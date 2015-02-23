@@ -55,7 +55,7 @@ package net.trajano.openidconnect.core;
  * auth_time Claim value and request re-authentication if it determines too much
  * time has elapsed since the last End-User authentication.</li>
  * </ol>
- * 
+ *
  * @see http://openid.net/specs/openid-connect-core-1_0.html#IDTokenValidation
  * @author Archimedes
  */

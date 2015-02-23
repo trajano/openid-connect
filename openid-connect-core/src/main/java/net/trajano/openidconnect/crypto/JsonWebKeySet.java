@@ -12,14 +12,17 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 public class JsonWebKeySet {
+
     @XmlElement(required = true)
     private final Set<JsonWebKey> keys = new HashSet<>();
 
     public void add(final JsonWebKey jwk) {
+
         keys.add(jwk);
     }
 
     public Set<JsonWebKey> getKeys() {
+
         return Collections.unmodifiableSet(keys);
     }
 }

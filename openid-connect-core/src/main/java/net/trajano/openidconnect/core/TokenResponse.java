@@ -41,7 +41,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * <td>no-cache</td>
  * </tr>
  * </table>
- * 
+ *
  * @see http://openid.net/specs/openid-connect-core-1_0.html#TokenResponse
  * @see http://tools.ietf.org/html/rfc6749#section-4.2.2
  * @author Archimedes
@@ -59,6 +59,34 @@ public class TokenResponse {
     private String accessToken;
 
     /**
+     * RECOMMENDED. The lifetime in seconds of the access token. For example,
+     * the value "3600" denotes that the access token will expire in one hour
+     * from the time the response was generated. If omitted, the authorization
+     * server SHOULD provide the expiration time via other means or document the
+     * default value.
+     */
+    @XmlElement(name = "expires_in", required = false)
+    private int expiresIn;
+
+    /**
+     * ID Token value associated with the authenticated session.
+     */
+    @XmlElement(name = "id_token", required = true)
+    private String idToken;
+
+    /**
+     * OPTIONAL, if identical to the scope requested by the client; otherwise,
+     * REQUIRED. The scope of the access token as described by Section 3.3.
+     */
+    private String scope;
+
+    /**
+     * REQUIRED if the "state" parameter was present in the client authorization
+     * request. The exact value received from the client.
+     */
+    private String state;
+
+    /**
      * <p>
      * REQUIRED. The type of the token issued as described in Section 7.1. Value
      * is case insensitive.
@@ -74,46 +102,9 @@ public class TokenResponse {
     @XmlElement(name = "token_type", required = true)
     private String tokenType = BEARER;
 
-    /**
-     * RECOMMENDED. The lifetime in seconds of the access token. For example,
-     * the value "3600" denotes that the access token will expire in one hour
-     * from the time the response was generated. If omitted, the authorization
-     * server SHOULD provide the expiration time via other means or document the
-     * default value.
-     */
-    @XmlElement(name = "expires_in", required = false)
-    private int expiresIn;
-
-    /**
-     * OPTIONAL, if identical to the scope requested by the client; otherwise,
-     * REQUIRED. The scope of the access token as described by Section 3.3.
-     */
-    private String scope;
-
-    /**
-     * REQUIRED if the "state" parameter was present in the client authorization
-     * request. The exact value received from the client.
-     */
-    private String state;
-
     public String getAccessToken() {
 
         return accessToken;
-    }
-
-    public void setAccessToken(String accessToken) {
-
-        this.accessToken = accessToken;
-    }
-
-    public String getTokenType() {
-
-        return tokenType;
-    }
-
-    public void setTokenType(String tokenType) {
-
-        this.tokenType = tokenType;
     }
 
     public int getExpiresIn() {
@@ -121,9 +112,9 @@ public class TokenResponse {
         return expiresIn;
     }
 
-    public void setExpiresIn(int expiresIn) {
+    public String getIdToken() {
 
-        this.expiresIn = expiresIn;
+        return idToken;
     }
 
     public String getScope() {
@@ -131,34 +122,43 @@ public class TokenResponse {
         return scope;
     }
 
-    public void setScope(String scope) {
-
-        this.scope = scope;
-    }
-
     public String getState() {
 
         return state;
     }
 
-    public void setState(String state) {
+    public String getTokenType() {
 
-        this.state = state;
+        return tokenType;
     }
 
-    public String getIdToken() {
+    public void setAccessToken(final String accessToken) {
 
-        return idToken;
+        this.accessToken = accessToken;
     }
 
-    public void setIdToken(String idToken) {
+    public void setExpiresIn(final int expiresIn) {
+
+        this.expiresIn = expiresIn;
+    }
+
+    public void setIdToken(final String idToken) {
 
         this.idToken = idToken;
     }
 
-    /**
-     * ID Token value associated with the authenticated session.
-     */
-    @XmlElement(name = "id_token", required = true)
-    private String idToken;
+    public void setScope(final String scope) {
+
+        this.scope = scope;
+    }
+
+    public void setState(final String state) {
+
+        this.state = state;
+    }
+
+    public void setTokenType(final String tokenType) {
+
+        this.tokenType = tokenType;
+    }
 }

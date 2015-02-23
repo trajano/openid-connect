@@ -7,7 +7,7 @@ import javax.xml.bind.annotation.XmlElement;
 /**
  * The authorization server responds with an HTTP 400 (Bad Request) status code
  * (unless specified otherwise) .
- * 
+ *
  * @see http://openid.net/specs/openid-connect-core-1_0.html#TokenErrorResponse
  * @see http://tools.ietf.org/html/rfc6749#section-5.2
  * @author Archimedes Trajano
@@ -17,15 +17,7 @@ public class TokenErrorResponse {
     public enum ErrorCode {
 
         /**
-         * The request is missing a required parameter, includes an unsupported
-         * parameter value (other than grant type), repeats a parameter,
-         * includes multiple credentials, utilizes more than one mechanism for
-         * authenticating the client, or is otherwise malformed.
-         */
-        invalid_request,
-
-        /**
-         * 
+         *
          Client authentication failed (e.g., unknown client, no client
          * authentication included, or unsupported authentication method). The
          * authorization server MAY return an HTTP 401 (Unauthorized) status
@@ -37,6 +29,7 @@ public class TokenErrorResponse {
          * client.
          */
         invalid_client,
+
         /**
          * The provided authorization grant (e.g., authorization code, resource
          * owner credentials) or refresh token is invalid, expired, revoked,
@@ -44,23 +37,30 @@ public class TokenErrorResponse {
          * or was issued to another client.
          */
         invalid_grant,
-
         /**
-         * The authenticated client is not authorized to use this authorization
-         * grant type.
+         * The request is missing a required parameter, includes an unsupported
+         * parameter value (other than grant type), repeats a parameter,
+         * includes multiple credentials, utilizes more than one mechanism for
+         * authenticating the client, or is otherwise malformed.
          */
-        unauthorized_client,
-        /**
-         * The authorization grant type is not supported by the authorization
-         * server.
-         */
-        unsupported_grant_type,
+        invalid_request,
 
         /**
          * The requested scope is invalid, unknown, malformed, or exceeds the
          * scope granted by the resource owner.
          */
-        invalid_scope
+        invalid_scope,
+        /**
+         * The authenticated client is not authorized to use this authorization
+         * grant type.
+         */
+        unauthorized_client,
+
+        /**
+         * The authorization grant type is not supported by the authorization
+         * server.
+         */
+        unsupported_grant_type
 
     }
 
@@ -94,19 +94,9 @@ public class TokenErrorResponse {
         return error;
     }
 
-    public void setError(ErrorCode error) {
-
-        this.error = error;
-    }
-
     public String getErrorDescription() {
 
         return errorDescription;
-    }
-
-    public void setErrorDescription(String errorDescription) {
-
-        this.errorDescription = errorDescription;
     }
 
     public URI getErrorUri() {
@@ -114,7 +104,17 @@ public class TokenErrorResponse {
         return errorUri;
     }
 
-    public void setErrorUri(URI errorUri) {
+    public void setError(final ErrorCode error) {
+
+        this.error = error;
+    }
+
+    public void setErrorDescription(final String errorDescription) {
+
+        this.errorDescription = errorDescription;
+    }
+
+    public void setErrorUri(final URI errorUri) {
 
         this.errorUri = errorUri;
     }

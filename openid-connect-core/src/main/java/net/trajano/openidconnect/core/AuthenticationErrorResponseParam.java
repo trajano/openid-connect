@@ -19,66 +19,38 @@ package net.trajano.openidconnect.core;
  * appropriate error and state parameters. Other parameters SHOULD NOT be
  * returned.
  * </p>
- * 
+ *
  * @author Archimedes Trajano
  * @see http://openid.net/specs/openid-connect-core-1_0.html#AuthError
  */
 public final class AuthenticationErrorResponseParam {
 
-    private AuthenticationErrorResponseParam() {
-
-    }
-
     public enum ErrorCode {
         /**
-         * The client is not authorized to request an authorization code using
-         * this method.
-         * 
-         * @see http://tools.ietf.org/html/rfc6749#section-4.1.2.1
-         */
-        unauthorized_client
-
-        , /**
          * The resource owner or authorization server denied the request.
-         * 
+         *
          * @see http://tools.ietf.org/html/rfc6749#section-4.1.2.1
          */
         access_denied
 
         , /**
-         * The authorization server does not support obtaining an
-         * authorization code using this method.
-         * 
-         * @see http://tools.ietf.org/html/rfc6749#section-4.1.2.1
+         * The End-User is REQUIRED to select a session at the Authorization
+         * Server. The End-User MAY be authenticated at the Authorization Server
+         * with different associated accounts, but the End-User did not select a
+         * session. This error MAY be returned when the prompt parameter value
+         * in the Authentication Request is none, but the Authentication Request
+         * cannot be completed without displaying a user interface to prompt for
+         * a session to use.
          */
-        unsupported_response_type
+        account_selection_required
 
         , /**
-         * The requested scope is invalid, unknown, or malformed.
-         * 
-         * @see http://tools.ietf.org/html/rfc6749#section-4.1.2.1
+         * The Authorization Server requires End-User consent. This error MAY
+         * be returned when the prompt parameter value in the Authentication
+         * Request is none, but the Authentication Request cannot be completed
+         * without displaying a user interface for End-User consent.
          */
-        invalid_scope
-
-        ,
-        /**
-         * The authorization server encountered an unexpected condition that
-         * prevented it from fulfilling the request. (This error code is needed
-         * because a 500 Internal Server Error HTTP status code cannot be
-         * returned to the client via an HTTP redirect.)
-         * 
-         * @see http://tools.ietf.org/html/rfc6749#section-4.1.2.1
-         */
-        server_error,
-        /**
-         * The authorization server is currently unable to handle the request
-         * due to a temporary overloading or maintenance of the server. (This
-         * error code is needed because a 503 Service Unavailable HTTP status
-         * code cannot be returned to the client via an HTTP redirect.)
-         * 
-         * @see http://tools.ietf.org/html/rfc6749#section-4.1.2.1
-         */
-        temporarily_unavailable
+        consent_required
 
         , /**
          * The Authorization Server requires End-User interaction of some form
@@ -87,7 +59,25 @@ public final class AuthenticationErrorResponseParam {
          * Request cannot be completed without displaying a user interface for
          * End-User interaction.
          */
-        interaction_required, /**
+        interaction_required
+
+        ,
+        /**
+         * The request parameter contains an invalid Request Object.
+         */
+        invalid_request_object,
+        /**
+         * The request_uri in the Authorization Request returns an error or
+         * contains invalid data.
+         */
+        invalid_request_uri
+
+        , /**
+         * The requested scope is invalid, unknown, or malformed.
+         *
+         * @see http://tools.ietf.org/html/rfc6749#section-4.1.2.1
+         */
+        invalid_scope, /**
          * The Authorization Server requires End-User
          * authentication. This error MAY be returned when the prompt parameter
          * value in the Authentication Request is none, but the Authentication
@@ -95,42 +85,47 @@ public final class AuthenticationErrorResponseParam {
          * End-User authentication.
          */
         login_required, /**
-         * The End-User is REQUIRED to select a session at the
-         * Authorization Server. The End-User MAY be authenticated at the
-         * Authorization Server with different associated accounts, but the
-         * End-User did not select a session. This error MAY be returned when
-         * the prompt parameter value in the Authentication Request is none, but
-         * the Authentication Request cannot be completed without displaying a
-         * user interface to prompt for a session to use.
+         * The OP does not support use of the registration
+         * parameter defined in Section 7.2.1.
          */
-        account_selection_required, /**
-         * The Authorization Server requires
-         * End-User consent. This error MAY be returned when the prompt
-         * parameter value in the Authentication Request is none, but the
-         * Authentication Request cannot be completed without displaying a user
-         * interface for End-User consent.
-         */
-        consent_required, /**
-         * The request_uri in the Authorization Request
-         * returns an error or contains invalid data.
-         */
-        invalid_request_uri, /**
-         * The request parameter contains an invalid
-         * Request Object.
-         */
-        invalid_request_object, /**
-         * The OP does not support use of the request
-         * parameter defined in Section 6.
+        registration_not_supported, /**
+         * The OP does not support use of the
+         * request parameter defined in Section 6.
          */
         request_not_supported, /**
          * The OP does not support use of the request_uri
          * parameter defined in Section 6.
          */
         request_uri_not_supported, /**
-         * The OP does not support use of the
-         * registration parameter defined in Section 7.2.1.
+         * The authorization server encountered an
+         * unexpected condition that prevented it from fulfilling the request.
+         * (This error code is needed because a 500 Internal Server Error HTTP
+         * status code cannot be returned to the client via an HTTP redirect.)
+         *
+         * @see http://tools.ietf.org/html/rfc6749#section-4.1.2.1
          */
-        registration_not_supported
+        server_error, /**
+         * The authorization server is currently unable to handle
+         * the request due to a temporary overloading or maintenance of the
+         * server. (This error code is needed because a 503 Service Unavailable
+         * HTTP status code cannot be returned to the client via an HTTP
+         * redirect.)
+         *
+         * @see http://tools.ietf.org/html/rfc6749#section-4.1.2.1
+         */
+        temporarily_unavailable, /**
+         * The client is not authorized to request an
+         * authorization code using this method.
+         *
+         * @see http://tools.ietf.org/html/rfc6749#section-4.1.2.1
+         */
+        unauthorized_client, /**
+         * The authorization server does not support
+         * obtaining an authorization code using this method.
+         *
+         * @see http://tools.ietf.org/html/rfc6749#section-4.1.2.1
+         */
+        unsupported_response_type
 
     }
 
@@ -155,5 +150,9 @@ public final class AuthenticationErrorResponseParam {
      * state parameter. Set to the value received from the Client.
      */
     public final static String STATE = "state";
+
+    private AuthenticationErrorResponseParam() {
+
+    }
 
 }

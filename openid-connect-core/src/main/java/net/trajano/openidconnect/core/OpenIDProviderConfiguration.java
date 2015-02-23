@@ -17,6 +17,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 public class OpenIDProviderConfiguration {
+
     /**
      * Authorization endpoint.
      */
@@ -70,6 +71,7 @@ public class OpenIDProviderConfiguration {
      */
     @XmlElement(name = "token_endpoint_auth_methods_supported")
     private List<String> tokenEndpointAuthMethodsSupported;
+
     /**
      * Userinfo endpoint. Used to get information about the currently
      * authenticated user.
@@ -91,6 +93,7 @@ public class OpenIDProviderConfiguration {
      *            JSON object
      */
     public OpenIDProviderConfiguration(final JsonObject jsonObject) {
+
         setAuthorizationEndpoint(URI.create(jsonObject.getString("authorization_endpoint")));
         setTokenEndpoint(URI.create(jsonObject.getString("token_endpoint")));
         setIssuer(jsonObject.getString("issuer"));
@@ -99,87 +102,108 @@ public class OpenIDProviderConfiguration {
     }
 
     public URI getAuthorizationEndpoint() {
+
         return authorizationEndpoint;
     }
 
     public List<String> getIdTokenAlgValuesSupported() {
+
         return idTokenAlgValuesSupported;
     }
 
     public String getIssuer() {
+
         return issuer;
     }
 
     public URI getJwksUri() {
+
         return jwksUri;
     }
 
     public List<String> getResponseTypesSupported() {
+
         return responseTypesSupported;
     }
 
     public URI getRevocationEndpoint() {
+
         return revocationEndpoint;
     }
 
     public List<String> getSubjectTypesSupported() {
+
         return subjectTypesSupported;
     }
 
     public URI getTokenEndpoint() {
+
         return tokenEndpoint;
     }
 
     public List<String> getTokenEndpointAuthMethodsSupported() {
+
         return tokenEndpointAuthMethodsSupported;
     }
 
     public URI getUserinfoEndpoint() {
+
         return userinfoEndpoint;
     }
 
     public void setAuthorizationEndpoint(final URI authorizationEndpoint) {
+
         this.authorizationEndpoint = authorizationEndpoint;
     }
 
     public void setIdTokenAlgValuesSupported(final List<String> idTokenAlgValuesSupported) {
+
         this.idTokenAlgValuesSupported = idTokenAlgValuesSupported;
     }
 
     public void setIssuer(final String issuer) {
+
         this.issuer = issuer;
     }
 
     public void setJwksUri(final URI jwksUri) {
+
         this.jwksUri = jwksUri;
     }
 
     public void setResponseTypesSupported(final List<String> responseTypesSupported) {
+
         this.responseTypesSupported = responseTypesSupported;
     }
 
     public void setRevocationEndpoint(final URI revocationEndpoint) {
+
         this.revocationEndpoint = revocationEndpoint;
     }
 
     public void setSubjectTypesSupported(final List<String> subjectTypesSupported) {
+
         this.subjectTypesSupported = subjectTypesSupported;
     }
 
     public void setTokenEndpoint(final URI tokenEndpoint) {
+
         this.tokenEndpoint = tokenEndpoint;
     }
 
     public void setTokenEndpointAuthMethodsSupported(final List<String> tokenEndpointAuthMethodsSupported) {
+
         this.tokenEndpointAuthMethodsSupported = tokenEndpointAuthMethodsSupported;
     }
 
     public void setUserinfoEndpoint(final URI userinfoEndpoint) {
+
         this.userinfoEndpoint = userinfoEndpoint;
     }
 
     @Override
     public String toString() {
+
         return "OpenIDProviderConfigurationResponse [authorizationEndpoint=" + authorizationEndpoint + ", idTokenAlgValuesSupported=" + idTokenAlgValuesSupported + ", issuer=" + issuer + ", jwksUri=" + jwksUri + ", responseTypesSupported=" + responseTypesSupported + ", revocationEndpoint=" + revocationEndpoint + ", subjectTypesSupported=" + subjectTypesSupported + ", tokenEndpoint=" + tokenEndpoint + ", tokenEndpointAuthMethodsSupported=" + tokenEndpointAuthMethodsSupported + "]";
     }
 }

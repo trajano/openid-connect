@@ -12,7 +12,7 @@ public enum KeyType {
      * Octet sequence.
      */
     @XmlEnumValue("oct")
-    OCT,
+    oct,
 
     /**
      * RSA.

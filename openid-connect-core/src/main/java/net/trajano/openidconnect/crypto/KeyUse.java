@@ -7,10 +7,10 @@ public enum KeyUse {
      * Encryption.
      */
     @XmlEnumValue("enc")
-    ENC,
+    enc,
     /**
      * Signature.
      */
     @XmlEnumValue("sig")
-    SIG
+    sig
 }

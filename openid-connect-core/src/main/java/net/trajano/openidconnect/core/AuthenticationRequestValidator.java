@@ -30,7 +30,7 @@ package net.trajano.openidconnect.core;
  * If the Authorization Server encounters any error, it MUST return an error
  * response, per Section 3.1.2.6.
  * </p>
- * 
+ *
  * @see http
  *      ://openid.net/specs/openid-connect-core-1_0.html#AuthRequestValidation
  * @author Archimedes

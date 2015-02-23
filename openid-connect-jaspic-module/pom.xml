@@ -7,6 +7,11 @@
         <version>1.0.0-SNAPSHOT</version>
     </parent>
     <artifactId>openid-connect-jaspic-module</artifactId>
-    <dependencies/>
+    <dependencies>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>openid-connect-core</artifactId>
+        </dependency>
+    </dependencies>
     <build/>
 </project>
