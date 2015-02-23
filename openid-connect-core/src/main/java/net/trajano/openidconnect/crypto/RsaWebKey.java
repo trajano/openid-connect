@@ -1,5 +1,11 @@
 package net.trajano.openidconnect.crypto;
 
+import java.math.BigInteger;
+import java.security.GeneralSecurityException;
+import java.security.Key;
+import java.security.KeyFactory;
+import java.security.spec.RSAPublicKeySpec;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -59,6 +65,20 @@ public class RsaWebKey extends JsonWebKey {
     public void setP(final String p) {
 
         this.p = p;
+    }
+
+    @Override
+    public Key toJcaKey() throws GeneralSecurityException {
+
+        if (getUse() == KeyUse.sig) {
+            final BigInteger modulus = Base64Url.decodeUint(n);
+            final BigInteger publicExponent = Base64Url.decodeUint(e);
+            return KeyFactory.getInstance("RSA")
+                    .generatePublic(new RSAPublicKeySpec(modulus, publicExponent));
+        } else {
+            // TODO later
+            return null;
+        }
     }
 
 }

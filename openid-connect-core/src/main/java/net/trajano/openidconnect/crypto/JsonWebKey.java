@@ -1,5 +1,8 @@
 package net.trajano.openidconnect.crypto;
 
+import java.security.GeneralSecurityException;
+import java.security.Key;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -60,4 +63,11 @@ public abstract class JsonWebKey {
 
         this.use = use;
     }
+
+    /**
+     * Converts the JSON Web key to the JCA key.
+     * 
+     * @return
+     */
+    public abstract Key toJcaKey() throws GeneralSecurityException;
 }
