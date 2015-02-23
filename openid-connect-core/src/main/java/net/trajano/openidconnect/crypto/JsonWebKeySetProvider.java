@@ -8,8 +8,11 @@ import java.lang.reflect.Type;
 
 import javax.json.Json;
 import javax.json.JsonArray;
+import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
 import javax.json.JsonValue;
+import javax.json.JsonWriter;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
@@ -18,19 +21,19 @@ import javax.ws.rs.ext.MessageBodyReader;
 import javax.ws.rs.ext.MessageBodyWriter;
 import javax.ws.rs.ext.Provider;
 
+// TODO should we have the reader in jaspic and the writer in the rest api?
 @Provider
 @Consumes(MediaType.APPLICATION_JSON)
 public class JsonWebKeySetProvider implements MessageBodyReader<JsonWebKeySet>, MessageBodyWriter<JsonWebKeySet> {
 
     @Override
     public long getSize(final JsonWebKeySet jwks,
-            final Class<?> arg1,
-            final Type arg2,
-            final Annotation[] arg3,
-            final MediaType arg4) {
+            final Class<?> type,
+            final Type genericType,
+            final Annotation[] annotations,
+            final MediaType mediaType) {
 
-        // TODO Auto-generated method stub
-        return 0;
+        return -1;
     }
 
     @Override
@@ -43,13 +46,12 @@ public class JsonWebKeySetProvider implements MessageBodyReader<JsonWebKeySet>, 
     }
 
     @Override
-    public boolean isWriteable(final Class<?> arg0,
-            final Type arg1,
-            final Annotation[] arg2,
-            final MediaType arg3) {
+    public boolean isWriteable(final Class<?> type,
+            final Type genericType,
+            final Annotation[] annotations,
+            final MediaType mediaType) {
 
-        // TODO Auto-generated method stub
-        return false;
+        return type == JsonWebKeySet.class && mediaType == MediaType.APPLICATION_JSON_TYPE;
     }
 
     @Override
@@ -108,16 +110,25 @@ public class JsonWebKeySetProvider implements MessageBodyReader<JsonWebKeySet>, 
     }
 
     @Override
-    public void writeTo(final JsonWebKeySet arg0,
-            final Class<?> arg1,
-            final Type arg2,
-            final Annotation[] arg3,
-            final MediaType arg4,
-            final MultivaluedMap<String, Object> arg5,
-            final OutputStream arg6) throws IOException,
+    public void writeTo(final JsonWebKeySet jwks,
+            final Class<?> type,
+            final Type genericType,
+            final Annotation[] annotations,
+            final MediaType mediaType,
+            final MultivaluedMap<String, Object> httpHeaders,
+            final OutputStream os) throws IOException,
             WebApplicationException {
 
-        // TODO Auto-generated method stub
-
+        JsonArrayBuilder keysArray = Json.createArrayBuilder();
+        for (JsonWebKey key : jwks.getKeys()) {
+            JsonObjectBuilder keyBuilder = Json.createObjectBuilder();
+            key.buildJsonObject(keyBuilder);
+            keysArray.add(keyBuilder);
+        }
+        JsonObject jwksObject = Json.createObjectBuilder()
+                .add("keys", keysArray)
+                .build();
+        JsonWriter jsonWriter = Json.createWriter(os);
+        jsonWriter.write(jwksObject);
     }
 }

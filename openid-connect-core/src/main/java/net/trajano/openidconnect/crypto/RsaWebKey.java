@@ -6,6 +6,7 @@ import java.security.Key;
 import java.security.KeyFactory;
 import java.security.spec.RSAPublicKeySpec;
 
+import javax.json.JsonObjectBuilder;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -79,6 +80,18 @@ public class RsaWebKey extends JsonWebKey {
             // TODO later
             return null;
         }
+    }
+
+    @Override
+    protected void addToJsonObject(JsonObjectBuilder keyBuilder) {
+
+        if (getUse() == KeyUse.enc) {
+            keyBuilder.add("d", d);
+            keyBuilder.add("p", p);
+        }
+        keyBuilder.add("n", n);
+        keyBuilder.add("e", e);
+
     }
 
 }

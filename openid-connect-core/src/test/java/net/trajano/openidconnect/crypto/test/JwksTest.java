@@ -24,13 +24,13 @@ public class JwksTest {
         final MessageBodyReader<JsonWebKeySet> reader = new JsonWebKeySetProvider();
         final JsonWebKeySet jwks = reader.readFrom(JsonWebKeySet.class, JsonWebKeySet.class, null, MediaType.APPLICATION_JSON_TYPE, null, getClass().getResourceAsStream("googlejwks.json"));
 
-        JsonWebKey[] keys = jwks.getKeys()
+        final JsonWebKey[] keys = jwks.getKeys()
                 .toArray(new JsonWebKey[0]);
         assertEquals(2, keys.length);
         assertEquals(JsonWebAlgorithm.RS256, keys[0].getAlg());
         assertEquals(JsonWebAlgorithm.RS256, keys[1].getAlg());
 
-        RSAPublicKey jcaKey = (RSAPublicKey) keys[1].toJcaKey();
+        final RSAPublicKey jcaKey = (RSAPublicKey) keys[1].toJcaKey();
         assertNotEquals(jcaKey.getModulus(), BigInteger.ZERO);
         assertNotEquals(jcaKey.getPublicExponent(), BigInteger.ZERO);
     }
