@@ -1,11 +1,14 @@
 package net.trajano.openidconnect.crypto;
 
+import java.math.BigInteger;
+
 /**
  * base64url implementation.
  *
  * @author Archimedes Trajano
  */
 public final class Base64Url {
+
     /**
      * Decoding map.
      */
@@ -33,6 +36,7 @@ public final class Base64Url {
      * @return bytes
      */
     public static byte[] decode(final String base64String) {
+
         final byte[] buffer = new byte[decodeLength(base64String)];
         decode(base64String, buffer, 0);
         return buffer;
@@ -49,7 +53,10 @@ public final class Base64Url {
      *            offset
      * @return amount of bytes decoded.
      */
-    public static int decode(final String base64String, final byte[] buffer, final int offset) {
+    public static int decode(final String base64String,
+            final byte[] buffer,
+            final int offset) {
+
         int p = 0;
         final byte[] base64Chars = base64String.getBytes();
         for (int i = 0; i < base64Chars.length; ++i) {
@@ -81,6 +88,7 @@ public final class Base64Url {
      * @return byte length of the decoded text.
      */
     public static int decodeLength(final String base64String) {
+
         final int originalLength = base64String.length();
         if (originalLength == 0) {
             return 0;
@@ -93,7 +101,6 @@ public final class Base64Url {
         }
     }
 
-
     /**
      * Encodes bytes in a buffer into a Base64 string.
      *
@@ -105,7 +112,10 @@ public final class Base64Url {
      *            number of bytes to encode
      * @return Base64Url string
      */
-    public static String encode(final byte[] bytes, final int offset, final int length) {
+    public static String encode(final byte[] bytes,
+            final int offset,
+            final int length) {
+
         final StringBuilder buffer = new StringBuilder(length * 3);
         for (int i = offset; i < offset + length; i += 3) {
             // p's are the segments for each byte. For every triple there are 6
@@ -163,7 +173,32 @@ public final class Base64Url {
      * @return Base64 string
      */
     public static String encode(final byte[] bytes) {
+
         return encode(bytes, 0, bytes.length);
+    }
+
+    /**
+     * Decodes Base64urlUInt. The representation of a positive or zero integer
+     * value as the base64url encoding of the value's unsigned big endian
+     * representation as an octet sequence. The octet sequence MUST utilize the
+     * minimum number of octets needed to represent the value. Zero is
+     * represented as BASE64URL(single zero-valued octet), which is "AA".
+     */
+    public static BigInteger decodeUint(String s) {
+
+        return new BigInteger(1, decode(s));
+    }
+
+    /**
+     * Encodes Base64urlUInt. The representation of a positive or zero integer
+     * value as the base64url encoding of the value's unsigned big endian
+     * representation as an octet sequence. The octet sequence MUST utilize the
+     * minimum number of octets needed to represent the value. Zero is
+     * represented as BASE64URL(single zero-valued octet), which is "AA".
+     */
+    public static String encodeUint(BigInteger v) {
+
+        return encode(v.toByteArray());
     }
 
     /**
