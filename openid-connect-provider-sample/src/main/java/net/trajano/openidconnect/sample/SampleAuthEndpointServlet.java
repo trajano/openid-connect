@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import net.trajano.openidconnect.servlet.AuthorizationEndpointServlet;
+import net.trajano.openidconnect.servlet.ClientManager;
 import net.trajano.openidconnect.servlet.internal.AuthenticationRequest;
 
 @WebServlet("/oid/auth")
@@ -30,7 +31,13 @@ public class SampleAuthEndpointServlet extends AuthorizationEndpointServlet {
             ServletException {
 
         // TODO Auto-generated method stub
-        
+
+    }
+
+    @Override
+    protected ClientManager buildClientManager() throws ServletException {
+
+        return new AcceptAllClientManager();
     }
 
 }

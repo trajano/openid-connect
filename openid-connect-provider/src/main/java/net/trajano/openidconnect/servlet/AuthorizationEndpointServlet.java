@@ -145,11 +145,15 @@ public abstract class AuthorizationEndpointServlet extends HttpServlet {
     @Override
     public void init() throws ServletException {
 
-        try {
-            clientManager = (ClientManager) Class.forName(getServletConfig().getInitParameter("net.trajano.openidconnect.servlet.ClientManager"))
-                    .newInstance();
-        } catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
-            throw new ServletException(e);
-        }
+        clientManager = buildClientManager();
     }
+
+    /**
+     * A client manager must be provided by the classes that extend this. The
+     * method is only invoked on {@link #init()}.
+     * 
+     * @return
+     * @throws ServletException
+     */
+    protected abstract ClientManager buildClientManager() throws ServletException;
 }
