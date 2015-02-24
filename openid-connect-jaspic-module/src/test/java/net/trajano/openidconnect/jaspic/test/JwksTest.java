@@ -22,7 +22,7 @@ public class JwksTest {
     public void testGoogleJwks() throws Exception {
 
         final MessageBodyReader<JsonWebKeySet> reader = new JsonWebKeySetProvider();
-        final JsonWebKeySet jwks = reader.readFrom(JsonWebKeySet.class, JsonWebKeySet.class, null, MediaType.APPLICATION_JSON_TYPE, null, getClass().getResourceAsStream("googlejwks.json"));
+        final JsonWebKeySet jwks = reader.readFrom(JsonWebKeySet.class, JsonWebKeySet.class, null, MediaType.APPLICATION_JSON_TYPE, null, getClass().getResourceAsStream("/googlejwks.json"));
 
         assertEquals(2, jwks.getKeys()
                 .size());

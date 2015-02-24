@@ -27,7 +27,7 @@ public class JwksTest {
     public void testGoogleJwks() throws Exception {
 
         final MessageBodyReader<JsonWebKeySet> reader = new JsonWebKeySetProvider();
-        final JsonWebKeySet jwks = reader.readFrom(JsonWebKeySet.class, JsonWebKeySet.class, null, MediaType.APPLICATION_JSON_TYPE, null, getClass().getResourceAsStream("googlejwks.json"));
+        final JsonWebKeySet jwks = reader.readFrom(JsonWebKeySet.class, JsonWebKeySet.class, null, MediaType.APPLICATION_JSON_TYPE, null, getClass().getResourceAsStream("/googlejwks.json"));
 
         final JsonWebKey[] keys = jwks.getKeys()
                 .toArray(new JsonWebKey[0]);
@@ -44,7 +44,7 @@ public class JwksTest {
     public void testGoogleJwksRewrite() throws Exception {
 
         final MessageBodyReader<JsonWebKeySet> reader = new JsonWebKeySetProvider();
-        final JsonWebKeySet jwks = reader.readFrom(JsonWebKeySet.class, JsonWebKeySet.class, null, MediaType.APPLICATION_JSON_TYPE, null, getClass().getResourceAsStream("googlejwks.json"));
+        final JsonWebKeySet jwks = reader.readFrom(JsonWebKeySet.class, JsonWebKeySet.class, null, MediaType.APPLICATION_JSON_TYPE, null, getClass().getResourceAsStream("/googlejwks.json"));
 
         final JsonWebKey[] keys = jwks.getKeys()
                 .toArray(new JsonWebKey[0]);
@@ -61,7 +61,7 @@ public class JwksTest {
         writer.writeTo(jwks, JsonWebKeySet.class, null, null, MediaType.APPLICATION_JSON_TYPE, null, baos);
         baos.close();
 
-        JsonArray googleKeys = Json.createReader(getClass().getResourceAsStream("googlejwks.json"))
+        JsonArray googleKeys = Json.createReader(getClass().getResourceAsStream("/googlejwks.json"))
                 .readObject()
                 .getJsonArray("keys");
 
