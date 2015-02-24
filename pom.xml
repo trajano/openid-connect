@@ -61,6 +61,12 @@
                 <version>${project.version}</version>
                 <type>war</type>
             </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>openid-connect-sample</artifactId>
+                <version>${project.version}</version>
+                <type>ear</type>
+            </dependency>
         </dependencies>
     </dependencyManagement>
     <dependencies>
