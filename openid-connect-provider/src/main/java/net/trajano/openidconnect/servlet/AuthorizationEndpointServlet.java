@@ -6,8 +6,12 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.core.UriBuilder;
 
-import net.trajano.openidconnect.servlet.internal.AuthenticationRequestHandler;
+import net.trajano.openidconnect.core.AuthenticationErrorResponseParam;
+import net.trajano.openidconnect.core.AuthenticationErrorResponseParam.ErrorCode;
+import net.trajano.openidconnect.core.AuthenticationRequestParam;
+import net.trajano.openidconnect.servlet.internal.AuthenticationRequest;
 
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
@@ -24,27 +28,38 @@ import org.apache.shiro.subject.Subject;
  * Communication with the Authorization Endpoint MUST utilize TLS. See Section
  * 16.17 for more information on using TLS.
  * </p>
- * 
+ *
  * @author Archimedes
  */
 public class AuthorizationEndpointServlet extends HttpServlet {
 
+    /**
+     *
+     */
+    private static final long serialVersionUID = 4255947522328618454L;
+
     private ClientManager clientManager;
 
-    @Override
-    public void init() throws ServletException {
+    private void createError(final AuthenticationRequest authenticationRequest,
+            final HttpServletResponse resp,
+            final ErrorCode errorCode,
+            final String errorDescription) throws IOException {
 
-        try {
-            clientManager = (ClientManager) Class.forName(getServletConfig().getInitParameter("net.trajano.openidconnect.servlet.ClientManager"))
-                    .newInstance();
-        } catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
-            throw new ServletException(e);
+        final UriBuilder errorUri = UriBuilder.fromUri(authenticationRequest.getRedirectUri())
+                .queryParam(AuthenticationErrorResponseParam.ERROR, errorCode);
+        if (errorDescription != null) {
+            errorUri.queryParam(AuthenticationErrorResponseParam.ERROR_DESCRIPTION, errorDescription);
         }
+        if (authenticationRequest.getState() != null) {
+            errorUri.queryParam(AuthenticationErrorResponseParam.STATE, errorDescription);
+        }
+        resp.sendRedirect(errorUri.build()
+                .toASCIIString());
     }
 
     @Override
-    protected void doGet(HttpServletRequest req,
-            HttpServletResponse resp) throws ServletException,
+    protected void doGet(final HttpServletRequest req,
+            final HttpServletResponse resp) throws ServletException,
             IOException {
 
         doPost(req, resp);
@@ -66,18 +81,50 @@ public class AuthorizationEndpointServlet extends HttpServlet {
      * </p>
      */
     @Override
-    protected void doPost(HttpServletRequest req,
-            HttpServletResponse resp) throws ServletException,
+    protected void doPost(final HttpServletRequest req,
+            final HttpServletResponse resp) throws ServletException,
             IOException {
 
-        if (!req.isSecure()) {
-            throw new ServletException("secure connection required");
+        final AuthenticationRequest authenticationRequest = new AuthenticationRequest(req);
+
+        if (!clientManager.isRedirectUriValidForClient(authenticationRequest.getClientId(), authenticationRequest.getRedirectUri())) {
+            throw new ServletException("redirect URI is not supported for the client");
         }
-        new AuthenticationRequestHandler(req);
 
-        Subject currentUser = SecurityUtils.getSubject();
-        if (currentUser.isAuthenticated()) {
+        if (!req.isSecure()) {
+            createError(authenticationRequest, resp, AuthenticationErrorResponseParam.ErrorCode.invalid_request, "secure connection required");
+            return;
+        }
 
+        if (!authenticationRequest.getScopes()
+                .contains("openid")) {
+            createError(authenticationRequest, resp, AuthenticationErrorResponseParam.ErrorCode.invalid_request, "the request must contain the 'openid' scope value");
+            return;
+        }
+
+        if (authenticationRequest.getPrompts()
+                .contains(AuthenticationRequestParam.Prompt.none) && authenticationRequest.getPrompts()
+                .size() != 1) {
+            createError(authenticationRequest, resp, AuthenticationErrorResponseParam.ErrorCode.invalid_request, "Cannot have 'none' with any other value for 'prompt'");
+            return;
+        }
+
+        // TODO should perhaps move this logic to an interface later so we are not tightly coupled to Shiro?
+        final Subject currentUser = SecurityUtils.getSubject();
+        if (!currentUser.isAuthenticated() && authenticationRequest.getPrompts().contains(AuthenticationRequestParam.Prompt.none)) {
+            createError(authenticationRequest, resp, AuthenticationErrorResponseParam.ErrorCode.login_required, null);
+            return;
+        }
+    }
+
+    @Override
+    public void init() throws ServletException {
+
+        try {
+            clientManager = (ClientManager) Class.forName(getServletConfig().getInitParameter("net.trajano.openidconnect.servlet.ClientManager"))
+                    .newInstance();
+        } catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
+            throw new ServletException(e);
         }
     }
 }

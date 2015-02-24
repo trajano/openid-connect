@@ -50,18 +50,21 @@ public final class AuthenticationErrorResponseParam {
          * Request is none, but the Authentication Request cannot be completed
          * without displaying a user interface for End-User consent.
          */
-        consent_required
-
-        , /**
+        consent_required,
+        /**
          * The Authorization Server requires End-User interaction of some form
          * to proceed. This error MAY be returned when the prompt parameter
          * value in the Authentication Request is none, but the Authentication
          * Request cannot be completed without displaying a user interface for
          * End-User interaction.
          */
-        interaction_required
-
-        ,
+        interaction_required,
+        /**
+         * The request is missing a required parameter, includes an invalid
+         * parameter value, includes a parameter more than once, or is otherwise
+         * malformed.
+         */
+        invalid_request,
         /**
          * The request parameter contains an invalid Request Object.
          */
@@ -70,19 +73,18 @@ public final class AuthenticationErrorResponseParam {
          * The request_uri in the Authorization Request returns an error or
          * contains invalid data.
          */
-        invalid_request_uri
-
-        , /**
+        invalid_request_uri,
+        /**
          * The requested scope is invalid, unknown, or malformed.
          *
          * @see http://tools.ietf.org/html/rfc6749#section-4.1.2.1
          */
-        invalid_scope, /**
-         * The Authorization Server requires End-User
-         * authentication. This error MAY be returned when the prompt parameter
-         * value in the Authentication Request is none, but the Authentication
-         * Request cannot be completed without displaying a user interface for
-         * End-User authentication.
+        invalid_scope,
+        /**
+         * The Authorization Server requires End-User authentication. This error
+         * MAY be returned when the prompt parameter value in the Authentication
+         * Request is none, but the Authentication Request cannot be completed
+         * without displaying a user interface for End-User authentication.
          */
         login_required, /**
          * The OP does not support use of the registration
@@ -96,20 +98,21 @@ public final class AuthenticationErrorResponseParam {
          * The OP does not support use of the request_uri
          * parameter defined in Section 6.
          */
-        request_uri_not_supported, /**
-         * The authorization server encountered an
-         * unexpected condition that prevented it from fulfilling the request.
-         * (This error code is needed because a 500 Internal Server Error HTTP
-         * status code cannot be returned to the client via an HTTP redirect.)
+        request_uri_not_supported,
+        /**
+         * The authorization server encountered an unexpected condition that
+         * prevented it from fulfilling the request. (This error code is needed
+         * because a 500 Internal Server Error HTTP status code cannot be
+         * returned to the client via an HTTP redirect.)
          *
          * @see http://tools.ietf.org/html/rfc6749#section-4.1.2.1
          */
-        server_error, /**
-         * The authorization server is currently unable to handle
-         * the request due to a temporary overloading or maintenance of the
-         * server. (This error code is needed because a 503 Service Unavailable
-         * HTTP status code cannot be returned to the client via an HTTP
-         * redirect.)
+        server_error,
+        /**
+         * The authorization server is currently unable to handle the request
+         * due to a temporary overloading or maintenance of the server. (This
+         * error code is needed because a 503 Service Unavailable HTTP status
+         * code cannot be returned to the client via an HTTP redirect.)
          *
          * @see http://tools.ietf.org/html/rfc6749#section-4.1.2.1
          */

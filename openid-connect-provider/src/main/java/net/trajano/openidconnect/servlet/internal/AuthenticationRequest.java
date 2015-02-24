@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import net.trajano.openidconnect.core.AuthenticationRequestParam;
 
-public class AuthenticationRequestHandler {
+public class AuthenticationRequest {
 
     private final Set<String> acrValues;
 
@@ -41,13 +41,10 @@ public class AuthenticationRequestHandler {
 
     private final List<Locale> uiLocales;
 
-    public AuthenticationRequestHandler(final HttpServletRequest req) throws ServletException {
+    public AuthenticationRequest(final HttpServletRequest req) throws ServletException {
 
         scopes = new HashSet<>(Arrays.asList(req.getParameter(AuthenticationRequestParam.SCOPE)
                 .split("\\s")));
-        if (!scopes.contains("openid")) {
-            throw new ServletException("the request must contain the 'openid' scope value");
-        }
         responseTypes = new HashSet<>(Arrays.asList(req.getParameter(AuthenticationRequestParam.RESPONSE_TYPE)
                 .split("\\s")));
         clientId = req.getParameter(AuthenticationRequestParam.CLIENT_ID);
@@ -61,9 +58,7 @@ public class AuthenticationRequestHandler {
                 .split("\\s")) {
             prompts.add(AuthenticationRequestParam.Prompt.valueOf(prompt));
         }
-        if (prompts.contains(AuthenticationRequestParam.Prompt.none) && prompts.size() != 1) {
-            throw new ServletException("Cannot have none with any other value for prompt");
-        }
+        
         maxAge = Integer.valueOf(req.getParameter(AuthenticationRequestParam.MAX_AGE));
         uiLocales = new ArrayList<>();
         for (final String uiLocale : req.getParameter(AuthenticationRequestParam.UI_LOCALES)
@@ -74,6 +69,71 @@ public class AuthenticationRequestHandler {
         loginHint = req.getParameter(AuthenticationRequestParam.LOGIN_HINT);
         acrValues = new HashSet<>(Arrays.asList(req.getParameter(AuthenticationRequestParam.ACR_VALUES)
                 .split("\\s")));
+    }
+
+    public Set<String> getAcrValues() {
+
+        return acrValues;
+    }
+
+    public String getClientId() {
+
+        return clientId;
+    }
+
+    public AuthenticationRequestParam.Display getDisplay() {
+
+        return display;
+    }
+
+    public String getIdTokenHint() {
+
+        return idTokenHint;
+    }
+
+    public String getLoginHint() {
+
+        return loginHint;
+    }
+
+    public int getMaxAge() {
+
+        return maxAge;
+    }
+
+    public String getNonce() {
+
+        return nonce;
+    }
+
+    public Set<AuthenticationRequestParam.Prompt> getPrompts() {
+
+        return prompts;
+    }
+
+    public URI getRedirectUri() {
+
+        return redirectUri;
+    }
+
+    public Set<String> getResponseTypes() {
+
+        return responseTypes;
+    }
+
+    public Set<String> getScopes() {
+
+        return scopes;
+    }
+
+    public String getState() {
+
+        return state;
+    }
+
+    public List<Locale> getUiLocales() {
+
+        return uiLocales;
     }
 
 }
