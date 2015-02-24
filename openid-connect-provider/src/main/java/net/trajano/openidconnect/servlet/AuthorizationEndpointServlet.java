@@ -9,6 +9,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import net.trajano.openidconnect.servlet.internal.AuthenticationRequestHandler;
 
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.subject.Subject;
+
 /**
  * <p>
  * The Authorization Endpoint performs Authentication of the End-User. This is
@@ -25,6 +28,19 @@ import net.trajano.openidconnect.servlet.internal.AuthenticationRequestHandler;
  * @author Archimedes
  */
 public class AuthorizationEndpointServlet extends HttpServlet {
+
+    private ClientManager clientManager;
+
+    @Override
+    public void init() throws ServletException {
+
+        try {
+            clientManager = (ClientManager) Class.forName(getServletConfig().getInitParameter("net.trajano.openidconnect.servlet.ClientManager"))
+                    .newInstance();
+        } catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
+            throw new ServletException(e);
+        }
+    }
 
     @Override
     protected void doGet(HttpServletRequest req,
@@ -58,8 +74,10 @@ public class AuthorizationEndpointServlet extends HttpServlet {
             throw new ServletException("secure connection required");
         }
         new AuthenticationRequestHandler(req);
-        if (req.getUserPrincipal() != null) {
-            
+
+        Subject currentUser = SecurityUtils.getSubject();
+        if (currentUser.isAuthenticated()) {
+
         }
     }
 }

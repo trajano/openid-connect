@@ -3,22 +3,12 @@
 	xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
 	version="3.1" metadata-complete="false">
 	<distributable />
-	<!-- TODO  move to web-fragment -->
-	<listener>
-		<listener-class>org.apache.shiro.web.env.EnvironmentLoaderListener</listener-class>
-	</listener>
-
-	<filter>
-		<filter-name>ShiroFilter</filter-name>
-		<filter-class>org.apache.shiro.web.servlet.ShiroFilter</filter-class>
-	</filter>
-
-	<filter-mapping>
-		<filter-name>ShiroFilter</filter-name>
-		<url-pattern>/*</url-pattern>
-		<dispatcher>REQUEST</dispatcher>
-		<dispatcher>FORWARD</dispatcher>
-		<dispatcher>INCLUDE</dispatcher>
-		<dispatcher>ERROR</dispatcher>
-	</filter-mapping>
+	<servlet>
+		<servlet-name>AuthorationEndpointServlet</servlet-name>
+		<servlet-class>net.trajano.openidconnect.servlet.AuthorationEndpointServlet</servlet-class>
+		<init-param>
+			<param-name>net.trajano.openidconnect.servlet.ClientManager</param-name>
+			<param-value>net.trajano.openidconnect.sample.AcceptAllClientManager</param-value>
+		</init-param>
+	</servlet>
 </web-app>
