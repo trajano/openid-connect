@@ -13,9 +13,6 @@ import net.trajano.openidconnect.core.AuthenticationErrorResponseParam.ErrorCode
 import net.trajano.openidconnect.core.AuthenticationRequestParam;
 import net.trajano.openidconnect.servlet.internal.AuthenticationRequest;
 
-import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.subject.Subject;
-
 /**
  * <p>
  * The Authorization Endpoint performs Authentication of the End-User. This is
@@ -31,7 +28,7 @@ import org.apache.shiro.subject.Subject;
  *
  * @author Archimedes
  */
-public class AuthorizationEndpointServlet extends HttpServlet {
+public abstract class AuthorizationEndpointServlet extends HttpServlet {
 
     /**
      *
@@ -109,13 +106,41 @@ public class AuthorizationEndpointServlet extends HttpServlet {
             return;
         }
 
-        // TODO should perhaps move this logic to an interface later so we are not tightly coupled to Shiro?
-        final Subject currentUser = SecurityUtils.getSubject();
-        if (!currentUser.isAuthenticated() && authenticationRequest.getPrompts().contains(AuthenticationRequestParam.Prompt.none)) {
+        if (!isAuthenticated(authenticationRequest, req, resp) && authenticationRequest.getPrompts()
+                .contains(AuthenticationRequestParam.Prompt.none)) {
             createError(authenticationRequest, resp, AuthenticationErrorResponseParam.ErrorCode.login_required, null);
             return;
         }
     }
+
+    /**
+     * Checks if the user is authenticated.
+     * 
+     * @param req
+     * @param resp
+     * @return
+     * @throws IOException
+     * @throws ServletException
+     */
+    protected abstract boolean isAuthenticated(AuthenticationRequest authenticationRequest,
+            HttpServletRequest req,
+            HttpServletResponse resp) throws IOException,
+            ServletException;
+
+    /**
+     * Performs the authentication. For the most part this should be a redirect
+     * to the login page.
+     * 
+     * @param req
+     * @param resp
+     * @return
+     * @throws IOException
+     * @throws ServletException
+     */
+    protected abstract void authenticate(AuthenticationRequest authenticationRequest,
+            HttpServletRequest req,
+            HttpServletResponse resp) throws IOException,
+            ServletException;
 
     @Override
     public void init() throws ServletException {
