@@ -36,6 +36,10 @@
                             <artifactId>openid-connect-provider-sample</artifactId>
                             <contextRoot>/</contextRoot>
                         </webModule>
+                        <ejbModule>
+                            <groupId>${project.groupId}</groupId>
+                            <artifactId>openid-connect-provider-ejb</artifactId>
+                        </ejbModule>
                     </modules>
                 </configuration>
             </plugin>
