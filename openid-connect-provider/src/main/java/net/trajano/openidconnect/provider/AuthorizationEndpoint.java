@@ -1,6 +1,7 @@
 package net.trajano.openidconnect.provider;
 
-import javax.inject.Inject;
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -31,18 +32,24 @@ import net.trajano.openidconnect.core.AuthenticationRequestParam;
  * @author Archimedes
  */
 @Path("auth")
+@Stateless
 public class AuthorizationEndpoint {
 
-    private final ClientManager clientManager;
+    private ClientManager clientManager;
 
-    private final Authenticator authenticator;
-
-    @Inject
-    public AuthorizationEndpoint(ClientManager clientManager, Authenticator authenticator) {
+    @EJB
+    public void setClientManager(ClientManager clientManager) {
 
         this.clientManager = clientManager;
+    }
+
+    @EJB
+    public void setAuthenticator(Authenticator authenticator) {
+
         this.authenticator = authenticator;
     }
+
+    private Authenticator authenticator;
 
     private Response createError(final AuthenticationRequest authenticationRequest,
             final ErrorCode errorCode,

@@ -8,6 +8,7 @@ import javax.ws.rs.core.Application;
 
 import net.trajano.openidconnect.crypto.JsonWebKeySetProvider;
 import net.trajano.openidconnect.provider.AuthorizationEndpoint;
+import net.trajano.openidconnect.provider.Jwks;
 
 @ApplicationPath("V1")
 public class ProviderV1 extends Application {
@@ -17,6 +18,7 @@ public class ProviderV1 extends Application {
 
         Set<Class<?>> classes = new HashSet<>();
         classes.add(AuthorizationEndpoint.class);
+        classes.add(Jwks.class);
         classes.add(JsonWebKeySetProvider.class);
         return classes;
     }

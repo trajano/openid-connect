@@ -12,6 +12,12 @@ import javax.servlet.http.HttpServletRequest;
 
 import net.trajano.openidconnect.core.AuthenticationRequestParam;
 
+/**
+ * Wraps an HttpServletRequest to provide a cleaner API to the request
+ * parameters.
+ * 
+ * @author Archimedes
+ */
 public class AuthenticationRequest {
 
     private final Set<String> acrValues;

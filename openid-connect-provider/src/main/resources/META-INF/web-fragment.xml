@@ -4,5 +4,7 @@
 	xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-fragment_3_1.xsd"
 	version="3.1" metadata-complete="false">
 	<name>openid_connect_provider</name>
-
+	<servlet>
+		<servlet-name>net.trajano.openidconnect.provider.internal.ProviderV1</servlet-name>
+	</servlet>
 </web-fragment>

@@ -1,6 +1,7 @@
 package net.trajano.openidconnect.provider;
 
-import javax.inject.Inject;
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -8,7 +9,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import net.trajano.openidconnect.crypto.JsonWebKeySet;
-import net.trajano.openidconnect.provider.internal.KeyProvider;
 
 /**
  * <p>
@@ -26,15 +26,16 @@ import net.trajano.openidconnect.provider.internal.KeyProvider;
  * @author Archimedes
  */
 @Path("jwks")
+@Stateless
 public class Jwks {
 
-    private final KeyProvider keyProvider;
-
-    @Inject
-    public Jwks(KeyProvider keyProvider) {
+    @EJB
+    public void setKeyProvider(KeyProvider keyProvider) {
 
         this.keyProvider = keyProvider;
     }
+
+    private KeyProvider keyProvider;
 
     /**
      * <p>

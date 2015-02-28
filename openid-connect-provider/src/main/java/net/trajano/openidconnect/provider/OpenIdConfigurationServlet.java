@@ -19,7 +19,6 @@ import javax.ws.rs.core.Application;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriBuilder;
 
-import net.trajano.openidconnect.provider.internal.KeyProvider;
 import net.trajano.openidconnect.provider.internal.ProviderV1;
 
 @Stateless
@@ -159,7 +158,7 @@ public class OpenIdConfigurationServlet extends HttpServlet {
         revocationMapping = applicationPath + "/revocation";
 
         if (keyProvider == null) {
-            throw new ServletException("key provider2 is not injected");
+            throw new ServletException("key provider3 is not injected");
         }
     }
 

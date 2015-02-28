@@ -13,11 +13,6 @@
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>openid-connect-jaspic-sample</artifactId>
-            <type>war</type>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
             <artifactId>openid-connect-provider-sample</artifactId>
             <type>war</type>
         </dependency>
@@ -35,11 +30,6 @@
                             <groupId>${project.groupId}</groupId>
                             <artifactId>openid-connect-provider-sample</artifactId>
                             <contextRoot>/</contextRoot>
-                        </webModule>
-                        <webModule>
-                            <groupId>${project.groupId}</groupId>
-                            <artifactId>openid-connect-jaspic-sample</artifactId>
-                            <contextRoot>/secure</contextRoot>
                         </webModule>
                     </modules>
                 </configuration>
