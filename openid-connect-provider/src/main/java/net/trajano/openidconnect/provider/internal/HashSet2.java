@@ -11,6 +11,18 @@ import java.util.HashSet;
  */
 public class HashSet2<T> extends HashSet<T> {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -473305627529777783L;
+
+    /**
+     * Initializes the set with objects.
+     * 
+     * @param objs
+     *            objects
+     */
+    @SafeVarargs
     public HashSet2(T... objs) {
 
         super(Arrays.asList(objs));

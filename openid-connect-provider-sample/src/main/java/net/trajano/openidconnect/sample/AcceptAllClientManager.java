@@ -4,7 +4,7 @@ import java.net.URI;
 
 import javax.ejb.Stateless;
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriBuilder;
 
 import net.trajano.openidconnect.provider.AuthenticationRequest;
 import net.trajano.openidconnect.provider.Authenticator;
@@ -36,11 +36,16 @@ public class AcceptAllClientManager implements ClientManager, Authenticator {
     }
 
     @Override
-    public Response authenticate(AuthenticationRequest authenticationRequest,
-            HttpServletRequest req) {
+    public URI authenticate(AuthenticationRequest authenticationRequest,
+            HttpServletRequest req,
+            UriBuilder contextUriBuilder) {
 
-        // TODO Auto-generated method stub
+        return contextUriBuilder.path("login.jsp")
+                .build();
+    }
+    
+    @Override
+    public String getSubject(String clientId, HttpServletRequest req) {
         return null;
     }
-
 }

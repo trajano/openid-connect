@@ -32,7 +32,6 @@ public class WellKnownOpenIdConfiguration {
     @Produces(MediaType.APPLICATION_JSON)
     public Response op(@Context HttpServletRequest request) {
 
-        System.out.println("here" + request + "  " + keyProvider);
         final OpenIdProviderConfiguration openIdConfiguration = new OpenIdProviderConfiguration();
         // The value will be replaced by replacePath
         if (issuer == null) {

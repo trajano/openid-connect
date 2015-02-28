@@ -103,6 +103,7 @@ public class AuthorizationEndpoint {
             @Context final HttpServletRequest req) {
 
         final AuthenticationRequest authenticationRequest = new AuthenticationRequest(req);
+        System.out.println("here" + authenticator + " " + clientManager);
 
         if (!clientManager.isRedirectUriValidForClient(authenticationRequest.getClientId(), authenticationRequest.getRedirectUri())) {
             throw new WebApplicationException("redirect URI is not supported for the client", Status.BAD_REQUEST);
@@ -130,7 +131,10 @@ public class AuthorizationEndpoint {
         }
 
         if (!authenticator.isAuthenticated(authenticationRequest, req)) {
-            return authenticator.authenticate(authenticationRequest, req);
+            return Response.temporaryRedirect(authenticator.authenticate(authenticationRequest, req, UriBuilder.fromUri(req.getRequestURL()
+                    .toString())
+                    .replacePath(req.getContextPath())))
+                    .build();
         }
 
         throw new WebApplicationException(Status.BAD_REQUEST);

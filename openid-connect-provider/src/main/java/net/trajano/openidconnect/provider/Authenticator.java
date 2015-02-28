@@ -1,10 +1,11 @@
 package net.trajano.openidconnect.provider;
 
 import java.io.IOException;
+import java.net.URI;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriBuilder;
 
 public interface Authenticator {
 
@@ -21,15 +22,32 @@ public interface Authenticator {
             HttpServletRequest req);
 
     /**
-     * Performs the authentication. For the most part this should be a redirect
-     * to the login page.
+     * Obtains the URI to the start of the authentication process.
      * 
+     * @param authenticationRequest
+     *            authentication request
      * @param req
-     * @param resp
+     *            servlet request
+     * @param contextUriBuilder
+     *            {@link UriBuilder} pointing to the context.
      * @return
      * @throws IOException
      * @throws ServletException
      */
-    Response authenticate(AuthenticationRequest authenticationRequest,
+    URI authenticate(AuthenticationRequest authenticationRequest,
+            HttpServletRequest req,
+            UriBuilder contextUri);
+
+    /**
+     * Obtains the subject for the current user. Depending on the client ID the
+     * user obtained in the request may not be valid. May return
+     * <code>null</code> if the subject cannot be determined.
+     * 
+     * @param clientId
+     *            client ID
+     * @param req
+     * @return
+     */
+    String getSubject(String clientId,
             HttpServletRequest req);
 }
