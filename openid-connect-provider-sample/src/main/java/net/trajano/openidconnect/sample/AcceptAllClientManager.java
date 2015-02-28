@@ -1,10 +1,13 @@
 package net.trajano.openidconnect.sample;
 
+import java.io.IOException;
 import java.net.URI;
+import java.security.GeneralSecurityException;
 import java.util.Set;
 
 import javax.ejb.Stateless;
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.UriBuilder;
 
 import net.trajano.openidconnect.core.Scope;
@@ -60,12 +63,17 @@ public class AcceptAllClientManager implements ClientManager, Authenticator, Use
     public Userinfo getUserinfo(TokenResponse response) {
 
         Userinfo userinfo = new Userinfo();
-        userinfo.setSub(response.getIdToken().getSub());
+        try {
+            userinfo.setSub(response.getIdToken()
+                    .getSub());
+        } catch (IOException | GeneralSecurityException e) {
+            throw new WebApplicationException(e);
+        }
         return userinfo;
     }
 
     @Override
-    public String getRealm() {
+    public String getRealmName() {
 
         return "bearers";
     }

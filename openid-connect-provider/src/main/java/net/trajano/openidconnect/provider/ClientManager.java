@@ -35,5 +35,5 @@ public interface ClientManager {
      * 
      * @return
      */
-    String getRealm();
+    String getRealmName();
 }

@@ -41,10 +41,6 @@ import net.trajano.openidconnect.provider.internal.BearerTokenProcessor;
 @Path("profile")
 public class UserinfoEndpoint {
 
-    private Authenticator authenticator;
-
-    private ClientManager clientManager;
-
     private BearerTokenProcessor bearerTokenProcessor;
 
     private UserinfoProvider userinfoProvider;
@@ -80,19 +76,8 @@ public class UserinfoEndpoint {
     public Response op(@Context HttpServletRequest req) {
 
         TokenResponse tokenResponse = bearerTokenProcessor.getToken(req);
-        return Response.ok(userinfoProvider.getUserinfo(tokenResponse)).build();
-    }
-
-    @EJB
-    public void setAuthenticator(final Authenticator authenticator) {
-
-        this.authenticator = authenticator;
-    }
-
-    @EJB
-    public void setClientManager(final ClientManager clientManager) {
-
-        this.clientManager = clientManager;
+        return Response.ok(userinfoProvider.getUserinfo(tokenResponse))
+                .build();
     }
 
     @EJB

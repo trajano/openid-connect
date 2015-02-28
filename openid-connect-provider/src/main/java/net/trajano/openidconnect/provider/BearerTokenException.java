@@ -31,16 +31,16 @@ public class BearerTokenException extends NotAuthorizedException {
 
     public BearerTokenException(ClientManager clientManager) {
 
-        this(clientManager.getRealm());
+        this(clientManager.getRealmName());
     }
 
     public BearerTokenException(ClientManager clientManager, String errorCode) {
 
-        this(clientManager.getRealm(), errorCode);
+        this(clientManager.getRealmName(), errorCode);
     }
 
     public BearerTokenException(ClientManager clientManager, String errorCode, String errorDescription) {
 
-        this(clientManager.getRealm(), errorCode, errorDescription);
+        this(clientManager.getRealmName(), errorCode, errorDescription);
     }
 }
