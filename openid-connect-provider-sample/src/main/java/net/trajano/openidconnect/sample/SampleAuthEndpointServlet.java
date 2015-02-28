@@ -11,6 +11,8 @@ import net.trajano.openidconnect.servlet.AuthorizationEndpointServlet;
 import net.trajano.openidconnect.servlet.ClientManager;
 import net.trajano.openidconnect.servlet.internal.AuthenticationRequest;
 
+import org.apache.shiro.SecurityUtils;
+
 @WebServlet("/oid/auth")
 public class SampleAuthEndpointServlet extends AuthorizationEndpointServlet {
 
@@ -20,8 +22,8 @@ public class SampleAuthEndpointServlet extends AuthorizationEndpointServlet {
             HttpServletResponse resp) throws IOException,
             ServletException {
 
-        // TODO Auto-generated method stub
-        return false;
+        return SecurityUtils.getSubject()
+                .isAuthenticated();
     }
 
     @Override
@@ -30,7 +32,7 @@ public class SampleAuthEndpointServlet extends AuthorizationEndpointServlet {
             HttpServletResponse resp) throws IOException,
             ServletException {
 
-        // TODO Auto-generated method stub
+        resp.sendRedirect(req.getContextPath() + "/login.jsp");
 
     }
 
