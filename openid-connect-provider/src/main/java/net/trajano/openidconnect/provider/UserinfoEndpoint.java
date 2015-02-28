@@ -8,6 +8,8 @@ import javax.ws.rs.Path;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
+import net.trajano.openidconnect.provider.internal.BearerTokenProcessor;
+
 /**
  * <p>
  * The UserInfo Endpoint is an OAuth 2.0 Protected Resource that returns Claims
@@ -39,7 +41,18 @@ import javax.ws.rs.core.Response;
 public class UserinfoEndpoint {
 
     private Authenticator authenticator;
+
     private ClientManager clientManager;
+
+    private BearerTokenProcessor bearerTokenProcessor;
+
+    private UserinfoProvider userinfoProvider;
+
+    @EJB
+    public void setUserinfoProvider(UserinfoProvider userinfoProvider) {
+
+        this.userinfoProvider = userinfoProvider;
+    }
 
     /**
      * <p>
@@ -65,18 +78,26 @@ public class UserinfoEndpoint {
     @POST
     public Response op(@Context HttpServletRequest req) {
 
+        String clientId = bearerTokenProcessor.validateAndGetClientId(req);
+        userinfoProvider.getUserinfo(authenticator.getSubject(clientId, req), clientId, authenticator.getScopes(clientId, req));
         return null;
     }
 
     @EJB
     public void setAuthenticator(final Authenticator authenticator) {
-    
+
         this.authenticator = authenticator;
     }
 
     @EJB
     public void setClientManager(final ClientManager clientManager) {
-    
+
         this.clientManager = clientManager;
+    }
+
+    @EJB
+    public void setBearerTokenProcessor(BearerTokenProcessor bearerTokenProcessor) {
+
+        this.bearerTokenProcessor = bearerTokenProcessor;
     }
 }

@@ -12,6 +12,7 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 
 import net.trajano.openidconnect.core.AuthenticationRequestParam;
+import net.trajano.openidconnect.core.Scope;
 
 /**
  * Wraps an HttpServletRequest to provide a cleaner API to the request
@@ -41,7 +42,7 @@ public class AuthenticationRequest {
 
     private final Set<String> responseTypes;
 
-    private final Set<String> scopes;
+    private final Set<Scope> scopes;
 
     private final String state;
 
@@ -49,8 +50,11 @@ public class AuthenticationRequest {
 
     public AuthenticationRequest(final HttpServletRequest req) {
 
-        scopes = new HashSet<>(Arrays.asList(req.getParameter(AuthenticationRequestParam.SCOPE)
-                .split("\\s")));
+        scopes = new HashSet<>();
+        for (final String scope : req.getParameter(AuthenticationRequestParam.SCOPE)
+                .split("\\s")) {
+            scopes.add(Scope.valueOf(scope));
+        }
         responseTypes = new HashSet<>(Arrays.asList(req.getParameter(AuthenticationRequestParam.RESPONSE_TYPE)
                 .split("\\s")));
         clientId = req.getParameter(AuthenticationRequestParam.CLIENT_ID);
@@ -143,7 +147,7 @@ public class AuthenticationRequest {
         return responseTypes;
     }
 
-    public Set<String> getScopes() {
+    public Set<Scope> getScopes() {
 
         return scopes;
     }

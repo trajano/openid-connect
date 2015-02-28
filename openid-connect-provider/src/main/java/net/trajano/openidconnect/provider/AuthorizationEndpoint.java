@@ -22,6 +22,7 @@ import javax.ws.rs.core.UriBuilder;
 import net.trajano.openidconnect.core.AuthenticationErrorResponseParam;
 import net.trajano.openidconnect.core.AuthenticationErrorResponseParam.ErrorCode;
 import net.trajano.openidconnect.core.AuthenticationRequestParam;
+import net.trajano.openidconnect.core.Scope;
 
 /**
  * <p>
@@ -114,7 +115,7 @@ public class AuthorizationEndpoint {
         }
 
         if (!authenticationRequest.getScopes()
-                .contains("openid")) {
+                .contains(Scope.openid)) {
             return createError(authenticationRequest, AuthenticationErrorResponseParam.ErrorCode.invalid_request, "the request must contain the 'openid' scope value");
         }
 

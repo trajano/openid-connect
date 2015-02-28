@@ -29,4 +29,11 @@ public interface ClientManager {
      */
     boolean authenticateClient(String clientId,
             String clientSecret);
+
+    /**
+     * A string representing the realm used by clients.
+     * 
+     * @return
+     */
+    String getRealm();
 }

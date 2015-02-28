@@ -242,4 +242,9 @@ public final class Base64Url {
     private Base64Url() {
 
     }
+
+    public static String decodeToString(String encoded) {
+
+        return new String(decode(encoded), UTF8);
+    }
 }
