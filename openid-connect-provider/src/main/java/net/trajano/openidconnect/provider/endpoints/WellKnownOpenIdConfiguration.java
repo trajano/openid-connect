@@ -24,7 +24,7 @@ import net.trajano.openidconnect.provider.internal.HashSet2;
 import net.trajano.openidconnect.provider.internal.ProviderV1;
 import net.trajano.openidconnect.provider.spi.KeyProvider;
 
-@Path(".well-known/openid-configuration")
+@Path("openid-configuration")
 public class WellKnownOpenIdConfiguration {
 
     @GET
