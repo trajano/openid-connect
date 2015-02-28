@@ -5,4 +5,4 @@
  * @author Archimedes
  *
  */
-package net.trajano.openidconnect.servlet;
+package net.trajano.openidconnect.provider;

@@ -2,9 +2,16 @@ package net.trajano.openidconnect.sample;
 
 import java.net.URI;
 
-import net.trajano.openidconnect.servlet.ClientManager;
+import javax.ejb.Stateless;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.core.Response;
 
-public class AcceptAllClientManager implements ClientManager {
+import net.trajano.openidconnect.provider.AuthenticationRequest;
+import net.trajano.openidconnect.provider.Authenticator;
+import net.trajano.openidconnect.provider.ClientManager;
+
+@Stateless
+public class AcceptAllClientManager implements ClientManager, Authenticator {
 
     @Override
     public boolean isRedirectUriValidForClient(String clientId,
@@ -18,6 +25,22 @@ public class AcceptAllClientManager implements ClientManager {
             String clientSecret) {
 
         return true;
+    }
+
+    @Override
+    public boolean isAuthenticated(AuthenticationRequest authenticationRequest,
+            HttpServletRequest req) {
+
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public Response authenticate(AuthenticationRequest authenticationRequest,
+            HttpServletRequest req) {
+
+        // TODO Auto-generated method stub
+        return null;
     }
 
 }

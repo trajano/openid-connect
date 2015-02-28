@@ -1,9 +1,9 @@
-package net.trajano.openidconnect.servlet;
+package net.trajano.openidconnect.provider;
 
 import java.io.IOException;
-import java.util.Iterator;
 
 import javax.ejb.EJB;
+import javax.ejb.Stateless;
 import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonArrayBuilder;
@@ -14,12 +14,16 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.ApplicationPath;
+import javax.ws.rs.core.Application;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriBuilder;
 
-import net.trajano.openidconnect.servlet.internal.KeyProvider;
+import net.trajano.openidconnect.provider.internal.KeyProvider;
+import net.trajano.openidconnect.provider.internal.ProviderV1;
 
-@WebServlet(urlPatterns = "/.well-known/openid-configuration", loadOnStartup = 1)
+@Stateless
+@WebServlet(urlPatterns = "/.well-known/openid-configuration")
 public class OpenIdConfigurationServlet extends HttpServlet {
 
     private static final JsonArray RESPONSE_TYPES_SUPPORTED = Json.createArrayBuilder()
@@ -39,11 +43,6 @@ public class OpenIdConfigurationServlet extends HttpServlet {
     private String authorizationMapping;
 
     /**
-     * End session endpoint mapping that is built during {@link #init()}
-     */
-    private String revocationMapping;
-
-    /**
      * Issuer override. If not it will be the URI without the port and the
      * scheme replaced with HTTPS.
      */
@@ -53,6 +52,19 @@ public class OpenIdConfigurationServlet extends HttpServlet {
      * JWKS URI mapping that is built during {@link #init()}
      */
     private String jwksMapping;
+
+    @EJB
+    public void setKeyProvider(KeyProvider keyProvider) {
+
+        this.keyProvider = keyProvider;
+    }
+
+    private KeyProvider keyProvider;
+
+    /**
+     * End session endpoint mapping that is built during {@link #init()}
+     */
+    private String revocationMapping;
 
     /**
      * Token endpoint mapping that is built during {@link #init()}
@@ -85,6 +97,7 @@ public class OpenIdConfigurationServlet extends HttpServlet {
         }
         final UriBuilder uriBuilder = UriBuilder.fromUri(request.getRequestURL()
                 .toString());
+
         builder.add("jwks_uri", uriBuilder.replacePath(request.getContextPath() + "/jwks.json")
                 .build()
                 .toASCIIString());
@@ -125,28 +138,6 @@ public class OpenIdConfigurationServlet extends HttpServlet {
 
     }
 
-    @EJB
-    private KeyProvider keyProvider;
-
-    /**
-     * Gets the one and only one mapping for the {@link ServletRegistration}.
-     *
-     * @param servletRegistration
-     * @throws ServletException
-     */
-    private String getMappedUri(final ServletRegistration servletRegistration) throws ServletException {
-
-        final Iterator<String> iterator = servletRegistration.getMappings()
-                .iterator();
-        final String mapping = iterator.next();
-        if (iterator.hasNext()) {
-            throw new ServletException("Servlet " + servletRegistration.getClassName() + " has more than one mapping");
-        } else if (!mapping.startsWith("/")) {
-            throw new ServletException("mapping is expected to start with /");
-        }
-        return getServletContext().getContextPath() + mapping;
-    }
-
     /**
      * Determines the endpoints for OAuth2 based on the mappings specified in
      * the {@link ServletRegistration}s.
@@ -154,15 +145,21 @@ public class OpenIdConfigurationServlet extends HttpServlet {
     @Override
     public void init() throws ServletException {
 
-        for (final ServletRegistration servletRegistration : getServletContext().getServletRegistrations()
-                .values()) {
-            try {
-                if (AuthorizationEndpointServlet.class.isAssignableFrom(Class.forName(servletRegistration.getClassName()))) {
-                    authorizationMapping = getMappedUri(servletRegistration);
-                }
-            } catch (final ClassNotFoundException e) {
-                log("Unable to get class " + servletRegistration.getClassName(), e);
-            }
+        // eventually allow for multiple for now hard code.
+        final Class<? extends Application> providerClass = ProviderV1.class;
+        String applicationPath = providerClass.getAnnotation(ApplicationPath.class)
+                .value();
+        if (!applicationPath.startsWith("/")) {
+            applicationPath = "/" + applicationPath;
+        }
+        jwksMapping = applicationPath + "/jwks";
+        authorizationMapping = applicationPath + "/auth";
+        tokenMapping = applicationPath + "/token";
+        userinfoMapping = applicationPath + "/profile";
+        revocationMapping = applicationPath + "/revocation";
+
+        if (keyProvider == null) {
+            throw new ServletException("key provider2 is not injected");
         }
     }
 

@@ -1,4 +1,4 @@
-package net.trajano.openidconnect.servlet;
+package net.trajano.openidconnect.provider;
 
 import java.net.URI;
 

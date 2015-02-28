@@ -1,4 +1,4 @@
-package net.trajano.openidconnect.servlet.internal;
+package net.trajano.openidconnect.provider;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 
 import net.trajano.openidconnect.core.AuthenticationRequestParam;
@@ -41,7 +40,7 @@ public class AuthenticationRequest {
 
     private final List<Locale> uiLocales;
 
-    public AuthenticationRequest(final HttpServletRequest req) throws ServletException {
+    public AuthenticationRequest(final HttpServletRequest req) {
 
         scopes = new HashSet<>(Arrays.asList(req.getParameter(AuthenticationRequestParam.SCOPE)
                 .split("\\s")));
@@ -58,7 +57,7 @@ public class AuthenticationRequest {
                 .split("\\s")) {
             prompts.add(AuthenticationRequestParam.Prompt.valueOf(prompt));
         }
-        
+
         maxAge = Integer.valueOf(req.getParameter(AuthenticationRequestParam.MAX_AGE));
         uiLocales = new ArrayList<>();
         for (final String uiLocale : req.getParameter(AuthenticationRequestParam.UI_LOCALES)

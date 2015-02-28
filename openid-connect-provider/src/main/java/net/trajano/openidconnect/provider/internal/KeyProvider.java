@@ -1,8 +1,7 @@
-package net.trajano.openidconnect.servlet.internal;
+package net.trajano.openidconnect.provider.internal;
 
 import static com.google.common.base.Charsets.UTF_8;
 
-import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
@@ -20,13 +19,11 @@ import javax.ejb.Lock;
 import javax.ejb.LockType;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
-import javax.inject.Inject;
 
 import net.trajano.openidconnect.crypto.Base64Url;
 import net.trajano.openidconnect.crypto.JsonWebKey;
 import net.trajano.openidconnect.crypto.RsaWebKey;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.xml.wss.impl.misc.Base64;
 
 /**
@@ -38,6 +35,11 @@ import com.sun.xml.wss.impl.misc.Base64;
 public class KeyProvider {
 
     /**
+     * Encoded JOSE header.
+     */
+    private String encodedJoseHeader;
+
+    /**
      * This is the JSON Web Key that is built from the key pair.
      */
     private JsonWebKey jwk;
@@ -47,12 +49,9 @@ public class KeyProvider {
      */
     private UUID keyId;
 
-    @Inject
-    private ObjectMapper mapper;
+    private RSAPrivateKey privateKey;
 
-    public RSAPrivateKey privateKey;
-
-    public RSAPublicKey publicKey;
+    private RSAPublicKey publicKey;
 
     private SecretKey secretKey;
 
@@ -136,7 +135,7 @@ public class KeyProvider {
     @Lock(LockType.READ)
     public String sign(final byte[] content) throws GeneralSecurityException {
 
-        StringBuilder b = new StringBuilder(encodedJoseHeader).append('.')
+        final StringBuilder b = new StringBuilder(encodedJoseHeader).append('.')
                 .append(Base64Url.encode(content));
 
         final Signature signature = Signature.getInstance("SHA256withRSA");
@@ -146,23 +145,5 @@ public class KeyProvider {
         return b.append('.')
                 .append(Base64.encode(signature.sign()))
                 .toString();
-    }
-
-    /**
-     * Encoded JOSE header.
-     */
-    private String encodedJoseHeader;
-
-    @Lock(LockType.READ)
-    public String sign(final Object content) throws GeneralSecurityException,
-            IOException {
-
-        final byte[] contentBytes;
-        if (content instanceof String) {
-            contentBytes = ((String) content).getBytes(UTF_8);
-        } else {
-            contentBytes = mapper.writeValueAsBytes(content);
-        }
-        return sign(contentBytes);
     }
 }
