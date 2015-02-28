@@ -4,6 +4,7 @@ import java.math.BigInteger;
 import java.security.GeneralSecurityException;
 import java.security.Key;
 import java.security.KeyFactory;
+import java.security.interfaces.RSAPublicKey;
 import java.security.spec.RSAPublicKeySpec;
 
 import javax.json.JsonObjectBuilder;
@@ -15,6 +16,18 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RsaWebKey extends JsonWebKey {
+
+    public RsaWebKey() {
+
+    }
+
+    public RsaWebKey(String kid, RSAPublicKey publicKey) {
+
+        setKid(kid);
+        setUse(KeyUse.sig);
+        n = (Base64Url.encodeUint(publicKey.getModulus()));
+        e = (Base64Url.encodeUint(publicKey.getPublicExponent()));
+    }
 
     @XmlElement
     private String d;

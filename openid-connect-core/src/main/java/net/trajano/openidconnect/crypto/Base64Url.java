@@ -1,6 +1,7 @@
 package net.trajano.openidconnect.crypto;
 
 import java.math.BigInteger;
+import java.nio.charset.Charset;
 
 /**
  * base64url implementation.
@@ -123,6 +124,40 @@ public final class Base64Url {
     public static String encode(final byte[] bytes) {
 
         return encode(bytes, 0, bytes.length);
+    }
+
+    /**
+     * Encodes a US-ASCII string.
+     *
+     * @param s
+     *            string to encode
+     * @return Base64 string
+     */
+    public static String encodeUsAscii(final String s) {
+
+        return encode(s.getBytes(US_ASCII));
+    }
+
+    /**
+     * Encodes a Unicode string as UTF-8.
+     *
+     * @param s
+     *            string to encode
+     * @return Base64 string
+     */
+    public static String encode(final String s) {
+
+        return encode(s.getBytes(US_ASCII));
+    }
+
+    private static final Charset UTF8;
+
+    private static Charset US_ASCII;
+    static {
+        US_ASCII = Charset.availableCharsets()
+                .get("US-ASCII");
+        UTF8 = Charset.availableCharsets()
+                .get("UTF8");
     }
 
     /**

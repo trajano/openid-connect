@@ -3,6 +3,7 @@ package net.trajano.openidconnect.servlet;
 import java.io.IOException;
 import java.util.Iterator;
 
+import javax.ejb.EJB;
 import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonArrayBuilder;
@@ -15,6 +16,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriBuilder;
+
+import net.trajano.openidconnect.servlet.internal.KeyProvider;
 
 @WebServlet(urlPatterns = "/.well-known/openid-configuration", loadOnStartup = 1)
 public class OpenIdConfigurationServlet extends HttpServlet {
@@ -82,7 +85,7 @@ public class OpenIdConfigurationServlet extends HttpServlet {
         }
         final UriBuilder uriBuilder = UriBuilder.fromUri(request.getRequestURL()
                 .toString());
-        builder.add("jwks_uri", uriBuilder.replacePath(request.getContextPath() + jwksMapping)
+        builder.add("jwks_uri", uriBuilder.replacePath(request.getContextPath() + "/jwks.json")
                 .build()
                 .toASCIIString());
         builder.add("authorization_endpoint", uriBuilder.replacePath(request.getContextPath() + authorizationMapping)
@@ -112,7 +115,7 @@ public class OpenIdConfigurationServlet extends HttpServlet {
         builder.add("response_types_supported", RESPONSE_TYPES_SUPPORTED);
 
         resp.setHeader("Cache-Control", "public, max-age=86400");
-        // resp.setHeader("ETag", keyProvider.getKid());
+        resp.setHeader("ETag", keyProvider.getKid());
         resp.setContentType(MediaType.APPLICATION_JSON);
         final String configurationJson = builder.build()
                 .toString();
@@ -121,6 +124,9 @@ public class OpenIdConfigurationServlet extends HttpServlet {
                 .write(configurationJson);
 
     }
+
+    @EJB
+    private KeyProvider keyProvider;
 
     /**
      * Gets the one and only one mapping for the {@link ServletRegistration}.
