@@ -1,8 +1,6 @@
 package net.trajano.openidconnect.provider;
 
-import java.util.Collection;
-
-import net.trajano.openidconnect.core.Scope;
+import net.trajano.openidconnect.core.TokenResponse;
 import net.trajano.openidconnect.core.Userinfo;
 
 /**
@@ -16,12 +14,9 @@ public interface UserinfoProvider {
      * Gets the user info for the specified subject limited by the clientId and
      * scopes specified.
      * 
-     * @param subject
-     * @param clientId
-     * @param scopes
+     * @param tokenResponse
+     *            access token response.
      * @return
      */
-    Userinfo getUserinfo(String subject,
-            String clientId,
-            Collection<Scope> scopes);
+    Userinfo getUserinfo(TokenResponse tokenResponse);
 }

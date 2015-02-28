@@ -117,21 +117,6 @@ public class OpenIdProviderConfiguration {
     @XmlElement(name = "registration_endpoint")
     private URI registrationEndpoint;
 
-    @XmlElement(name = "revocation_endpoint")
-    private URI revocationEndpoint;
-
-    
-    public URI getRevocationEndpoint() {
-    
-        return revocationEndpoint;
-    }
-
-    
-    public void setRevocationEndpoint(URI revocationEndpoint) {
-    
-        this.revocationEndpoint = revocationEndpoint;
-    }
-
     @XmlElement(name = "request_object_signing_alg_values_supported")
     private Set<JsonWebAlgorithm> requestObjectSigningAlgValuesSupported;
 
@@ -167,6 +152,9 @@ public class OpenIdProviderConfiguration {
      */
     @XmlElement(name = "response_types_supported")
     private Set<String> responseTypesSupported;
+
+    @XmlElement(name = "revocation_endpoint")
+    private URI revocationEndpoint;
 
     /**
      * JSON array containing a list of the OAuth 2.0 [RFC6749] scope values that
@@ -291,6 +279,11 @@ public class OpenIdProviderConfiguration {
     public Set<String> getResponseTypesSupported() {
 
         return responseTypesSupported;
+    }
+
+    public URI getRevocationEndpoint() {
+
+        return revocationEndpoint;
     }
 
     public Set<String> getScopesSupported() {
@@ -451,6 +444,11 @@ public class OpenIdProviderConfiguration {
     public void setResponseTypesSupported(final Set<String> responseTypesSupported) {
 
         this.responseTypesSupported = responseTypesSupported;
+    }
+
+    public void setRevocationEndpoint(final URI revocationEndpoint) {
+
+        this.revocationEndpoint = revocationEndpoint;
     }
 
     public void setScopesSupported(final Set<String> scopesSupported) {

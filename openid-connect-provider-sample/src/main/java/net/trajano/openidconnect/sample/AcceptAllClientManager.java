@@ -1,7 +1,6 @@
 package net.trajano.openidconnect.sample;
 
 import java.net.URI;
-import java.util.Collection;
 import java.util.Set;
 
 import javax.ejb.Stateless;
@@ -9,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.UriBuilder;
 
 import net.trajano.openidconnect.core.Scope;
+import net.trajano.openidconnect.core.TokenResponse;
 import net.trajano.openidconnect.core.Userinfo;
 import net.trajano.openidconnect.provider.AuthenticationRequest;
 import net.trajano.openidconnect.provider.Authenticator;
@@ -57,12 +57,10 @@ public class AcceptAllClientManager implements ClientManager, Authenticator, Use
     }
 
     @Override
-    public Userinfo getUserinfo(String subject,
-            String clientId,
-            Collection<Scope> scopes) {
+    public Userinfo getUserinfo(TokenResponse response) {
 
         Userinfo userinfo = new Userinfo();
-        userinfo.setSub(subject);
+        userinfo.setSub(response.getIdToken().getSub());
         return userinfo;
     }
 

@@ -39,7 +39,8 @@ public class JwtUtil {
      * @param serialization
      *            JWS compact serialization
      * @param keyMap
-     *            A map of key IDs to keys to obtain the key from.
+     *            A map of key IDs to keys to obtain the key from. If this is
+     *            null then signature validation will not occur.
      * @return the JWS payload
      * @throws GeneralSecurityException
      *             problem with crypto APIs or signature was not valid
@@ -56,7 +57,7 @@ public class JwtUtil {
                 .readObject();
 
         // Handle plaintext JWTs
-        if (!"none".equals(joseHeader.getString("alg"))) {
+        if (keyMap == null || !"none".equals(joseHeader.getString("alg"))) {
 
             final String kid;
             if (joseHeader.containsKey("kid")) {

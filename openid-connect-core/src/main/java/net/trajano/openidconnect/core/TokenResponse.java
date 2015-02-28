@@ -1,9 +1,18 @@
 package net.trajano.openidconnect.core;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.security.GeneralSecurityException;
+import java.security.Key;
+import java.util.Map;
+
+import javax.ws.rs.core.MediaType;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+
+import net.trajano.openidconnect.crypto.JwtUtil;
 
 /**
  * <p>
@@ -59,6 +68,12 @@ public class TokenResponse {
     private String accessToken;
 
     /**
+     * Encoded ID Token value associated with the authenticated session.
+     */
+    @XmlElement(name = "id_token", required = true)
+    private String encodedIdToken;
+
+    /**
      * RECOMMENDED. The lifetime in seconds of the access token. For example,
      * the value "3600" denotes that the access token will expire in one hour
      * from the time the response was generated. If omitted, the authorization
@@ -67,12 +82,6 @@ public class TokenResponse {
      */
     @XmlElement(name = "expires_in", required = false)
     private int expiresIn;
-
-    /**
-     * ID Token value associated with the authenticated session.
-     */
-    @XmlElement(name = "id_token", required = true)
-    private String idToken;
 
     /**
      * OPTIONAL, if identical to the scope requested by the client; otherwise,
@@ -107,14 +116,43 @@ public class TokenResponse {
         return accessToken;
     }
 
+    public String getEncodedIdToken() {
+
+        return encodedIdToken;
+    }
+
     public int getExpiresIn() {
 
         return expiresIn;
     }
 
-    public String getIdToken() {
+    /**
+     * Gets the ID Token without signature validation.
+     *
+     * @return
+     * @throws IOException
+     * @throws GeneralSecurityException
+     */
+    public IdToken getIdToken() throws IOException,
+    GeneralSecurityException {
 
-        return idToken;
+        return getIdToken(null);
+    }
+
+    /**
+     * Gets the ID Token with signature validation.
+     *
+     * @param keyMap
+     *            key map
+     * @return
+     * @throws IOException
+     * @throws GeneralSecurityException
+     */
+    public IdToken getIdToken(final Map<String, Key> keyMap) throws IOException,
+    GeneralSecurityException {
+
+        return new IdTokenProvider().readFrom(IdToken.class, null, null, MediaType.APPLICATION_JSON_TYPE, null, new ByteArrayInputStream(JwtUtil.getJwsPayload(encodedIdToken, keyMap)));
+
     }
 
     public String getScope() {
@@ -137,14 +175,14 @@ public class TokenResponse {
         this.accessToken = accessToken;
     }
 
+    public void setEncodedIdToken(final String encodedIdToken) throws GeneralSecurityException {
+
+        this.encodedIdToken = encodedIdToken;
+    }
+
     public void setExpiresIn(final int expiresIn) {
 
         this.expiresIn = expiresIn;
-    }
-
-    public void setIdToken(final String idToken) {
-
-        this.idToken = idToken;
     }
 
     public void setScope(final String scope) {

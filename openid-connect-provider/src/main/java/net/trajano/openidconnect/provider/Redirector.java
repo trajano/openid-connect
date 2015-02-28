@@ -15,7 +15,7 @@ import net.trajano.openidconnect.core.IdToken;
 @Stateless
 public class Redirector {
 
-    private IdTokenProvider tokenProvider;
+    private TokenProvider tokenProvider;
 
     /**
      * @param responseType
@@ -47,7 +47,7 @@ public class Redirector {
     }
 
     @EJB
-    public void setTokenProvider(IdTokenProvider tokenProvider) {
+    public void setTokenProvider(TokenProvider tokenProvider) {
 
         this.tokenProvider = tokenProvider;
     }

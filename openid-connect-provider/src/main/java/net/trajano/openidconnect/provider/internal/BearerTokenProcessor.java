@@ -8,7 +8,7 @@ import net.trajano.openidconnect.core.TokenResponse;
 import net.trajano.openidconnect.crypto.Base64Url;
 import net.trajano.openidconnect.provider.BearerTokenException;
 import net.trajano.openidconnect.provider.ClientManager;
-import net.trajano.openidconnect.provider.IdTokenProvider;
+import net.trajano.openidconnect.provider.TokenProvider;
 
 @Stateless
 public class BearerTokenProcessor {
@@ -18,7 +18,7 @@ public class BearerTokenProcessor {
      */
     private ClientManager clientManager;
 
-    private IdTokenProvider idtokenProvider;
+    private TokenProvider idtokenProvider;
 
     public void setClientManager(final ClientManager clientManager) {
 
