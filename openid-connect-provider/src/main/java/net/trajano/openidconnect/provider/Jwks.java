@@ -54,7 +54,7 @@ public class Jwks {
      */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    protected Response op() {
+    public Response op() {
 
         JsonWebKeySet jwks = new JsonWebKeySet();
         jwks.add(keyProvider.getJwk());

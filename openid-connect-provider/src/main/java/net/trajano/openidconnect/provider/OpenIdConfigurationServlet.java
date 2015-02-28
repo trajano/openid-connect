@@ -97,7 +97,7 @@ public class OpenIdConfigurationServlet extends HttpServlet {
         final UriBuilder uriBuilder = UriBuilder.fromUri(request.getRequestURL()
                 .toString());
 
-        builder.add("jwks_uri", uriBuilder.replacePath(request.getContextPath() + "/jwks.json")
+        builder.add("jwks_uri", uriBuilder.replacePath(request.getContextPath() + jwksMapping)
                 .build()
                 .toASCIIString());
         builder.add("authorization_endpoint", uriBuilder.replacePath(request.getContextPath() + authorizationMapping)
