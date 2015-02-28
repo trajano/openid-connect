@@ -1,5 +1,7 @@
 package net.trajano.openidconnect.provider;
 
+import java.net.URI;
+
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.servlet.http.HttpServletRequest;
@@ -40,21 +42,9 @@ import net.trajano.openidconnect.core.AuthenticationRequestParam;
 @Stateless
 public class AuthorizationEndpoint {
 
-    private ClientManager clientManager;
-
-    @EJB
-    public void setClientManager(ClientManager clientManager) {
-
-        this.clientManager = clientManager;
-    }
-
-    @EJB
-    public void setAuthenticator(Authenticator authenticator) {
-
-        this.authenticator = authenticator;
-    }
-
     private Authenticator authenticator;
+
+    private ClientManager clientManager;
 
     private Response createError(final AuthenticationRequest authenticationRequest,
             final ErrorCode errorCode,
@@ -72,11 +62,22 @@ public class AuthorizationEndpoint {
                 .build();
     }
 
+    /**
+     * <a href=
+     * "https://localhost:8181/V1/auth?client_id=angelstone-client-id&scope=openid&state=170894&redirect_uri=https://www.getpostman.com/oauth2/callback&response_type=code"
+     * >a</a>
+     *
+     * @param scope
+     * @param req
+     * @return
+     */
     @GET
-    public Response getOp(@QueryParam(AuthenticationRequestParam.SCOPE) @NotNull String scope,
+    public Response getOp(@QueryParam(AuthenticationRequestParam.SCOPE) @NotNull final String scope,
+            @QueryParam(AuthenticationRequestParam.CLIENT_ID) @NotNull final String clientId,
+            @QueryParam(AuthenticationRequestParam.REDIRECT_URI) @NotNull final URI redirectUri,
             @Context final HttpServletRequest req) {
 
-        return op(scope, req);
+        return op(scope, clientId, redirectUri, req);
     }
 
     /**
@@ -96,7 +97,10 @@ public class AuthorizationEndpoint {
      */
     @POST
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-    public Response op(@FormParam(AuthenticationRequestParam.SCOPE) @NotNull String scope, @Context final HttpServletRequest req) {
+    public Response op(@FormParam(AuthenticationRequestParam.SCOPE) @NotNull final String scope,
+            @FormParam(AuthenticationRequestParam.CLIENT_ID) @NotNull final String clientId,
+            @FormParam(AuthenticationRequestParam.REDIRECT_URI) @NotNull final URI redirectUri,
+            @Context final HttpServletRequest req) {
 
         final AuthenticationRequest authenticationRequest = new AuthenticationRequest(req);
 
@@ -131,6 +135,18 @@ public class AuthorizationEndpoint {
 
         throw new WebApplicationException(Status.BAD_REQUEST);
 
+    }
+
+    @EJB
+    public void setAuthenticator(final Authenticator authenticator) {
+
+        this.authenticator = authenticator;
+    }
+
+    @EJB
+    public void setClientManager(final ClientManager clientManager) {
+
+        this.clientManager = clientManager;
     }
 
 }

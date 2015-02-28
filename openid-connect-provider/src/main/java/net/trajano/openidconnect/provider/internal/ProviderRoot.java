@@ -6,9 +6,7 @@ import java.util.Set;
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
 
-import net.trajano.openidconnect.crypto.JsonWebKeySetProvider;
-import net.trajano.openidconnect.provider.AuthorizationEndpoint;
-import net.trajano.openidconnect.provider.Jwks;
+import net.trajano.openidconnect.provider.WellKnownOpenIdConfiguration;
 
 @ApplicationPath("")
 public class ProviderRoot extends Application {
@@ -17,9 +15,7 @@ public class ProviderRoot extends Application {
     public Set<Class<?>> getClasses() {
 
         Set<Class<?>> classes = new HashSet<>();
-        classes.add(AuthorizationEndpoint.class);
-        classes.add(Jwks.class);
-        classes.add(JsonWebKeySetProvider.class);
+        classes.add(WellKnownOpenIdConfiguration.class);
         return classes;
     }
 }

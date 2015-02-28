@@ -28,6 +28,7 @@ import net.trajano.openidconnect.crypto.JsonWebAlgorithm;
  */
 @XmlRootElement
 public class OpenIdProviderConfiguration {
+
     /**
      * JSON array containing a list of the Authentication Context Class
      * References that this OP supports.
@@ -51,6 +52,7 @@ public class OpenIdProviderConfiguration {
      */
     @XmlElement(name = "check_session_iframe")
     private URI checkSessionIframe;
+
     /**
      * Boolean value specifying whether the OP supports use of the claims
      * parameter, with true indicating support. If omitted, the default value is
@@ -58,13 +60,16 @@ public class OpenIdProviderConfiguration {
      */
     @XmlElement(name = "claims_parameter_supported")
     private boolean claimsParameterSupported;
+
     @XmlElement(name = "claims_supported")
     private Set<String> claimsSupported;
 
     @XmlElement(name = "claim_types_supported")
     private Set<String> claimTypesSupported;
+
     @XmlElement(name = "display_values_supported")
     private Set<String> displayValuesSupported;
+
     /**
      * URL at the OP to which an RP can perform a redirect to request that the
      * End-User be logged out at the OP.
@@ -77,6 +82,7 @@ public class OpenIdProviderConfiguration {
 
     @XmlElement(name = "id_token_encryption_enc_values_supported")
     private Set<JsonWebAlgorithm> idTokenEncryptionEncValuesSupported;
+
     @XmlElement(name = "id_token_signing_alg_values_supported")
     private Set<JsonWebAlgorithm> idTokenSigningAlgValuesSupported;
 
@@ -110,6 +116,21 @@ public class OpenIdProviderConfiguration {
      */
     @XmlElement(name = "registration_endpoint")
     private URI registrationEndpoint;
+
+    @XmlElement(name = "revocation_endpoint")
+    private URI revocationEndpoint;
+
+    
+    public URI getRevocationEndpoint() {
+    
+        return revocationEndpoint;
+    }
+
+    
+    public void setRevocationEndpoint(URI revocationEndpoint) {
+    
+        this.revocationEndpoint = revocationEndpoint;
+    }
 
     @XmlElement(name = "request_object_signing_alg_values_supported")
     private Set<JsonWebAlgorithm> requestObjectSigningAlgValuesSupported;
@@ -203,230 +224,287 @@ public class OpenIdProviderConfiguration {
     private Set<JsonWebAlgorithm> userinfoSigningAlgValuesSupported;
 
     public Set<String> getAcrValuesSupported() {
+
         return acrValuesSupported;
     }
 
     public URI getAuthorizationEndpoint() {
+
         return authorizationEndpoint;
     }
 
     public Set<String> getClaimsSupported() {
+
         return claimsSupported;
     }
 
     public Set<String> getClaimTypesSupported() {
+
         return claimTypesSupported;
     }
 
     public Set<String> getDisplayValuesSupported() {
+
         return displayValuesSupported;
     }
 
     public URI getEndSessionEndpoint() {
+
         return endSessionEndpoint;
     }
 
     public Set<JsonWebAlgorithm> getIdTokenEncryptionAlgValuesSupported() {
+
         return idTokenEncryptionAlgValuesSupported;
     }
 
     public Set<JsonWebAlgorithm> getIdTokenEncryptionEncValuesSupported() {
+
         return idTokenEncryptionEncValuesSupported;
     }
 
     public Set<JsonWebAlgorithm> getIdTokenSigningAlgValuesSupported() {
+
         return idTokenSigningAlgValuesSupported;
     }
 
     public URI getIssuer() {
+
         return issuer;
     }
 
     public URI getJwksUri() {
+
         return jwksUri;
     }
 
     public URI getRegistrationEndpoint() {
+
         return registrationEndpoint;
     }
 
     public Set<JsonWebAlgorithm> getRequestObjectSigningAlgValuesSupported() {
+
         return requestObjectSigningAlgValuesSupported;
     }
 
     public Set<String> getResponseTypesSupported() {
+
         return responseTypesSupported;
     }
 
     public Set<String> getScopesSupported() {
+
         return scopesSupported;
     }
 
     public URI getServiceDocumentation() {
+
         return serviceDocumentation;
     }
 
     public Set<String> getSubjectTypesSupported() {
+
         return subjectTypesSupported;
     }
 
     public URI getTokenEndpoint() {
+
         return tokenEndpoint;
     }
 
     public Set<String> getTokenEndpointAuthMethodsSupported() {
+
         return tokenEndpointAuthMethodsSupported;
     }
 
     public Set<JsonWebAlgorithm> getTokenEndpointAuthSigningAlgValuesSupported() {
+
         return tokenEndpointAuthSigningAlgValuesSupported;
     }
 
     public Set<Locale> getUiLocalesSupported() {
+
         return uiLocalesSupported;
     }
 
     public Set<JsonWebAlgorithm> getUserinfoEncryptionAlgValuesSupported() {
+
         return userinfoEncryptionAlgValuesSupported;
     }
 
     public Set<JsonWebAlgorithm> getUserinfoEncryptionEncValuesSupported() {
+
         return userinfoEncryptionEncValuesSupported;
     }
 
     public URI getUserinfoEndpoint() {
+
         return userinfoEndpoint;
     }
 
     public Set<JsonWebAlgorithm> getUserinfoSigningAlgValuesSupported() {
+
         return userinfoSigningAlgValuesSupported;
     }
 
     public boolean isClaimsParameterSupported() {
+
         return claimsParameterSupported;
     }
 
     public boolean isRequestParameterSupported() {
+
         return requestParameterSupported;
     }
 
     public boolean isRequestUriParameterSupported() {
+
         return requestUriParameterSupported;
     }
 
     public boolean isRequireRequestUriRegistration() {
+
         return requireRequestUriRegistration;
     }
 
     public void setAcrValuesSupported(final Set<String> acrValuesSupported) {
+
         this.acrValuesSupported = acrValuesSupported;
     }
 
     public void setAuthorizationEndpoint(final URI authorizationEndpoint) {
+
         this.authorizationEndpoint = authorizationEndpoint;
     }
 
     public void setClaimsParameterSupported(final boolean claimsParameterSupported) {
+
         this.claimsParameterSupported = claimsParameterSupported;
     }
 
     public void setClaimsSupported(final Set<String> claimsSupported) {
+
         this.claimsSupported = claimsSupported;
     }
 
     public void setClaimTypesSupported(final Set<String> claimTypesSupported) {
+
         this.claimTypesSupported = claimTypesSupported;
     }
 
     public void setDisplayValuesSupported(final Set<String> displayValuesSupported) {
+
         this.displayValuesSupported = displayValuesSupported;
     }
 
     public void setEndSessionEndpoint(final URI endSessionEndpoint) {
+
         this.endSessionEndpoint = endSessionEndpoint;
     }
 
     public void setIdTokenEncryptionAlgValuesSupported(final Set<JsonWebAlgorithm> idTokenEncryptionAlgValuesSupported) {
+
         this.idTokenEncryptionAlgValuesSupported = idTokenEncryptionAlgValuesSupported;
     }
 
     public void setIdTokenEncryptionEncValuesSupported(final Set<JsonWebAlgorithm> idTokenEncryptionEncValuesSupported) {
+
         this.idTokenEncryptionEncValuesSupported = idTokenEncryptionEncValuesSupported;
     }
 
     public void setIdTokenSigningAlgValuesSupported(final Set<JsonWebAlgorithm> idTokenSigningAlgValuesSupported) {
+
         this.idTokenSigningAlgValuesSupported = idTokenSigningAlgValuesSupported;
     }
 
     public void setIssuer(final URI issuer) {
+
         this.issuer = issuer;
     }
 
     public void setJwksUri(final URI jwksUri) {
+
         this.jwksUri = jwksUri;
     }
 
     public void setRegistrationEndpoint(final URI registrationEndpoint) {
+
         this.registrationEndpoint = registrationEndpoint;
     }
 
     public void setRequestObjectSigningAlgValuesSupported(final Set<JsonWebAlgorithm> requestObjectSigningAlgValuesSupported) {
+
         this.requestObjectSigningAlgValuesSupported = requestObjectSigningAlgValuesSupported;
     }
 
     public void setRequestParameterSupported(final boolean requestParameterSupported) {
+
         this.requestParameterSupported = requestParameterSupported;
     }
 
     public void setRequireRequestUriRegistration(final boolean requireRequestUriRegistration) {
+
         this.requireRequestUriRegistration = requireRequestUriRegistration;
     }
 
     public void setResponseTypesSupported(final Set<String> responseTypesSupported) {
+
         this.responseTypesSupported = responseTypesSupported;
     }
 
     public void setScopesSupported(final Set<String> scopesSupported) {
+
         this.scopesSupported = scopesSupported;
     }
 
     public void setServiceDocumentation(final URI serviceDocumentation) {
+
         this.serviceDocumentation = serviceDocumentation;
     }
 
     public void setSubjectTypesSupported(final Set<String> subjectTypesSupported) {
+
         this.subjectTypesSupported = subjectTypesSupported;
     }
 
     public void setTokenEndpoint(final URI tokenEndpoint) {
+
         this.tokenEndpoint = tokenEndpoint;
     }
 
     public void setTokenEndpointAuthMethodsSupported(final Set<String> tokenEndpointAuthMethodsSupported) {
+
         this.tokenEndpointAuthMethodsSupported = tokenEndpointAuthMethodsSupported;
     }
 
     public void setTokenEndpointAuthSigningAlgValuesSupported(final Set<JsonWebAlgorithm> tokenEndpointAuthSigningAlgValuesSupported) {
+
         this.tokenEndpointAuthSigningAlgValuesSupported = tokenEndpointAuthSigningAlgValuesSupported;
     }
 
     public void setUiLocalesSupported(final Set<Locale> uiLocalesSupported) {
+
         this.uiLocalesSupported = uiLocalesSupported;
     }
 
     public void setUserinfoEncryptionAlgValuesSupported(final Set<JsonWebAlgorithm> userinfoEncryptionAlgValuesSupported) {
+
         this.userinfoEncryptionAlgValuesSupported = userinfoEncryptionAlgValuesSupported;
     }
 
     public void setUserinfoEncryptionEncValuesSupported(final Set<JsonWebAlgorithm> userinfoEncryptionEncValuesSupported) {
+
         this.userinfoEncryptionEncValuesSupported = userinfoEncryptionEncValuesSupported;
     }
 
     public void setUserinfoEndpoint(final URI userinfoEndpoint) {
+
         this.userinfoEndpoint = userinfoEndpoint;
     }
 
     public void setUserinfoSigningAlgValuesSupported(final Set<JsonWebAlgorithm> userinfoSigningAlgValuesSupported) {
+
         this.userinfoSigningAlgValuesSupported = userinfoSigningAlgValuesSupported;
     }
 }

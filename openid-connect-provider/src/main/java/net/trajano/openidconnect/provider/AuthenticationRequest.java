@@ -3,6 +3,7 @@ package net.trajano.openidconnect.provider;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -30,7 +31,7 @@ public class AuthenticationRequest {
 
     private final String loginHint;
 
-    private final int maxAge;
+    private final Integer maxAge;
 
     private final String nonce;
 
@@ -56,24 +57,40 @@ public class AuthenticationRequest {
         redirectUri = URI.create(req.getParameter(AuthenticationRequestParam.REDIRECT_URI));
         state = req.getParameter(AuthenticationRequestParam.STATE);
         nonce = req.getParameter(AuthenticationRequestParam.NONCE);
-        display = AuthenticationRequestParam.Display.valueOf(req.getParameter(AuthenticationRequestParam.DISPLAY));
+        if (req.getParameter(AuthenticationRequestParam.DISPLAY) != null) {
+            display = AuthenticationRequestParam.Display.valueOf(req.getParameter(AuthenticationRequestParam.DISPLAY));
+        } else {
+            display = null;
+        }
         prompts = new HashSet<>();
 
-        for (final String prompt : req.getParameter(AuthenticationRequestParam.PROMPT)
-                .split("\\s")) {
-            prompts.add(AuthenticationRequestParam.Prompt.valueOf(prompt));
+        if (req.getParameter(AuthenticationRequestParam.PROMPT) != null) {
+            for (final String prompt : req.getParameter(AuthenticationRequestParam.PROMPT)
+                    .split("\\s")) {
+                prompts.add(AuthenticationRequestParam.Prompt.valueOf(prompt));
+            }
         }
 
-        maxAge = Integer.valueOf(req.getParameter(AuthenticationRequestParam.MAX_AGE));
+        if (req.getParameter(AuthenticationRequestParam.MAX_AGE) != null) {
+            maxAge = Integer.valueOf(req.getParameter(AuthenticationRequestParam.MAX_AGE));
+        } else {
+            maxAge = null;
+        }
         uiLocales = new ArrayList<>();
-        for (final String uiLocale : req.getParameter(AuthenticationRequestParam.UI_LOCALES)
-                .split("\\s")) {
-            uiLocales.add(new Locale(uiLocale));
+        if (req.getParameter(AuthenticationRequestParam.UI_LOCALES) != null) {
+            for (final String uiLocale : req.getParameter(AuthenticationRequestParam.UI_LOCALES)
+                    .split("\\s")) {
+                uiLocales.add(new Locale(uiLocale));
+            }
         }
         idTokenHint = req.getParameter(AuthenticationRequestParam.ID_TOKEN_HINT);
         loginHint = req.getParameter(AuthenticationRequestParam.LOGIN_HINT);
-        acrValues = new HashSet<>(Arrays.asList(req.getParameter(AuthenticationRequestParam.ACR_VALUES)
-                .split("\\s")));
+        if (req.getParameter(AuthenticationRequestParam.ACR_VALUES) != null) {
+            acrValues = new HashSet<>(Arrays.asList(req.getParameter(AuthenticationRequestParam.ACR_VALUES)
+                    .split("\\s")));
+        } else {
+            acrValues = Collections.emptySet();
+        }
     }
 
     public Set<String> getAcrValues() {
@@ -101,7 +118,7 @@ public class AuthenticationRequest {
         return loginHint;
     }
 
-    public int getMaxAge() {
+    public Integer getMaxAge() {
 
         return maxAge;
     }

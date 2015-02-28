@@ -19,10 +19,12 @@ public class RsaWebKey extends JsonWebKey {
 
     public RsaWebKey() {
 
+        setKty(KeyType.RSA);
     }
 
     public RsaWebKey(String kid, RSAPublicKey publicKey) {
 
+        setKty(KeyType.RSA);
         setKid(kid);
         setUse(KeyUse.sig);
         n = (Base64Url.encodeUint(publicKey.getModulus()));
