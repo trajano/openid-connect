@@ -10,16 +10,18 @@ import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.UriBuilder;
 
+import net.trajano.openidconnect.core.IdToken;
 import net.trajano.openidconnect.core.Scope;
 import net.trajano.openidconnect.core.TokenResponse;
 import net.trajano.openidconnect.core.Userinfo;
 import net.trajano.openidconnect.provider.AuthenticationRequest;
-import net.trajano.openidconnect.provider.Authenticator;
-import net.trajano.openidconnect.provider.ClientManager;
-import net.trajano.openidconnect.provider.UserinfoProvider;
+import net.trajano.openidconnect.provider.spi.Authenticator;
+import net.trajano.openidconnect.provider.spi.ClientManager;
+import net.trajano.openidconnect.provider.spi.TokenProvider;
+import net.trajano.openidconnect.provider.spi.UserinfoProvider;
 
 @Stateless
-public class AcceptAllClientManager implements ClientManager, Authenticator, UserinfoProvider {
+public class AcceptAllClientManager implements ClientManager, Authenticator, UserinfoProvider, TokenProvider {
 
     @Override
     public boolean isRedirectUriValidForClient(String clientId,
@@ -81,6 +83,37 @@ public class AcceptAllClientManager implements ClientManager, Authenticator, Use
     @Override
     public Set<Scope> getScopes(String clientId,
             HttpServletRequest req) {
+
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public TokenResponse getByCode(String code,
+            boolean deleteAfterRetrieval) {
+
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public String store(IdToken idToken,
+            Set<Scope> scopes) {
+
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public IdToken buildIdToken(String subject,
+            Object... extraOptions) {
+
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public TokenResponse getByAccessToken(String accessToken) {
 
         // TODO Auto-generated method stub
         return null;

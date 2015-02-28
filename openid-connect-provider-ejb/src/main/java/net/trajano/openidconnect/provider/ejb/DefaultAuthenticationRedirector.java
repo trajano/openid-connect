@@ -10,11 +10,11 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 
 import net.trajano.openidconnect.core.IdToken;
+import net.trajano.openidconnect.core.ResponseType;
 import net.trajano.openidconnect.core.TokenResponse;
-import net.trajano.openidconnect.provider.AuthenticationRedirector;
 import net.trajano.openidconnect.provider.AuthenticationRequest;
-import net.trajano.openidconnect.provider.ResponseType;
-import net.trajano.openidconnect.provider.TokenProvider;
+import net.trajano.openidconnect.provider.spi.AuthenticationRedirector;
+import net.trajano.openidconnect.provider.spi.TokenProvider;
 
 /**
  * Upon successful authentication, implementers are expected to invoke any of

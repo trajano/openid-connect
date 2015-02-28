@@ -1,4 +1,4 @@
-package net.trajano.openidconnect.provider;
+package net.trajano.openidconnect.provider.spi;
 
 import java.io.IOException;
 import java.net.URI;
@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.UriBuilder;
 
 import net.trajano.openidconnect.core.Scope;
+import net.trajano.openidconnect.provider.AuthenticationRequest;
 
 public interface Authenticator {
 

@@ -1,7 +1,6 @@
-package net.trajano.openidconnect.provider;
+package net.trajano.openidconnect.provider.endpoints;
 
 import javax.ejb.EJB;
-import javax.ejb.Stateless;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -10,6 +9,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import net.trajano.openidconnect.crypto.JsonWebKeySet;
+import net.trajano.openidconnect.provider.spi.KeyProvider;
 
 /**
  * <p>
@@ -24,10 +24,9 @@ import net.trajano.openidconnect.crypto.JsonWebKeySet;
  * 16.17 for more information on using TLS.
  * </p>
  *
- * @author Archimedes
+ * @author Archimedes Trajano
  */
 @Path("jwks")
-@Stateless
 public class Jwks {
 
     @EJB

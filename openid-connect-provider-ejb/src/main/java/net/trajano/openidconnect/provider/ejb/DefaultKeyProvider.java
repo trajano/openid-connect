@@ -19,7 +19,7 @@ import javax.ejb.Startup;
 import net.trajano.openidconnect.crypto.Base64Url;
 import net.trajano.openidconnect.crypto.JsonWebKey;
 import net.trajano.openidconnect.crypto.RsaWebKey;
-import net.trajano.openidconnect.provider.KeyProvider;
+import net.trajano.openidconnect.provider.spi.KeyProvider;
 
 /**
  * Used to generate the keys used by the application. These are in memory only
@@ -92,6 +92,7 @@ public class DefaultKeyProvider implements KeyProvider{
         } catch (final GeneralSecurityException e) {
             throw new IllegalStateException(e);
         }
+        System.out.println("Keys initialized");
     }
 
     public JsonWebKey getJwk() {

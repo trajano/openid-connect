@@ -1,9 +1,12 @@
-package net.trajano.openidconnect.provider;
+package net.trajano.openidconnect.provider.spi;
 
 import java.io.IOException;
 
+import javax.ejb.Local;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.Response;
+
+import net.trajano.openidconnect.provider.AuthenticationRequest;
 
 /**
  * Upon successful authentication, implementers are expected to invoke any of
@@ -12,6 +15,7 @@ import javax.ws.rs.core.Response;
  * 
  * @author Archimedes Trajano
  */
+@Local
 public interface AuthenticationRedirector {
 
     void performRedirect(HttpServletResponse response,

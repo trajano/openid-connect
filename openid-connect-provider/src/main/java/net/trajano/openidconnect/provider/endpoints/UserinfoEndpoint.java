@@ -1,4 +1,4 @@
-package net.trajano.openidconnect.provider;
+package net.trajano.openidconnect.provider.endpoints;
 
 import javax.ejb.EJB;
 import javax.servlet.http.HttpServletRequest;
@@ -10,6 +10,7 @@ import javax.ws.rs.core.Response;
 
 import net.trajano.openidconnect.core.TokenResponse;
 import net.trajano.openidconnect.provider.internal.BearerTokenProcessor;
+import net.trajano.openidconnect.provider.spi.UserinfoProvider;
 
 /**
  * <p>

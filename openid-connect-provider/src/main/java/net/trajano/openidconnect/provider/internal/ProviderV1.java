@@ -7,8 +7,8 @@ import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
 
 import net.trajano.openidconnect.crypto.JsonWebKeySetProvider;
-import net.trajano.openidconnect.provider.AuthorizationEndpoint;
-import net.trajano.openidconnect.provider.Jwks;
+import net.trajano.openidconnect.provider.endpoints.AuthorizationEndpoint;
+import net.trajano.openidconnect.provider.endpoints.Jwks;
 
 @ApplicationPath("V1")
 public class ProviderV1 extends Application {

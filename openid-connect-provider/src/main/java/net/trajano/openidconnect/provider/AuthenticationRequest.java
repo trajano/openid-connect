@@ -12,6 +12,7 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 
 import net.trajano.openidconnect.core.AuthenticationRequestParam;
+import net.trajano.openidconnect.core.ResponseType;
 import net.trajano.openidconnect.core.Scope;
 
 /**

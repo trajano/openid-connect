@@ -1,4 +1,4 @@
-package net.trajano.openidconnect.provider;
+package net.trajano.openidconnect.core;
 
 public enum ResponseType {
 

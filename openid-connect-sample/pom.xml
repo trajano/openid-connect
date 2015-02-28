@@ -27,19 +27,26 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-ear-plugin</artifactId>
-                <version>2.9</version>
+                <version>2.9.1</version>
+                <executions>
+                    <execution>
+                        <id>generate-application-xml</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>generate-application-xml</goal>
+                        </goals>
+                    </execution>
+                </executions>
                 <configuration>
                     <version>7</version>
+                    <generateApplicationXml>true</generateApplicationXml>
+                    <defaultLibBundleDir>lib</defaultLibBundleDir>
                     <modules>
                         <webModule>
                             <groupId>${project.groupId}</groupId>
                             <artifactId>openid-connect-provider-sample</artifactId>
                             <contextRoot>/</contextRoot>
                         </webModule>
-                        <ejbModule>
-                            <groupId>${project.groupId}</groupId>
-                            <artifactId>openid-connect-provider-ejb</artifactId>
-                        </ejbModule>
                     </modules>
                 </configuration>
             </plugin>

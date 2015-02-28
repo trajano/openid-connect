@@ -1,9 +1,8 @@
-package net.trajano.openidconnect.provider;
+package net.trajano.openidconnect.provider.endpoints;
 
 import java.net.URI;
 
 import javax.ejb.EJB;
-import javax.ejb.Stateless;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
@@ -23,6 +22,9 @@ import net.trajano.openidconnect.core.AuthenticationErrorResponseParam;
 import net.trajano.openidconnect.core.AuthenticationErrorResponseParam.ErrorCode;
 import net.trajano.openidconnect.core.AuthenticationRequestParam;
 import net.trajano.openidconnect.core.Scope;
+import net.trajano.openidconnect.provider.AuthenticationRequest;
+import net.trajano.openidconnect.provider.spi.Authenticator;
+import net.trajano.openidconnect.provider.spi.ClientManager;
 
 /**
  * <p>
@@ -40,7 +42,6 @@ import net.trajano.openidconnect.core.Scope;
  * @author Archimedes
  */
 @Path("auth")
-@Stateless
 public class AuthorizationEndpoint {
 
     private Authenticator authenticator;

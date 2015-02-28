@@ -1,4 +1,4 @@
-package net.trajano.openidconnect.provider;
+package net.trajano.openidconnect.provider.endpoints;
 
 import static java.net.URI.create;
 
@@ -6,7 +6,6 @@ import java.net.URI;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
-import javax.ejb.Stateless;
 import javax.servlet.ServletRegistration;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.ApplicationPath;
@@ -23,8 +22,8 @@ import javax.ws.rs.core.UriBuilder;
 import net.trajano.openidconnect.core.OpenIdProviderConfiguration;
 import net.trajano.openidconnect.provider.internal.HashSet2;
 import net.trajano.openidconnect.provider.internal.ProviderV1;
+import net.trajano.openidconnect.provider.spi.KeyProvider;
 
-@Stateless
 @Path(".well-known/openid-configuration")
 public class WellKnownOpenIdConfiguration {
 
@@ -128,6 +127,8 @@ public class WellKnownOpenIdConfiguration {
     @PostConstruct
     public void init() {
 
+        System.out.println("post constructing");
+        
         // eventually allow for multiple for now hard code.
         final Class<? extends Application> providerClass = ProviderV1.class;
         String applicationPath = providerClass.getAnnotation(ApplicationPath.class)

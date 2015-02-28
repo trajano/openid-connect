@@ -1,4 +1,4 @@
-package net.trajano.openidconnect.provider;
+package net.trajano.openidconnect.provider.spi;
 
 import java.util.Set;
 
