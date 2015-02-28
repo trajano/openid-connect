@@ -1,5 +1,7 @@
 package net.trajano.openidconnect.core;
 
+import java.util.Date;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -238,6 +240,36 @@ public class IdToken {
     public void setExp(final long exp) {
 
         this.exp = exp;
+    }
+
+    /**
+     * Checks if the exp value before or after the current time.
+     * 
+     * @return true if the current time is after exp.
+     */
+    public boolean isExpired() {
+
+        return System.currentTimeMillis() / 1000 > exp;
+    }
+
+    /**
+     * Returns the timestamp when the token will expire.
+     * 
+     * @return
+     */
+    public Date getExpiration() {
+
+        return new Date(exp * 1000L);
+    }
+
+    /**
+     * Returns the timestamp the token was issued on.
+     * 
+     * @return
+     */
+    public Date getIssuedOn() {
+
+        return new Date(iat * 1000L);
     }
 
     public void setIat(final long iat) {

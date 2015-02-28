@@ -40,7 +40,7 @@ public class AuthenticationRequest {
 
     private final URI redirectUri;
 
-    private final Set<String> responseTypes;
+    private final Set<ResponseType> responseTypes;
 
     private final Set<Scope> scopes;
 
@@ -55,8 +55,12 @@ public class AuthenticationRequest {
                 .split("\\s")) {
             scopes.add(Scope.valueOf(scope));
         }
-        responseTypes = new HashSet<>(Arrays.asList(req.getParameter(AuthenticationRequestParam.RESPONSE_TYPE)
-                .split("\\s")));
+        responseTypes = new HashSet<>();
+        for (final String responseType : req.getParameter(AuthenticationRequestParam.RESPONSE_TYPE)
+                .split("\\s")) {
+            responseTypes.add(ResponseType.valueOf(responseType));
+        }
+
         clientId = req.getParameter(AuthenticationRequestParam.CLIENT_ID);
         redirectUri = URI.create(req.getParameter(AuthenticationRequestParam.REDIRECT_URI));
         state = req.getParameter(AuthenticationRequestParam.STATE);
@@ -95,6 +99,32 @@ public class AuthenticationRequest {
         } else {
             acrValues = Collections.emptySet();
         }
+    }
+
+    /**
+     * All but the code Response Type value, which is defined by OAuth 2.0
+     * [RFC6749], are defined in the OAuth 2.0 Multiple Response Type Encoding
+     * Practices [OAuth.Responses] specification. NOTE: While OAuth 2.0 also
+     * defines the token Response Type value for the Implicit Flow, OpenID
+     * Connect does not use this Response Type, since no ID Token would be
+     * returned.
+     * 
+     * @see http://openid.net/specs/openid-connect-core-1_0.html#Authentication
+     * @return
+     */
+    public boolean isImplicitFlow() {
+
+        return !responseTypes.contains(ResponseType.code);
+    }
+
+    /**
+     * If the response types contains code and only code.
+     * 
+     * @return
+     */
+    public boolean isAuthorizationCodeFlow() {
+
+        return responseTypes.equals(Collections.singleton(ResponseType.code));
     }
 
     public Set<String> getAcrValues() {
@@ -142,7 +172,7 @@ public class AuthenticationRequest {
         return redirectUri;
     }
 
-    public Set<String> getResponseTypes() {
+    public Set<ResponseType> getResponseTypes() {
 
         return responseTypes;
     }
@@ -162,4 +192,8 @@ public class AuthenticationRequest {
         return uiLocales;
     }
 
+    public boolean containsResponseType(ResponseType responseType) {
+
+        return responseTypes.contains(responseType);
+    }
 }

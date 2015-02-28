@@ -57,7 +57,7 @@ public class WellKnownOpenIdConfiguration {
         openIdConfiguration.setUserinfoEndpoint(baseUri.replacePath(request.getContextPath() + userinfoMapping)
                 .build());
         openIdConfiguration.setScopesSupported(new HashSet2<String>("openid", "email", "profile"));
-        openIdConfiguration.setResponseTypesSupported(new HashSet2<String>("code", "id_token", "token id_token"));
+        openIdConfiguration.setResponseTypesSupported(new HashSet2<String>(CODE, ID_TOKEN, ID_TOKEN_TOKEN, CODE_ID_TOKEN, CODE_TOKEN, CODE_ID_TOKEN_TOKEN));
 
         CacheControl cacheControl = new CacheControl();
         cacheControl.setPrivate(false);
@@ -69,6 +69,18 @@ public class WellKnownOpenIdConfiguration {
                 .build();
 
     }
+
+    public static final String CODE = "code";
+
+    public static final String ID_TOKEN = "id_token";
+
+    public static final String ID_TOKEN_TOKEN = "id_token token";
+
+    public static final String CODE_ID_TOKEN = "code id_token";
+
+    public static final String CODE_TOKEN = "code token";
+
+    public static final String CODE_ID_TOKEN_TOKEN = "code id_token token";
 
     /**
      * Authorization endpoint mapping that is built during {@link #init()}
