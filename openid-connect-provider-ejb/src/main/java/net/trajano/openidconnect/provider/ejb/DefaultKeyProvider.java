@@ -1,4 +1,4 @@
-package net.trajano.openidconnect.provider.internal;
+package net.trajano.openidconnect.provider.ejb;
 
 import java.security.GeneralSecurityException;
 import java.security.KeyPair;

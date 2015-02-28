@@ -1,6 +1,6 @@
-package net.trajano.openidconnect.provider.test;
+package net.trajano.openidconnect.provider.ejb.test;
 
-import net.trajano.openidconnect.provider.internal.DefaultKeyProvider;
+import net.trajano.openidconnect.provider.ejb.DefaultKeyProvider;
 
 import org.junit.Test;
 

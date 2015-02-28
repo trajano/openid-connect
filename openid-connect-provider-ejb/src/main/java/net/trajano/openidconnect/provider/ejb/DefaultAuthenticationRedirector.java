@@ -1,4 +1,4 @@
-package net.trajano.openidconnect.provider;
+package net.trajano.openidconnect.provider.ejb;
 
 import java.io.IOException;
 import java.net.URI;
@@ -11,6 +11,10 @@ import javax.ws.rs.core.UriBuilder;
 
 import net.trajano.openidconnect.core.IdToken;
 import net.trajano.openidconnect.core.TokenResponse;
+import net.trajano.openidconnect.provider.AuthenticationRedirector;
+import net.trajano.openidconnect.provider.AuthenticationRequest;
+import net.trajano.openidconnect.provider.ResponseType;
+import net.trajano.openidconnect.provider.TokenProvider;
 
 /**
  * Upon successful authentication, implementers are expected to invoke any of
@@ -20,7 +24,7 @@ import net.trajano.openidconnect.core.TokenResponse;
  * @author Archimedes Trajano
  */
 @Stateless
-public class Redirector {
+public class DefaultAuthenticationRedirector implements AuthenticationRedirector {
 
     private TokenProvider tokenProvider;
 
@@ -80,12 +84,12 @@ public class Redirector {
      * @param extraStorageOptions
      * @throws IOException
      */
+    @Override
     public void performRedirect(HttpServletResponse response,
             final AuthenticationRequest request,
-            final String subject,
-            Object... extraOptions) throws IOException {
+            final String subject) throws IOException {
 
-        response.sendRedirect(buildAuthorizationResponseUri(request, subject, extraOptions).toASCIIString());
+        response.sendRedirect(buildAuthorizationResponseUri(request, subject).toASCIIString());
     }
 
     /**
@@ -98,11 +102,11 @@ public class Redirector {
      * @param extraStorageOptions
      * @return
      */
+    @Override
     public Response buildResponse(final AuthenticationRequest request,
-            final String subject,
-            Object... extraOptions) {
+            final String subject) {
 
-        return Response.temporaryRedirect(buildAuthorizationResponseUri(request, subject, extraOptions))
+        return Response.temporaryRedirect(buildAuthorizationResponseUri(request, subject))
                 .build();
     }
 
