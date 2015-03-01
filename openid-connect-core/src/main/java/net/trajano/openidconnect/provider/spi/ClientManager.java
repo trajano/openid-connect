@@ -2,6 +2,9 @@ package net.trajano.openidconnect.provider.spi;
 
 import java.net.URI;
 
+import net.trajano.openidconnect.core.InvalidClientException;
+import net.trajano.openidconnect.core.OAuthException;
+
 public interface ClientManager {
 
     /**
@@ -24,21 +27,12 @@ public interface ClientManager {
      *            client ID
      * @param clientSecret
      *            client secret
-     * @return <code>true</code> if the client secret matches what is expected
-     *         for the client ID.
+     * @return returns the authenticated client ID.
+     * @throws OAuthException
+     * @throws InvalidClientException
      */
-    boolean authenticateClient(String clientId,
+    String authenticateClient(String clientId,
             String clientSecret);
-
-    /**
-     * Checks if the client secret matches what is expected for the client ID.
-     * 
-     * @param authorization
-     *            Authorization header value including "Basic"
-     * @return <code>true</code> if the client secret matches what is expected
-     *         for the client ID.
-     */
-    boolean authenticateClient(String authorization);
 
     /**
      * The issuer URI. This is also used as the realm.

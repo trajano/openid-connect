@@ -9,10 +9,12 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.core.MediaType;
 
 import net.trajano.openidconnect.provider.spi.AuthenticationRedirector;
 import net.trajano.openidconnect.provider.spi.AuthenticationRequest;
 import net.trajano.openidconnect.provider.spi.KeyProvider;
+import net.trajano.openidconnect.provider.spi.TokenProvider;
 
 @WebServlet(urlPatterns = "/doLogin")
 @Stateless
@@ -28,8 +30,16 @@ public class LoginServlet extends HttpServlet {
             HttpServletResponse resp) throws ServletException,
             IOException {
 
+        resp.setContentType(MediaType.TEXT_PLAIN);
         resp.getWriter()
                 .print(kp);
+        resp.getWriter()
+                .print(tp);
+
+        resp.getWriter()
+                .println();
+        resp.getWriter()
+                .println(tp.getAllTokenResponses());
 
     }
 
@@ -48,4 +58,7 @@ public class LoginServlet extends HttpServlet {
 
     @EJB
     private KeyProvider kp;
+
+    @EJB
+    private TokenProvider tp;
 }

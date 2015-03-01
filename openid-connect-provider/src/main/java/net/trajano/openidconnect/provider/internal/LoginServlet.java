@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import net.trajano.openidconnect.provider.ejb.AcceptAllClientManager;
 import net.trajano.openidconnect.provider.spi.AuthenticationRedirector;
 import net.trajano.openidconnect.provider.spi.AuthenticationRequest;
 
@@ -29,6 +30,8 @@ public class LoginServlet extends HttpServlet {
 
         resp.getWriter()
                 .print("RR" + redirector);
+        resp.getWriter()
+                .print("RR" + acm);
 
     }
 
@@ -41,6 +44,9 @@ public class LoginServlet extends HttpServlet {
         System.out.println("got subject " + subject);
         redirector.performRedirect(resp, new AuthenticationRequest(req), subject);
     }
+
+    
+    AcceptAllClientManager acm;
 
     @EJB
     private AuthenticationRedirector redirector;

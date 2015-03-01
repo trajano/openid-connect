@@ -8,8 +8,8 @@ import javax.ws.rs.Path;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
-import net.trajano.openidconnect.core.IdTokenResponse;
-import net.trajano.openidconnect.provider.spi.BearerTokenProcessor;
+import net.trajano.openidconnect.provider.internal.AuthorizationUtil;
+import net.trajano.openidconnect.provider.spi.TokenProvider;
 import net.trajano.openidconnect.provider.spi.UserinfoProvider;
 
 /**
@@ -42,9 +42,10 @@ import net.trajano.openidconnect.provider.spi.UserinfoProvider;
 @Path("profile")
 public class UserinfoEndpoint {
 
-    private BearerTokenProcessor bearerTokenProcessor;
-
     private UserinfoProvider userinfoProvider;
+
+    @EJB
+    private TokenProvider tokenProvider;
 
     @EJB
     public void setUserinfoProvider(UserinfoProvider userinfoProvider) {
@@ -76,14 +77,9 @@ public class UserinfoEndpoint {
     @POST
     public Response op(@Context HttpServletRequest req) {
 
-        IdTokenResponse tokenResponse = bearerTokenProcessor.getToken(req);
-        return Response.ok(userinfoProvider.getUserinfo(tokenResponse))
+        String accessToken = AuthorizationUtil.processBearer(req);
+        return Response.ok(userinfoProvider.getUserinfo(tokenProvider.getByAccessToken(accessToken)))
                 .build();
     }
 
-    @EJB
-    public void setBearerTokenProcessor(BearerTokenProcessor bearerTokenProcessor) {
-
-        this.bearerTokenProcessor = bearerTokenProcessor;
-    }
 }

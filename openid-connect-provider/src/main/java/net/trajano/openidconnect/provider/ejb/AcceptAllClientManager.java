@@ -4,6 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.URI;
 import java.security.GeneralSecurityException;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -43,13 +44,6 @@ public class AcceptAllClientManager implements ClientManager, Authenticator, Use
     @Override
     public boolean isRedirectUriValidForClient(String clientId,
             URI redirectUri) {
-
-        return true;
-    }
-
-    @Override
-    public boolean authenticateClient(String clientId,
-            String clientSecret) {
 
         return true;
     }
@@ -141,7 +135,7 @@ public class AcceptAllClientManager implements ClientManager, Authenticator, Use
         return code;
     }
 
-    private Map<String, IdTokenResponse> codeToTokenResponse = new HashMap<>();
+    public Map<String, IdTokenResponse> codeToTokenResponse = new HashMap<>();
 
     private Map<String, IdTokenResponse> accessTokenToTokenResponse = new HashMap<>();
 
@@ -158,7 +152,7 @@ public class AcceptAllClientManager implements ClientManager, Authenticator, Use
         idToken.setAud(req.getClientId());
         idToken.setAzp(req.getClientId());
         idToken.setIss(getIssuer().toASCIIString());
-        idToken.resetTimeAndExpiration(ONE_HOUR);
+        idToken.resetIssueAndExpiration(ONE_HOUR);
         return idToken;
     }
 
@@ -191,7 +185,7 @@ public class AcceptAllClientManager implements ClientManager, Authenticator, Use
         }
         idTokenResponse.setAccessToken(keyProvider.nextToken());
         IdToken idToken = idTokenResponse.getIdToken(keyProvider.getJwks());
-        idToken.resetTimeAndExpiration(expiresIn);
+        idToken.resetIssueAndExpiration(expiresIn);
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         new IdTokenProvider().writeTo(idToken, IdToken.class, IdToken.class, null, MediaType.APPLICATION_JSON_TYPE, null, baos);
@@ -212,9 +206,15 @@ public class AcceptAllClientManager implements ClientManager, Authenticator, Use
     }
 
     @Override
-    public boolean authenticateClient(String authorization) {
+    public Collection<IdTokenResponse> getAllTokenResponses() {
 
-        // TODO Auto-generated method stub
-        return true;
+        return accessTokenToTokenResponse.values();
+    }
+
+    @Override
+    public String authenticateClient(String clientId,
+            String clientSecret) {
+
+        return clientId;
     }
 }

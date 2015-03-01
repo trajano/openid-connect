@@ -68,13 +68,13 @@ public class WellKnownOpenIdConfiguration {
 
     public static final String ID_TOKEN = "id_token";
 
-    public static final String ID_TOKEN_TOKEN = "id_token token";
+    public static final String ID_TOKEN_TOKEN = "id_token token";
 
-    public static final String CODE_ID_TOKEN = "code id_token";
+    public static final String CODE_ID_TOKEN = "code id_token";
 
-    public static final String CODE_TOKEN = "code token";
+    public static final String CODE_TOKEN = "code token";
 
-    public static final String CODE_ID_TOKEN_TOKEN = "code id_token token";
+    public static final String CODE_ID_TOKEN_TOKEN = "code id_token token";
 
     /**
      * Authorization endpoint mapping that is built during {@link #init()}

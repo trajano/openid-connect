@@ -164,7 +164,7 @@ public class DefaultKeyProvider implements KeyProvider {
     @Lock(LockType.WRITE)
     public String nextToken() {
 
-        byte[] randomTokenBytes = new byte[32];
+        byte[] randomTokenBytes = new byte[16];
         random.nextBytes(randomTokenBytes);
         return Base64Url.encode(randomTokenBytes);
     }

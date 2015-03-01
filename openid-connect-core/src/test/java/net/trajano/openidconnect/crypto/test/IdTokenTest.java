@@ -11,7 +11,7 @@ public class IdTokenTest {
     public void testCreate() {
 
         IdToken token = new IdToken();
-        token.resetTimeAndExpiration(3600);
+        token.resetIssueAndExpiration(3600);
         Assert.assertEquals(3600, token.getExp() - token.getIat());
     }
 }

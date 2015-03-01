@@ -2,6 +2,7 @@ package net.trajano.openidconnect.provider.spi;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
+import java.util.Collection;
 import java.util.Set;
 
 import javax.validation.constraints.NotNull;
@@ -32,6 +33,8 @@ public interface TokenProvider {
     IdTokenResponse getByCode(String code,
             boolean deleteAfterRetrieval);
 
+    Collection<IdTokenResponse> getAllTokenResponses();
+    
     /**
      * Stores the ID token and associated scope in some storage and creates the
      * access_token, authorization code and refresh token linkages.
