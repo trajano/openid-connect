@@ -5,7 +5,6 @@ import java.util.Iterator;
 import java.util.Set;
 
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlTransient;
 
 public class TokenResponse {
 
@@ -65,22 +64,6 @@ public class TokenResponse {
         this.scope = scope;
     }
 
-    /**
-     * Client ID used to create the token. This is transient as it is not sent
-     * to the client and is used for validation.
-     */
-    @XmlTransient
-    private String clientId;
-
-    public String getClientId() {
-
-        return clientId;
-    }
-
-    public void setClientId(String clientId) {
-
-        this.clientId = clientId;
-    }
 
     /**
      * OPTIONAL, if identical to the scope requested by the client; otherwise,

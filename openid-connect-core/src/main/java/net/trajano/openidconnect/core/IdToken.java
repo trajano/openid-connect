@@ -73,7 +73,7 @@ public class IdToken {
      * values used, which may be context-specific. The amr value is an array of
      * case sensitive strings.
      */
-    private String amr;
+    private String[] amr;
 
     /**
      * REQUIRED. Audience(s) that this ID Token is intended for. It MUST contain
@@ -167,7 +167,7 @@ public class IdToken {
         return acr;
     }
 
-    public String getAmr() {
+    public String[] getAmr() {
 
         return amr;
     }
@@ -217,7 +217,7 @@ public class IdToken {
         this.acr = acr;
     }
 
-    public void setAmr(final String amr) {
+    public void setAmr(final String[] amr) {
 
         this.amr = amr;
     }

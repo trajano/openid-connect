@@ -13,10 +13,10 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 
 import net.trajano.openidconnect.core.IdToken;
-import net.trajano.openidconnect.core.ResponseType;
 import net.trajano.openidconnect.core.IdTokenResponse;
-import net.trajano.openidconnect.provider.AuthenticationRequest;
+import net.trajano.openidconnect.core.ResponseType;
 import net.trajano.openidconnect.provider.spi.AuthenticationRedirector;
+import net.trajano.openidconnect.provider.spi.AuthenticationRequest;
 import net.trajano.openidconnect.provider.spi.TokenProvider;
 
 /**
@@ -49,7 +49,7 @@ public class DefaultAuthenticationRedirector implements AuthenticationRedirector
             final String subject) throws IOException,
             GeneralSecurityException {
 
-        IdToken idToken = tokenProvider.buildIdToken(subject);
+        IdToken idToken = tokenProvider.buildIdToken(subject, request);
         final String code = tokenProvider.store(idToken, request);
 
         final UriBuilder b = UriBuilder.fromUri(request.getRedirectUri());

@@ -6,8 +6,8 @@ import javax.ws.rs.BadRequestException;
 
 import net.trajano.openidconnect.core.IdTokenResponse;
 import net.trajano.openidconnect.crypto.Base64Url;
-import net.trajano.openidconnect.provider.BearerTokenException;
-import net.trajano.openidconnect.provider.internal.BearerTokenProcessor;
+import net.trajano.openidconnect.provider.spi.BearerTokenException;
+import net.trajano.openidconnect.provider.spi.BearerTokenProcessor;
 import net.trajano.openidconnect.provider.spi.ClientManager;
 import net.trajano.openidconnect.provider.spi.TokenProvider;
 

@@ -7,8 +7,12 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 
 import javax.json.Json;
+import javax.json.JsonArray;
+import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
+import javax.json.JsonString;
+import javax.json.JsonValue;
 import javax.json.JsonWriter;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.Produces;
@@ -25,7 +29,7 @@ import javax.ws.rs.ext.Provider;
 public class IdTokenProvider implements MessageBodyReader<IdToken>, MessageBodyWriter<IdToken> {
 
     @Override
-    public long getSize(final IdToken arg0,
+    public long getSize(final IdToken token,
             final Class<?> arg1,
             final Type arg2,
             final Annotation[] arg3,
@@ -65,7 +69,16 @@ public class IdTokenProvider implements MessageBodyReader<IdToken>, MessageBodyW
                 .readObject();
         final IdToken idToken = new IdToken();
         idToken.setAcr(obj.getString("acr"));
-        idToken.setAmr(obj.getString("amr"));
+        JsonArray amrs = obj.getJsonArray("amr");
+        if (amrs != null) {
+            String[] amrArray = new String[amrs.size()];
+            int i = 0;
+            for (JsonValue amr : amrs) {
+                amrArray[i] = ((JsonString) amr).getString();
+                ++i;
+            }
+            idToken.setAmr(amrArray);
+        }
         idToken.setAud(obj.getString("aud"));
         idToken.setAuthTime(obj.getInt("auth_time"));
         idToken.setAzp(obj.getString("azp"));
@@ -90,8 +103,13 @@ public class IdTokenProvider implements MessageBodyReader<IdToken>, MessageBodyW
         final JsonObjectBuilder b = Json.createObjectBuilder();
         if (idToken.getAcr() != null)
             b.add("acr", idToken.getAcr());
-        if (idToken.getAmr() != null)
-            b.add("amr", idToken.getAmr());
+        if (idToken.getAmr() != null) {
+            JsonArrayBuilder amrBuilder = Json.createArrayBuilder();
+            for (String amr : idToken.getAmr()) {
+                amrBuilder.add(amr);
+            }
+            b.add("amr", amrBuilder);
+        }
         if (idToken.getAud() != null)
             b.add("aud", idToken.getAud());
         if (idToken.getAuthTime() != 0)

@@ -13,7 +13,7 @@
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>openid-connect-provider</artifactId>
+            <artifactId>openid-connect-core</artifactId>
         </dependency>
     </dependencies>
     <build/>

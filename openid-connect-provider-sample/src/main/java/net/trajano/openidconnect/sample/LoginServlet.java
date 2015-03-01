@@ -9,8 +9,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import net.trajano.openidconnect.provider.AuthenticationRequest;
 import net.trajano.openidconnect.provider.spi.AuthenticationRedirector;
+import net.trajano.openidconnect.provider.spi.AuthenticationRequest;
 
 @WebServlet(urlPatterns = "/doLogin", loadOnStartup = 1)
 public class LoginServlet extends HttpServlet {

@@ -25,7 +25,7 @@ import net.trajano.openidconnect.core.IdTokenResponse;
 import net.trajano.openidconnect.core.Scope;
 import net.trajano.openidconnect.core.TokenResponse;
 import net.trajano.openidconnect.core.Userinfo;
-import net.trajano.openidconnect.provider.AuthenticationRequest;
+import net.trajano.openidconnect.provider.spi.AuthenticationRequest;
 import net.trajano.openidconnect.provider.spi.Authenticator;
 import net.trajano.openidconnect.provider.spi.ClientManager;
 import net.trajano.openidconnect.provider.spi.KeyProvider;
@@ -129,7 +129,6 @@ public class AcceptAllClientManager implements ClientManager, Authenticator, Use
         response.setExpiresIn(ONE_HOUR);
         response.setScopes(req.getScopes());
         response.setTokenType(IdTokenResponse.BEARER);
-        response.setClientId(req.getClientId());
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         new IdTokenProvider().writeTo(idToken, IdToken.class, IdToken.class, null, MediaType.APPLICATION_JSON_TYPE, null, baos);
         baos.close();
@@ -150,10 +149,15 @@ public class AcceptAllClientManager implements ClientManager, Authenticator, Use
     private Map<String, IdTokenResponse> refreshTokenToTokenResponse = new HashMap<>();
 
     @Override
-    public IdToken buildIdToken(String subject) {
+    public IdToken buildIdToken(String subject,
+            AuthenticationRequest req) {
 
         IdToken idToken = new IdToken();
         idToken.setSub(subject);
+        idToken.setNonce(req.getNonce());
+        idToken.setAuthTime(System.currentTimeMillis() / 1000);
+        idToken.setAud(req.getClientId());
+        idToken.setAzp(req.getClientId());
         idToken.setIss(getIssuer().toASCIIString());
         idToken.resetTimeAndExpiration(ONE_HOUR);
         return idToken;
@@ -176,7 +180,8 @@ public class AcceptAllClientManager implements ClientManager, Authenticator, Use
             GeneralSecurityException {
 
         IdTokenResponse idTokenResponse = refreshTokenToTokenResponse.get(token);
-        if (!clientId.equals(idTokenResponse.getClientId())) {
+        if (!clientId.equals(idTokenResponse.getIdToken()
+                .getAud())) {
             throw new WebApplicationException();
         }
         if (scopes != null && !scopes.containsAll(scopes)) {

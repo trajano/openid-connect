@@ -9,7 +9,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
 import net.trajano.openidconnect.core.IdTokenResponse;
-import net.trajano.openidconnect.provider.internal.BearerTokenProcessor;
+import net.trajano.openidconnect.provider.spi.BearerTokenProcessor;
 import net.trajano.openidconnect.provider.spi.UserinfoProvider;
 
 /**

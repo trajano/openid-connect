@@ -10,7 +10,6 @@ import net.trajano.openidconnect.core.IdToken;
 import net.trajano.openidconnect.core.IdTokenResponse;
 import net.trajano.openidconnect.core.Scope;
 import net.trajano.openidconnect.core.TokenResponse;
-import net.trajano.openidconnect.provider.AuthenticationRequest;
 
 /**
  * This provides storage and retrieval for the token responses. Implementers
@@ -58,7 +57,8 @@ public interface TokenProvider {
      *            subject
      * @return authorization code
      */
-    IdToken buildIdToken(String subject);
+    IdToken buildIdToken(String subject,
+            AuthenticationRequest request);
 
     /**
      * Gets the token data by access token. This may return null if there is no
@@ -80,11 +80,12 @@ public interface TokenProvider {
      *            time in seconds of how long the new token will expire this
      *            will also reissue the ID token.
      * @return
-     * @throws GeneralSecurityException 
-     * @throws IOException 
+     * @throws GeneralSecurityException
+     * @throws IOException
      */
     TokenResponse refreshToken(@NotNull String clientId,
             @NotNull String refreshToken,
             Set<Scope> scopes,
-            int expiresIn) throws IOException, GeneralSecurityException;
+            int expiresIn) throws IOException,
+            GeneralSecurityException;
 }

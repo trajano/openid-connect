@@ -9,7 +9,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.UriBuilder;
 
 import net.trajano.openidconnect.core.Scope;
-import net.trajano.openidconnect.provider.AuthenticationRequest;
 
 public interface Authenticator {
 
@@ -56,8 +55,8 @@ public interface Authenticator {
             HttpServletRequest req);
 
     /**
-     * Obtains the scopes requested for the current user. Depending on the client ID the
-     * user obtained in the request may not be valid. May return
+     * Obtains the scopes requested for the current user. Depending on the
+     * client ID the user obtained in the request may not be valid. May return
      * <code>null</code> if the subject cannot be determined.
      * 
      * @param clientId

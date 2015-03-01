@@ -24,7 +24,7 @@ import net.trajano.openidconnect.core.AuthenticationRequestParam;
 import net.trajano.openidconnect.core.AuthenticationRequestParam.Display;
 import net.trajano.openidconnect.core.AuthenticationRequestParam.Prompt;
 import net.trajano.openidconnect.core.Scope;
-import net.trajano.openidconnect.provider.AuthenticationRequest;
+import net.trajano.openidconnect.provider.spi.AuthenticationRequest;
 import net.trajano.openidconnect.provider.spi.Authenticator;
 import net.trajano.openidconnect.provider.spi.ClientManager;
 

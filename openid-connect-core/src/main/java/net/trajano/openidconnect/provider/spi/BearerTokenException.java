@@ -1,10 +1,8 @@
-package net.trajano.openidconnect.provider;
+package net.trajano.openidconnect.provider.spi;
 
 import javax.ws.rs.NotAuthorizedException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
-
-import net.trajano.openidconnect.provider.spi.ClientManager;
 
 public class BearerTokenException extends NotAuthorizedException {
 

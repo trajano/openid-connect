@@ -1,4 +1,4 @@
-package net.trajano.openidconnect.provider.internal;
+package net.trajano.openidconnect.provider.spi;
 
 import javax.ejb.Local;
 import javax.servlet.http.HttpServletRequest;
