@@ -157,7 +157,7 @@ public final class Base64Url {
         US_ASCII = Charset.availableCharsets()
                 .get("US-ASCII");
         UTF8 = Charset.availableCharsets()
-                .get("UTF8");
+                .get("UTF-8");
     }
 
     /**

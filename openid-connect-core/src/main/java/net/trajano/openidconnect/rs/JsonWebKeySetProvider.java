@@ -1,4 +1,4 @@
-package net.trajano.openidconnect.crypto;
+package net.trajano.openidconnect.rs;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -21,6 +21,15 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.ext.MessageBodyReader;
 import javax.ws.rs.ext.MessageBodyWriter;
 import javax.ws.rs.ext.Provider;
+
+import net.trajano.openidconnect.crypto.EcWebKey;
+import net.trajano.openidconnect.crypto.JsonWebAlgorithm;
+import net.trajano.openidconnect.crypto.JsonWebKey;
+import net.trajano.openidconnect.crypto.JsonWebKeySet;
+import net.trajano.openidconnect.crypto.KeyType;
+import net.trajano.openidconnect.crypto.KeyUse;
+import net.trajano.openidconnect.crypto.OctWebKey;
+import net.trajano.openidconnect.crypto.RsaWebKey;
 
 // TODO should we have the reader in jaspic and the writer in the rest api?
 @Provider

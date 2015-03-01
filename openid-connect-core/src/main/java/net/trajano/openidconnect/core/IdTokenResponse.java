@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -12,6 +13,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import net.trajano.openidconnect.crypto.JsonWebKeySet;
 import net.trajano.openidconnect.crypto.JwtUtil;
+import net.trajano.openidconnect.rs.IdTokenProvider;
 
 /**
  * <p>
@@ -69,18 +71,18 @@ public class IdTokenResponse extends TokenResponse {
         return encodedIdToken;
     }
 
-
     /**
      * Gets the ID Token without signature validation.
      *
      * @return
-     * @throws IOException
-     * @throws GeneralSecurityException
      */
-    public IdToken getIdToken() throws IOException,
-            GeneralSecurityException {
+    public IdToken getIdToken() {
 
-        return getIdToken(null);
+        try {
+            return getIdToken(null);
+        } catch (IOException | GeneralSecurityException e) {
+            throw new WebApplicationException(e);
+        }
     }
 
     /**
@@ -99,11 +101,9 @@ public class IdTokenResponse extends TokenResponse {
 
     }
 
-
     public void setEncodedIdToken(final String encodedIdToken) throws GeneralSecurityException {
 
         this.encodedIdToken = encodedIdToken;
     }
-
 
 }

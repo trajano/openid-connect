@@ -17,7 +17,7 @@ import javax.ws.rs.ext.MessageBodyWriter;
 import net.trajano.openidconnect.crypto.JsonWebAlgorithm;
 import net.trajano.openidconnect.crypto.JsonWebKey;
 import net.trajano.openidconnect.crypto.JsonWebKeySet;
-import net.trajano.openidconnect.crypto.JsonWebKeySetProvider;
+import net.trajano.openidconnect.rs.JsonWebKeySetProvider;
 
 import org.junit.Test;
 

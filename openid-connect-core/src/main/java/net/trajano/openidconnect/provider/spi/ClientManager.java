@@ -31,7 +31,17 @@ public interface ClientManager {
             String clientSecret);
 
     /**
-     * The issuer URI.  This is also used as the realm.
+     * Checks if the client secret matches what is expected for the client ID.
+     * 
+     * @param authorization
+     *            Authorization header value including "Basic"
+     * @return <code>true</code> if the client secret matches what is expected
+     *         for the client ID.
+     */
+    boolean authenticateClient(String authorization);
+
+    /**
+     * The issuer URI. This is also used as the realm.
      * 
      * @return
      */

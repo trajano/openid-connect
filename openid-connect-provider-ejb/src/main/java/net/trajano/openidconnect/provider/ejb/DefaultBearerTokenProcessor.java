@@ -1,5 +1,6 @@
 package net.trajano.openidconnect.provider.ejb;
 
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.BadRequestException;
@@ -19,8 +20,15 @@ public class DefaultBearerTokenProcessor implements BearerTokenProcessor {
      */
     private ClientManager clientManager;
 
+    @EJB
+    public void setIdtokenProvider(TokenProvider idtokenProvider) {
+
+        this.idtokenProvider = idtokenProvider;
+    }
+
     private TokenProvider idtokenProvider;
 
+    @EJB
     public void setClientManager(final ClientManager clientManager) {
 
         this.clientManager = clientManager;
@@ -42,9 +50,16 @@ public class DefaultBearerTokenProcessor implements BearerTokenProcessor {
     @Override
     public String validateAndGetClientId(final HttpServletRequest request) {
 
-        final String s = Base64Url.decodeToString(getEncodedToken(request));
-        final String clientId = s.substring(0, s.indexOf(':'));
-        final String clientSecret = s.substring(s.indexOf(':') + 1);
+        final String clientId;
+        final String clientSecret;
+        if (request.getParameter("client_id") != null && request.getParameter("client_secret") != null) {
+            clientId = request.getParameter("client_id");
+            clientSecret = request.getParameter("client_secret");
+        } else {
+            final String s = Base64Url.decodeToString(getEncodedToken(request, "Basic"));
+            clientId = s.substring(0, s.indexOf(':'));
+            clientSecret = s.substring(s.indexOf(':') + 1);
+        }
         if (!clientManager.authenticateClient(clientId, clientSecret)) {
             throw new BearerTokenException(clientManager, "invalid_token");
         }
@@ -52,18 +67,20 @@ public class DefaultBearerTokenProcessor implements BearerTokenProcessor {
 
     }
 
-    private String getEncodedToken(HttpServletRequest request) {
+    private String getEncodedToken(HttpServletRequest request,
+            String type) {
 
         if (!request.isSecure()) {
             throw new BadRequestException();
         }
 
         final String authorization = request.getHeader("Authorization");
+        System.out.println("Authorization: " + authorization);
         if (authorization == null) {
             throw new BearerTokenException(clientManager);
         }
         final String[] authorizationComponents = authorization.split(" ");
-        if (!"Bearer".equals(authorizationComponents[0])) {
+        if (!type.equals(authorizationComponents[0])) {
             throw new BearerTokenException(clientManager);
         }
         return authorizationComponents[1];
@@ -73,7 +90,7 @@ public class DefaultBearerTokenProcessor implements BearerTokenProcessor {
     @Override
     public IdTokenResponse getToken(HttpServletRequest request) {
 
-        final String accessToken = getEncodedToken(request);
+        final String accessToken = getEncodedToken(request, "Bearer");
         return idtokenProvider.getByAccessToken(accessToken);
     }
 }

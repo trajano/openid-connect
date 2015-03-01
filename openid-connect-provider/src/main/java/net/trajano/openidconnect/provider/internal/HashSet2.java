@@ -5,7 +5,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * A {@link HashSet} that allows initialization by array.
+ * A {@link HashSet} that allows initialization by array and a #put method that
+ * will return itself
  * 
  * @author Archimedes
  * @param <T>
@@ -27,5 +28,11 @@ public class HashSet2<T> extends HashSet<T> implements Set<T> {
     public HashSet2(T... objs) {
 
         super(Arrays.asList(objs));
+    }
+
+    public HashSet2<T> put(T obj) {
+
+        add(obj);
+        return this;
     }
 }

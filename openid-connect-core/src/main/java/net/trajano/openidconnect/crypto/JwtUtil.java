@@ -55,7 +55,7 @@ public class JwtUtil {
                 .readObject();
 
         // Handle plaintext JWTs
-        if (jwks == null || !"none".equals(joseHeader.getString("alg"))) {
+        if (jwks != null && !"none".equals(joseHeader.getString("alg"))) {
 
             final String kid;
             if (joseHeader.containsKey("kid")) {

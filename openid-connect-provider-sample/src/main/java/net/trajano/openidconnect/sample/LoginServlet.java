@@ -12,15 +12,16 @@ import javax.servlet.http.HttpServletResponse;
 
 import net.trajano.openidconnect.provider.spi.AuthenticationRedirector;
 import net.trajano.openidconnect.provider.spi.AuthenticationRequest;
+import net.trajano.openidconnect.provider.spi.KeyProvider;
 
-@WebServlet(urlPatterns = "/doLogin", loadOnStartup = 1)
+@WebServlet(urlPatterns = "/doLogin")
 @Stateless
 public class LoginServlet extends HttpServlet {
 
     /**
      * 
      */
-    private static final long serialVersionUID = -1296536605271663835L;
+    private static final long serialVersionUID = -129656605271663835L;
 
     @Override
     protected void doGet(HttpServletRequest req,
@@ -28,7 +29,7 @@ public class LoginServlet extends HttpServlet {
             IOException {
 
         resp.getWriter()
-                .print(redirector);
+                .print(kp);
 
     }
 
@@ -44,4 +45,7 @@ public class LoginServlet extends HttpServlet {
 
     @EJB
     private AuthenticationRedirector redirector;
+
+    @EJB
+    private KeyProvider kp;
 }

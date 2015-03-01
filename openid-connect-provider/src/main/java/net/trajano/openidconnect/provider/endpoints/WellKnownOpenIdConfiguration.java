@@ -4,7 +4,6 @@ import static java.net.URI.create;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
-import javax.ejb.Stateless;
 import javax.servlet.ServletRegistration;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
@@ -22,7 +21,6 @@ import net.trajano.openidconnect.provider.spi.ClientManager;
 import net.trajano.openidconnect.provider.spi.KeyProvider;
 
 @Path("openid-configuration")
-@Stateless
 public class WellKnownOpenIdConfiguration {
 
     private ClientManager clientManager;

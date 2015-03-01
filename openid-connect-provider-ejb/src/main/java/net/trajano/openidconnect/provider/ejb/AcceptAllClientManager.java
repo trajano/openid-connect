@@ -20,7 +20,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriBuilder;
 
 import net.trajano.openidconnect.core.IdToken;
-import net.trajano.openidconnect.core.IdTokenProvider;
 import net.trajano.openidconnect.core.IdTokenResponse;
 import net.trajano.openidconnect.core.Scope;
 import net.trajano.openidconnect.core.TokenResponse;
@@ -31,6 +30,7 @@ import net.trajano.openidconnect.provider.spi.ClientManager;
 import net.trajano.openidconnect.provider.spi.KeyProvider;
 import net.trajano.openidconnect.provider.spi.TokenProvider;
 import net.trajano.openidconnect.provider.spi.UserinfoProvider;
+import net.trajano.openidconnect.rs.IdTokenProvider;
 
 // TODO move to a sample ejb package
 @Singleton
@@ -82,12 +82,9 @@ public class AcceptAllClientManager implements ClientManager, Authenticator, Use
     public Userinfo getUserinfo(IdTokenResponse response) {
 
         Userinfo userinfo = new Userinfo();
-        try {
-            userinfo.setSub(response.getIdToken()
-                    .getSub());
-        } catch (IOException | GeneralSecurityException e) {
-            throw new WebApplicationException(e);
-        }
+        userinfo.setSub(response.getIdToken()
+                .getSub());
+
         return userinfo;
     }
 
@@ -138,6 +135,8 @@ public class AcceptAllClientManager implements ClientManager, Authenticator, Use
         codeToTokenResponse.put(code, response);
         accessTokenToTokenResponse.put(response.getAccessToken(), response);
         refreshTokenToTokenResponse.put(response.getRefreshToken(), response);
+
+        System.out.println("STORE " + code);
 
         return code;
     }
@@ -210,5 +209,12 @@ public class AcceptAllClientManager implements ClientManager, Authenticator, Use
     public void init() {
 
         System.out.println("!!!! OUT!!!!");
+    }
+
+    @Override
+    public boolean authenticateClient(String authorization) {
+
+        // TODO Auto-generated method stub
+        return true;
     }
 }

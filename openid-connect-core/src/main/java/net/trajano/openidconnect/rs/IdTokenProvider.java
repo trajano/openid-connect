@@ -1,4 +1,4 @@
-package net.trajano.openidconnect.core;
+package net.trajano.openidconnect.rs;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -22,6 +22,8 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.ext.MessageBodyReader;
 import javax.ws.rs.ext.MessageBodyWriter;
 import javax.ws.rs.ext.Provider;
+
+import net.trajano.openidconnect.core.IdToken;
 
 @Provider
 @Produces(MediaType.APPLICATION_JSON)
@@ -68,24 +70,35 @@ public class IdTokenProvider implements MessageBodyReader<IdToken>, MessageBodyW
         final JsonObject obj = Json.createReader(is)
                 .readObject();
         final IdToken idToken = new IdToken();
-        idToken.setAcr(obj.getString("acr"));
-        JsonArray amrs = obj.getJsonArray("amr");
-        if (amrs != null) {
-            String[] amrArray = new String[amrs.size()];
+        System.out.println(obj);
+        if (obj.containsKey("acr")) {
+            idToken.setAcr(obj.getString("acr"));
+        }
+        if (obj.containsKey("amr")) {
+            final JsonArray amrs = obj.getJsonArray("amr");
+            final String[] amrArray = new String[amrs.size()];
             int i = 0;
-            for (JsonValue amr : amrs) {
+            for (final JsonValue amr : amrs) {
                 amrArray[i] = ((JsonString) amr).getString();
                 ++i;
             }
             idToken.setAmr(amrArray);
         }
+
         idToken.setAud(obj.getString("aud"));
-        idToken.setAuthTime(obj.getInt("auth_time"));
-        idToken.setAzp(obj.getString("azp"));
+        if (obj.containsKey("auth_time")) {
+            idToken.setAuthTime(obj.getInt("auth_time"));
+        }
+        if (obj.containsKey("azp")) {
+            idToken.setAzp(obj.getString("azp"));
+        }
+
         idToken.setExp(obj.getInt("exp"));
-        idToken.setIat(obj.getInt("oat"));
+        idToken.setIat(obj.getInt("iat"));
         idToken.setIss(obj.getString("iss"));
-        idToken.setNonce(obj.getString("nonce"));
+        if (obj.containsKey("nonce")) {
+            idToken.setNonce(obj.getString("nonce"));
+        }
         idToken.setSub(obj.getString("sub"));
         return idToken;
     }
@@ -101,26 +114,30 @@ public class IdTokenProvider implements MessageBodyReader<IdToken>, MessageBodyW
             WebApplicationException {
 
         final JsonObjectBuilder b = Json.createObjectBuilder();
-        if (idToken.getAcr() != null)
+        if (idToken.getAcr() != null) {
             b.add("acr", idToken.getAcr());
+        }
         if (idToken.getAmr() != null) {
-            JsonArrayBuilder amrBuilder = Json.createArrayBuilder();
-            for (String amr : idToken.getAmr()) {
+            final JsonArrayBuilder amrBuilder = Json.createArrayBuilder();
+            for (final String amr : idToken.getAmr()) {
                 amrBuilder.add(amr);
             }
             b.add("amr", amrBuilder);
         }
-        if (idToken.getAud() != null)
-            b.add("aud", idToken.getAud());
-        if (idToken.getAuthTime() != 0)
+
+        b.add("aud", idToken.getAud());
+        if (idToken.getAuthTime() != 0) {
             b.add("auth_time", idToken.getAuthTime());
-        if (idToken.getAzp() != null)
+        }
+        if (idToken.getAzp() != null) {
             b.add("azp", idToken.getAzp());
-        if (idToken.getIat() != 0)
-            b.add("iat", idToken.getIat());
+        }
+        b.add("iat", idToken.getIat());
+        b.add("exp", idToken.getExp());
         b.add("iss", idToken.getIss());
-        if (idToken.getNonce() != null)
+        if (idToken.getNonce() != null) {
             b.add("nonce", idToken.getNonce());
+        }
         b.add("sub", idToken.getSub());
 
         final JsonWriter w = Json.createWriter(os);

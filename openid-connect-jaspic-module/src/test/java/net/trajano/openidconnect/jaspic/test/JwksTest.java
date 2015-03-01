@@ -11,8 +11,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.ext.MessageBodyReader;
 
 import net.trajano.openidconnect.crypto.JsonWebKeySet;
-import net.trajano.openidconnect.crypto.JsonWebKeySetProvider;
 import net.trajano.openidconnect.jaspic.internal.KeyMapBuilder;
+import net.trajano.openidconnect.rs.JsonWebKeySetProvider;
 
 import org.junit.Test;
 
