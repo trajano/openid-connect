@@ -11,7 +11,6 @@ public class KeyProviderTest {
 
         DefaultKeyProvider keyProvider = new DefaultKeyProvider();
         keyProvider.generateKeys();
-        keyProvider.getJwk();
 
     }
 }

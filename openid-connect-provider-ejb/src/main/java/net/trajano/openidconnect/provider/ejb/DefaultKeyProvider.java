@@ -3,50 +3,53 @@ package net.trajano.openidconnect.provider.ejb;
 import java.security.GeneralSecurityException;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
-import java.security.PublicKey;
+import java.security.SecureRandom;
 import java.security.Signature;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
-import java.util.UUID;
+import java.util.Random;
 
 import javax.annotation.PostConstruct;
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
+import javax.ejb.Lock;
+import javax.ejb.LockType;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 
 import net.trajano.openidconnect.crypto.Base64Url;
 import net.trajano.openidconnect.crypto.JsonWebKey;
+import net.trajano.openidconnect.crypto.JsonWebKeySet;
 import net.trajano.openidconnect.crypto.RsaWebKey;
 import net.trajano.openidconnect.provider.spi.KeyProvider;
 
 /**
  * Used to generate the keys used by the application. These are in memory only
- * and only encrypt data that is in transit.
+ * and only encrypt data that is in transit. There are multiple RSA signing keys
+ * that are generated like Google and the key will be chosen based on time.
  */
 @Singleton
 @Startup
-public class DefaultKeyProvider implements KeyProvider{
+@Lock(LockType.READ)
+public class DefaultKeyProvider implements KeyProvider {
 
-    /**
-     * Encoded JOSE header.
-     */
-    private String encodedJoseHeader;
+    private static class SigningKey {
 
-    /**
-     * This is the JSON Web Key that is built from the key pair.
-     */
-    private JsonWebKey jwk;
+        /**
+         * Encoded JOSE header.
+         */
+        private String encodedJoseHeader;
 
-    /**
-     * Randomly generated key ID for the signing key
-     */
-    private UUID keyId;
+        private RSAPrivateKey privateKey;
 
-    private RSAPrivateKey privateKey;
+    }
 
-    private RSAPublicKey publicKey;
+    private SigningKey[] signingKeys;
+
+    private JsonWebKey[] signingJwks;
+
+    private Random random;
 
     private SecretKey secretKey;
 
@@ -70,49 +73,42 @@ public class DefaultKeyProvider implements KeyProvider{
         return encrypt(contentBytes);
     }
 
+    private static final int NUMBER_OF_SIGNING_KEYS = 3;
+
     @PostConstruct
     public void generateKeys() {
 
         try {
+            random = SecureRandom.getInstanceStrong();
+
+            signingJwks = new JsonWebKey[NUMBER_OF_SIGNING_KEYS];
+            signingKeys = new SigningKey[NUMBER_OF_SIGNING_KEYS];
+
             final KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
             keyPairGenerator.initialize(1024);
-            final KeyPair keyPair = keyPairGenerator.generateKeyPair();
+            for (int i = 0; i < NUMBER_OF_SIGNING_KEYS; ++i) {
+                final KeyPair keyPair = keyPairGenerator.generateKeyPair();
 
-            keyId = UUID.randomUUID();
+                String keyId = nextToken();
+                RSAPrivateKey privateKey = (RSAPrivateKey) keyPair.getPrivate();
+                RSAPublicKey publicKey = (RSAPublicKey) keyPair.getPublic();
 
-            privateKey = (RSAPrivateKey) keyPair.getPrivate();
-            publicKey = (RSAPublicKey) keyPair.getPublic();
-            jwk = new RsaWebKey(keyId.toString(), publicKey);
+                SigningKey d = new SigningKey();
+                d.encodedJoseHeader = Base64Url.encodeUsAscii(String.format("{\"alg\":\"%s\",\"kid\":\"%s\"}", "RS256", keyId));
+                d.privateKey = privateKey;
+                signingKeys[i] = d;
+                signingJwks[i] = new RsaWebKey(keyId, publicKey);
+
+            }
 
             final KeyGenerator keyGenerator = KeyGenerator.getInstance("AES");
             keyGenerator.init(128);
             secretKey = keyGenerator.generateKey();
 
-            encodedJoseHeader = Base64Url.encodeUsAscii(String.format("{\"alg\":\"%s\",\"kid\":\"%s\"}", "RS256", keyId));
         } catch (final GeneralSecurityException e) {
             throw new IllegalStateException(e);
         }
         System.out.println("Keys initialized");
-    }
-
-    public JsonWebKey getJwk() {
-
-        return jwk;
-    }
-
-    public String getKid() {
-
-        return keyId.toString();
-    }
-
-    public RSAPrivateKey getPrivateKey() {
-
-        return privateKey;
-    }
-
-    public PublicKey getPublicKey() {
-
-        return publicKey;
     }
 
     public SecretKey getSecretKey() {
@@ -120,17 +116,66 @@ public class DefaultKeyProvider implements KeyProvider{
         return secretKey;
     }
 
+    /**
+     * Signs the content using JWT.
+     */
+    @Override
     public String sign(final byte[] content) throws GeneralSecurityException {
 
-        final StringBuilder b = new StringBuilder(encodedJoseHeader).append('.')
+        SigningKey signingKey = signingKeys[new Random().nextInt() % signingKeys.length];
+        final StringBuilder b = new StringBuilder(signingKey.encodedJoseHeader).append('.')
                 .append(Base64Url.encode(content));
 
         final Signature signature = Signature.getInstance("SHA256withRSA");
-        signature.initSign(privateKey);
+        signature.initSign(signingKey.privateKey);
         signature.update(b.toString()
                 .getBytes());
         return b.append('.')
                 .append(Base64Url.encode(signature.sign()))
                 .toString();
+    }
+
+    /**
+     * Signs the content using JWT.
+     */
+    @Override
+    public String sign(final String content) throws GeneralSecurityException {
+
+        SigningKey signingKey = signingKeys[new Random().nextInt() % signingKeys.length];
+        final StringBuilder b = new StringBuilder(signingKey.encodedJoseHeader).append('.')
+                .append(Base64Url.encode(content));
+
+        final Signature signature = Signature.getInstance("SHA256withRSA");
+        signature.initSign(signingKey.privateKey);
+        signature.update(b.toString()
+                .getBytes());
+        return b.append('.')
+                .append(Base64Url.encode(signature.sign()))
+                .toString();
+    }
+
+    @Override
+    public JsonWebKey[] getSigningKeys() {
+
+        return signingJwks;
+    }
+
+    @Override
+    @Lock(LockType.WRITE)
+    public String nextToken() {
+
+        byte[] randomTokenBytes = new byte[32];
+        random.nextBytes(randomTokenBytes);
+        return Base64Url.encode(randomTokenBytes);
+    }
+
+    @Override
+    public JsonWebKeySet getJwks() {
+
+        final JsonWebKeySet jwks = new JsonWebKeySet();
+        for (final JsonWebKey jwk : getSigningKeys()) {
+            jwks.add(jwk);
+        }
+        return jwks;
     }
 }

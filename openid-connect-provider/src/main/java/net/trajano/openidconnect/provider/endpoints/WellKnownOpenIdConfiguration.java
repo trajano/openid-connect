@@ -2,8 +2,6 @@ package net.trajano.openidconnect.provider.endpoints;
 
 import static java.net.URI.create;
 
-import java.net.URI;
-
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.servlet.ServletRegistration;
@@ -22,10 +20,19 @@ import javax.ws.rs.core.UriBuilder;
 import net.trajano.openidconnect.core.OpenIdProviderConfiguration;
 import net.trajano.openidconnect.provider.internal.HashSet2;
 import net.trajano.openidconnect.provider.internal.ProviderV1;
+import net.trajano.openidconnect.provider.spi.ClientManager;
 import net.trajano.openidconnect.provider.spi.KeyProvider;
 
 @Path("openid-configuration")
 public class WellKnownOpenIdConfiguration {
+
+    private ClientManager clientManager;
+
+    @EJB
+    public void setClientManager(ClientManager clientManager) {
+
+        this.clientManager = clientManager;
+    }
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
@@ -33,16 +40,9 @@ public class WellKnownOpenIdConfiguration {
 
         final OpenIdProviderConfiguration openIdConfiguration = new OpenIdProviderConfiguration();
         // The value will be replaced by replacePath
-        if (issuer == null) {
-            openIdConfiguration.setIssuer(UriBuilder.fromUri(request.getRequestURL()
-                    .toString())
-                    .scheme("https")
-                    .port(-1)
-                    .replacePath("")
-                    .build());
-        } else {
-            openIdConfiguration.setIssuer(issuer);
-        }
+
+        openIdConfiguration.setIssuer(clientManager.getIssuer());
+
         UriBuilder baseUri = UriBuilder.fromUri(create(request.getRequestURL()
                 .toString()));
         openIdConfiguration.setJwksUri(baseUri.replacePath(request.getContextPath() + jwksMapping)
@@ -64,7 +64,7 @@ public class WellKnownOpenIdConfiguration {
 
         return Response.ok(openIdConfiguration)
                 .cacheControl(cacheControl)
-                .tag(keyProvider.getKid())
+                .tag(keyProvider.getSigningKeys()[0].getKid())
                 .build();
 
     }
@@ -85,12 +85,6 @@ public class WellKnownOpenIdConfiguration {
      * Authorization endpoint mapping that is built during {@link #init()}
      */
     private String authorizationMapping;
-
-    /**
-     * Issuer override. If not it will be the URI without the port and the
-     * scheme replaced with HTTPS.
-     */
-    private URI issuer;
 
     /**
      * JWKS URI mapping that is built during {@link #init()}
@@ -127,8 +121,6 @@ public class WellKnownOpenIdConfiguration {
     @PostConstruct
     public void init() {
 
-        System.out.println("post constructing");
-        
         // eventually allow for multiple for now hard code.
         final Class<? extends Application> providerClass = ProviderV1.class;
         String applicationPath = providerClass.getAnnotation(ApplicationPath.class)

@@ -3,6 +3,7 @@ package net.trajano.openidconnect.provider.spi;
 import java.io.IOException;
 
 import javax.ejb.Local;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.Response;
 
@@ -20,7 +21,7 @@ public interface AuthenticationRedirector {
 
     void performRedirect(HttpServletResponse response,
             AuthenticationRequest request,
-            String subject) throws IOException;
+            String subject) throws IOException, ServletException;
 
     Response buildResponse(AuthenticationRequest request,
             String subject);

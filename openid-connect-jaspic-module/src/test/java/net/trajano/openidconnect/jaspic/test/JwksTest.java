@@ -24,8 +24,7 @@ public class JwksTest {
         final MessageBodyReader<JsonWebKeySet> reader = new JsonWebKeySetProvider();
         final JsonWebKeySet jwks = reader.readFrom(JsonWebKeySet.class, JsonWebKeySet.class, null, MediaType.APPLICATION_JSON_TYPE, null, getClass().getResourceAsStream("/googlejwks.json"));
 
-        assertEquals(2, jwks.getKeys()
-                .size());
+        assertEquals(2, jwks.getKeys().length);
         Map<String, Key> keyMap = KeyMapBuilder.build(jwks);
         {
             RSAPublicKey key = (RSAPublicKey) keyMap.get("efe3dae36c5fb10efb2355b31b23ae77a86332dc");

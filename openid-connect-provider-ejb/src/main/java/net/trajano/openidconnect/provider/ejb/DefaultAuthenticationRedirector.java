@@ -2,16 +2,19 @@ package net.trajano.openidconnect.provider.ejb;
 
 import java.io.IOException;
 import java.net.URI;
+import java.security.GeneralSecurityException;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 
 import net.trajano.openidconnect.core.IdToken;
 import net.trajano.openidconnect.core.ResponseType;
-import net.trajano.openidconnect.core.TokenResponse;
+import net.trajano.openidconnect.core.IdTokenResponse;
 import net.trajano.openidconnect.provider.AuthenticationRequest;
 import net.trajano.openidconnect.provider.spi.AuthenticationRedirector;
 import net.trajano.openidconnect.provider.spi.TokenProvider;
@@ -39,13 +42,15 @@ public class DefaultAuthenticationRedirector implements AuthenticationRedirector
      *            redirect URI.
      * @param extraOptions
      *            extra options for building the idtoken
+     * @throws GeneralSecurityException
+     * @throws IOException
      */
     private URI buildAuthorizationResponseUri(final AuthenticationRequest request,
-            final String subject,
-            Object... extraOptions) {
+            final String subject) throws IOException,
+            GeneralSecurityException {
 
-        IdToken idToken = tokenProvider.buildIdToken(subject, extraOptions);
-        final String code = tokenProvider.store(idToken, request.getScopes());
+        IdToken idToken = tokenProvider.buildIdToken(subject);
+        final String code = tokenProvider.store(idToken, request);
 
         final UriBuilder b = UriBuilder.fromUri(request.getRedirectUri());
         if (request.getState() != null) {
@@ -58,12 +63,12 @@ public class DefaultAuthenticationRedirector implements AuthenticationRedirector
         }
 
         boolean implicitFlow = (request.isImplicitFlow());
-        TokenResponse tokenResponse = tokenProvider.getByCode(code, implicitFlow);
+        IdTokenResponse tokenResponse = tokenProvider.getByCode(code, implicitFlow);
         if (request.containsResponseType(ResponseType.id_token)) {
             b.queryParam("id_token", tokenResponse.getEncodedIdToken());
         }
         if (request.containsResponseType(ResponseType.token)) {
-            b.queryParam("token_type", TokenResponse.BEARER);
+            b.queryParam("token_type", IdTokenResponse.BEARER);
             b.queryParam("access_token", tokenResponse.getAccessToken());
         }
         if (request.containsResponseType(ResponseType.code)) {
@@ -87,9 +92,14 @@ public class DefaultAuthenticationRedirector implements AuthenticationRedirector
     @Override
     public void performRedirect(HttpServletResponse response,
             final AuthenticationRequest request,
-            final String subject) throws IOException {
+            final String subject) throws IOException,
+            ServletException {
 
-        response.sendRedirect(buildAuthorizationResponseUri(request, subject).toASCIIString());
+        try {
+            response.sendRedirect(buildAuthorizationResponseUri(request, subject).toASCIIString());
+        } catch (GeneralSecurityException e) {
+            throw new ServletException(e);
+        }
     }
 
     /**
@@ -106,8 +116,12 @@ public class DefaultAuthenticationRedirector implements AuthenticationRedirector
     public Response buildResponse(final AuthenticationRequest request,
             final String subject) {
 
-        return Response.temporaryRedirect(buildAuthorizationResponseUri(request, subject))
-                .build();
+        try {
+            return Response.temporaryRedirect(buildAuthorizationResponseUri(request, subject))
+                    .build();
+        } catch (IOException | GeneralSecurityException e) {
+            throw new WebApplicationException(e);
+        }
     }
 
     @EJB

@@ -1,10 +1,16 @@
 package net.trajano.openidconnect.provider.spi;
 
+import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.util.Set;
 
+import javax.validation.constraints.NotNull;
+
 import net.trajano.openidconnect.core.IdToken;
+import net.trajano.openidconnect.core.IdTokenResponse;
 import net.trajano.openidconnect.core.Scope;
 import net.trajano.openidconnect.core.TokenResponse;
+import net.trajano.openidconnect.provider.AuthenticationRequest;
 
 /**
  * This provides storage and retrieval for the token responses. Implementers
@@ -24,7 +30,7 @@ public interface TokenProvider {
      *            mapping to the token after the call
      * @return
      */
-    TokenResponse getByCode(String code,
+    IdTokenResponse getByCode(String code,
             boolean deleteAfterRetrieval);
 
     /**
@@ -33,12 +39,15 @@ public interface TokenProvider {
      * 
      * @param idToken
      *            idToken
-     * @param scope
-     *            scopes requested
+     * @param req
+     *            Authentication request
      * @return authorization code to retrieve the token data.
+     * @throws IOException
+     * @throws GeneralSecurityException
      */
     String store(IdToken idToken,
-            Set<Scope> scopes);
+            AuthenticationRequest req) throws IOException,
+            GeneralSecurityException;
 
     /**
      * Builds an {@link IdToken} for the subject . Extra implementation specific
@@ -47,12 +56,9 @@ public interface TokenProvider {
      * 
      * @param subject
      *            subject
-     * @param extraOptions
-     *            extra options
      * @return authorization code
      */
-    IdToken buildIdToken(String subject,
-            Object... extraOptions);
+    IdToken buildIdToken(String subject);
 
     /**
      * Gets the token data by access token. This may return null if there is no
@@ -62,5 +68,23 @@ public interface TokenProvider {
      *            access token.
      * @return token response data
      */
-    TokenResponse getByAccessToken(String accessToken);
+    IdTokenResponse getByAccessToken(String accessToken);
+
+    /**
+     * @param clientId
+     * @param refreshToken
+     * @param scopes
+     *            this may be null in which case the original scope is used, but
+     *            can be used to reduce the scope after refresh.
+     * @param expiresIn
+     *            time in seconds of how long the new token will expire this
+     *            will also reissue the ID token.
+     * @return
+     * @throws GeneralSecurityException 
+     * @throws IOException 
+     */
+    TokenResponse refreshToken(@NotNull String clientId,
+            @NotNull String refreshToken,
+            Set<Scope> scopes,
+            int expiresIn) throws IOException, GeneralSecurityException;
 }

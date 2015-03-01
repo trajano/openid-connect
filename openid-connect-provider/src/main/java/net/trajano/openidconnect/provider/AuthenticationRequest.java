@@ -66,27 +66,31 @@ public class AuthenticationRequest {
         redirectUri = URI.create(req.getParameter(AuthenticationRequestParam.REDIRECT_URI));
         state = req.getParameter(AuthenticationRequestParam.STATE);
         nonce = req.getParameter(AuthenticationRequestParam.NONCE);
-        if (req.getParameter(AuthenticationRequestParam.DISPLAY) != null) {
+        if (req.getParameter(AuthenticationRequestParam.DISPLAY) != null && !req.getParameter(AuthenticationRequestParam.DISPLAY)
+                .isEmpty()) {
             display = AuthenticationRequestParam.Display.valueOf(req.getParameter(AuthenticationRequestParam.DISPLAY));
         } else {
             display = null;
         }
         prompts = new HashSet<>();
 
-        if (req.getParameter(AuthenticationRequestParam.PROMPT) != null) {
+        if (req.getParameter(AuthenticationRequestParam.PROMPT) != null && !req.getParameter(AuthenticationRequestParam.PROMPT)
+                .isEmpty()) {
             for (final String prompt : req.getParameter(AuthenticationRequestParam.PROMPT)
                     .split("\\s")) {
                 prompts.add(AuthenticationRequestParam.Prompt.valueOf(prompt));
             }
         }
 
-        if (req.getParameter(AuthenticationRequestParam.MAX_AGE) != null) {
+        if (req.getParameter(AuthenticationRequestParam.MAX_AGE) != null && !req.getParameter(AuthenticationRequestParam.MAX_AGE)
+                .isEmpty()) {
             maxAge = Integer.valueOf(req.getParameter(AuthenticationRequestParam.MAX_AGE));
         } else {
             maxAge = null;
         }
         uiLocales = new ArrayList<>();
-        if (req.getParameter(AuthenticationRequestParam.UI_LOCALES) != null) {
+        if (req.getParameter(AuthenticationRequestParam.UI_LOCALES) != null && !req.getParameter(AuthenticationRequestParam.UI_LOCALES)
+                .isEmpty()) {
             for (final String uiLocale : req.getParameter(AuthenticationRequestParam.UI_LOCALES)
                     .split("\\s")) {
                 uiLocales.add(new Locale(uiLocale));
@@ -94,7 +98,8 @@ public class AuthenticationRequest {
         }
         idTokenHint = req.getParameter(AuthenticationRequestParam.ID_TOKEN_HINT);
         loginHint = req.getParameter(AuthenticationRequestParam.LOGIN_HINT);
-        if (req.getParameter(AuthenticationRequestParam.ACR_VALUES) != null) {
+        if (req.getParameter(AuthenticationRequestParam.ACR_VALUES) != null && !req.getParameter(AuthenticationRequestParam.ACR_VALUES)
+                .isEmpty()) {
             acrValues = new HashSet<>(Arrays.asList(req.getParameter(AuthenticationRequestParam.ACR_VALUES)
                     .split("\\s")));
         } else {

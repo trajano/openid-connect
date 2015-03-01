@@ -8,7 +8,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
-import net.trajano.openidconnect.core.TokenResponse;
+import net.trajano.openidconnect.core.IdTokenResponse;
 import net.trajano.openidconnect.provider.internal.BearerTokenProcessor;
 import net.trajano.openidconnect.provider.spi.UserinfoProvider;
 
@@ -76,7 +76,7 @@ public class UserinfoEndpoint {
     @POST
     public Response op(@Context HttpServletRequest req) {
 
-        TokenResponse tokenResponse = bearerTokenProcessor.getToken(req);
+        IdTokenResponse tokenResponse = bearerTokenProcessor.getToken(req);
         return Response.ok(userinfoProvider.getUserinfo(tokenResponse))
                 .build();
     }

@@ -1,38 +1,35 @@
 package net.trajano.openidconnect.sample;
 
 import java.io.IOException;
-import java.util.Date;
 
-import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
-import javax.ejb.Stateless;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import net.trajano.openidconnect.provider.spi.KeyProvider;
+import net.trajano.openidconnect.provider.AuthenticationRequest;
+import net.trajano.openidconnect.provider.spi.AuthenticationRedirector;
 
-@WebServlet(urlPatterns = "/login", loadOnStartup = 1)
-@Stateless
+@WebServlet(urlPatterns = "/doLogin", loadOnStartup = 1)
 public class LoginServlet extends HttpServlet {
 
-    @EJB
-    KeyProvider p;
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -1296536605271663835L;
 
     @Override
-    protected void doGet(HttpServletRequest req,
+    protected void doPost(HttpServletRequest req,
             HttpServletResponse resp) throws ServletException,
             IOException {
 
-        resp.getWriter()
-                .print("hello world at " + new Date());
+        String subject = req.getParameter("username");
+        System.out.println("got subject " + subject);
+        redirector.performRedirect(resp, new AuthenticationRequest(req), subject);
     }
 
-    @PostConstruct
-    public void init2() {
-
-        System.out.println("init 2 " + p);
-    }
+    @EJB
+    AuthenticationRedirector redirector;
 }

@@ -21,6 +21,8 @@ import javax.ws.rs.core.UriBuilder;
 import net.trajano.openidconnect.core.AuthenticationErrorResponseParam;
 import net.trajano.openidconnect.core.AuthenticationErrorResponseParam.ErrorCode;
 import net.trajano.openidconnect.core.AuthenticationRequestParam;
+import net.trajano.openidconnect.core.AuthenticationRequestParam.Display;
+import net.trajano.openidconnect.core.AuthenticationRequestParam.Prompt;
 import net.trajano.openidconnect.core.Scope;
 import net.trajano.openidconnect.provider.AuthenticationRequest;
 import net.trajano.openidconnect.provider.spi.Authenticator;
@@ -74,12 +76,23 @@ public class AuthorizationEndpoint {
      * @return
      */
     @GET
-    public Response getOp(@QueryParam(AuthenticationRequestParam.SCOPE) @NotNull final String scope,
+    public Response getOp(@QueryParam(AuthenticationRequestParam.ACR_VALUES) final String acrValues,
             @QueryParam(AuthenticationRequestParam.CLIENT_ID) @NotNull final String clientId,
+            @QueryParam(AuthenticationRequestParam.DISPLAY) final Display display,
+            @QueryParam(AuthenticationRequestParam.ID_TOKEN_HINT) final String idTokenHint,
+            @QueryParam(AuthenticationRequestParam.LOGIN_HINT) final String loginHint,
+            @QueryParam(AuthenticationRequestParam.MAX_AGE) final Integer maxAge,
+            @QueryParam(AuthenticationRequestParam.NONCE) final String nonce,
+            @QueryParam(AuthenticationRequestParam.PROMPT) final Prompt prompt,
             @QueryParam(AuthenticationRequestParam.REDIRECT_URI) @NotNull final URI redirectUri,
+            @QueryParam(AuthenticationRequestParam.RESPONSE_MODE) final String responseMode,
+            @QueryParam(AuthenticationRequestParam.RESPONSE_TYPE) @NotNull final String responseType,
+            @QueryParam(AuthenticationRequestParam.SCOPE) @NotNull final String scope,
+            @QueryParam(AuthenticationRequestParam.STATE) final String state,
+            @QueryParam(AuthenticationRequestParam.UI_LOCALES) final String uiLocales,
             @Context final HttpServletRequest req) {
 
-        return op(scope, clientId, redirectUri, req);
+        return op(acrValues, clientId, display, idTokenHint, loginHint, maxAge, nonce, prompt, redirectUri, responseMode, responseType, scope, state, uiLocales, req);
     }
 
     /**
@@ -99,13 +112,23 @@ public class AuthorizationEndpoint {
      */
     @POST
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-    public Response op(@FormParam(AuthenticationRequestParam.SCOPE) @NotNull final String scope,
+    public Response op(@FormParam(AuthenticationRequestParam.ACR_VALUES) final String acrValues,
             @FormParam(AuthenticationRequestParam.CLIENT_ID) @NotNull final String clientId,
+            @FormParam(AuthenticationRequestParam.DISPLAY) final Display display,
+            @FormParam(AuthenticationRequestParam.ID_TOKEN_HINT) final String idTokenHint,
+            @FormParam(AuthenticationRequestParam.LOGIN_HINT) final String loginHint,
+            @FormParam(AuthenticationRequestParam.MAX_AGE) final Integer maxAge,
+            @FormParam(AuthenticationRequestParam.NONCE) final String nonce,
+            @FormParam(AuthenticationRequestParam.PROMPT) final Prompt prompt,
             @FormParam(AuthenticationRequestParam.REDIRECT_URI) @NotNull final URI redirectUri,
+            @FormParam(AuthenticationRequestParam.RESPONSE_MODE) final String responseMode,
+            @FormParam(AuthenticationRequestParam.RESPONSE_TYPE) @NotNull final String responseType,
+            @FormParam(AuthenticationRequestParam.SCOPE) @NotNull final String scope,
+            @FormParam(AuthenticationRequestParam.STATE) final String state,
+            @FormParam(AuthenticationRequestParam.UI_LOCALES) final String uiLocales,
             @Context final HttpServletRequest req) {
 
         final AuthenticationRequest authenticationRequest = new AuthenticationRequest(req);
-        System.out.println("here" + authenticator + " " + clientManager);
 
         if (!clientManager.isRedirectUriValidForClient(authenticationRequest.getClientId(), authenticationRequest.getRedirectUri())) {
             throw new WebApplicationException("redirect URI is not supported for the client", Status.BAD_REQUEST);
@@ -133,9 +156,47 @@ public class AuthorizationEndpoint {
         }
 
         if (!authenticator.isAuthenticated(authenticationRequest, req)) {
-            return Response.temporaryRedirect(authenticator.authenticate(authenticationRequest, req, UriBuilder.fromUri(req.getRequestURL()
+            final UriBuilder uriBuilder = UriBuilder.fromUri(req.getRequestURL()
                     .toString())
-                    .replacePath(req.getContextPath())))
+                    .replacePath(req.getContextPath())
+                    .queryParam("client_id", clientId)
+                    .queryParam("redirect_uri", redirectUri)
+                    .queryParam("scope", scope)
+                    .queryParam("response_type", responseType);
+            if (acrValues != null) {
+                uriBuilder.queryParam("acr_values", acrValues);
+            }
+
+            if (display != null) {
+                uriBuilder.queryParam("display", display);
+            }
+            if (idTokenHint != null) {
+                uriBuilder.queryParam("id_token_hint", idTokenHint);
+            }
+            if (loginHint != null) {
+                uriBuilder.queryParam("login_hint", loginHint);
+            }
+            if (maxAge != null) {
+                uriBuilder.queryParam("max_age", maxAge);
+            }
+            if (nonce != null) {
+                uriBuilder.queryParam("nonce", nonce);
+            }
+            if (prompt != null) {
+                uriBuilder.queryParam("prompt", prompt);
+            }
+
+            if (responseMode != null) {
+                uriBuilder.queryParam("response_mode", responseMode);
+            }
+
+            if (state != null) {
+                uriBuilder.queryParam("state", state);
+            }
+            if (uiLocales != null) {
+                uriBuilder.queryParam("ui_locales", uiLocales);
+            }
+            return Response.temporaryRedirect(authenticator.authenticate(authenticationRequest, req, uriBuilder))
                     .build();
         }
 

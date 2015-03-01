@@ -291,4 +291,16 @@ public class IdToken {
 
         this.sub = sub;
     }
+
+    /**
+     * Sets the Issuing time and the expiration values based on the current time
+     * and expiration specified.
+     * 
+     * @param expirationInSeconds
+     */
+    public void resetTimeAndExpiration(int expirationInSeconds) {
+
+        iat = System.currentTimeMillis() / 1000;
+        exp = iat + expirationInSeconds;
+    }
 }

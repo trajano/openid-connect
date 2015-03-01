@@ -8,7 +8,6 @@ import javax.ws.rs.core.CacheControl;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import net.trajano.openidconnect.crypto.JsonWebKeySet;
 import net.trajano.openidconnect.provider.spi.KeyProvider;
 
 /**
@@ -28,12 +27,6 @@ import net.trajano.openidconnect.provider.spi.KeyProvider;
  */
 @Path("jwks")
 public class Jwks {
-
-    @EJB
-    public void setKeyProvider(KeyProvider keyProvider) {
-
-        this.keyProvider = keyProvider;
-    }
 
     private KeyProvider keyProvider;
 
@@ -56,17 +49,21 @@ public class Jwks {
     @Produces(MediaType.APPLICATION_JSON)
     public Response op() {
 
-        JsonWebKeySet jwks = new JsonWebKeySet();
-        jwks.add(keyProvider.getJwk());
 
-        CacheControl cacheControl = new CacheControl();
+        final CacheControl cacheControl = new CacheControl();
         cacheControl.setPrivate(false);
         cacheControl.setMaxAge(300);
 
-        return Response.ok(jwks)
+        return Response.ok(keyProvider.getJwks())
                 .cacheControl(cacheControl)
-                .tag(keyProvider.getKid())
+                .tag(keyProvider.getSigningKeys()[0].getKid())
                 .build();
+    }
+
+    @EJB
+    public void setKeyProvider(final KeyProvider keyProvider) {
+
+        this.keyProvider = keyProvider;
     }
 
 }

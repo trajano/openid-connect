@@ -2,11 +2,9 @@ package net.trajano.openidconnect.crypto;
 
 import java.io.ByteArrayInputStream;
 import java.security.GeneralSecurityException;
-import java.security.Key;
 import java.security.PublicKey;
 import java.security.Signature;
 import java.security.SignatureException;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -46,7 +44,7 @@ public class JwtUtil {
      *             problem with crypto APIs or signature was not valid
      */
     public static byte[] getJwsPayload(final String serialization,
-            final Map<String, Key> keyMap) throws GeneralSecurityException {
+            final JsonWebKeySet jwks) throws GeneralSecurityException {
 
         if (LOG.isLoggable(Level.FINEST)) {
             LOG.finest("serialized payload = " + serialization);
@@ -57,7 +55,7 @@ public class JwtUtil {
                 .readObject();
 
         // Handle plaintext JWTs
-        if (keyMap == null || !"none".equals(joseHeader.getString("alg"))) {
+        if (jwks == null || !"none".equals(joseHeader.getString("alg"))) {
 
             final String kid;
             if (joseHeader.containsKey("kid")) {
@@ -65,7 +63,8 @@ public class JwtUtil {
             } else {
                 kid = "";
             }
-            final PublicKey signingKey = (PublicKey) keyMap.get(kid);
+
+            final PublicKey signingKey = (PublicKey) jwks.getKey(kid);
 
             if (signingKey == null) {
                 throw new GeneralSecurityException("No key with id " + kid + " defined");

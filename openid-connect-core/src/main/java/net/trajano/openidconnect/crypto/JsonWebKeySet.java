@@ -1,8 +1,9 @@
 package net.trajano.openidconnect.crypto;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.security.GeneralSecurityException;
+import java.security.Key;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -10,19 +11,26 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
-@XmlAccessorType(XmlAccessType.FIELD)
+@XmlAccessorType(XmlAccessType.NONE)
 public class JsonWebKeySet {
 
-    @XmlElement(required = true)
-    private final Set<JsonWebKey> keys = new HashSet<>();
+    private final Map<String, JsonWebKey> keys = new HashMap<>();
 
     public void add(final JsonWebKey jwk) {
 
-        keys.add(jwk);
+        keys.put(jwk.getKid(), jwk);
     }
 
-    public Set<JsonWebKey> getKeys() {
+    @XmlElement(name = "keys", required = true)
+    public JsonWebKey[] getKeys() {
 
-        return Collections.unmodifiableSet(keys);
+        return keys.values()
+                .toArray(new JsonWebKey[0]);
+    }
+
+    public Key getKey(String kid) throws GeneralSecurityException {
+
+        JsonWebKey jwk = keys.get(kid);
+        return jwk.toJcaKey();
     }
 }

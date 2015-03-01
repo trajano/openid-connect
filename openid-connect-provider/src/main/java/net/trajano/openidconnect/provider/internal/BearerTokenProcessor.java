@@ -3,12 +3,12 @@ package net.trajano.openidconnect.provider.internal;
 import javax.ejb.Local;
 import javax.servlet.http.HttpServletRequest;
 
-import net.trajano.openidconnect.core.TokenResponse;
+import net.trajano.openidconnect.core.IdTokenResponse;
 
 @Local
 public interface BearerTokenProcessor {
 
-    TokenResponse getToken(HttpServletRequest req);
+    IdTokenResponse getToken(HttpServletRequest req);
 
     String validateAndGetClientId(HttpServletRequest request);
 

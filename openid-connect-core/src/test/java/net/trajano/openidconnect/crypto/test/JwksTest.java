@@ -29,8 +29,7 @@ public class JwksTest {
         final MessageBodyReader<JsonWebKeySet> reader = new JsonWebKeySetProvider();
         final JsonWebKeySet jwks = reader.readFrom(JsonWebKeySet.class, JsonWebKeySet.class, null, MediaType.APPLICATION_JSON_TYPE, null, getClass().getResourceAsStream("/googlejwks.json"));
 
-        final JsonWebKey[] keys = jwks.getKeys()
-                .toArray(new JsonWebKey[0]);
+        final JsonWebKey[] keys = jwks.getKeys();
         assertEquals(2, keys.length);
         assertEquals(JsonWebAlgorithm.RS256, keys[0].getAlg());
         assertEquals(JsonWebAlgorithm.RS256, keys[1].getAlg());
@@ -46,8 +45,7 @@ public class JwksTest {
         final MessageBodyReader<JsonWebKeySet> reader = new JsonWebKeySetProvider();
         final JsonWebKeySet jwks = reader.readFrom(JsonWebKeySet.class, JsonWebKeySet.class, null, MediaType.APPLICATION_JSON_TYPE, null, getClass().getResourceAsStream("/googlejwks.json"));
 
-        final JsonWebKey[] keys = jwks.getKeys()
-                .toArray(new JsonWebKey[0]);
+        final JsonWebKey[] keys = jwks.getKeys();
         assertEquals(2, keys.length);
         assertEquals(JsonWebAlgorithm.RS256, keys[0].getAlg());
         assertEquals(JsonWebAlgorithm.RS256, keys[1].getAlg());

@@ -31,9 +31,9 @@ public interface ClientManager {
             String clientSecret);
 
     /**
-     * A string representing the realm used by clients.
+     * The issuer URI.  This is also used as the realm.
      * 
      * @return
      */
-    String getRealmName();
+    URI getIssuer();
 }

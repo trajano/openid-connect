@@ -4,7 +4,7 @@ import javax.ejb.Stateless;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.BadRequestException;
 
-import net.trajano.openidconnect.core.TokenResponse;
+import net.trajano.openidconnect.core.IdTokenResponse;
 import net.trajano.openidconnect.crypto.Base64Url;
 import net.trajano.openidconnect.provider.BearerTokenException;
 import net.trajano.openidconnect.provider.internal.BearerTokenProcessor;
@@ -71,7 +71,7 @@ public class DefaultBearerTokenProcessor implements BearerTokenProcessor {
     }
 
     @Override
-    public TokenResponse getToken(HttpServletRequest request) {
+    public IdTokenResponse getToken(HttpServletRequest request) {
 
         final String accessToken = getEncodedToken(request);
         return idtokenProvider.getByAccessToken(accessToken);
