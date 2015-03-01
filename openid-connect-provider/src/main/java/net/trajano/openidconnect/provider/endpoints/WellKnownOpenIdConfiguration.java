@@ -7,11 +7,9 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.servlet.ServletRegistration;
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
-import javax.ws.rs.core.Application;
 import javax.ws.rs.core.CacheControl;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
@@ -20,7 +18,6 @@ import javax.ws.rs.core.UriBuilder;
 
 import net.trajano.openidconnect.core.OpenIdProviderConfiguration;
 import net.trajano.openidconnect.provider.internal.HashSet2;
-import net.trajano.openidconnect.provider.internal.ProviderV1;
 import net.trajano.openidconnect.provider.spi.ClientManager;
 import net.trajano.openidconnect.provider.spi.KeyProvider;
 
@@ -122,9 +119,7 @@ public class WellKnownOpenIdConfiguration {
     public void init() {
 
         // eventually allow for multiple for now hard code.
-        final Class<? extends Application> providerClass = ProviderV1.class;
-        String applicationPath = providerClass.getAnnotation(ApplicationPath.class)
-                .value();
+        String applicationPath = "V1";
         if (!applicationPath.startsWith("/")) {
             applicationPath = "/" + applicationPath;
         }
