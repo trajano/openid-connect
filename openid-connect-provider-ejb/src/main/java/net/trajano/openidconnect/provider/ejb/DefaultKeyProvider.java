@@ -79,7 +79,7 @@ public class DefaultKeyProvider implements KeyProvider {
     public void generateKeys() {
 
         try {
-            random = SecureRandom.getInstanceStrong();
+            random = new SecureRandom();
 
             signingJwks = new JsonWebKey[NUMBER_OF_SIGNING_KEYS];
             signingKeys = new SigningKey[NUMBER_OF_SIGNING_KEYS];
