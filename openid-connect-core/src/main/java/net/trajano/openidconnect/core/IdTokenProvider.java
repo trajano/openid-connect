@@ -88,14 +88,21 @@ public class IdTokenProvider implements MessageBodyReader<IdToken>, MessageBodyW
             WebApplicationException {
 
         final JsonObjectBuilder b = Json.createObjectBuilder();
-        b.add("acr", idToken.getAcr());
-        b.add("amr", idToken.getAmr());
-        b.add("aud", idToken.getAud());
-        b.add("auth_time", idToken.getAuthTime());
-        b.add("azp", idToken.getAzp());
-        b.add("iat", idToken.getIat());
+        if (idToken.getAcr() != null)
+            b.add("acr", idToken.getAcr());
+        if (idToken.getAmr() != null)
+            b.add("amr", idToken.getAmr());
+        if (idToken.getAud() != null)
+            b.add("aud", idToken.getAud());
+        if (idToken.getAuthTime() != 0)
+            b.add("auth_time", idToken.getAuthTime());
+        if (idToken.getAzp() != null)
+            b.add("azp", idToken.getAzp());
+        if (idToken.getIat() != 0)
+            b.add("iat", idToken.getIat());
         b.add("iss", idToken.getIss());
-        b.add("nonce", idToken.getNonce());
+        if (idToken.getNonce() != null)
+            b.add("nonce", idToken.getNonce());
         b.add("sub", idToken.getSub());
 
         final JsonWriter w = Json.createWriter(os);

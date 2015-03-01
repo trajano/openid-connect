@@ -21,6 +21,16 @@ public class LoginServlet extends HttpServlet {
     private static final long serialVersionUID = -1296536605271663835L;
 
     @Override
+    protected void doGet(HttpServletRequest req,
+            HttpServletResponse resp) throws ServletException,
+            IOException {
+
+        resp.getWriter()
+                .print(redirector);
+
+    }
+
+    @Override
     protected void doPost(HttpServletRequest req,
             HttpServletResponse resp) throws ServletException,
             IOException {
@@ -31,5 +41,5 @@ public class LoginServlet extends HttpServlet {
     }
 
     @EJB
-    AuthenticationRedirector redirector;
+    private AuthenticationRedirector redirector;
 }

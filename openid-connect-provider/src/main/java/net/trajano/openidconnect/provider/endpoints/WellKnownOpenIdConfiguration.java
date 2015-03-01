@@ -39,8 +39,6 @@ public class WellKnownOpenIdConfiguration {
     public Response op(@Context HttpServletRequest request) {
 
         final OpenIdProviderConfiguration openIdConfiguration = new OpenIdProviderConfiguration();
-        // The value will be replaced by replacePath
-
         openIdConfiguration.setIssuer(clientManager.getIssuer());
 
         UriBuilder baseUri = UriBuilder.fromUri(create(request.getRequestURL()
@@ -134,6 +132,8 @@ public class WellKnownOpenIdConfiguration {
         userinfoMapping = applicationPath + "/profile";
         revocationMapping = applicationPath + "/revocation";
 
+        System.out.println("CM = " + clientManager);
+        System.out.println("KP = " + keyProvider);
     }
 
 }

@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.ejb.Lock;
 import javax.ejb.LockType;
@@ -198,5 +199,11 @@ public class AcceptAllClientManager implements ClientManager, Authenticator, Use
         response.setAccessToken(idTokenResponse.getAccessToken());
         response.setExpiresIn(expiresIn);
         return null;
+    }
+
+    @PostConstruct
+    public void init() {
+
+        System.out.println("!!!! OUT!!!!");
     }
 }

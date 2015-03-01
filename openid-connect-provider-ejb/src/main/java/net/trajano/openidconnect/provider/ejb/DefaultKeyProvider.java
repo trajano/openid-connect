@@ -122,7 +122,7 @@ public class DefaultKeyProvider implements KeyProvider {
     @Override
     public String sign(final byte[] content) throws GeneralSecurityException {
 
-        SigningKey signingKey = signingKeys[new Random().nextInt() % signingKeys.length];
+        SigningKey signingKey = signingKeys[random.nextInt(signingKeys.length)];
         final StringBuilder b = new StringBuilder(signingKey.encodedJoseHeader).append('.')
                 .append(Base64Url.encode(content));
 

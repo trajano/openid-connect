@@ -2,6 +2,7 @@ package net.trajano.openidconnect.provider.internal;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Set;
 
 /**
  * A {@link HashSet} that allows initialization by array.
@@ -9,7 +10,7 @@ import java.util.HashSet;
  * @author Archimedes
  * @param <T>
  */
-public class HashSet2<T> extends HashSet<T> {
+public class HashSet2<T> extends HashSet<T> implements Set<T> {
 
     /**
      * 
