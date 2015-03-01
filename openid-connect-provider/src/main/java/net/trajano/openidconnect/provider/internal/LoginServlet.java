@@ -1,4 +1,4 @@
-package net.trajano.openidconnect.sample;
+package net.trajano.openidconnect.provider.internal;
 
 import java.io.IOException;
 
@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import net.trajano.openidconnect.provider.spi.AuthenticationRedirector;
 import net.trajano.openidconnect.provider.spi.AuthenticationRequest;
 
-@WebServlet(urlPatterns = "/doLogin", loadOnStartup = 1)
+@WebServlet(urlPatterns = "/doLogin2", loadOnStartup = 1)
 @Stateless
 public class LoginServlet extends HttpServlet {
 
@@ -28,7 +28,7 @@ public class LoginServlet extends HttpServlet {
             IOException {
 
         resp.getWriter()
-                .print(redirector);
+                .print("RR" + redirector);
 
     }
 
