@@ -3,23 +3,22 @@
 	xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
 	version="3.1" metadata-complete="false">
 	<distributable />
-	<context-param>
-		<param-name>client_id</param-name>
-		<param-value>FOO</param-value>
-	</context-param>
-	<context-param>
-		<param-name>client_secret</param-name>
-		<param-value>BAR</param-value>
-	</context-param>
-	<context-param>
-		<param-name>disable_certificate_checks</param-name>
-		<param-value>true</param-value>
-	</context-param>
-	<context-param>
-		<param-name>issuer_uri</param-name>
-		<param-value>https://localhost:8181</param-value>
-	</context-param>
-
+	<env-entry>
+		<env-entry-name>net.trajano.openidconnect.jaspic/client_id</env-entry-name>
+		<env-entry-value>sample_client_id</env-entry-value>
+	</env-entry>
+	<env-entry>
+		<env-entry-name>net.trajano.openidconnect.jaspic/client_secret</env-entry-name>
+		<env-entry-value>sample_client_secret</env-entry-value>
+	</env-entry>
+	<env-entry>
+		<env-entry-name>net.trajano.openidconnect.jaspic/disable_certificate_checks</env-entry-name>
+		<env-entry-value>true</env-entry-value>
+	</env-entry>
+	<env-entry>
+		<env-entry-name>net.trajano.openidconnect.jaspic/issuer_uri</env-entry-name>
+		<env-entry-value>https://localhost:8181</env-entry-value>
+	</env-entry>
 	<session-config>
 		<session-timeout>1</session-timeout>
 		<cookie-config>
