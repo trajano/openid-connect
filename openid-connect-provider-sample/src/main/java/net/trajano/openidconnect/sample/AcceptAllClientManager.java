@@ -21,12 +21,12 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriBuilder;
 
+import net.trajano.openidconnect.core.AuthenticationRequest;
 import net.trajano.openidconnect.core.IdToken;
 import net.trajano.openidconnect.core.IdTokenResponse;
 import net.trajano.openidconnect.core.Scope;
 import net.trajano.openidconnect.core.TokenResponse;
 import net.trajano.openidconnect.core.Userinfo;
-import net.trajano.openidconnect.provider.spi.AuthenticationRequest;
 import net.trajano.openidconnect.provider.spi.Authenticator;
 import net.trajano.openidconnect.provider.spi.ClientManager;
 import net.trajano.openidconnect.provider.spi.KeyProvider;

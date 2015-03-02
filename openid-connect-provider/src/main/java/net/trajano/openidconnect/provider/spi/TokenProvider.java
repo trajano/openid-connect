@@ -7,6 +7,7 @@ import java.util.Set;
 
 import javax.validation.constraints.NotNull;
 
+import net.trajano.openidconnect.core.AuthenticationRequest;
 import net.trajano.openidconnect.core.IdToken;
 import net.trajano.openidconnect.core.IdTokenResponse;
 import net.trajano.openidconnect.core.Scope;

@@ -1,4 +1,4 @@
-package net.trajano.openidconnect.provider.spi;
+package net.trajano.openidconnect.core;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -10,10 +10,6 @@ import java.util.Locale;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
-
-import net.trajano.openidconnect.core.AuthenticationRequestParam;
-import net.trajano.openidconnect.core.ResponseType;
-import net.trajano.openidconnect.core.Scope;
 
 /**
  * Wraps an HttpServletRequest to provide a cleaner API to the request

@@ -15,36 +15,41 @@ public class InvalidClientException extends NotAuthorizedException {
 
     private static final String WWW_AUTHENTICATE = "WWW-Authenticate";
 
-    public InvalidClientException() {
+    /**
+     * 
+     * @param type authorization type (e.g. Bearer or Basic)
+     */
+    public InvalidClientException(String type) {
 
         super(Response.noContent()
-                .header(WWW_AUTHENTICATE, buildWwwAuthenticateHeader(null, null))
+                .header(WWW_AUTHENTICATE, buildWwwAuthenticateHeader(type, null, null))
                 .status(Status.UNAUTHORIZED)
                 .build());
     }
 
-    public InvalidClientException(String errorDescription) {
+    public InvalidClientException(String type, String errorDescription) {
 
         super(Response.noContent()
-                .header(WWW_AUTHENTICATE, buildWwwAuthenticateHeader(errorDescription, null))
-                .status(Status.UNAUTHORIZED)
-                .build());
-
-    }
-
-    public InvalidClientException(String errorDescription, URI errorUri) {
-
-        super(Response.noContent()
-                .header(WWW_AUTHENTICATE, buildWwwAuthenticateHeader(errorDescription, errorUri))
+                .header(WWW_AUTHENTICATE, buildWwwAuthenticateHeader(type, errorDescription, null))
                 .status(Status.UNAUTHORIZED)
                 .build());
 
     }
 
-    private static String buildWwwAuthenticateHeader(String errorDescription,
+    public InvalidClientException(String type, String errorDescription, URI errorUri) {
+
+        super(Response.noContent()
+                .header(WWW_AUTHENTICATE, buildWwwAuthenticateHeader(type, errorDescription, errorUri))
+                .status(Status.UNAUTHORIZED)
+                .build());
+
+    }
+
+    private static String buildWwwAuthenticateHeader(String type,
+            String errorDescription,
             URI errorUri) {
 
-        StringBuilder b = new StringBuilder("error=\"invalid_client\"");
+        StringBuilder b = new StringBuilder(type).append(" error=\"invalid_client\"");
         if (errorDescription != null) {
             b.append("error_description=\"");
             b.append(errorDescription);

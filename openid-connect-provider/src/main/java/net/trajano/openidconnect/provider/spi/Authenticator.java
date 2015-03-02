@@ -8,6 +8,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.UriBuilder;
 
+import net.trajano.openidconnect.core.AuthenticationRequest;
 import net.trajano.openidconnect.core.Scope;
 
 public interface Authenticator {

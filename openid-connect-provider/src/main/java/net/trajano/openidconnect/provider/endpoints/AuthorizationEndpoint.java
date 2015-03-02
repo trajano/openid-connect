@@ -18,13 +18,16 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriBuilder;
 
-import net.trajano.openidconnect.core.AuthenticationErrorResponseParam;
-import net.trajano.openidconnect.core.AuthenticationErrorResponseParam.ErrorCode;
+import net.trajano.openidconnect.core.AuthenticationErrorCode;
+import net.trajano.openidconnect.core.AuthenticationException;
+import net.trajano.openidconnect.core.AuthenticationRequest;
 import net.trajano.openidconnect.core.AuthenticationRequestParam;
 import net.trajano.openidconnect.core.AuthenticationRequestParam.Display;
 import net.trajano.openidconnect.core.AuthenticationRequestParam.Prompt;
+import net.trajano.openidconnect.core.OAuthException;
 import net.trajano.openidconnect.core.Scope;
-import net.trajano.openidconnect.provider.spi.AuthenticationRequest;
+import net.trajano.openidconnect.core.SslRequiredException;
+import net.trajano.openidconnect.core.TokenErrorCode;
 import net.trajano.openidconnect.provider.spi.Authenticator;
 import net.trajano.openidconnect.provider.spi.ClientManager;
 
@@ -49,22 +52,6 @@ public class AuthorizationEndpoint {
     private Authenticator authenticator;
 
     private ClientManager clientManager;
-
-    private Response createError(final AuthenticationRequest authenticationRequest,
-            final ErrorCode errorCode,
-            final String errorDescription) {
-
-        final UriBuilder errorUri = UriBuilder.fromUri(authenticationRequest.getRedirectUri())
-                .queryParam(AuthenticationErrorResponseParam.ERROR, errorCode);
-        if (errorDescription != null) {
-            errorUri.queryParam(AuthenticationErrorResponseParam.ERROR_DESCRIPTION, errorDescription);
-        }
-        if (authenticationRequest.getState() != null) {
-            errorUri.queryParam(AuthenticationErrorResponseParam.STATE, errorDescription);
-        }
-        return Response.temporaryRedirect(errorUri.build())
-                .build();
-    }
 
     /**
      * <a href=
@@ -131,38 +118,39 @@ public class AuthorizationEndpoint {
         final AuthenticationRequest authenticationRequest = new AuthenticationRequest(req);
 
         if (!clientManager.isRedirectUriValidForClient(authenticationRequest.getClientId(), authenticationRequest.getRedirectUri())) {
-            throw new WebApplicationException("redirect URI is not supported for the client", Status.BAD_REQUEST);
+            throw new OAuthException(TokenErrorCode.invalid_grant, "redirect URI is not supported for the client");
         }
 
         if (!req.isSecure()) {
-            return createError(authenticationRequest, AuthenticationErrorResponseParam.ErrorCode.invalid_request, "secure connection required");
+            throw new SslRequiredException();
         }
 
         if (!authenticationRequest.getScopes()
                 .contains(Scope.openid)) {
-            return createError(authenticationRequest, AuthenticationErrorResponseParam.ErrorCode.invalid_request, "the request must contain the 'openid' scope value");
+            throw new AuthenticationException(authenticationRequest, AuthenticationErrorCode.invalid_request, "the request must contain the 'openid' scope value");
         }
 
         if (authenticationRequest.getPrompts()
                 .contains(AuthenticationRequestParam.Prompt.none) && authenticationRequest.getPrompts()
                 .size() != 1) {
-            return createError(authenticationRequest, AuthenticationErrorResponseParam.ErrorCode.invalid_request, "Cannot have 'none' with any other value for 'prompt'");
+            throw new AuthenticationException(authenticationRequest, AuthenticationErrorCode.invalid_request, "Cannot have 'none' with any other value for 'prompt'");
 
         }
 
         if (!authenticator.isAuthenticated(authenticationRequest, req) && authenticationRequest.getPrompts()
                 .contains(AuthenticationRequestParam.Prompt.none)) {
-            return createError(authenticationRequest, AuthenticationErrorResponseParam.ErrorCode.login_required, null);
+            throw new AuthenticationException(authenticationRequest, AuthenticationErrorCode.login_required, null);
         }
 
         if (!authenticator.isAuthenticated(authenticationRequest, req)) {
+            // TODO allow encoding perhaps with key? Make sure it's in an EJB.
             final UriBuilder uriBuilder = UriBuilder.fromUri(req.getRequestURL()
                     .toString())
                     .replacePath(req.getContextPath())
-                    .queryParam("client_id", clientId)
-                    .queryParam("redirect_uri", redirectUri)
-                    .queryParam("scope", scope)
-                    .queryParam("response_type", responseType);
+                    .queryParam(AuthenticationRequestParam.CLIENT_ID, clientId)
+                    .queryParam(AuthenticationRequestParam.REDIRECT_URI, redirectUri)
+                    .queryParam(AuthenticationRequestParam.SCOPE, scope)
+                    .queryParam(AuthenticationRequestParam.RESPONSE_TYPE, responseType);
             if (acrValues != null) {
                 uriBuilder.queryParam("acr_values", acrValues);
             }

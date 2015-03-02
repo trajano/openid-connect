@@ -4,7 +4,7 @@ package net.trajano.openidconnect.core;
  * @see http://tools.ietf.org/html/rfc6749#section-5.2
  * @author Archimedes
  */
-public enum Error {
+public enum TokenErrorCode {
 
     /**
      *

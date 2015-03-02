@@ -23,18 +23,18 @@ public class TokenErrorResponse {
 
     }
 
-    public TokenErrorResponse(Error error) {
+    public TokenErrorResponse(TokenErrorCode error) {
 
         this.error = error;
     }
 
-    public TokenErrorResponse(Error error, String errorDescription) {
+    public TokenErrorResponse(TokenErrorCode error, String errorDescription) {
 
         this(error);
         this.errorDescription = errorDescription;
     }
 
-    public TokenErrorResponse(Error error, String errorDescription, URI errorUri) {
+    public TokenErrorResponse(TokenErrorCode error, String errorDescription, URI errorUri) {
 
         this(error, errorDescription);
         this.errorUri = errorUri;
@@ -44,7 +44,7 @@ public class TokenErrorResponse {
      * REQUIRED. A single ASCII [USASCII] error code.
      */
     @XmlElement(required = true)
-    private Error error;
+    private TokenErrorCode error;
 
     /**
      * OPTIONAL. Human-readable ASCII [USASCII] text providing additional
@@ -65,7 +65,7 @@ public class TokenErrorResponse {
     @XmlElement(name = "error_uri")
     private URI errorUri;
 
-    public Error getError() {
+    public TokenErrorCode getError() {
 
         return error;
     }
@@ -80,7 +80,7 @@ public class TokenErrorResponse {
         return errorUri;
     }
 
-    public void setError(final Error error) {
+    public void setError(final TokenErrorCode error) {
 
         this.error = error;
     }

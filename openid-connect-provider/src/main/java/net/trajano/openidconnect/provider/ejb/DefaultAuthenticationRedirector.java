@@ -12,11 +12,11 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 
+import net.trajano.openidconnect.core.AuthenticationRequest;
 import net.trajano.openidconnect.core.IdToken;
 import net.trajano.openidconnect.core.IdTokenResponse;
 import net.trajano.openidconnect.core.ResponseType;
 import net.trajano.openidconnect.provider.spi.AuthenticationRedirector;
-import net.trajano.openidconnect.provider.spi.AuthenticationRequest;
 import net.trajano.openidconnect.provider.spi.TokenProvider;
 
 /**

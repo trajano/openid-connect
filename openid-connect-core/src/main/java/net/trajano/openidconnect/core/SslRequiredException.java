@@ -9,6 +9,6 @@ public class SslRequiredException extends OAuthException {
 
     public SslRequiredException() {
 
-        super(Error.invalid_request, "SSL required");
+        super(TokenErrorCode.invalid_request, "SSL required");
     }
 }
