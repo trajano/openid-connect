@@ -1,5 +1,6 @@
 package net.trajano.openidconnect.crypto.test;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 
@@ -11,8 +12,11 @@ import java.security.KeyPairGenerator;
 import java.security.interfaces.RSAPrivateCrtKey;
 import java.security.interfaces.RSAPublicKey;
 
+import javax.crypto.KeyGenerator;
+import javax.crypto.SecretKey;
 import javax.json.Json;
 import javax.json.JsonArray;
+import javax.json.JsonObjectBuilder;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.ext.MessageBodyReader;
 import javax.ws.rs.ext.MessageBodyWriter;
@@ -20,6 +24,7 @@ import javax.ws.rs.ext.MessageBodyWriter;
 import net.trajano.openidconnect.crypto.JsonWebAlgorithm;
 import net.trajano.openidconnect.crypto.JsonWebKey;
 import net.trajano.openidconnect.crypto.JsonWebKeySet;
+import net.trajano.openidconnect.crypto.OctWebKey;
 import net.trajano.openidconnect.rs.JsonWebKeySetProvider;
 
 import org.junit.Test;
@@ -39,6 +44,27 @@ public class JwksTest {
         System.out.println(publicKey.getAlgorithm());
         System.out.println(privateKey.getAlgorithm());
         System.out.println(JsonWebAlgorithm.fromJca(publicKey.getAlgorithm()));
+
+    }
+
+    @Test
+    public void testOct() throws Exception {
+
+        final KeyGenerator keyGenerator = KeyGenerator.getInstance("AES");
+        keyGenerator.init(128);
+        SecretKey secretKey = keyGenerator.generateKey();
+
+        OctWebKey octWebKey = new OctWebKey(secretKey, JsonWebAlgorithm.A128GCM);
+        octWebKey.setAlg(JsonWebAlgorithm.A128GCM);
+        octWebKey.setKid("f");
+
+        JsonObjectBuilder b = Json.createObjectBuilder();
+        octWebKey.buildJsonObject(b);
+        System.out.println(b.build()
+                .toString());
+
+        assertArrayEquals(secretKey.getEncoded(), octWebKey.toJcaKey()
+                .getEncoded());
 
     }
 

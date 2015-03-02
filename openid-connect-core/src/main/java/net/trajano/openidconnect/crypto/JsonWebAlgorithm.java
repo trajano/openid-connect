@@ -116,6 +116,11 @@ public enum JsonWebAlgorithm {
     }
 
     /**
+     * Symettric algorithms with JCA support.
+     */
+    public static final JsonWebAlgorithm[] SYMETTRIC_WITH_JCA = { A128GCM, A256CBC, A256GCM };
+
+    /**
      * Returns the JCA Algorithm Name.
      *
      * @return JCA Algorithm Name.

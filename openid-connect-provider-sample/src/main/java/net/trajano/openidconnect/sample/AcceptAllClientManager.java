@@ -68,6 +68,7 @@ public class AcceptAllClientManager implements ClientManager, Authenticator, Use
                 .queryParam(AuthenticationRequestParam.SCOPE, authenticationRequest.getScope())
                 .queryParam(AuthenticationRequestParam.RESPONSE_TYPE, authenticationRequest.getResponseType())
                 .queryParam(AuthenticationRequestParam.STATE, authenticationRequest.getState())
+                .queryParam(AuthenticationRequestParam.NONCE, authenticationRequest.getNonce())
                 .build();
     }
 
