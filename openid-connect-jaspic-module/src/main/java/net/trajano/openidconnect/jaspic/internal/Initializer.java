@@ -3,6 +3,7 @@ package net.trajano.openidconnect.jaspic.internal;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.annotation.Resource;
 import javax.security.auth.message.config.AuthConfigFactory;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
@@ -19,60 +20,26 @@ import net.trajano.auth.OpenIDConnectAuthModule;
 @WebListener
 public class Initializer implements ServletContextListener {
 
-    @Override
-    public void contextDestroyed(final ServletContextEvent sce) {
-
-        AuthConfigFactory.getFactory()
-                .removeRegistration(registrationID);
-    }
-
     /**
-     * Keys required by the OpenID Connect JASPIC module. It is expected that
-     * the web.xml contains &gt;
+     * asadmin set-web-env-entry
+     * --name=net.trajano.openidconnect.jaspic/client_id --value=asmin
+     * --type=java.lang.String
+     * openid-connect-sample/openid-connect-jaspic-sample-1.0.0-SNAPSHOT.war
      */
-    private static final String[] KEYS = { OAuthModule.CLIENT_ID_KEY, OAuthModule.CLIENT_SECRET_KEY, OpenIDConnectAuthModule.ISSUER_URI_KEY };
+    @Resource(name = "net.trajano.openidconnect.jaspic/client_id", description = "Client ID")
+    private String clientId;
 
-    /**
-     * Keys that are optional by the OpenID Connect JASPIC module.
-     */
-    private static final String[] OPTIONAL_KEYS = { OAuthModule.DISABLE_CERTIFICATE_CHECKS_KEY, };
+    @Resource(name = "net.trajano.openidconnect.jaspic/client_secret", description = "Client Secret")
+    private String clientSecret;
 
-    @Override
-    public void contextInitialized(final ServletContextEvent sce) {
+    @Resource(name = "net.trajano.openidconnect.jaspic/disable_certificate_checks", description = "Disable certificate checks. (optional, defaults to false)")
+    private String disableCertificateChecks = Boolean.FALSE.toString();
 
-        final Map<String, String> options = new HashMap<>();
-        for (String key : KEYS) {
-            String initParameter = sce.getServletContext()
-                    .getInitParameter(key);
-            if (initParameter == null)
-                throw new RuntimeException("Missing required context parameter " + key);
-            options.put(key, initParameter);
-        }
-        for (String key : OPTIONAL_KEYS) {
-            String initParameter = sce.getServletContext()
-                    .getInitParameter(key);
-            if (initParameter != null)
-                options.put(key, initParameter);
-        }
-        options.put(AuthModuleConfigProvider.SERVER_AUTH_MODULE_CLASS, OpenIDConnectAuthModule.class.getName());
+    @Resource(name = "net.trajano.openidconnect.jaspic/issuer_uri", description = "Issuer URI")
+    private String issuerUri;
 
-        options.put("cookie_context", sce.getServletContext()
-                .getContextPath() + "/");
-        options.put("scope", "openid profile email");
-        options.put("redirection_endpoint", sce.getServletContext()
-                .getContextPath() + "/oauth2");
-        options.put("token_uri", sce.getServletContext()
-                .getContextPath() + "/token");
-        options.put("userinfo_uri", sce.getServletContext()
-                .getContextPath() + "/userinfo");
-        options.put(OAuthModule.LOGOUT_GOTO_URI_KEY, sce.getServletContext()
-                .getContextPath() + "/");
-        options.put(OAuthModule.LOGOUT_URI_KEY, sce.getServletContext()
-                .getContextPath() + "/logout");
-        registrationID = AuthConfigFactory.getFactory()
-                .registerConfigProvider(new AuthModuleConfigProvider(options, null), "HttpServlet", null, null);
-
-    }
+    @Resource(name = "net.trajano.openidconnect.jaspic/disable_certificate_checks", description = "Scope. (optional, defaults to 'openid profile email')")
+    private String scope = "openid profile email";
 
     /**
      * A String identifier assigned by the {@link AuthConfigFactory} to the
@@ -80,4 +47,38 @@ public class Initializer implements ServletContextListener {
      * factory.
      */
     private String registrationID;
+
+    @Override
+    public void contextDestroyed(final ServletContextEvent sce) {
+
+        AuthConfigFactory.getFactory()
+                .removeRegistration(registrationID);
+    }
+
+    @Override
+    public void contextInitialized(final ServletContextEvent sce) {
+
+        final Map<String, String> options = new HashMap<>();
+
+        options.put(OAuthModule.CLIENT_ID_KEY, clientId);
+        options.put(OAuthModule.CLIENT_SECRET_KEY, clientSecret);
+        options.put(OAuthModule.DISABLE_CERTIFICATE_CHECKS_KEY, disableCertificateChecks);
+        options.put(OpenIDConnectAuthModule.ISSUER_URI_KEY, issuerUri);
+
+        options.put(AuthModuleConfigProvider.SERVER_AUTH_MODULE_CLASS, OpenIDConnectAuthModule.class.getName());
+
+        final String contextPath = sce.getServletContext()
+                .getContextPath();
+        options.put("cookie_context", contextPath + "/");
+        options.put("scope", scope);
+        options.put("redirection_endpoint", contextPath + "/oauth2");
+        options.put("token_uri", contextPath + "/token");
+        options.put("userinfo_uri", contextPath + "/userinfo");
+        options.put(OAuthModule.LOGOUT_GOTO_URI_KEY, contextPath + "/");
+        options.put(OAuthModule.LOGOUT_URI_KEY, contextPath + "/logout");
+
+        registrationID = AuthConfigFactory.getFactory()
+                .registerConfigProvider(new AuthModuleConfigProvider(options, null), "HttpServlet", null, null);
+
+    }
 }
