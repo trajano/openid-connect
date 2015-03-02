@@ -1,10 +1,11 @@
-package net.trajano.openidconnect.provider.ejb;
+package net.trajano.openidconnect.sample;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.URI;
 import java.security.GeneralSecurityException;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -78,7 +79,7 @@ public class AcceptAllClientManager implements ClientManager, Authenticator, Use
         Userinfo userinfo = new Userinfo();
         userinfo.setSub(response.getIdToken()
                 .getSub());
-
+        userinfo.setUpdatedAt(new Date());
         return userinfo;
     }
 

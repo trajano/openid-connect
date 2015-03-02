@@ -1,5 +1,6 @@
 package net.trajano.openidconnect.core;
 
+import java.util.Date;
 import java.util.Locale;
 
 import javax.json.JsonObject;
@@ -400,6 +401,11 @@ public class Userinfo {
     public void setUpdatedAt(final long updatedAt) {
 
         this.updatedAt = updatedAt;
+    }
+
+    public void setUpdatedAt(final Date updatedAt) {
+
+        this.updatedAt = updatedAt.getTime() / 1000;
     }
 
     public void setWebsite(final String website) {

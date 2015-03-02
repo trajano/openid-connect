@@ -6,9 +6,9 @@ import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
 
 import net.trajano.openidconnect.provider.endpoints.AuthorizationEndpoint;
-import net.trajano.openidconnect.provider.endpoints.Debug;
 import net.trajano.openidconnect.provider.endpoints.Jwks;
 import net.trajano.openidconnect.provider.endpoints.TokenEndpoint;
+import net.trajano.openidconnect.provider.endpoints.UserinfoEndpoint;
 import net.trajano.openidconnect.rs.IdTokenProvider;
 import net.trajano.openidconnect.rs.JsonWebKeySetProvider;
 
@@ -22,8 +22,8 @@ public class ProviderV1 extends Application {
                 .put(TokenEndpoint.class)
                 .put(IdTokenProvider.class)
                 .put(Jwks.class)
-                .put(Debug.class)
-                .put(JsonWebKeySetProvider.class);
+                .put(JsonWebKeySetProvider.class)
+                .put(UserinfoEndpoint.class);
         return classes;
     }
 }
