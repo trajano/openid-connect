@@ -1,10 +1,12 @@
-package net.trajano.openidconnect.core;
+package net.trajano.openidconnect.token;
 
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
 import javax.xml.bind.annotation.XmlElement;
+
+import net.trajano.openidconnect.core.Scope;
 
 public class TokenResponse {
 

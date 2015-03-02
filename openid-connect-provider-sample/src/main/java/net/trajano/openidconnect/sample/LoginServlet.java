@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.MediaType;
 
-import net.trajano.openidconnect.core.AuthenticationRequest;
+import net.trajano.openidconnect.auth.AuthenticationRequest;
 import net.trajano.openidconnect.provider.spi.AuthenticationRedirector;
 import net.trajano.openidconnect.provider.spi.KeyProvider;
 import net.trajano.openidconnect.provider.spi.TokenProvider;

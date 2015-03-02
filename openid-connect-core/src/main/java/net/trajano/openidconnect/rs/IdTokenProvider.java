@@ -23,7 +23,7 @@ import javax.ws.rs.ext.MessageBodyReader;
 import javax.ws.rs.ext.MessageBodyWriter;
 import javax.ws.rs.ext.Provider;
 
-import net.trajano.openidconnect.core.IdToken;
+import net.trajano.openidconnect.token.IdToken;
 
 @Provider
 @Produces(MediaType.APPLICATION_JSON)

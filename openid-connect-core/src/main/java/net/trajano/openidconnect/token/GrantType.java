@@ -1,4 +1,4 @@
-package net.trajano.openidconnect.core;
+package net.trajano.openidconnect.token;
 
 
 public enum GrantType {

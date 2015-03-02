@@ -2,8 +2,8 @@ package net.trajano.openidconnect.provider.internal;
 
 import javax.servlet.http.HttpServletRequest;
 
-import net.trajano.openidconnect.core.InvalidClientException;
 import net.trajano.openidconnect.crypto.Base64Url;
+import net.trajano.openidconnect.token.InvalidClientException;
 
 /**
  * Helper class to manage the Authorization tag

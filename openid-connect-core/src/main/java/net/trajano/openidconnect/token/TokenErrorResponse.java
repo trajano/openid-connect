@@ -1,4 +1,4 @@
-package net.trajano.openidconnect.core;
+package net.trajano.openidconnect.token;
 
 import java.net.URI;
 

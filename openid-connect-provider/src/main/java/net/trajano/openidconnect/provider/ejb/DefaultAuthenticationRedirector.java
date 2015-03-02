@@ -12,13 +12,13 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 
-import net.trajano.openidconnect.core.AuthenticationRequest;
-import net.trajano.openidconnect.core.IdToken;
-import net.trajano.openidconnect.core.IdTokenResponse;
-import net.trajano.openidconnect.core.ResponseType;
-import net.trajano.openidconnect.core.TokenResponse;
+import net.trajano.openidconnect.auth.AuthenticationRequest;
+import net.trajano.openidconnect.auth.ResponseType;
 import net.trajano.openidconnect.provider.spi.AuthenticationRedirector;
 import net.trajano.openidconnect.provider.spi.TokenProvider;
+import net.trajano.openidconnect.token.IdToken;
+import net.trajano.openidconnect.token.IdTokenResponse;
+import net.trajano.openidconnect.token.TokenResponse;
 
 /**
  * Upon successful authentication, implementers are expected to invoke any of

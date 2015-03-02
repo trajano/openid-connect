@@ -1,4 +1,4 @@
-package net.trajano.openidconnect.core;
+package net.trajano.openidconnect.auth;
 
 import java.io.Serializable;
 import java.net.URI;
@@ -12,6 +12,8 @@ import java.util.Locale;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
+
+import net.trajano.openidconnect.core.Scope;
 
 /**
  * Wraps an HttpServletRequest to provide a cleaner API to the request

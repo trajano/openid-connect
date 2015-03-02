@@ -1,6 +1,6 @@
 package net.trajano.openidconnect.crypto.test;
 
-import net.trajano.openidconnect.core.IdToken;
+import net.trajano.openidconnect.token.IdToken;
 
 import org.junit.Assert;
 import org.junit.Test;

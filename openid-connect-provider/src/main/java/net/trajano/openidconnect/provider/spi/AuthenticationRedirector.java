@@ -7,7 +7,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.Response;
 
-import net.trajano.openidconnect.core.AuthenticationRequest;
+import net.trajano.openidconnect.auth.AuthenticationRequest;
 
 /**
  * Upon successful authentication, implementers are expected to invoke any of

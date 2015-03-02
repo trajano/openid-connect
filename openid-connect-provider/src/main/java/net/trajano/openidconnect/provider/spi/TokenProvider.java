@@ -7,11 +7,11 @@ import java.util.Set;
 
 import javax.validation.constraints.NotNull;
 
-import net.trajano.openidconnect.core.AuthenticationRequest;
-import net.trajano.openidconnect.core.IdToken;
-import net.trajano.openidconnect.core.IdTokenResponse;
+import net.trajano.openidconnect.auth.AuthenticationRequest;
 import net.trajano.openidconnect.core.Scope;
-import net.trajano.openidconnect.core.TokenResponse;
+import net.trajano.openidconnect.token.IdToken;
+import net.trajano.openidconnect.token.IdTokenResponse;
+import net.trajano.openidconnect.token.TokenResponse;
 
 /**
  * This provides storage and retrieval for the token responses. Implementers

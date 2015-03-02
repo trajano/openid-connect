@@ -1,4 +1,4 @@
-package net.trajano.openidconnect.core;
+package net.trajano.openidconnect.token;
 
 import java.net.URI;
 
@@ -6,28 +6,28 @@ import javax.ws.rs.BadRequestException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-public class OAuthException extends BadRequestException {
+public class TokenException extends BadRequestException {
 
     /**
      * 
      */
     private static final long serialVersionUID = 7363379256768742855L;
 
-    public OAuthException(TokenErrorCode error) {
+    public TokenException(TokenErrorCode error) {
 
         super(Response.ok(new TokenErrorResponse(error))
                 .status(Status.BAD_REQUEST)
                 .build());
     }
 
-    public OAuthException(TokenErrorCode error, String errorDescription) {
+    public TokenException(TokenErrorCode error, String errorDescription) {
 
         super(Response.ok(new TokenErrorResponse(error, errorDescription))
                 .status(Status.BAD_REQUEST)
                 .build());
     }
 
-    public OAuthException(TokenErrorCode error, String errorDescription, URI errorUri) {
+    public TokenException(TokenErrorCode error, String errorDescription, URI errorUri) {
 
         super(Response.ok(new TokenErrorResponse(error, errorDescription))
                 .status(Status.BAD_REQUEST)

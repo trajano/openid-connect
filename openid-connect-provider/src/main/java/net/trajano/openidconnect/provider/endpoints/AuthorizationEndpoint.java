@@ -18,17 +18,17 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriBuilder;
 
-import net.trajano.openidconnect.core.AuthenticationErrorCode;
-import net.trajano.openidconnect.core.AuthenticationException;
-import net.trajano.openidconnect.core.AuthenticationRequest;
-import net.trajano.openidconnect.core.AuthenticationRequestParam;
-import net.trajano.openidconnect.core.AuthenticationRequestParam.Display;
-import net.trajano.openidconnect.core.AuthenticationRequestParam.Prompt;
-import net.trajano.openidconnect.core.OAuthException;
+import net.trajano.openidconnect.auth.AuthenticationErrorCode;
+import net.trajano.openidconnect.auth.AuthenticationException;
+import net.trajano.openidconnect.auth.AuthenticationRequest;
+import net.trajano.openidconnect.auth.AuthenticationRequestParam;
+import net.trajano.openidconnect.auth.AuthenticationRequestParam.Display;
+import net.trajano.openidconnect.auth.AuthenticationRequestParam.Prompt;
 import net.trajano.openidconnect.core.Scope;
-import net.trajano.openidconnect.core.TokenErrorCode;
 import net.trajano.openidconnect.provider.spi.Authenticator;
 import net.trajano.openidconnect.provider.spi.ClientManager;
+import net.trajano.openidconnect.token.TokenException;
+import net.trajano.openidconnect.token.TokenErrorCode;
 
 /**
  * <p>
@@ -117,7 +117,7 @@ public class AuthorizationEndpoint {
         final AuthenticationRequest authenticationRequest = new AuthenticationRequest(req);
 
         if (!clientManager.isRedirectUriValidForClient(authenticationRequest.getClientId(), authenticationRequest.getRedirectUri())) {
-            throw new OAuthException(TokenErrorCode.invalid_grant, "redirect URI is not supported for the client");
+            throw new TokenException(TokenErrorCode.invalid_grant, "redirect URI is not supported for the client");
         }
 
         if (!authenticationRequest.getScopes()

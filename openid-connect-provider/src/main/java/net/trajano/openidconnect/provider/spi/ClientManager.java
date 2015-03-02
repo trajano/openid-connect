@@ -2,9 +2,6 @@ package net.trajano.openidconnect.provider.spi;
 
 import java.net.URI;
 
-import net.trajano.openidconnect.core.InvalidClientException;
-import net.trajano.openidconnect.core.OAuthException;
-
 public interface ClientManager {
 
     /**
@@ -15,8 +12,6 @@ public interface ClientManager {
      * @param clientSecret
      *            client secret
      * @return returns the authenticated client ID.
-     * @throws OAuthException
-     * @throws InvalidClientException
      */
     String authenticateClient(String clientId,
             String clientSecret);

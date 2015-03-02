@@ -1,4 +1,4 @@
-package net.trajano.openidconnect.core;
+package net.trajano.openidconnect.token;
 
 /**
  * @see http://tools.ietf.org/html/rfc6749#section-5.2

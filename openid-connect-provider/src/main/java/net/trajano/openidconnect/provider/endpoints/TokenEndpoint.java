@@ -17,12 +17,12 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import net.trajano.openidconnect.core.GrantType;
-import net.trajano.openidconnect.core.IdTokenResponse;
 import net.trajano.openidconnect.provider.internal.AuthorizationUtil;
 import net.trajano.openidconnect.provider.internal.ClientCredentials;
 import net.trajano.openidconnect.provider.spi.ClientManager;
 import net.trajano.openidconnect.provider.spi.TokenProvider;
+import net.trajano.openidconnect.token.GrantType;
+import net.trajano.openidconnect.token.IdTokenResponse;
 
 @Path("token")
 @Produces(MediaType.APPLICATION_JSON)

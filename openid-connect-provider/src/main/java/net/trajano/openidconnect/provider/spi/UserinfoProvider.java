@@ -1,7 +1,7 @@
 package net.trajano.openidconnect.provider.spi;
 
-import net.trajano.openidconnect.core.IdTokenResponse;
-import net.trajano.openidconnect.core.Userinfo;
+import net.trajano.openidconnect.token.IdTokenResponse;
+import net.trajano.openidconnect.userinfo.Userinfo;
 
 /**
  * The user info provider

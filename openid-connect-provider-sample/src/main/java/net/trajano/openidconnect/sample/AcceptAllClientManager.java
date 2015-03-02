@@ -20,19 +20,19 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriBuilder;
 
-import net.trajano.openidconnect.core.AuthenticationRequest;
-import net.trajano.openidconnect.core.AuthenticationRequestParam;
-import net.trajano.openidconnect.core.IdToken;
-import net.trajano.openidconnect.core.IdTokenResponse;
+import net.trajano.openidconnect.auth.AuthenticationRequest;
+import net.trajano.openidconnect.auth.AuthenticationRequestParam;
 import net.trajano.openidconnect.core.Scope;
-import net.trajano.openidconnect.core.TokenResponse;
-import net.trajano.openidconnect.core.Userinfo;
 import net.trajano.openidconnect.provider.spi.Authenticator;
 import net.trajano.openidconnect.provider.spi.ClientManager;
 import net.trajano.openidconnect.provider.spi.KeyProvider;
 import net.trajano.openidconnect.provider.spi.TokenProvider;
 import net.trajano.openidconnect.provider.spi.UserinfoProvider;
 import net.trajano.openidconnect.rs.IdTokenProvider;
+import net.trajano.openidconnect.token.IdToken;
+import net.trajano.openidconnect.token.IdTokenResponse;
+import net.trajano.openidconnect.token.TokenResponse;
+import net.trajano.openidconnect.userinfo.Userinfo;
 
 // TODO move to a sample ejb package
 @Singleton

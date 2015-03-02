@@ -1,4 +1,4 @@
-package net.trajano.openidconnect.core;
+package net.trajano.openidconnect.userinfo;
 
 import java.util.Date;
 import java.util.Locale;
