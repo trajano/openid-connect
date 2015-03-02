@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
@@ -184,6 +185,23 @@ public class AuthenticationRequest {
         return scopes;
     }
 
+    /**
+     * Gets a string representation of the scope set.
+     * 
+     * @return
+     */
+    public String getScope() {
+
+        StringBuilder b = new StringBuilder();
+        Iterator<Scope> i = scopes.iterator();
+        b.append(i.next());
+        while (i.hasNext()) {
+            b.append(' ');
+            b.append(i.next());
+        }
+        return b.toString();
+    }
+
     public String getState() {
 
         return state;
@@ -197,5 +215,17 @@ public class AuthenticationRequest {
     public boolean containsResponseType(ResponseType responseType) {
 
         return responseTypes.contains(responseType);
+    }
+
+    public String getResponseType() {
+
+        StringBuilder b = new StringBuilder();
+        Iterator<ResponseType> i = responseTypes.iterator();
+        b.append(i.next());
+        while (i.hasNext()) {
+            b.append(' ');
+            b.append(i.next());
+        }
+        return b.toString();
     }
 }

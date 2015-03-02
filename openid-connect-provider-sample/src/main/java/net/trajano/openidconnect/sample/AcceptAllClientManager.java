@@ -10,7 +10,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.ejb.Lock;
 import javax.ejb.LockType;
@@ -22,6 +21,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriBuilder;
 
 import net.trajano.openidconnect.core.AuthenticationRequest;
+import net.trajano.openidconnect.core.AuthenticationRequestParam;
 import net.trajano.openidconnect.core.IdToken;
 import net.trajano.openidconnect.core.IdTokenResponse;
 import net.trajano.openidconnect.core.Scope;
@@ -63,6 +63,11 @@ public class AcceptAllClientManager implements ClientManager, Authenticator, Use
             UriBuilder contextUriBuilder) {
 
         return contextUriBuilder.path("login.jsp")
+                .queryParam(AuthenticationRequestParam.CLIENT_ID, authenticationRequest.getClientId())
+                .queryParam(AuthenticationRequestParam.REDIRECT_URI, authenticationRequest.getRedirectUri())
+                .queryParam(AuthenticationRequestParam.SCOPE, authenticationRequest.getScope())
+                .queryParam(AuthenticationRequestParam.RESPONSE_TYPE, authenticationRequest.getResponseType())
+                .queryParam(AuthenticationRequestParam.STATE, authenticationRequest.getState())
                 .build();
     }
 
@@ -87,14 +92,6 @@ public class AcceptAllClientManager implements ClientManager, Authenticator, Use
     public URI getIssuer() {
 
         return URI.create("https://helloworld");
-    }
-
-    @Override
-    public Set<Scope> getScopes(String clientId,
-            HttpServletRequest req) {
-
-        // TODO Auto-generated method stub
-        return null;
     }
 
     @Override
@@ -198,12 +195,6 @@ public class AcceptAllClientManager implements ClientManager, Authenticator, Use
         response.setAccessToken(idTokenResponse.getAccessToken());
         response.setExpiresIn(expiresIn);
         return null;
-    }
-
-    @PostConstruct
-    public void init() {
-
-        System.out.println("!!!! OUT!!!!");
     }
 
     @Override

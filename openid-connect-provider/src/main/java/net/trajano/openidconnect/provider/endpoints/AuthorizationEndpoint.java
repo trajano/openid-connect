@@ -146,44 +146,7 @@ public class AuthorizationEndpoint {
             // TODO allow encoding perhaps with key? Make sure it's in an EJB.
             final UriBuilder uriBuilder = UriBuilder.fromUri(req.getRequestURL()
                     .toString())
-                    .replacePath(req.getContextPath())
-                    .queryParam(AuthenticationRequestParam.CLIENT_ID, clientId)
-                    .queryParam(AuthenticationRequestParam.REDIRECT_URI, redirectUri)
-                    .queryParam(AuthenticationRequestParam.SCOPE, scope)
-                    .queryParam(AuthenticationRequestParam.RESPONSE_TYPE, responseType);
-            if (acrValues != null) {
-                uriBuilder.queryParam("acr_values", acrValues);
-            }
-
-            if (display != null) {
-                uriBuilder.queryParam("display", display);
-            }
-            if (idTokenHint != null) {
-                uriBuilder.queryParam("id_token_hint", idTokenHint);
-            }
-            if (loginHint != null) {
-                uriBuilder.queryParam("login_hint", loginHint);
-            }
-            if (maxAge != null) {
-                uriBuilder.queryParam("max_age", maxAge);
-            }
-            if (nonce != null) {
-                uriBuilder.queryParam("nonce", nonce);
-            }
-            if (prompt != null) {
-                uriBuilder.queryParam("prompt", prompt);
-            }
-
-            if (responseMode != null) {
-                uriBuilder.queryParam("response_mode", responseMode);
-            }
-
-            if (state != null) {
-                uriBuilder.queryParam("state", state);
-            }
-            if (uiLocales != null) {
-                uriBuilder.queryParam("ui_locales", uiLocales);
-            }
+                    .replacePath(req.getContextPath());
             return Response.temporaryRedirect(authenticator.authenticate(authenticationRequest, req, uriBuilder))
                     .build();
         }
