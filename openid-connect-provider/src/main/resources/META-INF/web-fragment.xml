@@ -4,4 +4,17 @@
 	xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-fragment_3_1.xsd"
 	version="3.1" metadata-complete="false">
 	<name>openid_connect_provider</name>
+	<security-constraint>
+		<web-resource-collection>
+			<web-resource-name>V1</web-resource-name>
+			<url-pattern>/V1/*</url-pattern>
+		</web-resource-collection>
+		<web-resource-collection>
+			<web-resource-name>WellKnown</web-resource-name>
+			<url-pattern>/.well-known/openid-configuration</url-pattern>
+		</web-resource-collection>
+		<user-data-constraint>
+			<transport-guarantee>CONFIDENTIAL</transport-guarantee>
+		</user-data-constraint>
+	</security-constraint>
 </web-fragment>

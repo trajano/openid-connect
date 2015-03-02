@@ -1,5 +1,6 @@
 package net.trajano.openidconnect.core;
 
+import java.io.Serializable;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -14,11 +15,17 @@ import javax.servlet.http.HttpServletRequest;
 
 /**
  * Wraps an HttpServletRequest to provide a cleaner API to the request
- * parameters.
+ * parameters. This is {@link Serializable} in order to allow implementations to
+ * use Object Input/Output streams to build the data as needed.
  * 
  * @author Archimedes
  */
-public class AuthenticationRequest {
+public class AuthenticationRequest implements Serializable {
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 6520962711562750670L;
 
     private final Set<String> acrValues;
 

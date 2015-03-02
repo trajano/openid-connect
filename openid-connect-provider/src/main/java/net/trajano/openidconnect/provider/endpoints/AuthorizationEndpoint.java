@@ -26,7 +26,6 @@ import net.trajano.openidconnect.core.AuthenticationRequestParam.Display;
 import net.trajano.openidconnect.core.AuthenticationRequestParam.Prompt;
 import net.trajano.openidconnect.core.OAuthException;
 import net.trajano.openidconnect.core.Scope;
-import net.trajano.openidconnect.core.SslRequiredException;
 import net.trajano.openidconnect.core.TokenErrorCode;
 import net.trajano.openidconnect.provider.spi.Authenticator;
 import net.trajano.openidconnect.provider.spi.ClientManager;
@@ -115,14 +114,11 @@ public class AuthorizationEndpoint {
             @FormParam(AuthenticationRequestParam.UI_LOCALES) final String uiLocales,
             @Context final HttpServletRequest req) {
 
+ 
         final AuthenticationRequest authenticationRequest = new AuthenticationRequest(req);
 
         if (!clientManager.isRedirectUriValidForClient(authenticationRequest.getClientId(), authenticationRequest.getRedirectUri())) {
             throw new OAuthException(TokenErrorCode.invalid_grant, "redirect URI is not supported for the client");
-        }
-
-        if (!req.isSecure()) {
-            throw new SslRequiredException();
         }
 
         if (!authenticationRequest.getScopes()

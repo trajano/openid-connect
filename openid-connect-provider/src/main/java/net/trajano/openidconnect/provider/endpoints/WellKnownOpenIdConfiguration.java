@@ -39,7 +39,8 @@ public class WellKnownOpenIdConfiguration {
         openIdConfiguration.setIssuer(clientManager.getIssuer());
 
         UriBuilder baseUri = UriBuilder.fromUri(create(request.getRequestURL()
-                .toString()));
+                .toString()))
+                .scheme("https");
         openIdConfiguration.setJwksUri(baseUri.replacePath(request.getContextPath() + jwksMapping)
                 .build());
         openIdConfiguration.setAuthorizationEndpoint(baseUri.replacePath(request.getContextPath() + authorizationMapping)

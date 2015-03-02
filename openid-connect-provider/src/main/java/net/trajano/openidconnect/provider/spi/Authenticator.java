@@ -26,6 +26,12 @@ public interface Authenticator {
     /**
      * Obtains the URI to the start of the authentication process. This must be
      * the full URL including the necessary query parameters.
+     * <p>
+     * The simplest way of doing this is to pass the query parameters that are
+     * needed as-is, but it is recommended that the request data be encoded and
+     * passed as a single query parameter to reduce the amount of parameters
+     * that need to be passed
+     * </p>
      * 
      * @param authenticationRequest
      *            authentication request

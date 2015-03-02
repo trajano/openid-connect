@@ -3,7 +3,6 @@ package net.trajano.openidconnect.provider.internal;
 import javax.servlet.http.HttpServletRequest;
 
 import net.trajano.openidconnect.core.InvalidClientException;
-import net.trajano.openidconnect.core.SslRequiredException;
 import net.trajano.openidconnect.crypto.Base64Url;
 
 /**
@@ -39,10 +38,6 @@ public final class AuthorizationUtil {
 
     public static ClientCredentials processBasicOrQuery(final HttpServletRequest req) {
 
-        if (!req.isSecure()) {
-            throw new SslRequiredException();
-        }
-
         if (req.getHeader("Authorization") != null) {
             final String basicCredentials = getDecodedValue(req, BASIC_AUTHORIZATION);
             final String[] credentials = basicCredentials.split(":");
@@ -58,10 +53,6 @@ public final class AuthorizationUtil {
     }
 
     public static String processBearer(final HttpServletRequest req) {
-
-        if (!req.isSecure()) {
-            throw new SslRequiredException();
-        }
 
         if (req.getHeader("Authorization") != null) {
             return getDecodedValue(req, BEARER_AUTHORIZATION);
