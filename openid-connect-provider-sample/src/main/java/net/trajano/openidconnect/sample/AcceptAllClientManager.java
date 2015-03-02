@@ -113,8 +113,8 @@ public class AcceptAllClientManager implements ClientManager, Authenticator, Use
             GeneralSecurityException {
 
         IdTokenResponse response = new IdTokenResponse();
-        response.setAccessToken(keyProvider.nextToken());
-        response.setRefreshToken(keyProvider.nextToken());
+        response.setAccessToken(keyProvider.nextEncodedToken());
+        response.setRefreshToken(keyProvider.nextEncodedToken());
         response.setExpiresIn(ONE_HOUR);
         response.setScopes(req.getScopes());
         response.setTokenType(IdTokenResponse.BEARER);
@@ -123,7 +123,7 @@ public class AcceptAllClientManager implements ClientManager, Authenticator, Use
         baos.close();
         response.setEncodedIdToken(keyProvider.sign(baos.toByteArray()));
 
-        String code = keyProvider.nextToken();
+        String code = keyProvider.nextEncodedToken();
         codeToTokenResponse.put(code, response);
         accessTokenToTokenResponse.put(response.getAccessToken(), response);
         refreshTokenToTokenResponse.put(response.getRefreshToken(), response);
@@ -181,7 +181,7 @@ public class AcceptAllClientManager implements ClientManager, Authenticator, Use
         if (scopes != null && scopes.containsAll(scopes)) {
             idTokenResponse.setScopes(scopes);
         }
-        idTokenResponse.setAccessToken(keyProvider.nextToken());
+        idTokenResponse.setAccessToken(keyProvider.nextEncodedToken());
         IdToken idToken = idTokenResponse.getIdToken(keyProvider.getJwks());
         idToken.resetIssueAndExpiration(expiresIn);
 

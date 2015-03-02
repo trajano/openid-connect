@@ -45,14 +45,17 @@ public class DefaultKeyProvider implements KeyProvider {
 
     }
 
-    private SigningKey[] signingKeys;
-
-    private JsonWebKey[] signingJwks;
+    private static final int NUMBER_OF_SIGNING_KEYS = 3;
 
     private Random random;
 
     private SecretKey secretKey;
 
+    private JsonWebKey[] signingJwks;
+
+    private SigningKey[] signingKeys;
+
+    @Override
     public byte[] decrypt(final byte[] content) throws GeneralSecurityException {
 
         final Cipher cipher = Cipher.getInstance("AES");
@@ -60,6 +63,7 @@ public class DefaultKeyProvider implements KeyProvider {
         return cipher.doFinal(content);
     }
 
+    @Override
     public byte[] encrypt(final byte[] content) throws GeneralSecurityException {
 
         final Cipher cipher = Cipher.getInstance("AES");
@@ -67,13 +71,12 @@ public class DefaultKeyProvider implements KeyProvider {
         return cipher.doFinal(content);
     }
 
+    @Override
     public byte[] encrypt(final String content) throws GeneralSecurityException {
 
         final byte[] contentBytes = content.getBytes();
         return encrypt(contentBytes);
     }
-
-    private static final int NUMBER_OF_SIGNING_KEYS = 3;
 
     @PostConstruct
     public void generateKeys() {
@@ -89,11 +92,11 @@ public class DefaultKeyProvider implements KeyProvider {
             for (int i = 0; i < NUMBER_OF_SIGNING_KEYS; ++i) {
                 final KeyPair keyPair = keyPairGenerator.generateKeyPair();
 
-                String keyId = nextToken();
-                RSAPrivateKey privateKey = (RSAPrivateKey) keyPair.getPrivate();
-                RSAPublicKey publicKey = (RSAPublicKey) keyPair.getPublic();
+                final String keyId = nextEncodedToken();
+                final RSAPrivateKey privateKey = (RSAPrivateKey) keyPair.getPrivate();
+                final RSAPublicKey publicKey = (RSAPublicKey) keyPair.getPublic();
 
-                SigningKey d = new SigningKey();
+                final SigningKey d = new SigningKey();
                 d.encodedJoseHeader = Base64Url.encodeUsAscii(String.format("{\"alg\":\"%s\",\"kid\":\"%s\"}", "RS256", keyId));
                 d.privateKey = privateKey;
                 signingKeys[i] = d;
@@ -111,9 +114,34 @@ public class DefaultKeyProvider implements KeyProvider {
         System.out.println("Keys initialized");
     }
 
+    @Override
+    public JsonWebKeySet getJwks() {
+
+        final JsonWebKeySet jwks = new JsonWebKeySet();
+        for (final JsonWebKey jwk : getSigningKeys()) {
+            jwks.add(jwk);
+        }
+        return jwks;
+    }
+
     public SecretKey getSecretKey() {
 
         return secretKey;
+    }
+
+    @Override
+    public JsonWebKey[] getSigningKeys() {
+
+        return signingJwks;
+    }
+
+    @Override
+    @Lock(LockType.WRITE)
+    public String nextEncodedToken() {
+
+        final byte[] randomTokenBytes = new byte[16];
+        random.nextBytes(randomTokenBytes);
+        return Base64Url.encode(randomTokenBytes);
     }
 
     /**
@@ -122,7 +150,7 @@ public class DefaultKeyProvider implements KeyProvider {
     @Override
     public String sign(final byte[] content) throws GeneralSecurityException {
 
-        SigningKey signingKey = signingKeys[random.nextInt(signingKeys.length)];
+        final SigningKey signingKey = signingKeys[random.nextInt(signingKeys.length)];
         final StringBuilder b = new StringBuilder(signingKey.encodedJoseHeader).append('.')
                 .append(Base64Url.encode(content));
 
@@ -141,7 +169,7 @@ public class DefaultKeyProvider implements KeyProvider {
     @Override
     public String sign(final String content) throws GeneralSecurityException {
 
-        SigningKey signingKey = signingKeys[new Random().nextInt() % signingKeys.length];
+        final SigningKey signingKey = signingKeys[new Random().nextInt() % signingKeys.length];
         final StringBuilder b = new StringBuilder(signingKey.encodedJoseHeader).append('.')
                 .append(Base64Url.encode(content));
 
@@ -152,30 +180,5 @@ public class DefaultKeyProvider implements KeyProvider {
         return b.append('.')
                 .append(Base64Url.encode(signature.sign()))
                 .toString();
-    }
-
-    @Override
-    public JsonWebKey[] getSigningKeys() {
-
-        return signingJwks;
-    }
-
-    @Override
-    @Lock(LockType.WRITE)
-    public String nextToken() {
-
-        byte[] randomTokenBytes = new byte[16];
-        random.nextBytes(randomTokenBytes);
-        return Base64Url.encode(randomTokenBytes);
-    }
-
-    @Override
-    public JsonWebKeySet getJwks() {
-
-        final JsonWebKeySet jwks = new JsonWebKeySet();
-        for (final JsonWebKey jwk : getSigningKeys()) {
-            jwks.add(jwk);
-        }
-        return jwks;
     }
 }

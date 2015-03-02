@@ -5,7 +5,7 @@ import net.trajano.openidconnect.core.Userinfo;
 
 /**
  * The user info provider
- * 
+ *
  * @author Archimedes
  */
 public interface UserinfoProvider {
@@ -13,7 +13,7 @@ public interface UserinfoProvider {
     /**
      * Gets the user info for the specified subject limited by the clientId and
      * scopes specified.
-     * 
+     *
      * @param tokenResponse
      *            access token response.
      * @return

@@ -5,7 +5,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import net.trajano.openidconnect.provider.internal.AuthorizationUtil;
@@ -40,18 +42,13 @@ import net.trajano.openidconnect.provider.spi.UserinfoProvider;
  * </p>
  */
 @Path("profile")
+@Produces(MediaType.APPLICATION_JSON)
 public class UserinfoEndpoint {
-
-    private UserinfoProvider userinfoProvider;
 
     @EJB
     private TokenProvider tokenProvider;
 
-    @EJB
-    public void setUserinfoProvider(UserinfoProvider userinfoProvider) {
-
-        this.userinfoProvider = userinfoProvider;
-    }
+    private UserinfoProvider userinfoProvider;
 
     /**
      * <p>
@@ -64,22 +61,29 @@ public class UserinfoEndpoint {
      * It is RECOMMENDED that the request use the HTTP GET method and the Access
      * Token be sent using the Authorization header field.
      * </p>
-     * 
+     *
      * @param req
      * @return
      */
     @GET
-    public Response getOp(@Context HttpServletRequest req) {
+    public Response getOp(@Context final HttpServletRequest req) {
 
         return op(req);
     }
 
     @POST
-    public Response op(@Context HttpServletRequest req) {
+    public Response op(@Context final HttpServletRequest req) {
 
-        String accessToken = AuthorizationUtil.processBearer(req);
+        final String accessToken = AuthorizationUtil.processBearer(req);
+        System.out.println("ACCESS TOKEN = " + accessToken);
         return Response.ok(userinfoProvider.getUserinfo(tokenProvider.getByAccessToken(accessToken)))
                 .build();
+    }
+
+    @EJB
+    public void setUserinfoProvider(final UserinfoProvider userinfoProvider) {
+
+        this.userinfoProvider = userinfoProvider;
     }
 
 }

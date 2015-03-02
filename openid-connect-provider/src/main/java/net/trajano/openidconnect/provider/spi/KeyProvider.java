@@ -17,13 +17,16 @@ public interface KeyProvider {
     byte[] decrypt(final byte[] content) throws GeneralSecurityException;
 
     byte[] encrypt(final byte[] content) throws GeneralSecurityException;
+
     byte[] encrypt(final String content) throws GeneralSecurityException;
 
-    JsonWebKey[] getSigningKeys();
     JsonWebKeySet getJwks();
 
+    JsonWebKey[] getSigningKeys();
+
+    String nextEncodedToken();
+
     String sign(final byte[] content) throws GeneralSecurityException;
+
     String sign(final String content) throws GeneralSecurityException;
-    
-    String nextToken();
 }

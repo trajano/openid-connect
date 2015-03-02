@@ -16,6 +16,7 @@ import net.trajano.openidconnect.core.AuthenticationRequest;
 import net.trajano.openidconnect.core.IdToken;
 import net.trajano.openidconnect.core.IdTokenResponse;
 import net.trajano.openidconnect.core.ResponseType;
+import net.trajano.openidconnect.core.TokenResponse;
 import net.trajano.openidconnect.provider.spi.AuthenticationRedirector;
 import net.trajano.openidconnect.provider.spi.TokenProvider;
 
@@ -23,7 +24,7 @@ import net.trajano.openidconnect.provider.spi.TokenProvider;
  * Upon successful authentication, implementers are expected to invoke any of
  * the methods below. This class is meant to be injected into a servlet or REST
  * service. ?? should I move this and perhaps key provider into a EJB jar.
- * 
+ *
  * @author Archimedes Trajano
  */
 @Stateless
@@ -49,7 +50,7 @@ public class DefaultAuthenticationRedirector implements AuthenticationRedirector
             final String subject) throws IOException,
             GeneralSecurityException {
 
-        IdToken idToken = tokenProvider.buildIdToken(subject, request);
+        final IdToken idToken = tokenProvider.buildIdToken(subject, request);
         final String code = tokenProvider.store(idToken, request);
 
         final UriBuilder b = UriBuilder.fromUri(request.getRedirectUri());
@@ -62,13 +63,13 @@ public class DefaultAuthenticationRedirector implements AuthenticationRedirector
             return b.build();
         }
 
-        boolean implicitFlow = (request.isImplicitFlow());
-        IdTokenResponse tokenResponse = tokenProvider.getByCode(code, implicitFlow);
+        final boolean implicitFlow = request.isImplicitFlow();
+        final IdTokenResponse tokenResponse = tokenProvider.getByCode(code, implicitFlow);
         if (request.containsResponseType(ResponseType.id_token)) {
             b.queryParam("id_token", tokenResponse.getEncodedIdToken());
         }
         if (request.containsResponseType(ResponseType.token)) {
-            b.queryParam("token_type", IdTokenResponse.BEARER);
+            b.queryParam("token_type", TokenResponse.BEARER);
             b.queryParam("access_token", tokenResponse.getAccessToken());
         }
         if (request.containsResponseType(ResponseType.code)) {
@@ -79,32 +80,8 @@ public class DefaultAuthenticationRedirector implements AuthenticationRedirector
     }
 
     /**
-     * Perform a redirect with the authorization response data.
-     * 
-     * @param response
-     * @param responseType
-     * @param subject
-     * @param state
-     * @param redirectUri
-     * @param extraStorageOptions
-     * @throws IOException
-     */
-    @Override
-    public void performRedirect(HttpServletResponse response,
-            final AuthenticationRequest request,
-            final String subject) throws IOException,
-            ServletException {
-
-        try {
-            response.sendRedirect(buildAuthorizationResponseUri(request, subject).toASCIIString());
-        } catch (GeneralSecurityException e) {
-            throw new ServletException(e);
-        }
-    }
-
-    /**
      * Builds a JAX-RS {@link Response} object containing a redirect
-     * 
+     *
      * @param responseType
      * @param subject
      * @param state
@@ -121,6 +98,30 @@ public class DefaultAuthenticationRedirector implements AuthenticationRedirector
                     .build();
         } catch (IOException | GeneralSecurityException e) {
             throw new WebApplicationException(e);
+        }
+    }
+
+    /**
+     * Perform a redirect with the authorization response data.
+     *
+     * @param response
+     * @param responseType
+     * @param subject
+     * @param state
+     * @param redirectUri
+     * @param extraStorageOptions
+     * @throws IOException
+     */
+    @Override
+    public void performRedirect(final HttpServletResponse response,
+            final AuthenticationRequest request,
+            final String subject) throws IOException,
+            ServletException {
+
+        try {
+            response.sendRedirect(buildAuthorizationResponseUri(request, subject).toASCIIString());
+        } catch (final GeneralSecurityException e) {
+            throw new ServletException(e);
         }
     }
 

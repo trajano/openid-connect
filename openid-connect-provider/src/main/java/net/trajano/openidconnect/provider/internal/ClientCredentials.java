@@ -2,13 +2,15 @@ package net.trajano.openidconnect.provider.internal;
 
 public class ClientCredentials {
 
-    public ClientCredentials(String clientId, String clientSecret) {
+    private final String clientId;
+
+    private final String clientSecret;
+
+    public ClientCredentials(final String clientId, final String clientSecret) {
 
         this.clientId = clientId;
         this.clientSecret = clientSecret;
     }
-
-    private final String clientId;
 
     public String getClientId() {
 
@@ -19,6 +21,4 @@ public class ClientCredentials {
 
         return clientSecret;
     }
-
-    private final String clientSecret;
 }

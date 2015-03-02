@@ -38,7 +38,7 @@ public class Initializer implements ServletContextListener {
     @Resource(name = "net.trajano.openidconnect.jaspic/issuer_uri", description = "Issuer URI")
     private String issuerUri;
 
-    @Resource(name = "net.trajano.openidconnect.jaspic/disable_certificate_checks", description = "Scope. (optional, defaults to 'openid profile email')")
+    @Resource(name = "net.trajano.openidconnect.jaspic/scope", description = "Scope. (optional, defaults to 'openid profile email')")
     private String scope = "openid profile email";
 
     /**

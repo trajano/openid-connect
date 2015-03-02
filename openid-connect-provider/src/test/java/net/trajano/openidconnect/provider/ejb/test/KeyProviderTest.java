@@ -9,7 +9,7 @@ public class KeyProviderTest {
     @Test
     public void testKeyProvider() throws Exception {
 
-        DefaultKeyProvider keyProvider = new DefaultKeyProvider();
+        final DefaultKeyProvider keyProvider = new DefaultKeyProvider();
         keyProvider.generateKeys();
 
     }

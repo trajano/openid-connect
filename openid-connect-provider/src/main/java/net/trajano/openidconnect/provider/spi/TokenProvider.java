@@ -17,14 +17,38 @@ import net.trajano.openidconnect.core.TokenResponse;
  * This provides storage and retrieval for the token responses. Implementers
  * would generally be providing an expiring cache that provides multiple key
  * types pointing to the same token response instance.
- * 
+ *
  * @author Archimedes
  */
 public interface TokenProvider {
 
     /**
+     * Builds an {@link IdToken} for the subject . Extra implementation specific
+     * options to the storage process to change certain aspects of the token can
+     * be provided as well.
+     *
+     * @param subject
+     *            subject
+     * @return authorization code
+     */
+    IdToken buildIdToken(String subject,
+            AuthenticationRequest request);
+
+    Collection<IdTokenResponse> getAllTokenResponses();
+
+    /**
+     * Gets the token data by access token. This may return null if there is no
+     * data found for the access token.
+     *
+     * @param accessToken
+     *            access token.
+     * @return token response data
+     */
+    IdTokenResponse getByAccessToken(String accessToken);
+
+    /**
      * Gets the token by authorization code.
-     * 
+     *
      * @param code
      * @param deleteAfterRetrieval
      *            if true the implementation is expected to remove the code
@@ -33,46 +57,6 @@ public interface TokenProvider {
      */
     IdTokenResponse getByCode(String code,
             boolean deleteAfterRetrieval);
-
-    Collection<IdTokenResponse> getAllTokenResponses();
-    
-    /**
-     * Stores the ID token and associated scope in some storage and creates the
-     * access_token, authorization code and refresh token linkages.
-     * 
-     * @param idToken
-     *            idToken
-     * @param req
-     *            Authentication request
-     * @return authorization code to retrieve the token data.
-     * @throws IOException
-     * @throws GeneralSecurityException
-     */
-    String store(IdToken idToken,
-            AuthenticationRequest req) throws IOException,
-            GeneralSecurityException;
-
-    /**
-     * Builds an {@link IdToken} for the subject . Extra implementation specific
-     * options to the storage process to change certain aspects of the token can
-     * be provided as well.
-     * 
-     * @param subject
-     *            subject
-     * @return authorization code
-     */
-    IdToken buildIdToken(String subject,
-            AuthenticationRequest request);
-
-    /**
-     * Gets the token data by access token. This may return null if there is no
-     * data found for the access token.
-     * 
-     * @param accessToken
-     *            access token.
-     * @return token response data
-     */
-    IdTokenResponse getByAccessToken(String accessToken);
 
     /**
      * @param clientId
@@ -91,5 +75,21 @@ public interface TokenProvider {
             @NotNull String refreshToken,
             Set<Scope> scopes,
             int expiresIn) throws IOException,
+            GeneralSecurityException;
+
+    /**
+     * Stores the ID token and associated scope in some storage and creates the
+     * access_token, authorization code and refresh token linkages.
+     *
+     * @param idToken
+     *            idToken
+     * @param req
+     *            Authentication request
+     * @return authorization code to retrieve the token data.
+     * @throws IOException
+     * @throws GeneralSecurityException
+     */
+    String store(IdToken idToken,
+            AuthenticationRequest req) throws IOException,
             GeneralSecurityException;
 }

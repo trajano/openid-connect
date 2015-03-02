@@ -12,18 +12,6 @@ import net.trajano.openidconnect.core.AuthenticationRequest;
 public interface Authenticator {
 
     /**
-     * Checks if the user is authenticated.
-     * 
-     * @param req
-     * @param resp
-     * @return
-     * @throws IOException
-     * @throws ServletException
-     */
-    boolean isAuthenticated(AuthenticationRequest authenticationRequest,
-            HttpServletRequest req);
-
-    /**
      * Obtains the URI to the start of the authentication process. This must be
      * the full URL including the necessary query parameters.
      * <p>
@@ -32,7 +20,7 @@ public interface Authenticator {
      * passed as a single query parameter to reduce the amount of parameters
      * that need to be passed
      * </p>
-     * 
+     *
      * @param authenticationRequest
      *            authentication request
      * @param req
@@ -52,13 +40,25 @@ public interface Authenticator {
      * Obtains the subject for the current user. Depending on the client ID the
      * user obtained in the request may not be valid. May return
      * <code>null</code> if the subject cannot be determined.
-     * 
+     *
      * @param clientId
      *            client ID
      * @param req
      * @return
      */
     String getSubject(String clientId,
+            HttpServletRequest req);
+
+    /**
+     * Checks if the user is authenticated.
+     *
+     * @param req
+     * @param resp
+     * @return
+     * @throws IOException
+     * @throws ServletException
+     */
+    boolean isAuthenticated(AuthenticationRequest authenticationRequest,
             HttpServletRequest req);
 
 }

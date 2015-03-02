@@ -71,7 +71,7 @@ public class Userinfo {
      * operating.
      */
     @XmlElement(name = "email_verified")
-    private boolean emailVerified;
+    private Boolean emailVerified;
 
     /**
      * Surname(s) or last name(s) of the End-User. Note that in some cultures,
@@ -155,7 +155,7 @@ public class Userinfo {
      * any extensions MUST be represented in RFC 3966 format.
      */
     @XmlElement(name = "phone_number_verified")
-    private boolean phoneNumberVerified;
+    private Boolean phoneNumberVerified;
 
     /**
      * URL of the End-User's profile picture. This URL MUST refer to an image

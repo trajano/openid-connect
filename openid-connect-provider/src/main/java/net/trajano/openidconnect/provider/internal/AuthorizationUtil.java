@@ -16,7 +16,7 @@ public final class AuthorizationUtil {
 
     private static final String BEARER_AUTHORIZATION = "Bearer";
 
-    private static String getDecodedValue(final HttpServletRequest request,
+    private static String getValue(final HttpServletRequest request,
             final String type) {
 
         final String authorization = request.getHeader("Authorization");
@@ -32,14 +32,14 @@ public final class AuthorizationUtil {
             throw new InvalidClientException(type);
         }
 
-        return Base64Url.decodeToString(authorizationComponents[1]);
+        return authorizationComponents[1];
 
     }
 
     public static ClientCredentials processBasicOrQuery(final HttpServletRequest req) {
 
         if (req.getHeader("Authorization") != null) {
-            final String basicCredentials = getDecodedValue(req, BASIC_AUTHORIZATION);
+            final String basicCredentials = Base64Url.decodeToString(getValue(req, BASIC_AUTHORIZATION));
             final String[] credentials = basicCredentials.split(":");
             if (credentials.length != 2) {
                 throw new InvalidClientException(BASIC_AUTHORIZATION);
@@ -55,7 +55,7 @@ public final class AuthorizationUtil {
     public static String processBearer(final HttpServletRequest req) {
 
         if (req.getHeader("Authorization") != null) {
-            return getDecodedValue(req, BEARER_AUTHORIZATION);
+            return getValue(req, BEARER_AUTHORIZATION);
         } else {
             throw new InvalidClientException(BEARER_AUTHORIZATION);
         }

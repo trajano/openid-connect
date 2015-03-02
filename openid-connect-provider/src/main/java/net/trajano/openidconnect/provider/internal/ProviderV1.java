@@ -18,7 +18,7 @@ public class ProviderV1 extends Application {
     @Override
     public Set<Class<?>> getClasses() {
 
-        Set<Class<?>> classes = new HashSet2<Class<?>>().put(AuthorizationEndpoint.class)
+        final Set<Class<?>> classes = new HashSet2<Class<?>>().put(AuthorizationEndpoint.class)
                 .put(TokenEndpoint.class)
                 .put(IdTokenProvider.class)
                 .put(Jwks.class)

@@ -114,7 +114,6 @@ public class AuthorizationEndpoint {
             @FormParam(AuthenticationRequestParam.UI_LOCALES) final String uiLocales,
             @Context final HttpServletRequest req) {
 
- 
         final AuthenticationRequest authenticationRequest = new AuthenticationRequest(req);
 
         if (!clientManager.isRedirectUriValidForClient(authenticationRequest.getClientId(), authenticationRequest.getRedirectUri())) {

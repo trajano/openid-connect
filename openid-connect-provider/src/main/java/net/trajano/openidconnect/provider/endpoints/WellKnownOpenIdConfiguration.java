@@ -23,75 +23,29 @@ import net.trajano.openidconnect.provider.spi.KeyProvider;
 @Path("openid-configuration")
 public class WellKnownOpenIdConfiguration {
 
-    private ClientManager clientManager;
-
-    @EJB
-    public void setClientManager(ClientManager clientManager) {
-
-        this.clientManager = clientManager;
-    }
-
-    @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response op(@Context HttpServletRequest request) {
-
-        final OpenIdProviderConfiguration openIdConfiguration = new OpenIdProviderConfiguration();
-        openIdConfiguration.setIssuer(clientManager.getIssuer());
-
-        UriBuilder baseUri = UriBuilder.fromUri(create(request.getRequestURL()
-                .toString()))
-                .scheme("https");
-        openIdConfiguration.setJwksUri(baseUri.replacePath(request.getContextPath() + jwksMapping)
-                .build());
-        openIdConfiguration.setAuthorizationEndpoint(baseUri.replacePath(request.getContextPath() + authorizationMapping)
-                .build());
-        openIdConfiguration.setRevocationEndpoint(baseUri.replacePath(request.getContextPath() + revocationMapping)
-                .build());
-        openIdConfiguration.setTokenEndpoint(baseUri.replacePath(request.getContextPath() + tokenMapping)
-                .build());
-        openIdConfiguration.setUserinfoEndpoint(baseUri.replacePath(request.getContextPath() + userinfoMapping)
-                .build());
-        openIdConfiguration.setScopesSupported(new HashSet2<String>("openid", "email", "profile"));
-        openIdConfiguration.setResponseTypesSupported(new HashSet2<String>(CODE, ID_TOKEN, ID_TOKEN_TOKEN, CODE_ID_TOKEN, CODE_TOKEN, CODE_ID_TOKEN_TOKEN));
-
-        CacheControl cacheControl = new CacheControl();
-        cacheControl.setPrivate(false);
-        cacheControl.setMaxAge(86400);
-
-        return Response.ok(openIdConfiguration)
-                .cacheControl(cacheControl)
-                .tag(keyProvider.getSigningKeys()[0].getKid())
-                .build();
-
-    }
-
     public static final String CODE = "code";
+
+    public static final String CODE_ID_TOKEN = "code id_token";
+
+    public static final String CODE_ID_TOKEN_TOKEN = "code id_token token";
+
+    public static final String CODE_TOKEN = "code token";
 
     public static final String ID_TOKEN = "id_token";
 
     public static final String ID_TOKEN_TOKEN = "id_token token";
-
-    public static final String CODE_ID_TOKEN = "code id_token";
-
-    public static final String CODE_TOKEN = "code token";
-
-    public static final String CODE_ID_TOKEN_TOKEN = "code id_token token";
 
     /**
      * Authorization endpoint mapping that is built during {@link #init()}
      */
     private String authorizationMapping;
 
+    private ClientManager clientManager;
+
     /**
      * JWKS URI mapping that is built during {@link #init()}
      */
     private String jwksMapping;
-
-    @EJB
-    public void setKeyProvider(KeyProvider keyProvider) {
-
-        this.keyProvider = keyProvider;
-    }
 
     private KeyProvider keyProvider;
 
@@ -130,6 +84,52 @@ public class WellKnownOpenIdConfiguration {
 
         System.out.println("CM = " + clientManager);
         System.out.println("KP = " + keyProvider);
+    }
+
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response op(@Context final HttpServletRequest request) {
+
+        final OpenIdProviderConfiguration openIdConfiguration = new OpenIdProviderConfiguration();
+        openIdConfiguration.setIssuer(clientManager.getIssuer());
+
+        final UriBuilder baseUri = UriBuilder.fromUri(create(request.getRequestURL()
+                .toString()))
+                .scheme("https");
+        openIdConfiguration.setJwksUri(baseUri.replacePath(request.getContextPath() + jwksMapping)
+                .build());
+        openIdConfiguration.setAuthorizationEndpoint(baseUri.replacePath(request.getContextPath() + authorizationMapping)
+                .build());
+        openIdConfiguration.setRevocationEndpoint(baseUri.replacePath(request.getContextPath() + revocationMapping)
+                .build());
+        openIdConfiguration.setTokenEndpoint(baseUri.replacePath(request.getContextPath() + tokenMapping)
+                .build());
+        openIdConfiguration.setUserinfoEndpoint(baseUri.replacePath(request.getContextPath() + userinfoMapping)
+                .build());
+        openIdConfiguration.setScopesSupported(new HashSet2<String>("openid", "email", "profile"));
+        openIdConfiguration.setResponseTypesSupported(new HashSet2<String>(CODE, ID_TOKEN, ID_TOKEN_TOKEN, CODE_ID_TOKEN, CODE_TOKEN, CODE_ID_TOKEN_TOKEN));
+
+        final CacheControl cacheControl = new CacheControl();
+        cacheControl.setPrivate(false);
+        cacheControl.setMaxAge(86400);
+
+        return Response.ok(openIdConfiguration)
+                .cacheControl(cacheControl)
+                .tag(keyProvider.getSigningKeys()[0].getKid())
+                .build();
+
+    }
+
+    @EJB
+    public void setClientManager(final ClientManager clientManager) {
+
+        this.clientManager = clientManager;
+    }
+
+    @EJB
+    public void setKeyProvider(final KeyProvider keyProvider) {
+
+        this.keyProvider = keyProvider;
     }
 
 }

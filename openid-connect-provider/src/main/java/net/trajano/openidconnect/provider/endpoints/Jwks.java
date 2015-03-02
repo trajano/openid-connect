@@ -49,7 +49,6 @@ public class Jwks {
     @Produces(MediaType.APPLICATION_JSON)
     public Response op() {
 
-
         final CacheControl cacheControl = new CacheControl();
         cacheControl.setPrivate(false);
         cacheControl.setMaxAge(300);
