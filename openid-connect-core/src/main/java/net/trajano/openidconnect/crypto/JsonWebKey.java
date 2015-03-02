@@ -4,6 +4,7 @@ import java.security.GeneralSecurityException;
 import java.security.Key;
 
 import javax.json.JsonObjectBuilder;
+import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -77,7 +78,7 @@ public abstract class JsonWebKey {
      * 
      * @param keyBuilder
      */
-    public void buildJsonObject(JsonObjectBuilder keyBuilder) {
+    public void buildJsonObject(@NotNull final JsonObjectBuilder keyBuilder) {
 
         keyBuilder.add("kid", kid);
         keyBuilder.add("alg", alg.toString());

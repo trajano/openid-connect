@@ -53,7 +53,7 @@ public class JsonWebKeySetProvider implements MessageBodyReader<JsonWebKeySet>, 
             final Annotation[] annotations,
             final MediaType mediaType) {
 
-        return type == JsonWebKeySet.class && mediaType == MediaType.APPLICATION_JSON_TYPE;
+        return JsonWebKeySet.class.isAssignableFrom(type) && MediaType.APPLICATION_JSON_TYPE.equals(mediaType);
     }
 
     @Override
@@ -62,7 +62,7 @@ public class JsonWebKeySetProvider implements MessageBodyReader<JsonWebKeySet>, 
             final Annotation[] annotations,
             final MediaType mediaType) {
 
-        return type == JsonWebKeySet.class && mediaType == MediaType.APPLICATION_JSON_TYPE;
+        return isReadable(type, genericType, annotations, mediaType);
     }
 
     @Override
@@ -77,6 +77,7 @@ public class JsonWebKeySetProvider implements MessageBodyReader<JsonWebKeySet>, 
         final JsonArray keysArray = Json.createReader(inputStream)
                 .readObject()
                 .getJsonArray("keys");
+
         final JsonWebKeySet keySet = new JsonWebKeySet();
         for (final JsonValue key : keysArray) {
             final JsonObject keyObject = (JsonObject) key;
@@ -117,6 +118,7 @@ public class JsonWebKeySetProvider implements MessageBodyReader<JsonWebKeySet>, 
             }
         }
 
+        System.out.println(keySet);
         return keySet;
     }
 
@@ -141,5 +143,6 @@ public class JsonWebKeySetProvider implements MessageBodyReader<JsonWebKeySet>, 
                 .build();
         JsonWriter jsonWriter = Json.createWriter(os);
         jsonWriter.write(jwksObject);
+        System.out.println(jwksObject);
     }
 }

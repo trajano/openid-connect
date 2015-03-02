@@ -5,6 +5,7 @@ import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.SecureRandom;
 import java.security.Signature;
+import java.security.interfaces.RSAPrivateCrtKey;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.util.Random;
@@ -19,6 +20,7 @@ import javax.ejb.Singleton;
 import javax.ejb.Startup;
 
 import net.trajano.openidconnect.crypto.Base64Url;
+import net.trajano.openidconnect.crypto.JsonWebAlgorithm;
 import net.trajano.openidconnect.crypto.JsonWebKey;
 import net.trajano.openidconnect.crypto.JsonWebKeySet;
 import net.trajano.openidconnect.crypto.RsaWebKey;
@@ -93,7 +95,7 @@ public class DefaultKeyProvider implements KeyProvider {
                 final KeyPair keyPair = keyPairGenerator.generateKeyPair();
 
                 final String keyId = nextEncodedToken();
-                final RSAPrivateKey privateKey = (RSAPrivateKey) keyPair.getPrivate();
+                final RSAPrivateCrtKey privateKey = (RSAPrivateCrtKey) keyPair.getPrivate();
                 final RSAPublicKey publicKey = (RSAPublicKey) keyPair.getPublic();
 
                 final SigningKey d = new SigningKey();
@@ -101,6 +103,7 @@ public class DefaultKeyProvider implements KeyProvider {
                 d.privateKey = privateKey;
                 signingKeys[i] = d;
                 signingJwks[i] = new RsaWebKey(keyId, publicKey);
+                signingJwks[i].setAlg(JsonWebAlgorithm.RS256);
 
             }
 

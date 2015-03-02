@@ -75,7 +75,6 @@ public class UserinfoEndpoint {
     public Response op(@Context final HttpServletRequest req) {
 
         final String accessToken = AuthorizationUtil.processBearer(req);
-        System.out.println("ACCESS TOKEN = " + accessToken);
         return Response.ok(userinfoProvider.getUserinfo(tokenProvider.getByAccessToken(accessToken)))
                 .build();
     }

@@ -1,5 +1,9 @@
 package net.trajano.openidconnect.crypto;
 
+import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.xml.bind.annotation.XmlEnumValue;
 
 /**
@@ -103,6 +107,14 @@ public enum JsonWebAlgorithm {
         this.jcaAlgorithm = jcaAlgorithm;
     }
 
+    private static final Map<String, JsonWebAlgorithm> REVERSE = new HashMap<>();
+    static {
+        for (JsonWebAlgorithm jwa : EnumSet.allOf(JsonWebAlgorithm.class)) {
+            if (jwa.jcaAlgorithm != null)
+                REVERSE.put(jwa.jcaAlgorithm, jwa);
+        }
+    }
+
     /**
      * Returns the JCA Algorithm Name.
      *
@@ -111,5 +123,10 @@ public enum JsonWebAlgorithm {
     public String toJca() {
 
         return jcaAlgorithm;
+    }
+
+    public static JsonWebAlgorithm fromJca(String jcaAlgorithm) {
+
+        return REVERSE.get(jcaAlgorithm);
     }
 }

@@ -6,6 +6,9 @@ import static org.junit.Assert.assertNotEquals;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.math.BigInteger;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.interfaces.RSAPrivateCrtKey;
 import java.security.interfaces.RSAPublicKey;
 
 import javax.json.Json;
@@ -22,6 +25,22 @@ import net.trajano.openidconnect.rs.JsonWebKeySetProvider;
 import org.junit.Test;
 
 public class JwksTest {
+
+    @Test
+    public void testAlgo() throws Exception {
+
+        final KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
+        keyPairGenerator.initialize(1024);
+        final KeyPair keyPair = keyPairGenerator.generateKeyPair();
+
+        final RSAPrivateCrtKey privateKey = (RSAPrivateCrtKey) keyPair.getPrivate();
+        final RSAPublicKey publicKey = (RSAPublicKey) keyPair.getPublic();
+
+        System.out.println(publicKey.getAlgorithm());
+        System.out.println(privateKey.getAlgorithm());
+        System.out.println(JsonWebAlgorithm.fromJca(publicKey.getAlgorithm()));
+
+    }
 
     @Test
     public void testGoogleJwks() throws Exception {

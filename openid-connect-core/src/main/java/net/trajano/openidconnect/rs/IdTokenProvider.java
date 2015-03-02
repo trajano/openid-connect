@@ -46,7 +46,7 @@ public class IdTokenProvider implements MessageBodyReader<IdToken>, MessageBodyW
             final Annotation[] arg2,
             final MediaType mediaType) {
 
-        return type == IdToken.class && mediaType == MediaType.APPLICATION_JSON_TYPE;
+        return type == IdToken.class && MediaType.APPLICATION_JSON_TYPE.equals(mediaType);
     }
 
     @Override
@@ -55,7 +55,7 @@ public class IdTokenProvider implements MessageBodyReader<IdToken>, MessageBodyW
             final Annotation[] arg2,
             final MediaType mediaType) {
 
-        return type == IdToken.class && mediaType == MediaType.APPLICATION_JSON_TYPE;
+        return isReadable(type, genericType, arg2, mediaType);
     }
 
     @Override

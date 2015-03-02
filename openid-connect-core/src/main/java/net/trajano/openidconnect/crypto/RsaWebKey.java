@@ -4,7 +4,9 @@ import java.math.BigInteger;
 import java.security.GeneralSecurityException;
 import java.security.Key;
 import java.security.KeyFactory;
+import java.security.interfaces.RSAPrivateCrtKey;
 import java.security.interfaces.RSAPublicKey;
+import java.security.spec.RSAPrivateCrtKeySpec;
 import java.security.spec.RSAPublicKeySpec;
 
 import javax.json.JsonObjectBuilder;
@@ -31,6 +33,19 @@ public class RsaWebKey extends JsonWebKey {
         e = (Base64Url.encodeUint(publicKey.getPublicExponent()));
     }
 
+    public RsaWebKey(String kid, RSAPrivateCrtKey privateKey) {
+
+        setKty(KeyType.RSA);
+        setKid(kid);
+        setUse(KeyUse.sig);
+        n = (Base64Url.encodeUint(privateKey.getModulus()));
+        e = (Base64Url.encodeUint(privateKey.getPublicExponent()));
+    }
+
+    /**
+     * The "d" (private exponent) member contains the private exponent value for
+     * the RSA private key. It is represented as a Base64urlUInt encoded value.
+     */
     @XmlElement
     private String d;
 
@@ -64,13 +79,50 @@ public class RsaWebKey extends JsonWebKey {
     @XmlElement
     private String n;
 
+    /**
+     * 
+     The "p" (first prime factor) member contains the first prime factor. It
+     * is represented as a Base64urlUInt encoded value.
+     */
     @XmlElement
     private String p;
+
+    /**
+     * 
+     The "q" (second prime factor) member contains the second prime factor. It
+     * is represented as a Base64urlUInt encoded value.
+     */
+    @XmlElement
+    private String q;
+
+    /**
+     * The "dp" (first factor CRT exponent) member contains the Chinese
+     * Remainder Theorem (CRT) exponent of the first factor. It is represented
+     * as a Base64urlUInt encoded value.
+     */
+    @XmlElement
+    private String dp;
+
+    /**
+     * The "dq" (second factor CRT exponent) member contains the Chinese
+     * Remainder Theorem (CRT) exponent of the second factor. It is represented
+     * as a Base64urlUInt encoded value.
+     */
+    @XmlElement
+    private String dq;
 
     public String getD() {
 
         return d;
     }
+
+    /**
+     * The "qi" (first CRT coefficient) member contains the Chinese Remainder
+     * Theorem (CRT) coefficient of the second factor. It is represented as a
+     * Base64urlUInt encoded value.
+     */
+    @XmlElement
+    private String qi;
 
     public String getE() {
 
@@ -110,15 +162,23 @@ public class RsaWebKey extends JsonWebKey {
     @Override
     public Key toJcaKey() throws GeneralSecurityException {
 
+        final BigInteger modulus = Base64Url.decodeUint(n);
+        final BigInteger publicExponent = Base64Url.decodeUint(e);
         if (getUse() == KeyUse.sig) {
-            final BigInteger modulus = Base64Url.decodeUint(n);
-            final BigInteger publicExponent = Base64Url.decodeUint(e);
             return KeyFactory.getInstance("RSA")
                     .generatePublic(new RSAPublicKeySpec(modulus, publicExponent));
         } else {
-            // TODO later
-            return null;
+
+            final BigInteger privateExponent = Base64Url.decodeUint(d);
+            final BigInteger primeP = Base64Url.decodeUint(p);
+            final BigInteger primeQ = Base64Url.decodeUint(q);
+            final BigInteger primeExponentP = Base64Url.decodeUint(dp);
+            final BigInteger primeExponentQ = Base64Url.decodeUint(dq);
+            final BigInteger crtCoefficent = Base64Url.decodeUint(qi);
+            return KeyFactory.getInstance("RSA")
+                    .generatePrivate(new RSAPrivateCrtKeySpec(modulus, publicExponent, privateExponent, primeP, primeQ, primeExponentP, primeExponentQ, crtCoefficent));
         }
+
     }
 
     @Override
@@ -127,6 +187,9 @@ public class RsaWebKey extends JsonWebKey {
         if (getUse() == KeyUse.enc) {
             keyBuilder.add("d", d);
             keyBuilder.add("p", p);
+            keyBuilder.add("dp", dp);
+            keyBuilder.add("dq", dq);
+            keyBuilder.add("qi", qi);
         }
         keyBuilder.add("n", n);
         keyBuilder.add("e", e);
