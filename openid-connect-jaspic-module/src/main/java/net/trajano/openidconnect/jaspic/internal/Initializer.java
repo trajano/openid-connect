@@ -9,9 +9,9 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
 
-import net.trajano.auth.AuthModuleConfigProvider;
 import net.trajano.auth.OAuthModule;
 import net.trajano.auth.OpenIDConnectAuthModule;
+import net.trajano.openidconnect.jaspic.OpenIDConnectModuleConfigProvider;
 
 /**
  * This initializes the OpenID Connector JASPIC module and registers itself as
@@ -65,20 +65,19 @@ public class Initializer implements ServletContextListener {
         options.put(OAuthModule.DISABLE_CERTIFICATE_CHECKS_KEY, disableCertificateChecks);
         options.put(OpenIDConnectAuthModule.ISSUER_URI_KEY, issuerUri);
 
-        options.put(AuthModuleConfigProvider.SERVER_AUTH_MODULE_CLASS, OpenIDConnectAuthModule.class.getName());
-
         final String contextPath = sce.getServletContext()
                 .getContextPath();
-        options.put("cookie_context", contextPath + "/");
+        final String rootPath = contextPath + "/";
+        options.put("cookie_context", rootPath);
         options.put("scope", scope);
-        options.put("redirection_endpoint", contextPath + "/oauth2");
+        options.put("redirection_endpoint", contextPath + "/cb");
         options.put("token_uri", contextPath + "/token");
         options.put("userinfo_uri", contextPath + "/userinfo");
-        options.put(OAuthModule.LOGOUT_GOTO_URI_KEY, contextPath + "/");
+        options.put(OAuthModule.LOGOUT_GOTO_URI_KEY, rootPath);
         options.put(OAuthModule.LOGOUT_URI_KEY, contextPath + "/logout");
 
         registrationID = AuthConfigFactory.getFactory()
-                .registerConfigProvider(new AuthModuleConfigProvider(options, null), "HttpServlet", null, null);
+                .registerConfigProvider(new OpenIDConnectModuleConfigProvider(options, null), "HttpServlet", null, null);
 
     }
 }
