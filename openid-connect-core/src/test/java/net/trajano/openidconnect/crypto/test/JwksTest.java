@@ -24,12 +24,22 @@ import javax.ws.rs.ext.MessageBodyWriter;
 import net.trajano.openidconnect.crypto.JsonWebAlgorithm;
 import net.trajano.openidconnect.crypto.JsonWebKey;
 import net.trajano.openidconnect.crypto.JsonWebKeySet;
+import net.trajano.openidconnect.crypto.NamedEllipticCurve;
 import net.trajano.openidconnect.crypto.OctWebKey;
 import net.trajano.openidconnect.rs.JsonWebKeySetProvider;
 
 import org.junit.Test;
 
 public class JwksTest {
+
+    @Test
+    public void testECValues() {
+
+        System.out.println(new BigInteger("FFFFFFFF00000001000000000000000000000000FFFFFFFFFFFFFFFFFFFFFFFF", 16).toString(10));
+        System.out.println(new BigInteger("FFFFFFFF00000001000000000000000000000000FFFFFFFFFFFFFFFFFFFFFFFC", 16).toString(10));
+
+        System.out.println(NamedEllipticCurve.P192);
+    }
 
     @Test
     public void testAlgo() throws Exception {
