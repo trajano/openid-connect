@@ -143,6 +143,5 @@ public class JsonWebKeySetProvider implements MessageBodyReader<JsonWebKeySet>, 
                 .build();
         JsonWriter jsonWriter = Json.createWriter(os);
         jsonWriter.write(jwksObject);
-        System.out.println(jwksObject);
     }
 }

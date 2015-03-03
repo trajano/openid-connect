@@ -55,7 +55,7 @@ public class Jwks {
 
         return Response.ok(keyProvider.getJwks())
                 .cacheControl(cacheControl)
-                .tag(keyProvider.getSigningKeys()[0].getKid())
+                .tag(keyProvider.getSecretKeyId())
                 .build();
     }
 

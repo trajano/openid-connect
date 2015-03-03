@@ -37,9 +37,16 @@ public class RsaWebKey extends JsonWebKey {
 
         setKty(KeyType.RSA);
         setKid(kid);
-        setUse(KeyUse.sig);
+        setUse(KeyUse.enc);
         n = (Base64Url.encodeUint(privateKey.getModulus()));
         e = (Base64Url.encodeUint(privateKey.getPublicExponent()));
+        p = (Base64Url.encodeUint(privateKey.getPrimeP()));
+        q = (Base64Url.encodeUint(privateKey.getPrimeQ()));
+        dp = (Base64Url.encodeUint(privateKey.getPrimeExponentP()));
+        dq = (Base64Url.encodeUint(privateKey.getPrimeExponentQ()));
+        d = (Base64Url.encodeUint(privateKey.getPrivateExponent()));
+        qi = (Base64Url.encodeUint(privateKey.getCrtCoefficient()));
+
     }
 
     /**

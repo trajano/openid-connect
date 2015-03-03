@@ -4,7 +4,6 @@ import java.security.GeneralSecurityException;
 
 import javax.ejb.Local;
 
-import net.trajano.openidconnect.crypto.JsonWebKey;
 import net.trajano.openidconnect.crypto.JsonWebKeySet;
 
 /**
@@ -20,9 +19,26 @@ public interface KeyProvider {
 
     byte[] encrypt(final String content) throws GeneralSecurityException;
 
+    /**
+     * JWKS containing only signature validation keys.
+     * 
+     * @return
+     */
     JsonWebKeySet getJwks();
 
-    JsonWebKey[] getSigningKeys();
+    /**
+     * JWKS containing the private keys.
+     * 
+     * @return
+     */
+    JsonWebKeySet getPrivateJwks();
+
+    /**
+     * Returns the Key ID for the secret key. Used as the ETag for caching.
+     * 
+     * @return
+     */
+    String getSecretKeyId();
 
     String nextEncodedToken();
 

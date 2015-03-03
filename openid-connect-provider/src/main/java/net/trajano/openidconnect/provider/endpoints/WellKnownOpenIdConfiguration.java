@@ -115,7 +115,7 @@ public class WellKnownOpenIdConfiguration {
 
         return Response.ok(openIdConfiguration)
                 .cacheControl(cacheControl)
-                .tag(keyProvider.getSigningKeys()[0].getKid())
+                .tag(keyProvider.getSecretKeyId())
                 .build();
 
     }
