@@ -59,11 +59,11 @@ import javax.ws.rs.core.UriBuilder;
 
 import net.trajano.auth.internal.CipherUtil;
 import net.trajano.auth.internal.JsonWebKeySet;
-import net.trajano.auth.internal.OAuthToken;
 import net.trajano.auth.internal.TokenCookie;
 import net.trajano.auth.internal.Utils;
 import net.trajano.openidconnect.core.OpenIdProviderConfiguration;
 import net.trajano.openidconnect.crypto.Base64Url;
+import net.trajano.openidconnect.token.IdTokenResponse;
 
 /**
  * OAuth 2.0 server authentication module. This is an implementation of the <a
@@ -487,7 +487,7 @@ public abstract class OAuthModule implements ServerAuthModule, ServerAuthContext
      *            OpenID provider config
      * @return token response
      */
-    protected OAuthToken getToken(final HttpServletRequest req,
+    protected IdTokenResponse getToken(final HttpServletRequest req,
             final OpenIdProviderConfiguration oidProviderConfig) throws IOException {
 
         final MultivaluedMap<String, String> requestData = new MultivaluedHashMap<>();
@@ -497,10 +497,10 @@ public abstract class OAuthModule implements ServerAuthModule, ServerAuthContext
 
         try {
             final String authorization = "Basic " + Base64Url.encode((clientId + ":" + clientSecret).getBytes("UTF8"));
-            final OAuthToken authorizationTokenResponse = restClient.target(oidProviderConfig.getTokenEndpoint())
+            final IdTokenResponse authorizationTokenResponse = restClient.target(oidProviderConfig.getTokenEndpoint())
                     .request(MediaType.APPLICATION_JSON_TYPE)
                     .header("Authorization", authorization)
-                    .post(Entity.form(requestData), OAuthToken.class);
+                    .post(Entity.form(requestData), IdTokenResponse.class);
             if (LOG.isLoggable(Level.FINEST)) {
                 LOG.finest("authorization token response =  " + authorizationTokenResponse);
             }
@@ -510,9 +510,9 @@ public abstract class OAuthModule implements ServerAuthModule, ServerAuthContext
             // on their endpoint.
             requestData.putSingle(CLIENT_ID, clientId);
             requestData.putSingle(CLIENT_SECRET_KEY, clientSecret);
-            final OAuthToken authorizationTokenResponse = restClient.target(oidProviderConfig.getTokenEndpoint())
+            final IdTokenResponse authorizationTokenResponse = restClient.target(oidProviderConfig.getTokenEndpoint())
                     .request(MediaType.APPLICATION_JSON_TYPE)
-                    .post(Entity.form(requestData), OAuthToken.class);
+                    .post(Entity.form(requestData), IdTokenResponse.class);
             if (LOG.isLoggable(Level.FINEST)) {
                 LOG.finest("authorization token response =  " + authorizationTokenResponse);
             }
@@ -575,11 +575,11 @@ public abstract class OAuthModule implements ServerAuthModule, ServerAuthContext
             IOException {
 
         final OpenIdProviderConfiguration oidProviderConfig = getOpenIDProviderConfig(req, restClient, moduleOptions);
-        final OAuthToken token = getToken(req, oidProviderConfig);
+        final IdTokenResponse token = getToken(req, oidProviderConfig);
         final JsonWebKeySet webKeys = getWebKeys(moduleOptions, oidProviderConfig);
 
         LOG.log(Level.FINEST, "tokenValue", token);
-        final JsonObject claimsSet = Json.createReader(new ByteArrayInputStream(Utils.getJwsPayload(token.getIdToken(), webKeys)))
+        final JsonObject claimsSet = Json.createReader(new ByteArrayInputStream(Utils.getJwsPayload(token.getEncodedIdToken(), webKeys)))
                 .readObject();
 
         final String nonce = getNonceFromCookie(req);
