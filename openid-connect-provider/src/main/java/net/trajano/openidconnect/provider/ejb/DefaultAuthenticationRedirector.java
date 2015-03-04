@@ -13,6 +13,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 
 import net.trajano.openidconnect.auth.AuthenticationRequest;
+import net.trajano.openidconnect.auth.ResponseMode;
 import net.trajano.openidconnect.auth.ResponseType;
 import net.trajano.openidconnect.provider.spi.AuthenticationRedirector;
 import net.trajano.openidconnect.provider.spi.TokenProvider;
@@ -60,23 +61,32 @@ public class DefaultAuthenticationRedirector implements AuthenticationRedirector
 
         if (request.isAuthorizationCodeFlow()) {
             b.queryParam("code", code);
-            return b.build();
+            if (ResponseMode.query == request.getResponseMode()) {
+                return b.build();
+            }
         }
+        if (ResponseMode.fragment == request.getResponseMode()) {
 
-        final boolean implicitFlow = request.isImplicitFlow();
-        final IdTokenResponse tokenResponse = tokenProvider.getByCode(code, implicitFlow);
-        if (request.containsResponseType(ResponseType.id_token)) {
-            b.queryParam("id_token", tokenResponse.getEncodedIdToken());
-        }
-        if (request.containsResponseType(ResponseType.token)) {
-            b.queryParam("token_type", TokenResponse.BEARER);
-            b.queryParam("access_token", tokenResponse.getAccessToken());
-        }
-        if (request.containsResponseType(ResponseType.code)) {
-            b.queryParam("code", code);
-        }
+            final boolean implicitFlow = request.isImplicitFlow();
+            final IdTokenResponse tokenResponse = tokenProvider.getByCode(code, implicitFlow);
+            if (request.containsResponseType(ResponseType.id_token)) {
+                b.queryParam("id_token", tokenResponse.getEncodedIdToken());
+            }
+            if (request.containsResponseType(ResponseType.token)) {
+                b.queryParam("token_type", TokenResponse.BEARER);
+                b.queryParam("access_token", tokenResponse.getAccessToken());
+            }
+            if (request.containsResponseType(ResponseType.code)) {
+                b.queryParam("code", code);
+            }
 
-        return b.build();
+            return UriBuilder.fromUri(request.getRedirectUri())
+                    .fragment(b.build()
+                            .getQuery())
+                    .build();
+        } else {
+            throw new WebApplicationException();
+        }
     }
 
     /**
@@ -94,8 +104,12 @@ public class DefaultAuthenticationRedirector implements AuthenticationRedirector
             final String subject) {
 
         try {
-            return Response.temporaryRedirect(buildAuthorizationResponseUri(request, subject))
-                    .build();
+            if (request.getResponseMode() == ResponseMode.fragment || request.getResponseMode() == ResponseMode.query) {
+                return Response.temporaryRedirect(buildAuthorizationResponseUri(request, subject))
+                        .build();
+            } else {
+                throw new WebApplicationException();
+            }
         } catch (IOException | GeneralSecurityException e) {
             throw new WebApplicationException(e);
         }
@@ -119,7 +133,11 @@ public class DefaultAuthenticationRedirector implements AuthenticationRedirector
             ServletException {
 
         try {
-            response.sendRedirect(buildAuthorizationResponseUri(request, subject).toASCIIString());
+            if (request.getResponseMode() == ResponseMode.fragment || request.getResponseMode() == ResponseMode.query) {
+                response.sendRedirect(buildAuthorizationResponseUri(request, subject).toASCIIString());
+            } else {
+
+            }
         } catch (final GeneralSecurityException e) {
             throw new ServletException(e);
         }

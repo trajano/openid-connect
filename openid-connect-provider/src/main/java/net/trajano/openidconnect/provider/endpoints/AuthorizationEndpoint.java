@@ -24,11 +24,10 @@ import net.trajano.openidconnect.auth.AuthenticationRequest;
 import net.trajano.openidconnect.auth.AuthenticationRequestParam;
 import net.trajano.openidconnect.auth.AuthenticationRequestParam.Display;
 import net.trajano.openidconnect.auth.AuthenticationRequestParam.Prompt;
-import net.trajano.openidconnect.core.Scope;
 import net.trajano.openidconnect.provider.spi.Authenticator;
 import net.trajano.openidconnect.provider.spi.ClientManager;
-import net.trajano.openidconnect.token.TokenException;
 import net.trajano.openidconnect.token.TokenErrorCode;
+import net.trajano.openidconnect.token.TokenException;
 
 /**
  * <p>
@@ -118,18 +117,6 @@ public class AuthorizationEndpoint {
 
         if (!clientManager.isRedirectUriValidForClient(authenticationRequest.getClientId(), authenticationRequest.getRedirectUri())) {
             throw new TokenException(TokenErrorCode.invalid_grant, "redirect URI is not supported for the client");
-        }
-
-        if (!authenticationRequest.getScopes()
-                .contains(Scope.openid)) {
-            throw new AuthenticationException(authenticationRequest, AuthenticationErrorCode.invalid_request, "the request must contain the 'openid' scope value");
-        }
-
-        if (authenticationRequest.getPrompts()
-                .contains(AuthenticationRequestParam.Prompt.none) && authenticationRequest.getPrompts()
-                .size() != 1) {
-            throw new AuthenticationException(authenticationRequest, AuthenticationErrorCode.invalid_request, "Cannot have 'none' with any other value for 'prompt'");
-
         }
 
         if (!authenticator.isAuthenticated(authenticationRequest, req) && authenticationRequest.getPrompts()

@@ -19,13 +19,13 @@ import net.trajano.openidconnect.core.Scope;
  * Wraps an HttpServletRequest to provide a cleaner API to the request
  * parameters. This is {@link Serializable} in order to allow implementations to
  * use Object Input/Output streams to build the data as needed.
- * 
+ *
  * @author Archimedes
  */
 public class AuthenticationRequest implements Serializable {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 6520962711562750670L;
 
@@ -47,6 +47,19 @@ public class AuthenticationRequest implements Serializable {
 
     private final URI redirectUri;
 
+    private final ResponseMode responseMode;
+
+    public ResponseMode getResponseMode() {
+
+        return responseMode;
+    }
+
+    /**
+     * Flag to indicate that "code" is the only response type. This is used in a
+     * few places so minor efficiency boost.
+     */
+    private final boolean codeOnlyResponseType;
+
     private final Set<ResponseType> responseTypes;
 
     private final Set<Scope> scopes;
@@ -63,6 +76,7 @@ public class AuthenticationRequest implements Serializable {
             scopes.add(Scope.valueOf(scope));
         }
         responseTypes = new HashSet<>();
+        codeOnlyResponseType = "code".equals(req.getParameter(AuthenticationRequestParam.RESPONSE_TYPE));
         for (final String responseType : req.getParameter(AuthenticationRequestParam.RESPONSE_TYPE)
                 .split("\\s")) {
             responseTypes.add(ResponseType.valueOf(responseType));
@@ -71,6 +85,12 @@ public class AuthenticationRequest implements Serializable {
         clientId = req.getParameter(AuthenticationRequestParam.CLIENT_ID);
         redirectUri = URI.create(req.getParameter(AuthenticationRequestParam.REDIRECT_URI));
         state = req.getParameter(AuthenticationRequestParam.STATE);
+        if (req.getParameter(AuthenticationRequestParam.RESPONSE_MODE) != null) {
+            responseMode = ResponseMode.valueOf(req.getParameter(AuthenticationRequestParam.RESPONSE_TYPE));
+        } else {
+            responseMode = getDefaultResponseMode();
+        }
+
         nonce = req.getParameter(AuthenticationRequestParam.NONCE);
         if (req.getParameter(AuthenticationRequestParam.DISPLAY) != null && !req.getParameter(AuthenticationRequestParam.DISPLAY)
                 .isEmpty()) {
@@ -111,32 +131,67 @@ public class AuthenticationRequest implements Serializable {
         } else {
             acrValues = Collections.emptySet();
         }
+        validate();
     }
 
     /**
-     * All but the code Response Type value, which is defined by OAuth 2.0
-     * [RFC6749], are defined in the OAuth 2.0 Multiple Response Type Encoding
-     * Practices [OAuth.Responses] specification. NOTE: While OAuth 2.0 also
-     * defines the token Response Type value for the Implicit Flow, OpenID
-     * Connect does not use this Response Type, since no ID Token would be
-     * returned.
-     * 
-     * @see http://openid.net/specs/openid-connect-core-1_0.html#Authentication
-     * @return
+     * Performs the validation on the Authentication token.
      */
-    public boolean isImplicitFlow() {
+    private void validate() {
 
-        return !responseTypes.contains(ResponseType.code);
+        if (!scopes.contains(Scope.openid)) {
+            throw new AuthenticationException(this, AuthenticationErrorCode.invalid_request, "the request must contain the 'openid' scope value");
+        }
+
+        if (prompts.contains(AuthenticationRequestParam.Prompt.none) && prompts.size() != 1) {
+
+            throw new AuthenticationException(this, AuthenticationErrorCode.invalid_request, "Cannot have 'none' with any other value for 'prompt'");
+
+        }
+
+        if (responseTypes.contains(ResponseType.none) && responseTypes.size() != 1) {
+
+            throw new AuthenticationException(this, AuthenticationErrorCode.invalid_request, "Cannot have 'none' with any other value for 'response_type'");
+
+        }
+
+        if (responseMode == ResponseMode.query && !codeOnlyResponseType) {
+
+            throw new AuthenticationException(this, AuthenticationErrorCode.invalid_request, "Invalid response mode for the response type requested.");
+
+        }
     }
 
     /**
-     * If the response types contains code and only code.
+     * For purposes of this specification, the default Response Mode for the
+     * OAuth 2.0 code Response Type is the query encoding. For purposes of this
+     * specification, the default Response Mode for the OAuth 2.0 token Response
+     * Type is the fragment encoding.
      * 
      * @return
      */
-    public boolean isAuthorizationCodeFlow() {
+    private ResponseMode getDefaultResponseMode() {
 
-        return responseTypes.equals(Collections.singleton(ResponseType.code));
+        if (codeOnlyResponseType) {
+            return ResponseMode.query;
+        } else {
+            return ResponseMode.fragment;
+        }
+
+    }
+
+    public boolean isDefaultResponseMode() {
+
+        if (codeOnlyResponseType) {
+            return ResponseMode.query == responseMode;
+        } else {
+            return ResponseMode.fragment == responseMode;
+        }
+    }
+
+    public boolean containsResponseType(final ResponseType responseType) {
+
+        return responseTypes.contains(responseType);
     }
 
     public Set<String> getAcrValues() {
@@ -184,31 +239,43 @@ public class AuthenticationRequest implements Serializable {
         return redirectUri;
     }
 
-    public Set<ResponseType> getResponseTypes() {
+    public String getResponseType() {
 
-        return responseTypes;
-    }
-
-    public Set<Scope> getScopes() {
-
-        return scopes;
-    }
-
-    /**
-     * Gets a string representation of the scope set.
-     * 
-     * @return
-     */
-    public String getScope() {
-
-        StringBuilder b = new StringBuilder();
-        Iterator<Scope> i = scopes.iterator();
+        final StringBuilder b = new StringBuilder();
+        final Iterator<ResponseType> i = responseTypes.iterator();
         b.append(i.next());
         while (i.hasNext()) {
             b.append(' ');
             b.append(i.next());
         }
         return b.toString();
+    }
+
+    public Set<ResponseType> getResponseTypes() {
+
+        return responseTypes;
+    }
+
+    /**
+     * Gets a string representation of the scope set.
+     *
+     * @return
+     */
+    public String getScope() {
+
+        final StringBuilder b = new StringBuilder();
+        final Iterator<Scope> i = scopes.iterator();
+        b.append(i.next());
+        while (i.hasNext()) {
+            b.append(' ');
+            b.append(i.next());
+        }
+        return b.toString();
+    }
+
+    public Set<Scope> getScopes() {
+
+        return scopes;
     }
 
     public String getState() {
@@ -221,20 +288,29 @@ public class AuthenticationRequest implements Serializable {
         return uiLocales;
     }
 
-    public boolean containsResponseType(ResponseType responseType) {
+    /**
+     * If the response types contains code and only code.
+     *
+     * @return
+     */
+    public boolean isAuthorizationCodeFlow() {
 
-        return responseTypes.contains(responseType);
+        return codeOnlyResponseType;
     }
 
-    public String getResponseType() {
+    /**
+     * All but the code Response Type value, which is defined by OAuth 2.0
+     * [RFC6749], are defined in the OAuth 2.0 Multiple Response Type Encoding
+     * Practices [OAuth.Responses] specification. NOTE: While OAuth 2.0 also
+     * defines the token Response Type value for the Implicit Flow, OpenID
+     * Connect does not use this Response Type, since no ID Token would be
+     * returned.
+     *
+     * @see http://openid.net/specs/openid-connect-core-1_0.html#Authentication
+     * @return
+     */
+    public boolean isImplicitFlow() {
 
-        StringBuilder b = new StringBuilder();
-        Iterator<ResponseType> i = responseTypes.iterator();
-        b.append(i.next());
-        while (i.hasNext()) {
-            b.append(' ');
-            b.append(i.next());
-        }
-        return b.toString();
+        return !responseTypes.contains(ResponseType.code);
     }
 }
