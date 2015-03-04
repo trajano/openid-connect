@@ -61,6 +61,8 @@ import net.trajano.auth.internal.CipherUtil;
 import net.trajano.auth.internal.JsonWebKeySet;
 import net.trajano.auth.internal.TokenCookie;
 import net.trajano.auth.internal.Utils;
+import net.trajano.openidconnect.auth.AuthenticationRequestParam;
+import net.trajano.openidconnect.auth.ResponseMode;
 import net.trajano.openidconnect.core.OpenIdProviderConfiguration;
 import net.trajano.openidconnect.crypto.Base64Url;
 import net.trajano.openidconnect.token.IdTokenResponse;
@@ -112,6 +114,11 @@ public abstract class OAuthModule implements ServerAuthModule, ServerAuthContext
      * Open ID token attribute name.
      */
     public static final String ID_TOKEN_KEY = "auth_idtoken";
+
+    /**
+     * Response mode used by the module.
+     */
+    private ResponseMode responseMode = ResponseMode.form_post;
 
     /**
      * Logger.
@@ -707,9 +714,9 @@ public abstract class OAuthModule implements ServerAuthModule, ServerAuthContext
     /**
      * Checks to see whether the {@link ServerAuthModule} is called by the
      * resource owner. This is indicated by the presence of a <code>code</code>
-     * and a <code>state</code> on the URL and is an idempotent request (i.e.
-     * GET or HEAD). The resource owner would be a web browser that got a
-     * redirect sent by the OAuth 2.0 provider.
+     * and a <code>state</code> on the URL. The resource owner would be a web
+     * browser that got a redirect or automatic form post sent by the Open ID
+     * Connect provider.
      *
      * @param req
      *            HTTP servlet request
@@ -718,7 +725,7 @@ public abstract class OAuthModule implements ServerAuthModule, ServerAuthContext
     public boolean isCallback(final HttpServletRequest req) {
 
         return moduleOptions.get(REDIRECTION_ENDPOINT_URI_KEY)
-                .equals(req.getRequestURI()) && isRetrievalRequest(req) && !isNullOrEmpty(req.getParameter(CODE)) && !isNullOrEmpty(req.getParameter(STATE));
+                .equals(req.getRequestURI()) && !isNullOrEmpty(req.getParameter(CODE)) && !isNullOrEmpty(req.getParameter(STATE));
     }
 
     /**
@@ -810,8 +817,7 @@ public abstract class OAuthModule implements ServerAuthModule, ServerAuthContext
                 stateBuilder.append('?');
                 stateBuilder.append(req.getQueryString());
             }
-            final String state = Base64Url.encode(stateBuilder.toString()
-                    .getBytes("UTF-8"));
+            final String state = Base64Url.encode(stateBuilder.toString());
 
             final String requestCookieContext;
             if (isNullOrEmpty(cookieContext)) {
@@ -827,7 +833,7 @@ public abstract class OAuthModule implements ServerAuthModule, ServerAuthContext
             nonceCookie.setHttpOnly(true);
             nonceCookie.setSecure(true);
             resp.addCookie(nonceCookie);
-            authorizationEndpointUri = UriBuilder.fromUri(oidProviderConfig.getAuthorizationEndpoint())
+            UriBuilder b = UriBuilder.fromUri(oidProviderConfig.getAuthorizationEndpoint())
                     .queryParam(CLIENT_ID, clientId)
                     .queryParam(RESPONSE_TYPE, "code")
                     .queryParam(SCOPE, scope)
@@ -835,8 +841,12 @@ public abstract class OAuthModule implements ServerAuthModule, ServerAuthContext
                             .toString())
                             .resolve(moduleOptions.get(REDIRECTION_ENDPOINT_URI_KEY)))
                     .queryParam(STATE, state)
-                    .queryParam("nonce", nonce)
-                    .build();
+                    .queryParam(AuthenticationRequestParam.NONCE, nonce);
+            System.out.println("R!" + responseMode);
+            if (responseMode != ResponseMode.query) {
+                b.queryParam(AuthenticationRequestParam.RESPONSE_MODE, responseMode.toString());
+            }
+            authorizationEndpointUri = b.build();
             deleteAuthCookies(resp);
 
             resp.sendRedirect(authorizationEndpointUri.toASCIIString());

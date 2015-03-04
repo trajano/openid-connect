@@ -9,8 +9,8 @@ import javax.security.auth.message.config.AuthConfigProvider;
 import javax.security.auth.message.config.ClientAuthConfig;
 import javax.security.auth.message.config.ServerAuthConfig;
 
-import net.trajano.auth.internal.OpenIDConnectServerAuthConfig;
 import net.trajano.openidconnect.jaspic.internal.Initializer;
+import net.trajano.openidconnect.jaspic.internal.OpenIDConnectModuleConfig;
 
 /**
  * This is used to provide the server auth module on the application rather than
@@ -67,7 +67,7 @@ public class OpenIDConnectModuleConfigProvider implements AuthConfigProvider {
             final String appContext,
             final CallbackHandler handler) throws AuthException {
 
-        return new OpenIDConnectServerAuthConfig(options, layer, appContext, handler);
+        return new OpenIDConnectModuleConfig(options, layer, appContext, handler);
     }
 
     /**

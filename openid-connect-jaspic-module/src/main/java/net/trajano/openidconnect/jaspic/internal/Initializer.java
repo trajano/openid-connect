@@ -9,8 +9,7 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
 
-import net.trajano.auth.OAuthModule;
-import net.trajano.auth.OpenIDConnectAuthModule;
+import net.trajano.openidconnect.jaspic.OpenIDConnectAuthModule;
 import net.trajano.openidconnect.jaspic.OpenIDConnectModuleConfigProvider;
 
 /**
