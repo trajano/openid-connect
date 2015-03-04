@@ -13,7 +13,8 @@ import javax.security.auth.message.MessagePolicy.TargetPolicy;
 import javax.security.auth.message.config.ServerAuthConfig;
 import javax.security.auth.message.config.ServerAuthContext;
 
-import net.trajano.auth.OpenIDConnectAuthModule;
+import net.trajano.openidconnect.jaspic.OpenIDConnectAuthModule;
+
 
 /**
  * Provides initialized server modules/contexts.
