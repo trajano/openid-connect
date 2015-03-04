@@ -82,8 +82,6 @@ public class WellKnownOpenIdConfiguration {
         userinfoMapping = applicationPath + "/profile";
         revocationMapping = applicationPath + "/revocation";
 
-        System.out.println("CM = " + clientManager);
-        System.out.println("KP = " + keyProvider);
     }
 
     @GET

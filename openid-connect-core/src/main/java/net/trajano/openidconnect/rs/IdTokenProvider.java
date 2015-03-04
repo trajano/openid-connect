@@ -70,7 +70,6 @@ public class IdTokenProvider implements MessageBodyReader<IdToken>, MessageBodyW
         final JsonObject obj = Json.createReader(is)
                 .readObject();
         final IdToken idToken = new IdToken();
-        System.out.println(obj);
         if (obj.containsKey("acr")) {
             idToken.setAcr(obj.getString("acr"));
         }

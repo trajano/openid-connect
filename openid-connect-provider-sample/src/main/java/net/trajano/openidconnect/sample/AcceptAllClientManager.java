@@ -129,7 +129,6 @@ public class AcceptAllClientManager implements ClientManager, Authenticator, Use
         accessTokenToTokenResponse.put(response.getAccessToken(), response);
         refreshTokenToTokenResponse.put(response.getRefreshToken(), response);
 
-        System.out.println("STORE " + code);
 
         return code;
     }

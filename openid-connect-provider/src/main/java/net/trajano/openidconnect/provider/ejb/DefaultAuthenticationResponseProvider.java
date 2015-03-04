@@ -1,7 +1,6 @@
 package net.trajano.openidconnect.provider.ejb;
 
 import java.io.IOException;
-import java.net.URI;
 import java.security.GeneralSecurityException;
 
 import javax.ejb.EJB;
@@ -9,13 +8,15 @@ import javax.ejb.Stateless;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriBuilder;
 
 import net.trajano.openidconnect.auth.AuthenticationRequest;
+import net.trajano.openidconnect.auth.AuthenticationResponse;
 import net.trajano.openidconnect.auth.ResponseMode;
 import net.trajano.openidconnect.auth.ResponseType;
-import net.trajano.openidconnect.provider.spi.AuthenticationRedirector;
+import net.trajano.openidconnect.provider.internal.CacheConstants;
+import net.trajano.openidconnect.provider.spi.AuthenticationResponseProvider;
 import net.trajano.openidconnect.provider.spi.TokenProvider;
 import net.trajano.openidconnect.token.IdToken;
 import net.trajano.openidconnect.token.IdTokenResponse;
@@ -29,7 +30,7 @@ import net.trajano.openidconnect.token.TokenResponse;
  * @author Archimedes Trajano
  */
 @Stateless
-public class DefaultAuthenticationRedirector implements AuthenticationRedirector {
+public class DefaultAuthenticationResponseProvider implements AuthenticationResponseProvider {
 
     private TokenProvider tokenProvider;
 
@@ -47,46 +48,32 @@ public class DefaultAuthenticationRedirector implements AuthenticationRedirector
      * @throws GeneralSecurityException
      * @throws IOException
      */
-    private URI buildAuthorizationResponseUri(final AuthenticationRequest request,
+    @Override
+    public AuthenticationResponse buildAuthenticationResponse(final AuthenticationRequest request,
             final String subject) throws IOException,
             GeneralSecurityException {
+
+        AuthenticationResponse response = new AuthenticationResponse();
 
         final IdToken idToken = tokenProvider.buildIdToken(subject, request);
         final String code = tokenProvider.store(idToken, request);
 
-        final UriBuilder b = UriBuilder.fromUri(request.getRedirectUri());
         if (request.getState() != null) {
-            b.queryParam("state", request.getState());
+            response.setState(request.getState());
         }
 
-        if (request.isAuthorizationCodeFlow()) {
-            b.queryParam("code", code);
-            if (ResponseMode.query == request.getResponseMode()) {
-                return b.build();
-            }
+        final boolean implicitFlow = request.isImplicitFlow();
+        final IdTokenResponse tokenResponse = tokenProvider.getByCode(code, implicitFlow);
+        if (request.containsResponseType(ResponseType.id_token)) {
+            response.setEncodedIdToken(tokenResponse.getEncodedIdToken());
         }
-        if (ResponseMode.fragment == request.getResponseMode()) {
-
-            final boolean implicitFlow = request.isImplicitFlow();
-            final IdTokenResponse tokenResponse = tokenProvider.getByCode(code, implicitFlow);
-            if (request.containsResponseType(ResponseType.id_token)) {
-                b.queryParam("id_token", tokenResponse.getEncodedIdToken());
-            }
-            if (request.containsResponseType(ResponseType.token)) {
-                b.queryParam("token_type", TokenResponse.BEARER);
-                b.queryParam("access_token", tokenResponse.getAccessToken());
-            }
-            if (request.containsResponseType(ResponseType.code)) {
-                b.queryParam("code", code);
-            }
-
-            return UriBuilder.fromUri(request.getRedirectUri())
-                    .fragment(b.build()
-                            .getQuery())
-                    .build();
-        } else {
-            throw new WebApplicationException();
+        if (request.containsResponseType(ResponseType.token)) {
+            response.setAccessToken(TokenResponse.BEARER, tokenResponse.getAccessToken());
         }
+        if (request.containsResponseType(ResponseType.code)) {
+            response.setCode(code);
+        }
+        return response;
     }
 
     /**
@@ -103,20 +90,30 @@ public class DefaultAuthenticationRedirector implements AuthenticationRedirector
     public Response buildResponse(final AuthenticationRequest request,
             final String subject) {
 
+        final AuthenticationResponse response;
         try {
-            if (request.getResponseMode() == ResponseMode.fragment || request.getResponseMode() == ResponseMode.query) {
-                return Response.temporaryRedirect(buildAuthorizationResponseUri(request, subject))
-                        .build();
-            } else {
-                throw new WebApplicationException();
-            }
+            response = buildAuthenticationResponse(request, subject);
         } catch (IOException | GeneralSecurityException e) {
             throw new WebApplicationException(e);
+        }
+        if (request.getResponseMode() == ResponseMode.query) {
+            return Response.temporaryRedirect(response.toQueryUri(request.getRedirectUri()))
+                    .build();
+        } else if (request.getResponseMode() == ResponseMode.form_post) {
+
+            return Response.ok(response.toFormPost(request.getRedirectUri()))
+                    .type(MediaType.TEXT_HTML_TYPE)
+                    .cacheControl(CacheConstants.NO_CACHE)
+                    .build();
+        } else {
+            return Response.temporaryRedirect(response.toFragmentUri(request.getRedirectUri()))
+                    .build();
         }
     }
 
     /**
-     * Perform a redirect with the authorization response data.
+     * Calls for the authentication callback. Perform a redirect with the
+     * authorization response data.
      *
      * @param response
      * @param responseType
@@ -127,16 +124,25 @@ public class DefaultAuthenticationRedirector implements AuthenticationRedirector
      * @throws IOException
      */
     @Override
-    public void performRedirect(final HttpServletResponse response,
+    public void doCallback(final HttpServletResponse response,
             final AuthenticationRequest request,
             final String subject) throws IOException,
             ServletException {
 
         try {
-            if (request.getResponseMode() == ResponseMode.fragment || request.getResponseMode() == ResponseMode.query) {
-                response.sendRedirect(buildAuthorizationResponseUri(request, subject).toASCIIString());
-            } else {
+            AuthenticationResponse authenticationResponse = buildAuthenticationResponse(request, subject);
+            if (request.getResponseMode() == ResponseMode.query) {
+                response.sendRedirect(authenticationResponse.toQueryUri(request.getRedirectUri())
+                        .toASCIIString());
 
+            } else if (request.getResponseMode() == ResponseMode.form_post) {
+                String formPost = authenticationResponse.toFormPost(request.getRedirectUri());
+                response.setContentLength(formPost.length());
+                response.getWriter()
+                        .print(formPost);
+            } else {
+                response.sendRedirect(authenticationResponse.toFragmentUri(request.getRedirectUri())
+                        .toASCIIString());
             }
         } catch (final GeneralSecurityException e) {
             throw new ServletException(e);

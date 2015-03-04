@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.MediaType;
 
 import net.trajano.openidconnect.auth.AuthenticationRequest;
-import net.trajano.openidconnect.provider.spi.AuthenticationRedirector;
+import net.trajano.openidconnect.provider.spi.AuthenticationResponseProvider;
 import net.trajano.openidconnect.provider.spi.KeyProvider;
 import net.trajano.openidconnect.provider.spi.TokenProvider;
 
@@ -49,12 +49,11 @@ public class LoginServlet extends HttpServlet {
             IOException {
 
         String subject = req.getParameter("username");
-        System.out.println("got subject " + subject);
-        redirector.performRedirect(resp, new AuthenticationRequest(req), subject);
+        redirector.doCallback(resp, new AuthenticationRequest(req), subject);
     }
 
     @EJB
-    private AuthenticationRedirector redirector;
+    private AuthenticationResponseProvider redirector;
 
     @EJB
     private KeyProvider kp;

@@ -1,4 +1,4 @@
-package net.trajano.openidconnect.provider.ejb;
+package net.trajano.openidconnect.internal;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -36,7 +36,7 @@ public class FormPostBuilder {
 
     private final Map<String, String> inputMap = new HashMap<>();
 
-    public String build() {
+    public String buildFormPost() {
 
         StringBuilder inputs = new StringBuilder();
         for (Map.Entry<String, String> entry : inputMap.entrySet()) {
@@ -48,6 +48,6 @@ public class FormPostBuilder {
     public void put(String name,
             String value) {
 
-        inputMap.put(name, value);
+            inputMap.put(name, value);
     }
 }

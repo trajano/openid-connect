@@ -118,9 +118,8 @@ public class JsonWebKeySetProvider implements MessageBodyReader<JsonWebKeySet>, 
             }
         }
 
-        System.out.println(keySet);
         return keySet;
-    }
+            }
 
     @Override
     public void writeTo(final JsonWebKeySet jwks,
