@@ -2,7 +2,7 @@ package net.trajano.openidconnect.provider.test;
 
 import java.net.URI;
 
-import net.trajano.openidconnect.internal.FormPostBuilder;
+import net.trajano.openidconnect.provider.internal.FormPostBuilder;
 
 import org.junit.Test;
 

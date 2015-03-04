@@ -15,6 +15,7 @@ import net.trajano.openidconnect.auth.AuthenticationRequest;
 import net.trajano.openidconnect.auth.AuthenticationResponse;
 import net.trajano.openidconnect.auth.ResponseMode;
 import net.trajano.openidconnect.auth.ResponseType;
+import net.trajano.openidconnect.provider.internal.AuthenticationResponseConverter;
 import net.trajano.openidconnect.provider.internal.CacheConstants;
 import net.trajano.openidconnect.provider.spi.AuthenticationResponseProvider;
 import net.trajano.openidconnect.provider.spi.TokenProvider;
@@ -53,7 +54,7 @@ public class DefaultAuthenticationResponseProvider implements AuthenticationResp
             final String subject) throws IOException,
             GeneralSecurityException {
 
-        AuthenticationResponse response = new AuthenticationResponse();
+        final AuthenticationResponse response = new AuthenticationResponse();
 
         final IdToken idToken = tokenProvider.buildIdToken(subject, request);
         final String code = tokenProvider.store(idToken, request);
@@ -96,17 +97,18 @@ public class DefaultAuthenticationResponseProvider implements AuthenticationResp
         } catch (IOException | GeneralSecurityException e) {
             throw new WebApplicationException(e);
         }
+        final AuthenticationResponseConverter converter = new AuthenticationResponseConverter(request.getRedirectUri(), response);
         if (request.getResponseMode() == ResponseMode.query) {
-            return Response.temporaryRedirect(response.toQueryUri(request.getRedirectUri()))
+            return Response.temporaryRedirect(converter.toQueryUri())
                     .build();
         } else if (request.getResponseMode() == ResponseMode.form_post) {
 
-            return Response.ok(response.toFormPost(request.getRedirectUri()))
+            return Response.ok(converter.toFormPost())
                     .type(MediaType.TEXT_HTML_TYPE)
                     .cacheControl(CacheConstants.NO_CACHE)
                     .build();
         } else {
-            return Response.temporaryRedirect(response.toFragmentUri(request.getRedirectUri()))
+            return Response.temporaryRedirect(converter.toFragmentUri())
                     .build();
         }
     }
@@ -130,18 +132,18 @@ public class DefaultAuthenticationResponseProvider implements AuthenticationResp
             ServletException {
 
         try {
-            AuthenticationResponse authenticationResponse = buildAuthenticationResponse(request, subject);
+            final AuthenticationResponseConverter authenticationResponse = new AuthenticationResponseConverter(request.getRedirectUri(), buildAuthenticationResponse(request, subject));
             if (request.getResponseMode() == ResponseMode.query) {
-                response.sendRedirect(authenticationResponse.toQueryUri(request.getRedirectUri())
+                response.sendRedirect(authenticationResponse.toQueryUri()
                         .toASCIIString());
 
             } else if (request.getResponseMode() == ResponseMode.form_post) {
-                String formPost = authenticationResponse.toFormPost(request.getRedirectUri());
+                final String formPost = authenticationResponse.toFormPost();
                 response.setContentLength(formPost.length());
                 response.getWriter()
                         .print(formPost);
             } else {
-                response.sendRedirect(authenticationResponse.toFragmentUri(request.getRedirectUri())
+                response.sendRedirect(authenticationResponse.toFragmentUri()
                         .toASCIIString());
             }
         } catch (final GeneralSecurityException e) {

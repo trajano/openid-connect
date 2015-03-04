@@ -1,4 +1,4 @@
-package net.trajano.openidconnect.internal;
+package net.trajano.openidconnect.provider.internal;
 
 import java.io.IOException;
 import java.io.InputStream;
