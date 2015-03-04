@@ -89,7 +89,7 @@ public class WellKnownOpenIdConfiguration {
     public Response op(@Context final HttpServletRequest request) {
 
         final OpenIdProviderConfiguration openIdConfiguration = new OpenIdProviderConfiguration();
-        openIdConfiguration.setIssuer(clientManager.getIssuer());
+        openIdConfiguration.setIssuer(clientManager.getIssuer().toASCIIString());
 
         final UriBuilder baseUri = UriBuilder.fromUri(create(request.getRequestURL()
                 .toString()))

@@ -12,8 +12,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.core.MediaType;
 
-import net.trajano.auth.OAuthModule;
-import net.trajano.auth.internal.OpenIDProviderConfiguration;
+import net.trajano.openidconnect.core.OpenIdProviderConfiguration;
+import net.trajano.openidconnect.jaspic.internal.OAuthModule;
 
 /**
  * OpenID Connect Server Auth Module. This uses OpenID Connect Discovery to
@@ -52,7 +52,7 @@ public class OpenIDConnectAuthModule extends OAuthModule {
      * {@inheritDoc}
      */
     @Override
-    protected OpenIDProviderConfiguration getOpenIDProviderConfig(final HttpServletRequest req,
+    protected OpenIdProviderConfiguration getOpenIDProviderConfig(final HttpServletRequest req,
             final Client restClient,
             final Map<String, String> options) throws AuthException {
 
@@ -64,7 +64,7 @@ public class OpenIDConnectAuthModule extends OAuthModule {
         return restClient.target(URI.create(issuerUri)
                 .resolve("/.well-known/openid-configuration"))
                 .request(MediaType.APPLICATION_JSON_TYPE)
-                .get(OpenIDProviderConfiguration.class);
+                .get(OpenIdProviderConfiguration.class);
     }
 
 }

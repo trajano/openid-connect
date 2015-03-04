@@ -92,8 +92,10 @@ public class OpenIdProviderConfiguration {
      * (see Section 2), this value MUST be identical to the issuer value
      * returned by WebFinger. This also MUST be identical to the iss Claim value
      * in ID Tokens issued from this Issuer.
+     * <p>
+     * In order to support Google, this is left as a string rather than a URI.
      */
-    private URI issuer;
+    private String issuer;
 
     /**
      * URL of the OP's JSON Web Key Set [JWK] document. This contains the
@@ -256,7 +258,7 @@ public class OpenIdProviderConfiguration {
         return idTokenSigningAlgValuesSupported;
     }
 
-    public URI getIssuer() {
+    public String getIssuer() {
 
         return issuer;
     }
@@ -411,7 +413,7 @@ public class OpenIdProviderConfiguration {
         this.idTokenSigningAlgValuesSupported = idTokenSigningAlgValuesSupported;
     }
 
-    public void setIssuer(final URI issuer) {
+    public void setIssuer(final String issuer) {
 
         this.issuer = issuer;
     }
