@@ -9,6 +9,7 @@ import java.util.Locale;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.xml.bind.annotation.XmlTransient;
 
 import net.trajano.openidconnect.core.Scope;
 import net.trajano.openidconnect.internal.Util;
@@ -35,6 +36,7 @@ public class AuthenticationRequest implements Serializable {
      * Flag to indicate that "code" is the only response type. This is used in a
      * few places so minor efficiency boost.
      */
+    @XmlTransient
     private final boolean codeOnlyResponseType;
 
     private final AuthenticationRequestParam.Display display;

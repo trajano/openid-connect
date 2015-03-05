@@ -116,11 +116,6 @@ public abstract class OAuthModule implements ServerAuthModule, ServerAuthContext
     public static final String ID_TOKEN_KEY = "auth_idtoken";
 
     /**
-     * Response mode used by the module.
-     */
-    private ResponseMode responseMode = ResponseMode.form_post;
-
-    /**
      * Logger.
      */
     private static final Logger LOG;
@@ -249,6 +244,11 @@ public abstract class OAuthModule implements ServerAuthModule, ServerAuthContext
     private String redirectionEndpointUri;
 
     /**
+     * Response mode used by the module.
+     */
+    private ResponseMode responseMode = ResponseMode.query;
+
+    /**
      * REST Client. This is not final so a different one can be put in for
      * testing.
      */
@@ -353,7 +353,7 @@ public abstract class OAuthModule implements ServerAuthModule, ServerAuthContext
      * @throws IOException
      */
     private String getIdToken(final HttpServletRequest req) throws GeneralSecurityException,
-            IOException {
+    IOException {
 
         final Cookie[] cookies = req.getCookies();
         if (cookies == null) {
@@ -388,7 +388,7 @@ public abstract class OAuthModule implements ServerAuthModule, ServerAuthContext
      * @throws IOException
      */
     private String getNonceFromCookie(final HttpServletRequest req) throws GeneralSecurityException,
-            IOException {
+    IOException {
 
         final Cookie[] cookies = req.getCookies();
         if (cookies == null) {
@@ -692,6 +692,10 @@ public abstract class OAuthModule implements ServerAuthModule, ServerAuthContext
             clientSecret = getRequiredOption(CLIENT_SECRET_KEY);
             LOGCONFIG.log(Level.CONFIG, "options", moduleOptions);
 
+            final String responseModeIn = moduleOptions.get(AuthenticationRequestParam.RESPONSE_MODE);
+            if (responseModeIn != null) {
+                responseMode = ResponseMode.valueOf(responseModeIn);
+            }
             handler = h;
             mandatory = requestPolicy.isMandatory();
             secret = CipherUtil.buildSecretKey(clientId, clientSecret);
@@ -833,15 +837,15 @@ public abstract class OAuthModule implements ServerAuthModule, ServerAuthContext
             nonceCookie.setHttpOnly(true);
             nonceCookie.setSecure(true);
             resp.addCookie(nonceCookie);
-            UriBuilder b = UriBuilder.fromUri(oidProviderConfig.getAuthorizationEndpoint())
+            final UriBuilder b = UriBuilder.fromUri(oidProviderConfig.getAuthorizationEndpoint())
                     .queryParam(CLIENT_ID, clientId)
                     .queryParam(RESPONSE_TYPE, "code")
                     .queryParam(SCOPE, scope)
                     .queryParam(REDIRECT_URI, URI.create(req.getRequestURL()
                             .toString())
                             .resolve(moduleOptions.get(REDIRECTION_ENDPOINT_URI_KEY)))
-                    .queryParam(STATE, state)
-                    .queryParam(AuthenticationRequestParam.NONCE, nonce);
+                            .queryParam(STATE, state)
+                            .queryParam(AuthenticationRequestParam.NONCE, nonce);
             System.out.println("R!" + responseMode);
             if (responseMode != ResponseMode.query) {
                 b.queryParam(AuthenticationRequestParam.RESPONSE_MODE, responseMode.toString());
@@ -948,7 +952,7 @@ public abstract class OAuthModule implements ServerAuthModule, ServerAuthContext
                     .equals(tokenUri)) {
                 resp.setContentType(MediaType.APPLICATION_JSON);
                 resp.getWriter()
-                        .print(tokenCookie.getIdToken());
+                .print(tokenCookie.getIdToken());
                 return AuthStatus.SEND_SUCCESS;
             }
 
@@ -956,7 +960,7 @@ public abstract class OAuthModule implements ServerAuthModule, ServerAuthContext
                     .equals(userInfoUri)) {
                 resp.setContentType(MediaType.APPLICATION_JSON);
                 resp.getWriter()
-                        .print(tokenCookie.getUserInfo());
+                .print(tokenCookie.getUserInfo());
                 return AuthStatus.SEND_SUCCESS;
             }
 
