@@ -1,5 +1,10 @@
 package net.trajano.openidconnect.core;
 
+import static net.trajano.openidconnect.core.OpenIdConnectKey.ERROR;
+import static net.trajano.openidconnect.core.OpenIdConnectKey.ERROR_DESCRIPTION;
+import static net.trajano.openidconnect.core.OpenIdConnectKey.ERROR_URI;
+import static net.trajano.openidconnect.core.OpenIdConnectKey.STATE;
+
 import java.net.URI;
 
 import javax.ws.rs.WebApplicationException;
@@ -10,72 +15,57 @@ import net.trajano.openidconnect.auth.AuthenticationRequest;
 
 /**
  * Renders the {@link OpenIdConnectException} as a redirect with an optional
- * state value.
+ * state value. It will only render {@value } OpenIdConnectKey#ERROR},
+ * {@value OpenIdConnectKey#ERROR_DESCRIPTION} and {@value }
+ * {@value OpenIdConnectKey#ERROR_URI} from the response.
  * 
- * @author Archimedes
+ * @author Archimedes Trajano
  */
 public class RedirectedOpenIdProviderException extends WebApplicationException {
-
-    /**
-     * REQUIRED. Error code.
-     */
-    private static final String ERROR = "error";
-
-    /**
-     * OPTIONAL. Human-readable ASCII encoded text description of the error.
-     */
-    private static final String ERROR_DESCRIPTION = "error_description";
-
-    /**
-     * OPTIONAL. URI of a web page that includes additional information about
-     * the error.
-     */
-    private static final String ERROR_URI = "error_uri";
 
     /**
      *
      */
     private static final long serialVersionUID = -8684305650194342408L;
 
-    /**
-     * OAuth 2.0 state value. REQUIRED if the Authorization Request included the
-     * state parameter. Set to the value received from the Client.
-     */
-    private final static String STATE = "state";
-
     private static Response responseBuilder(final URI redirectUri,
-            final ErrorCode error,
-            final String errorDescription,
-            final String state,
-            final URI errorUri) {
+            final ErrorResponse errorResponse,
+            final String state) {
 
         final UriBuilder b = UriBuilder.fromUri(redirectUri)
-                .queryParam(ERROR, error);
-        if (errorDescription != null) {
-            b.queryParam(ERROR_DESCRIPTION, errorDescription);
+                .queryParam(ERROR, errorResponse.getError());
+        if (errorResponse.getErrorDescription() != null) {
+            b.queryParam(ERROR_DESCRIPTION, errorResponse.getErrorDescription());
+        }
+        if (errorResponse.getErrorUri() != null) {
+            b.queryParam(ERROR_URI, errorResponse.getErrorUri());
         }
         if (state != null) {
-            b.queryParam(STATE, errorDescription);
-        }
-        if (errorUri != null) {
-            b.queryParam(ERROR_URI, errorUri);
+            b.queryParam(STATE, state);
         }
         return Response.temporaryRedirect(b.build())
                 .build();
     }
 
-    public RedirectedOpenIdProviderException(final AuthenticationRequest authenticationRequest, final ErrorCode errorCode) {
+    /**
+     * Convenience constructor as this exception type is generally part of
+     * authentication.
+     * 
+     * @param authenticationRequest
+     * @param errorResponse
+     */
+    public RedirectedOpenIdProviderException(final AuthenticationRequest authenticationRequest, ErrorResponse errorResponse) {
 
-        this(authenticationRequest, errorCode, null);
+        this(authenticationRequest.getRedirectUri(), errorResponse, authenticationRequest.getState());
     }
 
-    public RedirectedOpenIdProviderException(final AuthenticationRequest authenticationRequest, final ErrorCode errorCode, final String errorDescription) {
+    public RedirectedOpenIdProviderException(URI redirectUri, ErrorResponse errorResponse) {
 
-        this(authenticationRequest, errorCode, errorDescription, null);
+        this(redirectUri, errorResponse, null);
     }
 
-    public RedirectedOpenIdProviderException(final AuthenticationRequest authenticationRequest, final ErrorCode errorCode, final String errorDescription, URI errorUri) {
+    public RedirectedOpenIdProviderException(URI redirectUri, ErrorResponse errorResponse, String state) {
 
-        super(responseBuilder(authenticationRequest.getRedirectUri(), errorCode, errorDescription, authenticationRequest.getState(), errorUri));
+        super(responseBuilder(redirectUri, errorResponse, state));
     }
 }

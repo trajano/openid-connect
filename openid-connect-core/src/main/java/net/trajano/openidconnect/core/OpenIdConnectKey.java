@@ -22,6 +22,26 @@ public final class OpenIdConnectKey {
 
     public static final String SCOPE = "scope";
 
+    /**
+     * REQUIRED. Error code.
+     */
+    public static final String ERROR = "error";
+
+    /**
+     * OPTIONAL. Human-readable ASCII encoded text description of the error.
+     */
+    public static final String ERROR_DESCRIPTION = "error_description";
+
+    /**
+     * OPTIONAL. URI of a web page that includes additional information about
+     * the error.
+     */
+    public static final String ERROR_URI = "error_uri";
+
+    /**
+     * OAuth 2.0 state value. REQUIRED if the Authorization Request included the
+     * state parameter. Set to the value received from the Client.
+     */
     public static final String STATE = "state";
 
     private OpenIdConnectKey() {
