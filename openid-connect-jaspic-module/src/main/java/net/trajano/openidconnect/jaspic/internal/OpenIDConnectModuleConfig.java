@@ -13,7 +13,7 @@ import javax.security.auth.message.MessagePolicy.TargetPolicy;
 import javax.security.auth.message.config.ServerAuthConfig;
 import javax.security.auth.message.config.ServerAuthContext;
 
-import net.trajano.openidconnect.jaspic.OpenIDConnectAuthModule;
+import net.trajano.openidconnect.jaspic.OpenIdConnectAuthModule;
 
 
 /**
@@ -104,7 +104,7 @@ public class OpenIDConnectModuleConfig implements ServerAuthConfig {
             @SuppressWarnings("rawtypes") final Map properties) throws AuthException {
 
         final Map<?, ?> augmentedOptions = augmentProperties(properties);
-        final OpenIDConnectAuthModule module = new OpenIDConnectAuthModule();
+        final OpenIdConnectAuthModule module = new OpenIdConnectAuthModule();
 
         if (authContextID == null) {
             module.initialize(NON_MANDATORY, NON_MANDATORY, handler, augmentedOptions);
