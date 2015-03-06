@@ -1,4 +1,4 @@
-package net.trajano.openidconnect.auth;
+package net.trajano.openidconnect.core;
 
 public enum AuthenticationErrorCode {
     /**

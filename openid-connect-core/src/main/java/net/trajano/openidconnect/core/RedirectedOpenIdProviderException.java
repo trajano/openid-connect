@@ -1,4 +1,4 @@
-package net.trajano.openidconnect.auth;
+package net.trajano.openidconnect.core;
 
 import java.net.URI;
 
@@ -6,7 +6,15 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 
-public class AuthenticationException extends WebApplicationException {
+import net.trajano.openidconnect.auth.AuthenticationRequest;
+
+/**
+ * Renders the {@link OpenIdConnectException} as a redirect with an optional
+ * state value.
+ * 
+ * @author Archimedes
+ */
+public class RedirectedOpenIdProviderException extends WebApplicationException {
 
     /**
      * REQUIRED. Error code.
@@ -56,17 +64,17 @@ public class AuthenticationException extends WebApplicationException {
                 .build();
     }
 
-    public AuthenticationException(final AuthenticationRequest authenticationRequest, final AuthenticationErrorCode errorCode) {
+    public RedirectedOpenIdProviderException(final AuthenticationRequest authenticationRequest, final AuthenticationErrorCode errorCode) {
 
         this(authenticationRequest, errorCode, null);
     }
 
-    public AuthenticationException(final AuthenticationRequest authenticationRequest, final AuthenticationErrorCode errorCode, final String errorDescription) {
+    public RedirectedOpenIdProviderException(final AuthenticationRequest authenticationRequest, final AuthenticationErrorCode errorCode, final String errorDescription) {
 
         this(authenticationRequest, errorCode, errorDescription, null);
     }
 
-    public AuthenticationException(final AuthenticationRequest authenticationRequest, final AuthenticationErrorCode errorCode, final String errorDescription, URI errorUri) {
+    public RedirectedOpenIdProviderException(final AuthenticationRequest authenticationRequest, final AuthenticationErrorCode errorCode, final String errorDescription, URI errorUri) {
 
         super(responseBuilder(authenticationRequest.getRedirectUri(), errorCode, errorDescription, authenticationRequest.getState(), errorUri));
     }

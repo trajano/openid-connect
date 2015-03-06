@@ -18,16 +18,16 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriBuilder;
 
-import net.trajano.openidconnect.auth.AuthenticationErrorCode;
-import net.trajano.openidconnect.auth.AuthenticationException;
 import net.trajano.openidconnect.auth.AuthenticationRequest;
 import net.trajano.openidconnect.auth.AuthenticationRequestParam;
 import net.trajano.openidconnect.auth.AuthenticationRequestParam.Display;
 import net.trajano.openidconnect.auth.AuthenticationRequestParam.Prompt;
+import net.trajano.openidconnect.core.AuthenticationErrorCode;
+import net.trajano.openidconnect.core.RedirectedOpenIdProviderException;
+import net.trajano.openidconnect.core.TokenErrorCode;
+import net.trajano.openidconnect.core.OpenIdConnectException;
 import net.trajano.openidconnect.provider.spi.Authenticator;
 import net.trajano.openidconnect.provider.spi.ClientManager;
-import net.trajano.openidconnect.token.TokenErrorCode;
-import net.trajano.openidconnect.token.TokenException;
 
 /**
  * <p>
@@ -116,12 +116,12 @@ public class AuthorizationEndpoint {
         final AuthenticationRequest authenticationRequest = new AuthenticationRequest(req);
 
         if (!clientManager.isRedirectUriValidForClient(authenticationRequest.getClientId(), authenticationRequest.getRedirectUri())) {
-            throw new TokenException(TokenErrorCode.invalid_grant, "redirect URI is not supported for the client");
+            throw new OpenIdConnectException(TokenErrorCode.invalid_grant, "redirect URI is not supported for the client");
         }
 
         if (!authenticator.isAuthenticated(authenticationRequest, req) && authenticationRequest.getPrompts()
                 .contains(AuthenticationRequestParam.Prompt.none)) {
-            throw new AuthenticationException(authenticationRequest, AuthenticationErrorCode.login_required, null);
+            throw new RedirectedOpenIdProviderException(authenticationRequest, AuthenticationErrorCode.login_required, null);
         }
 
         if (!authenticator.isAuthenticated(authenticationRequest, req)) {
