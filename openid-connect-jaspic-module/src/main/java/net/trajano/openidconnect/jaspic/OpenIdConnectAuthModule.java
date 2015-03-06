@@ -4,7 +4,9 @@ import static net.trajano.openidconnect.core.OpenIdConnectKey.CLIENT_ID;
 import static net.trajano.openidconnect.core.OpenIdConnectKey.CLIENT_SECRET;
 import static net.trajano.openidconnect.core.OpenIdConnectKey.CODE;
 import static net.trajano.openidconnect.core.OpenIdConnectKey.GRANT_TYPE;
+import static net.trajano.openidconnect.core.OpenIdConnectKey.NONCE;
 import static net.trajano.openidconnect.core.OpenIdConnectKey.REDIRECT_URI;
+import static net.trajano.openidconnect.core.OpenIdConnectKey.RESPONSE_MODE;
 import static net.trajano.openidconnect.core.OpenIdConnectKey.RESPONSE_TYPE;
 import static net.trajano.openidconnect.core.OpenIdConnectKey.SCOPE;
 import static net.trajano.openidconnect.core.OpenIdConnectKey.STATE;
@@ -59,8 +61,8 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 
-import net.trajano.openidconnect.auth.AuthenticationRequestParam;
 import net.trajano.openidconnect.auth.ResponseMode;
+import net.trajano.openidconnect.core.OpenIdConnectKey;
 import net.trajano.openidconnect.core.OpenIdProviderConfiguration;
 import net.trajano.openidconnect.crypto.Base64Url;
 import net.trajano.openidconnect.jaspic.internal.CipherUtil;
@@ -694,7 +696,7 @@ public class OpenIdConnectAuthModule implements ServerAuthModule, ServerAuthCont
             clientSecret = getRequiredOption(CLIENT_SECRET);
             LOGCONFIG.log(Level.CONFIG, "options", moduleOptions);
 
-            final String responseModeIn = moduleOptions.get(AuthenticationRequestParam.RESPONSE_MODE);
+            final String responseModeIn = moduleOptions.get(OpenIdConnectKey.RESPONSE_MODE);
             if (responseModeIn != null) {
                 responseMode = ResponseMode.valueOf(responseModeIn);
             }
@@ -847,10 +849,10 @@ public class OpenIdConnectAuthModule implements ServerAuthModule, ServerAuthCont
                             .toString())
                             .resolve(moduleOptions.get(REDIRECTION_ENDPOINT_URI_KEY)))
                     .queryParam(STATE, state)
-                    .queryParam(AuthenticationRequestParam.NONCE, nonce);
+                    .queryParam(NONCE, nonce);
             System.out.println("R!" + responseMode);
             if (responseMode != ResponseMode.query) {
-                b.queryParam(AuthenticationRequestParam.RESPONSE_MODE, responseMode.toString());
+                b.queryParam(RESPONSE_MODE, responseMode.toString());
             }
             authorizationEndpointUri = b.build();
             deleteAuthCookies(resp);

@@ -22,11 +22,11 @@ import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriBuilder;
 
 import net.trajano.openidconnect.auth.AuthenticationRequest;
-import net.trajano.openidconnect.auth.AuthenticationRequestParam;
-import net.trajano.openidconnect.auth.AuthenticationRequestParam.Display;
-import net.trajano.openidconnect.auth.AuthenticationRequestParam.Prompt;
+import net.trajano.openidconnect.auth.Display;
+import net.trajano.openidconnect.auth.Prompt;
 import net.trajano.openidconnect.core.ErrorResponse;
 import net.trajano.openidconnect.core.OpenIdConnectException;
+import net.trajano.openidconnect.core.OpenIdConnectKey;
 import net.trajano.openidconnect.core.RedirectedOpenIdProviderException;
 import net.trajano.openidconnect.provider.spi.Authenticator;
 import net.trajano.openidconnect.provider.spi.ClientManager;
@@ -63,20 +63,20 @@ public class AuthorizationEndpoint {
      * @return
      */
     @GET
-    public Response getOp(@QueryParam(AuthenticationRequestParam.ACR_VALUES) final String acrValues,
-            @QueryParam(AuthenticationRequestParam.CLIENT_ID) @NotNull final String clientId,
-            @QueryParam(AuthenticationRequestParam.DISPLAY) final Display display,
-            @QueryParam(AuthenticationRequestParam.ID_TOKEN_HINT) final String idTokenHint,
-            @QueryParam(AuthenticationRequestParam.LOGIN_HINT) final String loginHint,
-            @QueryParam(AuthenticationRequestParam.MAX_AGE) final Integer maxAge,
-            @QueryParam(AuthenticationRequestParam.NONCE) final String nonce,
-            @QueryParam(AuthenticationRequestParam.PROMPT) final Prompt prompt,
-            @QueryParam(AuthenticationRequestParam.REDIRECT_URI) @NotNull final URI redirectUri,
-            @QueryParam(AuthenticationRequestParam.RESPONSE_MODE) final String responseMode,
-            @QueryParam(AuthenticationRequestParam.RESPONSE_TYPE) @NotNull final String responseType,
-            @QueryParam(AuthenticationRequestParam.SCOPE) @NotNull final String scope,
-            @QueryParam(AuthenticationRequestParam.STATE) final String state,
-            @QueryParam(AuthenticationRequestParam.UI_LOCALES) final String uiLocales,
+    public Response getOp(@QueryParam(OpenIdConnectKey.ACR_VALUES) final String acrValues,
+            @QueryParam(OpenIdConnectKey.CLIENT_ID) @NotNull final String clientId,
+            @QueryParam(OpenIdConnectKey.DISPLAY) final Display display,
+            @QueryParam(OpenIdConnectKey.ID_TOKEN_HINT) final String idTokenHint,
+            @QueryParam(OpenIdConnectKey.LOGIN_HINT) final String loginHint,
+            @QueryParam(OpenIdConnectKey.MAX_AGE) final Integer maxAge,
+            @QueryParam(OpenIdConnectKey.NONCE) final String nonce,
+            @QueryParam(OpenIdConnectKey.PROMPT) final Prompt prompt,
+            @QueryParam(OpenIdConnectKey.REDIRECT_URI) @NotNull final URI redirectUri,
+            @QueryParam(OpenIdConnectKey.RESPONSE_MODE) final String responseMode,
+            @QueryParam(OpenIdConnectKey.RESPONSE_TYPE) @NotNull final String responseType,
+            @QueryParam(OpenIdConnectKey.SCOPE) @NotNull final String scope,
+            @QueryParam(OpenIdConnectKey.STATE) final String state,
+            @QueryParam(OpenIdConnectKey.UI_LOCALES) final String uiLocales,
             @Context final HttpServletRequest req) {
 
         return op(acrValues, clientId, display, idTokenHint, loginHint, maxAge, nonce, prompt, redirectUri, responseMode, responseType, scope, state, uiLocales, req);
@@ -99,20 +99,20 @@ public class AuthorizationEndpoint {
      */
     @POST
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-    public Response op(@FormParam(AuthenticationRequestParam.ACR_VALUES) final String acrValues,
-            @FormParam(AuthenticationRequestParam.CLIENT_ID) @NotNull final String clientId,
-            @FormParam(AuthenticationRequestParam.DISPLAY) final Display display,
-            @FormParam(AuthenticationRequestParam.ID_TOKEN_HINT) final String idTokenHint,
-            @FormParam(AuthenticationRequestParam.LOGIN_HINT) final String loginHint,
-            @FormParam(AuthenticationRequestParam.MAX_AGE) final Integer maxAge,
-            @FormParam(AuthenticationRequestParam.NONCE) final String nonce,
-            @FormParam(AuthenticationRequestParam.PROMPT) final Prompt prompt,
-            @FormParam(AuthenticationRequestParam.REDIRECT_URI) @NotNull final URI redirectUri,
-            @FormParam(AuthenticationRequestParam.RESPONSE_MODE) final String responseMode,
-            @FormParam(AuthenticationRequestParam.RESPONSE_TYPE) @NotNull final String responseType,
-            @FormParam(AuthenticationRequestParam.SCOPE) @NotNull final String scope,
-            @FormParam(AuthenticationRequestParam.STATE) final String state,
-            @FormParam(AuthenticationRequestParam.UI_LOCALES) final String uiLocales,
+    public Response op(@FormParam(OpenIdConnectKey.ACR_VALUES) final String acrValues,
+            @FormParam(OpenIdConnectKey.CLIENT_ID) @NotNull final String clientId,
+            @FormParam(OpenIdConnectKey.DISPLAY) final Display display,
+            @FormParam(OpenIdConnectKey.ID_TOKEN_HINT) final String idTokenHint,
+            @FormParam(OpenIdConnectKey.LOGIN_HINT) final String loginHint,
+            @FormParam(OpenIdConnectKey.MAX_AGE) final Integer maxAge,
+            @FormParam(OpenIdConnectKey.NONCE) final String nonce,
+            @FormParam(OpenIdConnectKey.PROMPT) final Prompt prompt,
+            @FormParam(OpenIdConnectKey.REDIRECT_URI) @NotNull final URI redirectUri,
+            @FormParam(OpenIdConnectKey.RESPONSE_MODE) final String responseMode,
+            @FormParam(OpenIdConnectKey.RESPONSE_TYPE) @NotNull final String responseType,
+            @FormParam(OpenIdConnectKey.SCOPE) @NotNull final String scope,
+            @FormParam(OpenIdConnectKey.STATE) final String state,
+            @FormParam(OpenIdConnectKey.UI_LOCALES) final String uiLocales,
             @Context final HttpServletRequest req) {
 
         final AuthenticationRequest authenticationRequest = new AuthenticationRequest(req);
@@ -122,7 +122,7 @@ public class AuthorizationEndpoint {
         }
 
         if (!authenticator.isAuthenticated(authenticationRequest, req) && authenticationRequest.getPrompts()
-                .contains(AuthenticationRequestParam.Prompt.none)) {
+                .contains(Prompt.none)) {
             throw new RedirectedOpenIdProviderException(authenticationRequest, new ErrorResponse(login_required));
         }
 

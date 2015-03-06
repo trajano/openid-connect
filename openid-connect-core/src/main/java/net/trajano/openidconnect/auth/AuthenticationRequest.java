@@ -1,6 +1,7 @@
 package net.trajano.openidconnect.auth;
 
 import static net.trajano.openidconnect.core.ErrorCode.invalid_request;
+import static net.trajano.openidconnect.core.OpenIdConnectKey.UI_LOCALES;
 
 import java.io.Serializable;
 import java.net.URI;
@@ -14,6 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.annotation.XmlTransient;
 
 import net.trajano.openidconnect.core.ErrorResponse;
+import net.trajano.openidconnect.core.OpenIdConnectKey;
 import net.trajano.openidconnect.core.RedirectedOpenIdProviderException;
 import net.trajano.openidconnect.core.Scope;
 import net.trajano.openidconnect.internal.Util;
@@ -43,7 +45,7 @@ public class AuthenticationRequest implements Serializable {
     @XmlTransient
     private final boolean codeOnlyResponseType;
 
-    private final AuthenticationRequestParam.Display display;
+    private final Display display;
 
     private final String idTokenHint;
 
@@ -53,7 +55,7 @@ public class AuthenticationRequest implements Serializable {
 
     private final String nonce;
 
-    private final Set<AuthenticationRequestParam.Prompt> prompts;
+    private final Set<Prompt> prompts;
 
     private final URI redirectUri;
 
@@ -69,25 +71,25 @@ public class AuthenticationRequest implements Serializable {
 
     public AuthenticationRequest(final HttpServletRequest req) {
 
-        scopes = Util.getParameterSet(req, AuthenticationRequestParam.SCOPE, Scope.class);
-        responseTypes = Util.getParameterSet(req, AuthenticationRequestParam.RESPONSE_TYPE, ResponseType.class);
-        codeOnlyResponseType = "code".equals(req.getParameter(AuthenticationRequestParam.RESPONSE_TYPE));
+        scopes = Util.getParameterSet(req, OpenIdConnectKey.SCOPE, Scope.class);
+        responseTypes = Util.getParameterSet(req, OpenIdConnectKey.RESPONSE_TYPE, ResponseType.class);
+        codeOnlyResponseType = "code".equals(req.getParameter(OpenIdConnectKey.RESPONSE_TYPE));
 
-        clientId = req.getParameter(AuthenticationRequestParam.CLIENT_ID);
-        redirectUri = URI.create(req.getParameter(AuthenticationRequestParam.REDIRECT_URI));
-        state = req.getParameter(AuthenticationRequestParam.STATE);
-        nonce = Util.getParameter(req, AuthenticationRequestParam.NONCE);
-        display = Util.getParameter(req, AuthenticationRequestParam.DISPLAY, AuthenticationRequestParam.Display.class);
-        final ResponseMode responseModeIn = Util.getParameter(req, AuthenticationRequestParam.RESPONSE_MODE, ResponseMode.class);
+        clientId = req.getParameter(OpenIdConnectKey.CLIENT_ID);
+        redirectUri = URI.create(req.getParameter(OpenIdConnectKey.REDIRECT_URI));
+        state = req.getParameter(OpenIdConnectKey.STATE);
+        nonce = Util.getParameter(req, OpenIdConnectKey.NONCE);
+        display = Util.getParameter(req, OpenIdConnectKey.DISPLAY, Display.class);
+        final ResponseMode responseModeIn = Util.getParameter(req, OpenIdConnectKey.RESPONSE_MODE, ResponseMode.class);
         if (responseModeIn != null) {
             responseMode = responseModeIn;
         } else {
             responseMode = getDefaultResponseMode();
         }
 
-        prompts = Util.getParameterSet(req, AuthenticationRequestParam.PROMPT, AuthenticationRequestParam.Prompt.class);
+        prompts = Util.getParameterSet(req, OpenIdConnectKey.PROMPT, Prompt.class);
 
-        final String maxAgeIn = Util.getParameter(req, AuthenticationRequestParam.MAX_AGE);
+        final String maxAgeIn = Util.getParameter(req, OpenIdConnectKey.MAX_AGE);
         if (maxAgeIn != null) {
             maxAge = Integer.valueOf(maxAgeIn);
         } else {
@@ -95,19 +97,19 @@ public class AuthenticationRequest implements Serializable {
         }
 
         uiLocales = new ArrayList<>();
-        if (Util.isNotNullOrEmpty(req.getParameter(AuthenticationRequestParam.UI_LOCALES))) {
-            for (final String uiLocale : req.getParameter(AuthenticationRequestParam.UI_LOCALES)
+        if (Util.isNotNullOrEmpty(req.getParameter(UI_LOCALES))) {
+            for (final String uiLocale : req.getParameter(OpenIdConnectKey.UI_LOCALES)
                     .split("\\s")) {
                 uiLocales.add(new Locale(uiLocale));
             }
         }
 
-        idTokenHint = Util.getParameter(req, AuthenticationRequestParam.ID_TOKEN_HINT);
-        loginHint = Util.getParameter(req, AuthenticationRequestParam.LOGIN_HINT);
+        idTokenHint = Util.getParameter(req, OpenIdConnectKey.ID_TOKEN_HINT);
+        loginHint = Util.getParameter(req, OpenIdConnectKey.LOGIN_HINT);
 
         acrValues = new ArrayList<>();
-        if (Util.isNotNullOrEmpty(req.getParameter(AuthenticationRequestParam.ACR_VALUES))) {
-            for (final String acrValue : req.getParameter(AuthenticationRequestParam.ACR_VALUES)
+        if (Util.isNotNullOrEmpty(req.getParameter(OpenIdConnectKey.ACR_VALUES))) {
+            for (final String acrValue : req.getParameter(OpenIdConnectKey.ACR_VALUES)
                     .split("\\s+")) {
                 acrValues.add(acrValue);
             }
@@ -149,7 +151,7 @@ public class AuthenticationRequest implements Serializable {
 
     }
 
-    public AuthenticationRequestParam.Display getDisplay() {
+    public Display getDisplay() {
 
         return display;
     }
@@ -174,7 +176,7 @@ public class AuthenticationRequest implements Serializable {
         return nonce;
     }
 
-    public Set<AuthenticationRequestParam.Prompt> getPrompts() {
+    public Set<Prompt> getPrompts() {
 
         return prompts;
     }
@@ -282,7 +284,7 @@ public class AuthenticationRequest implements Serializable {
             throw new RedirectedOpenIdProviderException(this, new ErrorResponse(invalid_request, "the request must contain the 'openid' scope value"));
         }
 
-        if (prompts.contains(AuthenticationRequestParam.Prompt.none) && prompts.size() != 1) {
+        if (prompts.contains(Prompt.none) && prompts.size() != 1) {
 
             throw new RedirectedOpenIdProviderException(this, new ErrorResponse(invalid_request, "Cannot have 'none' with any other value for 'prompt'"));
 
