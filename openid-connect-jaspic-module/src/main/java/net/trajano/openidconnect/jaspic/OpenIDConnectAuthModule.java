@@ -240,17 +240,17 @@ public class OpenIDConnectAuthModule implements ServerAuthModule, ServerAuthCont
      * Age cookie name. The value of this cookie is an encrypted version of the
      * IP Address and will expire based on the max age of the token.
      */
-    public static final String NET_TRAJANO_AUTH_AGE = "net.trajano.auth.age";
+    public static final String NET_TRAJANO_AUTH_AGE = "net.trajano.oic.age";
 
     /**
      * ID token cookie name. This one expires when the browser closes.
      */
-    public static final String NET_TRAJANO_AUTH_ID = "net.trajano.auth.id";
+    public static final String NET_TRAJANO_AUTH_ID = "net.trajano.oic.id";
 
     /**
      * Nonce cookie name. This one expires when the browser closes.
      */
-    public static final String NET_TRAJANO_AUTH_NONCE = "net.trajano.auth.nonce";
+    public static final String NET_TRAJANO_AUTH_NONCE = "net.trajano.oic.nonce";
 
     /**
      * Redirection endpoint URI key. The value is optional and defaults to the
@@ -1044,8 +1044,8 @@ public class OpenIDConnectAuthModule implements ServerAuthModule, ServerAuthCont
     }
 
     static {
-        LOG = Logger.getLogger("net.trajano.auth.oauthsam", MESSAGES);
-        LOGCONFIG = Logger.getLogger("net.trajano.auth.oauthsam.config", MESSAGES);
+        LOG = Logger.getLogger("net.trajano.oic.jaspic", MESSAGES);
+        LOGCONFIG = Logger.getLogger("net.trajano.oic.jaspic.config", MESSAGES);
         R = ResourceBundle.getBundle(MESSAGES);
     }
 }
