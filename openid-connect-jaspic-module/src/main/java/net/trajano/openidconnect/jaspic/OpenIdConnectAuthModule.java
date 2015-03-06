@@ -57,16 +57,16 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 
-import net.trajano.auth.internal.CipherUtil;
 import net.trajano.auth.internal.JsonWebKeySet;
-import net.trajano.auth.internal.TokenCookie;
 import net.trajano.auth.internal.Utils;
 import net.trajano.openidconnect.auth.AuthenticationRequestParam;
 import net.trajano.openidconnect.auth.ResponseMode;
 import net.trajano.openidconnect.core.OpenIdProviderConfiguration;
 import net.trajano.openidconnect.crypto.Base64Url;
+import net.trajano.openidconnect.jaspic.internal.CipherUtil;
 import net.trajano.openidconnect.jaspic.internal.NullHostnameVerifier;
 import net.trajano.openidconnect.jaspic.internal.NullX509TrustManager;
+import net.trajano.openidconnect.jaspic.internal.TokenCookie;
 import net.trajano.openidconnect.token.IdTokenResponse;
 
 /**
