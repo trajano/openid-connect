@@ -19,7 +19,7 @@ import net.trajano.openidconnect.jaspic.OpenIdConnectAuthModule;
 /**
  * Provides initialized server modules/contexts.
  */
-public class OpenIDConnectModuleConfig implements ServerAuthConfig {
+public class OpenIdConnectModuleConfig implements ServerAuthConfig {
 
     /**
      * <p>
@@ -89,7 +89,7 @@ public class OpenIDConnectModuleConfig implements ServerAuthConfig {
      *            callback handlers
      * @throws AuthException
      */
-    public OpenIDConnectModuleConfig(final Map<String, String> options, final String layer, final String appContext, final CallbackHandler handler) throws AuthException {
+    public OpenIdConnectModuleConfig(final Map<String, String> options, final String layer, final String appContext, final CallbackHandler handler) throws AuthException {
 
         this.appContext = appContext;
         this.layer = layer;
