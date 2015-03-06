@@ -42,6 +42,7 @@ import javax.security.auth.message.MessageInfo;
 import javax.security.auth.message.MessagePolicy;
 import javax.security.auth.message.callback.CallerPrincipalCallback;
 import javax.security.auth.message.callback.GroupPrincipalCallback;
+import javax.security.auth.message.config.ServerAuthContext;
 import javax.security.auth.message.module.ServerAuthModule;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -66,16 +67,22 @@ import net.trajano.openidconnect.core.OpenIdProviderConfiguration;
 import net.trajano.openidconnect.crypto.Base64Url;
 import net.trajano.openidconnect.jaspic.internal.NullHostnameVerifier;
 import net.trajano.openidconnect.jaspic.internal.NullX509TrustManager;
-import net.trajano.openidconnect.jaspic.internal.OAuthModule;
 import net.trajano.openidconnect.token.IdTokenResponse;
 
 /**
  * OpenID Connect Server Auth Module. This uses OpenID Connect Discovery to
  * configure the OAuth 2.0 Login.
- *
+ * <p>
+ * OAuth 2.0 server authentication module. This is an implementation of the <a
+ * href="http://tools.ietf.org/html/rfc6749">OAuth 2.0 authentication
+ * framework</a>. This assumes no HttpSessions which makes it useful for RESTful
+ * applications and uses the OAuth token to manage the authentication state. The
+ * e-mail addresses are not requested.
+ * </p>
+ * 
  * @author Archimedes Trajano
  */
-public class OpenIDConnectAuthModule extends OAuthModule {
+public class OpenIDConnectAuthModule implements ServerAuthModule, ServerAuthContext {
 
     /**
      * Issuer URI option key.
@@ -96,11 +103,6 @@ public class OpenIDConnectAuthModule extends OAuthModule {
      * Resource bundle.
      */
     private static final ResourceBundle R;
-
-    static {
-        LOG = Logger.getLogger("net.trajano.openidconnect.jaspic", MESSAGES);
-        R = ResourceBundle.getBundle(MESSAGES);
-    }
 
     /**
      * Client ID. This is set through {@value #CLIENT_ID_KEY} option.
@@ -186,6 +188,104 @@ public class OpenIDConnectAuthModule extends OAuthModule {
     private String userInfoUri;
 
     /**
+     * Access token attribute name.
+     */
+    public static final String ACCESS_TOKEN_KEY = "auth_access";
+
+    /**
+     * Client ID option key and JSON key.
+     */
+    public static final String CLIENT_ID_KEY = "client_id";
+
+    /**
+     * Client secret option key and JSON key.
+     */
+    public static final String CLIENT_SECRET_KEY = "client_secret";
+
+    /**
+     * Cookie context option key. The value is optional.
+     */
+    public static final String COOKIE_CONTEXT_KEY = "cookie_context";
+
+    /**
+     * Disable HTTP certificate checks key. This this is set to true, the auth
+     * module will disable HTTPS certificate checks for the REST client
+     * connections. This should only be used in development.
+     */
+    public static final String DISABLE_CERTIFICATE_CHECKS_KEY = "disable_certificate_checks";
+
+    /**
+     * https prefix.
+     */
+    protected static final String HTTPS_PREFIX = "https://";
+
+    /**
+     * Open ID token attribute name.
+     */
+    public static final String ID_TOKEN_KEY = "auth_idtoken";
+
+    /**
+     * Logger for configuration.
+     */
+    protected static final Logger LOGCONFIG;
+
+    /**
+     * URI to go to when the user has logged out relative to the context path.
+     */
+    public static final String LOGOUT_GOTO_URI_KEY = "logout_goto_uri";
+
+    public static final String LOGOUT_URI_KEY = "logout_uri";
+
+    /**
+     * Age cookie name. The value of this cookie is an encrypted version of the
+     * IP Address and will expire based on the max age of the token.
+     */
+    public static final String NET_TRAJANO_AUTH_AGE = "net.trajano.auth.age";
+
+    /**
+     * ID token cookie name. This one expires when the browser closes.
+     */
+    public static final String NET_TRAJANO_AUTH_ID = "net.trajano.auth.id";
+
+    /**
+     * Nonce cookie name. This one expires when the browser closes.
+     */
+    public static final String NET_TRAJANO_AUTH_NONCE = "net.trajano.auth.nonce";
+
+    /**
+     * Redirection endpoint URI key. The value is optional and defaults to the
+     * context root of the application.
+     */
+    public static final String REDIRECTION_ENDPOINT_URI_KEY = "redirection_endpoint"; //$NON-NLS-1$
+
+    /**
+     * Refresh token attribute name.
+     */
+    public static final String REFRESH_TOKEN_KEY = "auth_refresh";
+
+    /**
+     * Scope option key. The value is optional and defaults to "openid"
+     */
+    public static final String SCOPE_KEY = "scope";
+
+    /**
+     * Token URI key. The value is optional and if not specified, the token
+     * request functionality will not be available.
+     */
+    public static final String TOKEN_URI_KEY = "token_uri";
+
+    /**
+     * User info attribute name.
+     */
+    public static final String USERINFO_KEY = "auth_userinfo";
+
+    /**
+     * User Info URI key. The value is optional and if not specified, the
+     * userinfo request functionality will not be available.
+     */
+    public static final String USERINFO_URI_KEY = "userinfo_uri";
+
+    /**
      * Lets subclasses change the provider configuration.
      *
      * @param req
@@ -220,7 +320,7 @@ public class OpenIDConnectAuthModule extends OAuthModule {
      * @return JAX-RS client.
      */
     public Client buildUnsecureRestClient() throws GeneralSecurityException {
-    
+
         final SSLContext context = SSLContext.getInstance("TLSv1");
         final TrustManager[] trustManagerArray = { NullX509TrustManager.INSTANCE };
         context.init(null, trustManagerArray, null);
@@ -241,12 +341,12 @@ public class OpenIDConnectAuthModule extends OAuthModule {
     @Override
     public void cleanSubject(final MessageInfo messageInfo,
             final Subject subject) throws AuthException {
-            
-                // Does nothing.
-            }
+
+        // Does nothing.
+    }
 
     private void deleteAuthCookies(final HttpServletResponse resp) {
-    
+
         for (final String cookieName : new String[] { NET_TRAJANO_AUTH_ID, NET_TRAJANO_AUTH_AGE, NET_TRAJANO_AUTH_NONCE }) {
             final Cookie deleteCookie = new Cookie(cookieName, "");
             deleteCookie.setMaxAge(0);
@@ -261,7 +361,7 @@ public class OpenIDConnectAuthModule extends OAuthModule {
      * @return the client ID.
      */
     protected String getClientId() {
-    
+
         return clientId;
     }
 
@@ -271,7 +371,7 @@ public class OpenIDConnectAuthModule extends OAuthModule {
      * @return the client secret.
      */
     protected String getClientSecret() {
-    
+
         return clientSecret;
     }
 
@@ -287,30 +387,30 @@ public class OpenIDConnectAuthModule extends OAuthModule {
      */
     private String getIdToken(final HttpServletRequest req) throws GeneralSecurityException,
             IOException {
-            
-                final Cookie[] cookies = req.getCookies();
-                if (cookies == null) {
-                    return null;
+
+        final Cookie[] cookies = req.getCookies();
+        if (cookies == null) {
+            return null;
+        }
+        String idToken = null;
+        boolean foundAge = false;
+        for (final Cookie cookie : cookies) {
+            if (NET_TRAJANO_AUTH_ID.equals(cookie.getName()) && !isNullOrEmpty(cookie.getValue())) {
+                idToken = cookie.getValue();
+            } else if (NET_TRAJANO_AUTH_AGE.equals(cookie.getName())) {
+                final String remoteAddr = req.getRemoteAddr();
+                final String cookieAddr = new String(CipherUtil.decrypt(Base64Url.decode(cookie.getValue()), secret), "US-ASCII");
+                if (!remoteAddr.equals(cookieAddr)) {
+                    throw new AuthException(MessageFormat.format(R.getString("ipaddressMismatch"), remoteAddr, cookieAddr));
                 }
-                String idToken = null;
-                boolean foundAge = false;
-                for (final Cookie cookie : cookies) {
-                    if (NET_TRAJANO_AUTH_ID.equals(cookie.getName()) && !isNullOrEmpty(cookie.getValue())) {
-                        idToken = cookie.getValue();
-                    } else if (NET_TRAJANO_AUTH_AGE.equals(cookie.getName())) {
-                        final String remoteAddr = req.getRemoteAddr();
-                        final String cookieAddr = new String(CipherUtil.decrypt(Base64Url.decode(cookie.getValue()), secret), "US-ASCII");
-                        if (!remoteAddr.equals(cookieAddr)) {
-                            throw new AuthException(MessageFormat.format(R.getString("ipaddressMismatch"), remoteAddr, cookieAddr));
-                        }
-                        foundAge = true;
-                    }
-                    if (idToken != null && foundAge) {
-                        return idToken;
-                    }
-                }
-                return null;
+                foundAge = true;
             }
+            if (idToken != null && foundAge) {
+                return idToken;
+            }
+        }
+        return null;
+    }
 
     /**
      * Gets the nonce from the cookie.
@@ -322,19 +422,19 @@ public class OpenIDConnectAuthModule extends OAuthModule {
      */
     private String getNonceFromCookie(final HttpServletRequest req) throws GeneralSecurityException,
             IOException {
-            
-                final Cookie[] cookies = req.getCookies();
-                if (cookies == null) {
-                    return null;
-                }
-            
-                for (final Cookie cookie : cookies) {
-                    if (NET_TRAJANO_AUTH_NONCE.equals(cookie.getName())) {
-                        return new String(CipherUtil.decrypt(Base64Url.decode(cookie.getValue()), secret), "US-ASCII");
-                    }
-                }
-                return null;
+
+        final Cookie[] cookies = req.getCookies();
+        if (cookies == null) {
+            return null;
+        }
+
+        for (final Cookie cookie : cookies) {
+            if (NET_TRAJANO_AUTH_NONCE.equals(cookie.getName())) {
+                return new String(CipherUtil.decrypt(Base64Url.decode(cookie.getValue()), secret), "US-ASCII");
             }
+        }
+        return null;
+    }
 
     /**
      * This gets the redirection endpoint URI. It uses the
@@ -346,7 +446,7 @@ public class OpenIDConnectAuthModule extends OAuthModule {
      * @return redirection endpoint URI.
      */
     protected URI getRedirectionEndpointUri(final HttpServletRequest req) {
-    
+
         return URI.create(req.getRequestURL()
                 .toString())
                 .resolve(redirectionEndpointUri);
@@ -362,7 +462,7 @@ public class OpenIDConnectAuthModule extends OAuthModule {
      *             missing option exception
      */
     private String getRequiredOption(final String optionKey) throws AuthException {
-    
+
         final String optionValue = moduleOptions.get(optionKey);
         if (optionValue == null) {
             LOG.log(Level.SEVERE, "missingOption", optionKey);
@@ -377,7 +477,7 @@ public class OpenIDConnectAuthModule extends OAuthModule {
      * @return REST client
      */
     protected Client getRestClient() {
-    
+
         return restClient;
     }
 
@@ -397,7 +497,7 @@ public class OpenIDConnectAuthModule extends OAuthModule {
     @SuppressWarnings("rawtypes")
     @Override
     public Class[] getSupportedMessageTypes() {
-    
+
         return new Class<?>[] { HttpServletRequest.class, HttpServletResponse.class };
     }
 
@@ -412,36 +512,36 @@ public class OpenIDConnectAuthModule extends OAuthModule {
      */
     protected IdTokenResponse getToken(final HttpServletRequest req,
             final OpenIdProviderConfiguration oidProviderConfig) throws IOException {
-            
-                final MultivaluedMap<String, String> requestData = new MultivaluedHashMap<>();
-                requestData.putSingle(CODE, req.getParameter("code"));
-                requestData.putSingle(GRANT_TYPE, "authorization_code");
-                requestData.putSingle(REDIRECT_URI, getRedirectionEndpointUri(req).toASCIIString());
-            
-                try {
-                    final String authorization = "Basic " + Base64Url.encode((clientId + ":" + clientSecret).getBytes("UTF8"));
-                    final IdTokenResponse authorizationTokenResponse = restClient.target(oidProviderConfig.getTokenEndpoint())
-                            .request(MediaType.APPLICATION_JSON_TYPE)
-                            .header("Authorization", authorization)
-                            .post(Entity.form(requestData), IdTokenResponse.class);
-                    if (LOG.isLoggable(Level.FINEST)) {
-                        LOG.finest("authorization token response =  " + authorizationTokenResponse);
-                    }
-                    return authorizationTokenResponse;
-                } catch (final BadRequestException e) {
-                    // workaround for google that does not support BASIC authentication
-                    // on their endpoint.
-                    requestData.putSingle(CLIENT_ID, clientId);
-                    requestData.putSingle(CLIENT_SECRET_KEY, clientSecret);
-                    final IdTokenResponse authorizationTokenResponse = restClient.target(oidProviderConfig.getTokenEndpoint())
-                            .request(MediaType.APPLICATION_JSON_TYPE)
-                            .post(Entity.form(requestData), IdTokenResponse.class);
-                    if (LOG.isLoggable(Level.FINEST)) {
-                        LOG.finest("authorization token response =  " + authorizationTokenResponse);
-                    }
-                    return authorizationTokenResponse;
-                }
+
+        final MultivaluedMap<String, String> requestData = new MultivaluedHashMap<>();
+        requestData.putSingle(CODE, req.getParameter("code"));
+        requestData.putSingle(GRANT_TYPE, "authorization_code");
+        requestData.putSingle(REDIRECT_URI, getRedirectionEndpointUri(req).toASCIIString());
+
+        try {
+            final String authorization = "Basic " + Base64Url.encode((clientId + ":" + clientSecret).getBytes("UTF8"));
+            final IdTokenResponse authorizationTokenResponse = restClient.target(oidProviderConfig.getTokenEndpoint())
+                    .request(MediaType.APPLICATION_JSON_TYPE)
+                    .header("Authorization", authorization)
+                    .post(Entity.form(requestData), IdTokenResponse.class);
+            if (LOG.isLoggable(Level.FINEST)) {
+                LOG.finest("authorization token response =  " + authorizationTokenResponse);
             }
+            return authorizationTokenResponse;
+        } catch (final BadRequestException e) {
+            // workaround for google that does not support BASIC authentication
+            // on their endpoint.
+            requestData.putSingle(CLIENT_ID, clientId);
+            requestData.putSingle(CLIENT_SECRET_KEY, clientSecret);
+            final IdTokenResponse authorizationTokenResponse = restClient.target(oidProviderConfig.getTokenEndpoint())
+                    .request(MediaType.APPLICATION_JSON_TYPE)
+                    .post(Entity.form(requestData), IdTokenResponse.class);
+            if (LOG.isLoggable(Level.FINEST)) {
+                LOG.finest("authorization token response =  " + authorizationTokenResponse);
+            }
+            return authorizationTokenResponse;
+        }
+    }
 
     /**
      * Gets the web keys from the options and the OpenID provider configuration.
@@ -457,11 +557,11 @@ public class OpenIDConnectAuthModule extends OAuthModule {
      */
     protected JsonWebKeySet getWebKeys(final Map<String, String> options,
             final OpenIdProviderConfiguration config) throws GeneralSecurityException {
-            
-                return new JsonWebKeySet(restClient.target(config.getJwksUri())
-                        .request(MediaType.APPLICATION_JSON_TYPE)
-                        .get(JsonObject.class));
-            }
+
+        return new JsonWebKeySet(restClient.target(config.getJwksUri())
+                .request(MediaType.APPLICATION_JSON_TYPE)
+                .get(JsonObject.class));
+    }
 
     /**
      * Workaround for the issuer value for Google. This was documented in
@@ -473,7 +573,7 @@ public class OpenIDConnectAuthModule extends OAuthModule {
      * @return updated issuer
      */
     private String googleWorkaround(final String issuer) {
-    
+
         if (issuer.startsWith(HTTPS_PREFIX)) {
             return issuer;
         }
@@ -496,82 +596,82 @@ public class OpenIDConnectAuthModule extends OAuthModule {
             final HttpServletResponse resp,
             final Subject subject) throws GeneralSecurityException,
             IOException {
-            
-                final OpenIdProviderConfiguration oidProviderConfig = getOpenIDProviderConfig(req, restClient, moduleOptions);
-                final IdTokenResponse token = getToken(req, oidProviderConfig);
-                final JsonWebKeySet webKeys = getWebKeys(moduleOptions, oidProviderConfig);
-            
-                LOG.log(Level.FINEST, "tokenValue", token);
-                final JsonObject claimsSet = Json.createReader(new ByteArrayInputStream(Utils.getJwsPayload(token.getEncodedIdToken(), webKeys)))
-                        .readObject();
-            
-                final String nonce = getNonceFromCookie(req);
-                validateIdToken(clientId, claimsSet, nonce);
-            
-                final Cookie deleteNonceCookie = new Cookie(NET_TRAJANO_AUTH_NONCE, "");
-                deleteNonceCookie.setMaxAge(0);
-                deleteNonceCookie.setPath(cookieContext);
-                resp.addCookie(deleteNonceCookie);
-            
-                final String iss = googleWorkaround(claimsSet.getString("iss"));
-                final String issuer = googleWorkaround(oidProviderConfig.getIssuer());
-                if (!iss.equals(issuer)) {
-                    LOG.log(Level.SEVERE, "issuerMismatch", new Object[] { iss, issuer });
-                    throw new GeneralSecurityException(MessageFormat.format(R.getString("issuerMismatch"), iss, issuer));
-                }
-                updateSubjectPrincipal(subject, claimsSet);
-            
-                final TokenCookie tokenCookie;
-                if (oidProviderConfig.getUserinfoEndpoint() != null && Pattern.compile("\\bprofile\\b")
-                        .matcher(scope)
-                        .find()) {
-                    final Response userInfoResponse = restClient.target(oidProviderConfig.getUserinfoEndpoint())
-                            .request(MediaType.APPLICATION_JSON_TYPE)
-                            .header("Authorization", token.getTokenType() + " " + token.getAccessToken())
-                            .get();
-                    if (userInfoResponse.getStatus() == 200) {
-                        tokenCookie = new TokenCookie(token.getAccessToken(), token.getRefreshToken(), claimsSet, userInfoResponse.readEntity(JsonObject.class));
-                    } else {
-                        LOG.log(Level.WARNING, "unableToGetProfile");
-                        tokenCookie = new TokenCookie(claimsSet);
-                    }
-                } else {
-                    tokenCookie = new TokenCookie(claimsSet);
-                }
-            
-                final String requestCookieContext;
-                if (isNullOrEmpty(cookieContext)) {
-                    requestCookieContext = req.getContextPath();
-                } else {
-                    requestCookieContext = cookieContext;
-                }
-            
-                final Cookie idTokenCookie = new Cookie(NET_TRAJANO_AUTH_ID, tokenCookie.toCookieValue(clientId, clientSecret));
-                idTokenCookie.setMaxAge(-1);
-                idTokenCookie.setSecure(true);
-                idTokenCookie.setHttpOnly(true);
-                idTokenCookie.setPath(requestCookieContext);
-                resp.addCookie(idTokenCookie);
-            
-                final Cookie ageCookie = new Cookie(NET_TRAJANO_AUTH_AGE, Base64Url.encode(CipherUtil.encrypt(req.getRemoteAddr()
-                        .getBytes("US-ASCII"), secret)));
-                if (isNullOrEmpty(req.getParameter("expires_in"))) {
-                    ageCookie.setMaxAge(3600);
-            
-                } else {
-                    ageCookie.setMaxAge(Integer.parseInt(req.getParameter("expires_in")));
-                }
-                ageCookie.setPath(requestCookieContext);
-                ageCookie.setSecure(true);
-                ageCookie.setHttpOnly(true);
-                resp.addCookie(ageCookie);
-            
-                final String stateEncoded = req.getParameter("state");
-                final String redirectUri = new String(Base64Url.decode(stateEncoded));
-                resp.sendRedirect(resp.encodeRedirectURL(req.getContextPath() + redirectUri));
-            
-                return AuthStatus.SEND_SUCCESS;
+
+        final OpenIdProviderConfiguration oidProviderConfig = getOpenIDProviderConfig(req, restClient, moduleOptions);
+        final IdTokenResponse token = getToken(req, oidProviderConfig);
+        final JsonWebKeySet webKeys = getWebKeys(moduleOptions, oidProviderConfig);
+
+        LOG.log(Level.FINEST, "tokenValue", token);
+        final JsonObject claimsSet = Json.createReader(new ByteArrayInputStream(Utils.getJwsPayload(token.getEncodedIdToken(), webKeys)))
+                .readObject();
+
+        final String nonce = getNonceFromCookie(req);
+        validateIdToken(clientId, claimsSet, nonce);
+
+        final Cookie deleteNonceCookie = new Cookie(NET_TRAJANO_AUTH_NONCE, "");
+        deleteNonceCookie.setMaxAge(0);
+        deleteNonceCookie.setPath(cookieContext);
+        resp.addCookie(deleteNonceCookie);
+
+        final String iss = googleWorkaround(claimsSet.getString("iss"));
+        final String issuer = googleWorkaround(oidProviderConfig.getIssuer());
+        if (!iss.equals(issuer)) {
+            LOG.log(Level.SEVERE, "issuerMismatch", new Object[] { iss, issuer });
+            throw new GeneralSecurityException(MessageFormat.format(R.getString("issuerMismatch"), iss, issuer));
+        }
+        updateSubjectPrincipal(subject, claimsSet);
+
+        final TokenCookie tokenCookie;
+        if (oidProviderConfig.getUserinfoEndpoint() != null && Pattern.compile("\\bprofile\\b")
+                .matcher(scope)
+                .find()) {
+            final Response userInfoResponse = restClient.target(oidProviderConfig.getUserinfoEndpoint())
+                    .request(MediaType.APPLICATION_JSON_TYPE)
+                    .header("Authorization", token.getTokenType() + " " + token.getAccessToken())
+                    .get();
+            if (userInfoResponse.getStatus() == 200) {
+                tokenCookie = new TokenCookie(token.getAccessToken(), token.getRefreshToken(), claimsSet, userInfoResponse.readEntity(JsonObject.class));
+            } else {
+                LOG.log(Level.WARNING, "unableToGetProfile");
+                tokenCookie = new TokenCookie(claimsSet);
             }
+        } else {
+            tokenCookie = new TokenCookie(claimsSet);
+        }
+
+        final String requestCookieContext;
+        if (isNullOrEmpty(cookieContext)) {
+            requestCookieContext = req.getContextPath();
+        } else {
+            requestCookieContext = cookieContext;
+        }
+
+        final Cookie idTokenCookie = new Cookie(NET_TRAJANO_AUTH_ID, tokenCookie.toCookieValue(clientId, clientSecret));
+        idTokenCookie.setMaxAge(-1);
+        idTokenCookie.setSecure(true);
+        idTokenCookie.setHttpOnly(true);
+        idTokenCookie.setPath(requestCookieContext);
+        resp.addCookie(idTokenCookie);
+
+        final Cookie ageCookie = new Cookie(NET_TRAJANO_AUTH_AGE, Base64Url.encode(CipherUtil.encrypt(req.getRemoteAddr()
+                .getBytes("US-ASCII"), secret)));
+        if (isNullOrEmpty(req.getParameter("expires_in"))) {
+            ageCookie.setMaxAge(3600);
+
+        } else {
+            ageCookie.setMaxAge(Integer.parseInt(req.getParameter("expires_in")));
+        }
+        ageCookie.setPath(requestCookieContext);
+        ageCookie.setSecure(true);
+        ageCookie.setHttpOnly(true);
+        resp.addCookie(ageCookie);
+
+        final String stateEncoded = req.getParameter("state");
+        final String redirectUri = new String(Base64Url.decode(stateEncoded));
+        resp.sendRedirect(resp.encodeRedirectURL(req.getContextPath() + redirectUri));
+
+        return AuthStatus.SEND_SUCCESS;
+    }
 
     /**
      * {@inheritDoc}
@@ -591,45 +691,45 @@ public class OpenIDConnectAuthModule extends OAuthModule {
             final MessagePolicy responsePolicy,
             final CallbackHandler h,
             @SuppressWarnings("rawtypes") final Map options) throws AuthException {
-            
-                try {
-                    moduleOptions = options;
-                    clientId = getRequiredOption(CLIENT_ID_KEY);
-                    cookieContext = moduleOptions.get(COOKIE_CONTEXT_KEY);
-                    redirectionEndpointUri = getRequiredOption(REDIRECTION_ENDPOINT_URI_KEY);
-                    tokenUri = moduleOptions.get(TOKEN_URI_KEY);
-                    userInfoUri = moduleOptions.get(USERINFO_URI_KEY);
-                    logoutUri = moduleOptions.get(LOGOUT_URI_KEY);
-                    logoutGotoUri = moduleOptions.get(LOGOUT_GOTO_URI_KEY);
-                    scope = moduleOptions.get(SCOPE_KEY);
-                    if (isNullOrEmpty(scope)) {
-                        scope = "openid";
-                    }
-                    clientSecret = getRequiredOption(CLIENT_SECRET_KEY);
-                    LOGCONFIG.log(Level.CONFIG, "options", moduleOptions);
-            
-                    final String responseModeIn = moduleOptions.get(AuthenticationRequestParam.RESPONSE_MODE);
-                    if (responseModeIn != null) {
-                        responseMode = ResponseMode.valueOf(responseModeIn);
-                    }
-                    handler = h;
-                    mandatory = requestPolicy.isMandatory();
-                    secret = CipherUtil.buildSecretKey(clientId, clientSecret);
-            
-                    if (restClient == null) {
-                        if (moduleOptions.get(DISABLE_CERTIFICATE_CHECKS_KEY) != null && Boolean.valueOf(moduleOptions.get(DISABLE_CERTIFICATE_CHECKS_KEY))) {
-                            restClient = buildUnsecureRestClient();
-                        } else {
-                            restClient = ClientBuilder.newClient();
-                        }
-            
-                    }
-                } catch (final Exception e) {
-                    // Should not happen
-                    LOG.log(Level.SEVERE, "initializeException", e);
-                    throw new AuthException(MessageFormat.format(R.getString("initializeException"), e.getMessage()));
-                }
+
+        try {
+            moduleOptions = options;
+            clientId = getRequiredOption(CLIENT_ID_KEY);
+            cookieContext = moduleOptions.get(COOKIE_CONTEXT_KEY);
+            redirectionEndpointUri = getRequiredOption(REDIRECTION_ENDPOINT_URI_KEY);
+            tokenUri = moduleOptions.get(TOKEN_URI_KEY);
+            userInfoUri = moduleOptions.get(USERINFO_URI_KEY);
+            logoutUri = moduleOptions.get(LOGOUT_URI_KEY);
+            logoutGotoUri = moduleOptions.get(LOGOUT_GOTO_URI_KEY);
+            scope = moduleOptions.get(SCOPE_KEY);
+            if (isNullOrEmpty(scope)) {
+                scope = "openid";
             }
+            clientSecret = getRequiredOption(CLIENT_SECRET_KEY);
+            LOGCONFIG.log(Level.CONFIG, "options", moduleOptions);
+
+            final String responseModeIn = moduleOptions.get(AuthenticationRequestParam.RESPONSE_MODE);
+            if (responseModeIn != null) {
+                responseMode = ResponseMode.valueOf(responseModeIn);
+            }
+            handler = h;
+            mandatory = requestPolicy.isMandatory();
+            secret = CipherUtil.buildSecretKey(clientId, clientSecret);
+
+            if (restClient == null) {
+                if (moduleOptions.get(DISABLE_CERTIFICATE_CHECKS_KEY) != null && Boolean.valueOf(moduleOptions.get(DISABLE_CERTIFICATE_CHECKS_KEY))) {
+                    restClient = buildUnsecureRestClient();
+                } else {
+                    restClient = ClientBuilder.newClient();
+                }
+
+            }
+        } catch (final Exception e) {
+            // Should not happen
+            LOG.log(Level.SEVERE, "initializeException", e);
+            throw new AuthException(MessageFormat.format(R.getString("initializeException"), e.getMessage()));
+        }
+    }
 
     /**
      * Checks to see whether the {@link ServerAuthModule} is called by the
@@ -643,7 +743,7 @@ public class OpenIDConnectAuthModule extends OAuthModule {
      * @return the module is called by the resource owner.
      */
     public boolean isCallback(final HttpServletRequest req) {
-    
+
         return moduleOptions.get(REDIRECTION_ENDPOINT_URI_KEY)
                 .equals(req.getRequestURI()) && !isNullOrEmpty(req.getParameter(CODE)) && !isNullOrEmpty(req.getParameter(STATE));
     }
@@ -654,7 +754,7 @@ public class OpenIDConnectAuthModule extends OAuthModule {
      * @return nonce
      */
     private String nextNonce() {
-    
+
         final byte[] bytes = new byte[8];
         random.nextBytes(bytes);
         return Base64Url.encode(bytes);
@@ -674,30 +774,30 @@ public class OpenIDConnectAuthModule extends OAuthModule {
      */
     private TokenCookie processTokenCookie(final Subject subject,
             final HttpServletRequest req) {
-            
-                try {
-                    final String idToken = getIdToken(req);
-                    TokenCookie tokenCookie = null;
-                    if (idToken != null) {
-                        tokenCookie = new TokenCookie(idToken, secret);
-                        validateIdToken(clientId, tokenCookie.getIdToken(), null);
-                        updateSubjectPrincipal(subject, tokenCookie.getIdToken());
-            
-                        req.setAttribute(ACCESS_TOKEN_KEY, tokenCookie.getAccessToken());
-                        req.setAttribute(REFRESH_TOKEN_KEY, tokenCookie.getRefreshToken());
-                        req.setAttribute(ID_TOKEN_KEY, tokenCookie.getIdToken());
-                        if (tokenCookie.getUserInfo() != null) {
-                            req.setAttribute(USERINFO_KEY, tokenCookie.getUserInfo());
-                        }
-                    }
-                    return tokenCookie;
-                } catch (final GeneralSecurityException | IOException e) {
-                    LOG.log(Level.FINE, "invalidToken", e.getMessage());
-                    LOG.throwing(this.getClass()
-                            .getName(), "validateRequest", e);
-                    return null;
+
+        try {
+            final String idToken = getIdToken(req);
+            TokenCookie tokenCookie = null;
+            if (idToken != null) {
+                tokenCookie = new TokenCookie(idToken, secret);
+                validateIdToken(clientId, tokenCookie.getIdToken(), null);
+                updateSubjectPrincipal(subject, tokenCookie.getIdToken());
+
+                req.setAttribute(ACCESS_TOKEN_KEY, tokenCookie.getAccessToken());
+                req.setAttribute(REFRESH_TOKEN_KEY, tokenCookie.getRefreshToken());
+                req.setAttribute(ID_TOKEN_KEY, tokenCookie.getIdToken());
+                if (tokenCookie.getUserInfo() != null) {
+                    req.setAttribute(USERINFO_KEY, tokenCookie.getUserInfo());
                 }
             }
+            return tokenCookie;
+        } catch (final GeneralSecurityException | IOException e) {
+            LOG.log(Level.FINE, "invalidToken", e.getMessage());
+            LOG.throwing(this.getClass()
+                    .getName(), "validateRequest", e);
+            return null;
+        }
+    }
 
     /**
      * Sends a redirect to the authorization endpoint. It sends the current
@@ -724,61 +824,61 @@ public class OpenIDConnectAuthModule extends OAuthModule {
     private AuthStatus redirectToAuthorizationEndpoint(final HttpServletRequest req,
             final HttpServletResponse resp,
             final String reason) throws AuthException {
-            
-                LOG.log(Level.FINE, "redirecting", new Object[] { reason });
-                URI authorizationEndpointUri = null;
-                try {
-                    final OpenIdProviderConfiguration oidProviderConfig = getOpenIDProviderConfig(req, restClient, moduleOptions);
-            
-                    final StringBuilder stateBuilder = new StringBuilder(req.getRequestURI()
-                            .substring(req.getContextPath()
-                                    .length()));
-                    if (req.getQueryString() != null) {
-                        stateBuilder.append('?');
-                        stateBuilder.append(req.getQueryString());
-                    }
-                    final String state = Base64Url.encode(stateBuilder.toString());
-            
-                    final String requestCookieContext;
-                    if (isNullOrEmpty(cookieContext)) {
-                        requestCookieContext = req.getContextPath();
-                    } else {
-                        requestCookieContext = cookieContext;
-                    }
-            
-                    final String nonce = nextNonce();
-                    final Cookie nonceCookie = new Cookie(NET_TRAJANO_AUTH_NONCE, Base64Url.encode(CipherUtil.encrypt(nonce.getBytes(), secret)));
-                    nonceCookie.setMaxAge(-1);
-                    nonceCookie.setPath(requestCookieContext);
-                    nonceCookie.setHttpOnly(true);
-                    nonceCookie.setSecure(true);
-                    resp.addCookie(nonceCookie);
-                    final UriBuilder b = UriBuilder.fromUri(oidProviderConfig.getAuthorizationEndpoint())
-                            .queryParam(CLIENT_ID, clientId)
-                            .queryParam(RESPONSE_TYPE, "code")
-                            .queryParam(SCOPE, scope)
-                            .queryParam(REDIRECT_URI, URI.create(req.getRequestURL()
-                                    .toString())
-                                    .resolve(moduleOptions.get(REDIRECTION_ENDPOINT_URI_KEY)))
-                                    .queryParam(STATE, state)
-                                    .queryParam(AuthenticationRequestParam.NONCE, nonce);
-                    System.out.println("R!" + responseMode);
-                    if (responseMode != ResponseMode.query) {
-                        b.queryParam(AuthenticationRequestParam.RESPONSE_MODE, responseMode.toString());
-                    }
-                    authorizationEndpointUri = b.build();
-                    deleteAuthCookies(resp);
-            
-                    resp.sendRedirect(authorizationEndpointUri.toASCIIString());
-                    return AuthStatus.SEND_CONTINUE;
-                } catch (final IOException | GeneralSecurityException e) {
-                    // Should not happen
-                    LOG.log(Level.SEVERE, "sendRedirectException", new Object[] { authorizationEndpointUri, e.getMessage() });
-                    LOG.throwing(this.getClass()
-                            .getName(), "redirectToAuthorizationEndpoint", e);
-                    throw new AuthException(MessageFormat.format(R.getString("sendRedirectException"), authorizationEndpointUri, e.getMessage()));
-                }
+
+        LOG.log(Level.FINE, "redirecting", new Object[] { reason });
+        URI authorizationEndpointUri = null;
+        try {
+            final OpenIdProviderConfiguration oidProviderConfig = getOpenIDProviderConfig(req, restClient, moduleOptions);
+
+            final StringBuilder stateBuilder = new StringBuilder(req.getRequestURI()
+                    .substring(req.getContextPath()
+                            .length()));
+            if (req.getQueryString() != null) {
+                stateBuilder.append('?');
+                stateBuilder.append(req.getQueryString());
             }
+            final String state = Base64Url.encode(stateBuilder.toString());
+
+            final String requestCookieContext;
+            if (isNullOrEmpty(cookieContext)) {
+                requestCookieContext = req.getContextPath();
+            } else {
+                requestCookieContext = cookieContext;
+            }
+
+            final String nonce = nextNonce();
+            final Cookie nonceCookie = new Cookie(NET_TRAJANO_AUTH_NONCE, Base64Url.encode(CipherUtil.encrypt(nonce.getBytes(), secret)));
+            nonceCookie.setMaxAge(-1);
+            nonceCookie.setPath(requestCookieContext);
+            nonceCookie.setHttpOnly(true);
+            nonceCookie.setSecure(true);
+            resp.addCookie(nonceCookie);
+            final UriBuilder b = UriBuilder.fromUri(oidProviderConfig.getAuthorizationEndpoint())
+                    .queryParam(CLIENT_ID, clientId)
+                    .queryParam(RESPONSE_TYPE, "code")
+                    .queryParam(SCOPE, scope)
+                    .queryParam(REDIRECT_URI, URI.create(req.getRequestURL()
+                            .toString())
+                            .resolve(moduleOptions.get(REDIRECTION_ENDPOINT_URI_KEY)))
+                    .queryParam(STATE, state)
+                    .queryParam(AuthenticationRequestParam.NONCE, nonce);
+            System.out.println("R!" + responseMode);
+            if (responseMode != ResponseMode.query) {
+                b.queryParam(AuthenticationRequestParam.RESPONSE_MODE, responseMode.toString());
+            }
+            authorizationEndpointUri = b.build();
+            deleteAuthCookies(resp);
+
+            resp.sendRedirect(authorizationEndpointUri.toASCIIString());
+            return AuthStatus.SEND_CONTINUE;
+        } catch (final IOException | GeneralSecurityException e) {
+            // Should not happen
+            LOG.log(Level.SEVERE, "sendRedirectException", new Object[] { authorizationEndpointUri, e.getMessage() });
+            LOG.throwing(this.getClass()
+                    .getName(), "redirectToAuthorizationEndpoint", e);
+            throw new AuthException(MessageFormat.format(R.getString("sendRedirectException"), authorizationEndpointUri, e.getMessage()));
+        }
+    }
 
     /**
      * Return {@link AuthStatus#SEND_SUCCESS}.
@@ -794,9 +894,9 @@ public class OpenIDConnectAuthModule extends OAuthModule {
     @Override
     public AuthStatus secureResponse(final MessageInfo messageInfo,
             final Subject subject) throws AuthException {
-            
-                return AuthStatus.SEND_SUCCESS;
-            }
+
+        return AuthStatus.SEND_SUCCESS;
+    }
 
     /**
      * Override REST client for testing.
@@ -805,7 +905,7 @@ public class OpenIDConnectAuthModule extends OAuthModule {
      *            REST client. May be mocked.
      */
     public void setRestClient(final Client restClient) {
-    
+
         this.restClient = restClient;
     }
 
@@ -822,21 +922,21 @@ public class OpenIDConnectAuthModule extends OAuthModule {
      */
     private void updateSubjectPrincipal(final Subject subject,
             final JsonObject jwtPayload) throws GeneralSecurityException {
-            
-                try {
-                    final String iss = googleWorkaround(jwtPayload.getString("iss"));
-                    handler.handle(new Callback[] { new CallerPrincipalCallback(subject, UriBuilder.fromUri(iss)
-                            .userInfo(jwtPayload.getString("sub"))
-                            .build()
-                            .toASCIIString()), new GroupPrincipalCallback(subject, new String[] { iss }) });
-                } catch (final IOException | UnsupportedCallbackException e) {
-                    // Should not happen
-                    LOG.log(Level.SEVERE, "updatePrincipalException", e.getMessage());
-                    LOG.throwing(this.getClass()
-                            .getName(), "updateSubjectPrincipal", e);
-                    throw new AuthException(MessageFormat.format(R.getString("updatePrincipalException"), e.getMessage()));
-                }
-            }
+
+        try {
+            final String iss = googleWorkaround(jwtPayload.getString("iss"));
+            handler.handle(new Callback[] { new CallerPrincipalCallback(subject, UriBuilder.fromUri(iss)
+                    .userInfo(jwtPayload.getString("sub"))
+                    .build()
+                    .toASCIIString()), new GroupPrincipalCallback(subject, new String[] { iss }) });
+        } catch (final IOException | UnsupportedCallbackException e) {
+            // Should not happen
+            LOG.log(Level.SEVERE, "updatePrincipalException", e.getMessage());
+            LOG.throwing(this.getClass()
+                    .getName(), "updateSubjectPrincipal", e);
+            throw new AuthException(MessageFormat.format(R.getString("updatePrincipalException"), e.getMessage()));
+        }
+    }
 
     /**
      * Validates the request. The request must be secure otherwise it will
@@ -857,90 +957,95 @@ public class OpenIDConnectAuthModule extends OAuthModule {
     public AuthStatus validateRequest(final MessageInfo messageInfo,
             final Subject clientSubject,
             final Subject serviceSubject) throws AuthException {
-            
-                final HttpServletRequest req = (HttpServletRequest) messageInfo.getRequestMessage();
-                final HttpServletResponse resp = (HttpServletResponse) messageInfo.getResponseMessage();
-            
-                try {
-                    final TokenCookie tokenCookie = processTokenCookie(clientSubject, req);
-            
-                    if (tokenCookie != null && req.isSecure() && isGetRequest(req) && req.getRequestURI()
-                            .equals(tokenUri)) {
-                        resp.setContentType(MediaType.APPLICATION_JSON);
-                        resp.getWriter()
+
+        final HttpServletRequest req = (HttpServletRequest) messageInfo.getRequestMessage();
+        final HttpServletResponse resp = (HttpServletResponse) messageInfo.getResponseMessage();
+
+        try {
+            final TokenCookie tokenCookie = processTokenCookie(clientSubject, req);
+
+            if (tokenCookie != null && req.isSecure() && isGetRequest(req) && req.getRequestURI()
+                    .equals(tokenUri)) {
+                resp.setContentType(MediaType.APPLICATION_JSON);
+                resp.getWriter()
                         .print(tokenCookie.getIdToken());
-                        return AuthStatus.SEND_SUCCESS;
-                    }
-            
-                    if (tokenCookie != null && req.isSecure() && isGetRequest(req) && req.getRequestURI()
-                            .equals(userInfoUri)) {
-                        resp.setContentType(MediaType.APPLICATION_JSON);
-                        resp.getWriter()
-                        .print(tokenCookie.getUserInfo());
-                        return AuthStatus.SEND_SUCCESS;
-                    }
-            
-                    if (tokenCookie != null && req.isSecure() && isGetRequest(req) && req.getRequestURI()
-                            .equals(logoutUri)) {
-                        deleteAuthCookies(resp);
-                        if (logoutGotoUri == null) {
-                            resp.sendRedirect(req.getServletContext() + "/");
-                        } else {
-                            resp.sendRedirect(logoutGotoUri);
-                        }
-                        return AuthStatus.SEND_SUCCESS;
-                    }
-            
-                    if (!mandatory && !req.isSecure()) {
-                        // successful if the module is not mandatory and the channel is
-                        // not secure.
-                        return AuthStatus.SUCCESS;
-                    }
-            
-                    if (!req.isSecure() && mandatory) {
-                        // Fail authorization 3.1.2.1
-                        resp.sendError(HttpURLConnection.HTTP_FORBIDDEN, R.getString("SSLReq"));
-                        return AuthStatus.SEND_FAILURE;
-                    }
-            
-                    if (!req.isSecure() && isCallback(req)) {
-                        resp.sendError(HttpURLConnection.HTTP_FORBIDDEN, R.getString("SSLReq"));
-                        return AuthStatus.SEND_FAILURE;
-                    }
-            
-                    if (req.isSecure() && isCallback(req)) {
-                        return handleCallback(req, resp, clientSubject);
-                    }
-            
-                    if (!mandatory || tokenCookie != null && !tokenCookie.isExpired()) {
-                        return AuthStatus.SUCCESS;
-                    }
-                    if (req.isSecure() && isHeadRequest(req) && req.getRequestURI()
-                            .equals(tokenUri)) {
-                        resp.setContentType(MediaType.APPLICATION_JSON);
-                        return AuthStatus.SEND_SUCCESS;
-                    }
-            
-                    if (req.getRequestURI()
-                            .equals(userInfoUri) && isHeadRequest(req)) {
-                        resp.setContentType(MediaType.APPLICATION_JSON);
-                        return AuthStatus.SEND_SUCCESS;
-            
-                    }
-                    if (!isRetrievalRequest(req)) {
-                        resp.sendError(HttpURLConnection.HTTP_FORBIDDEN, "Unable to POST when unauthorized.");
-                        return AuthStatus.SEND_FAILURE;
-                    }
-            
-                    return redirectToAuthorizationEndpoint(req, resp, "request is not valid");
-                } catch (final Exception e) {
-                    // Any problems with the data should be caught and force redirect to
-                    // authorization endpoint.
-                    LOG.log(Level.FINE, "validationException", e.getMessage());
-                    LOG.throwing(this.getClass()
-                            .getName(), "validateRequest", e);
-                    return redirectToAuthorizationEndpoint(req, resp, e.getMessage());
-                }
+                return AuthStatus.SEND_SUCCESS;
             }
 
+            if (tokenCookie != null && req.isSecure() && isGetRequest(req) && req.getRequestURI()
+                    .equals(userInfoUri)) {
+                resp.setContentType(MediaType.APPLICATION_JSON);
+                resp.getWriter()
+                        .print(tokenCookie.getUserInfo());
+                return AuthStatus.SEND_SUCCESS;
+            }
+
+            if (tokenCookie != null && req.isSecure() && isGetRequest(req) && req.getRequestURI()
+                    .equals(logoutUri)) {
+                deleteAuthCookies(resp);
+                if (logoutGotoUri == null) {
+                    resp.sendRedirect(req.getServletContext() + "/");
+                } else {
+                    resp.sendRedirect(logoutGotoUri);
+                }
+                return AuthStatus.SEND_SUCCESS;
+            }
+
+            if (!mandatory && !req.isSecure()) {
+                // successful if the module is not mandatory and the channel is
+                // not secure.
+                return AuthStatus.SUCCESS;
+            }
+
+            if (!req.isSecure() && mandatory) {
+                // Fail authorization 3.1.2.1
+                resp.sendError(HttpURLConnection.HTTP_FORBIDDEN, R.getString("SSLReq"));
+                return AuthStatus.SEND_FAILURE;
+            }
+
+            if (!req.isSecure() && isCallback(req)) {
+                resp.sendError(HttpURLConnection.HTTP_FORBIDDEN, R.getString("SSLReq"));
+                return AuthStatus.SEND_FAILURE;
+            }
+
+            if (req.isSecure() && isCallback(req)) {
+                return handleCallback(req, resp, clientSubject);
+            }
+
+            if (!mandatory || tokenCookie != null && !tokenCookie.isExpired()) {
+                return AuthStatus.SUCCESS;
+            }
+            if (req.isSecure() && isHeadRequest(req) && req.getRequestURI()
+                    .equals(tokenUri)) {
+                resp.setContentType(MediaType.APPLICATION_JSON);
+                return AuthStatus.SEND_SUCCESS;
+            }
+
+            if (req.getRequestURI()
+                    .equals(userInfoUri) && isHeadRequest(req)) {
+                resp.setContentType(MediaType.APPLICATION_JSON);
+                return AuthStatus.SEND_SUCCESS;
+
+            }
+            if (!isRetrievalRequest(req)) {
+                resp.sendError(HttpURLConnection.HTTP_FORBIDDEN, "Unable to POST when unauthorized.");
+                return AuthStatus.SEND_FAILURE;
+            }
+
+            return redirectToAuthorizationEndpoint(req, resp, "request is not valid");
+        } catch (final Exception e) {
+            // Any problems with the data should be caught and force redirect to
+            // authorization endpoint.
+            LOG.log(Level.FINE, "validationException", e.getMessage());
+            LOG.throwing(this.getClass()
+                    .getName(), "validateRequest", e);
+            return redirectToAuthorizationEndpoint(req, resp, e.getMessage());
+        }
+    }
+
+    static {
+        LOG = Logger.getLogger("net.trajano.auth.oauthsam", MESSAGES);
+        LOGCONFIG = Logger.getLogger("net.trajano.auth.oauthsam.config", MESSAGES);
+        R = ResourceBundle.getBundle(MESSAGES);
+    }
 }

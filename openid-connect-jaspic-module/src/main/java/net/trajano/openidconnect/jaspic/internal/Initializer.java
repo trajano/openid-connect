@@ -59,9 +59,9 @@ public class Initializer implements ServletContextListener {
 
         final Map<String, String> options = new HashMap<>();
 
-        options.put(OAuthModule.CLIENT_ID_KEY, clientId);
-        options.put(OAuthModule.CLIENT_SECRET_KEY, clientSecret);
-        options.put(OAuthModule.DISABLE_CERTIFICATE_CHECKS_KEY, disableCertificateChecks);
+        options.put(OpenIDConnectAuthModule.CLIENT_ID_KEY, clientId);
+        options.put(OpenIDConnectAuthModule.CLIENT_SECRET_KEY, clientSecret);
+        options.put(OpenIDConnectAuthModule.DISABLE_CERTIFICATE_CHECKS_KEY, disableCertificateChecks);
         options.put(OpenIDConnectAuthModule.ISSUER_URI_KEY, issuerUri);
 
         final String contextPath = sce.getServletContext()
@@ -72,8 +72,8 @@ public class Initializer implements ServletContextListener {
         options.put("redirection_endpoint", contextPath + "/cb");
         options.put("token_uri", contextPath + "/token");
         options.put("userinfo_uri", contextPath + "/userinfo");
-        options.put(OAuthModule.LOGOUT_GOTO_URI_KEY, rootPath);
-        options.put(OAuthModule.LOGOUT_URI_KEY, contextPath + "/logout");
+        options.put(OpenIDConnectAuthModule.LOGOUT_GOTO_URI_KEY, rootPath);
+        options.put(OpenIDConnectAuthModule.LOGOUT_URI_KEY, contextPath + "/logout");
 
         registrationID = AuthConfigFactory.getFactory()
                 .registerConfigProvider(new OpenIDConnectModuleConfigProvider(options, null), "HttpServlet", null, null);
