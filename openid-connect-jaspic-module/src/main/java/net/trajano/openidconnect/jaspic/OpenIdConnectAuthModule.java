@@ -1,17 +1,18 @@
 package net.trajano.openidconnect.jaspic;
 
-import static net.trajano.auth.internal.OAuthParameters.CLIENT_ID;
-import static net.trajano.auth.internal.OAuthParameters.CODE;
-import static net.trajano.auth.internal.OAuthParameters.GRANT_TYPE;
-import static net.trajano.auth.internal.OAuthParameters.REDIRECT_URI;
-import static net.trajano.auth.internal.OAuthParameters.RESPONSE_TYPE;
-import static net.trajano.auth.internal.OAuthParameters.SCOPE;
-import static net.trajano.auth.internal.OAuthParameters.STATE;
-import static net.trajano.auth.internal.Utils.isGetRequest;
-import static net.trajano.auth.internal.Utils.isHeadRequest;
-import static net.trajano.auth.internal.Utils.isNullOrEmpty;
-import static net.trajano.auth.internal.Utils.isRetrievalRequest;
-import static net.trajano.auth.internal.Utils.validateIdToken;
+import static net.trajano.openidconnect.core.OpenIdConnectKey.CLIENT_ID;
+import static net.trajano.openidconnect.core.OpenIdConnectKey.CODE;
+import static net.trajano.openidconnect.core.OpenIdConnectKey.GRANT_TYPE;
+import static net.trajano.openidconnect.core.OpenIdConnectKey.REDIRECT_URI;
+import static net.trajano.openidconnect.core.OpenIdConnectKey.RESPONSE_TYPE;
+import static net.trajano.openidconnect.core.OpenIdConnectKey.SCOPE;
+import static net.trajano.openidconnect.core.OpenIdConnectKey.STATE;
+import static net.trajano.openidconnect.jaspic.internal.Utils.getJwsPayload;
+import static net.trajano.openidconnect.jaspic.internal.Utils.isGetRequest;
+import static net.trajano.openidconnect.jaspic.internal.Utils.isHeadRequest;
+import static net.trajano.openidconnect.jaspic.internal.Utils.isNullOrEmpty;
+import static net.trajano.openidconnect.jaspic.internal.Utils.isRetrievalRequest;
+import static net.trajano.openidconnect.jaspic.internal.Utils.validateIdToken;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -57,13 +58,12 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 
-import net.trajano.auth.internal.JsonWebKeySet;
-import net.trajano.auth.internal.Utils;
 import net.trajano.openidconnect.auth.AuthenticationRequestParam;
 import net.trajano.openidconnect.auth.ResponseMode;
 import net.trajano.openidconnect.core.OpenIdProviderConfiguration;
 import net.trajano.openidconnect.crypto.Base64Url;
 import net.trajano.openidconnect.jaspic.internal.CipherUtil;
+import net.trajano.openidconnect.jaspic.internal.JsonWebKeySet;
 import net.trajano.openidconnect.jaspic.internal.NullHostnameVerifier;
 import net.trajano.openidconnect.jaspic.internal.NullX509TrustManager;
 import net.trajano.openidconnect.jaspic.internal.TokenCookie;
@@ -531,7 +531,7 @@ public class OpenIdConnectAuthModule implements ServerAuthModule, ServerAuthCont
         } catch (final BadRequestException e) {
             // workaround for google that does not support BASIC authentication
             // on their endpoint.
-            requestData.putSingle(CLIENT_ID, clientId);
+            requestData.putSingle(CLIENT_ID_KEY, clientId);
             requestData.putSingle(CLIENT_SECRET_KEY, clientSecret);
             final IdTokenResponse authorizationTokenResponse = restClient.target(oidProviderConfig.getTokenEndpoint())
                     .request(MediaType.APPLICATION_JSON_TYPE)
@@ -602,7 +602,7 @@ public class OpenIdConnectAuthModule implements ServerAuthModule, ServerAuthCont
         final JsonWebKeySet webKeys = getWebKeys(moduleOptions, oidProviderConfig);
 
         LOG.log(Level.FINEST, "tokenValue", token);
-        final JsonObject claimsSet = Json.createReader(new ByteArrayInputStream(Utils.getJwsPayload(token.getEncodedIdToken(), webKeys)))
+        final JsonObject claimsSet = Json.createReader(new ByteArrayInputStream(getJwsPayload(token.getEncodedIdToken(), webKeys)))
                 .readObject();
 
         final String nonce = getNonceFromCookie(req);
