@@ -23,9 +23,8 @@ import net.trajano.openidconnect.auth.AuthenticationRequestParam;
 import net.trajano.openidconnect.auth.AuthenticationRequestParam.Display;
 import net.trajano.openidconnect.auth.AuthenticationRequestParam.Prompt;
 import net.trajano.openidconnect.core.ErrorCode;
-import net.trajano.openidconnect.core.RedirectedOpenIdProviderException;
-import net.trajano.openidconnect.core.ErrorCode;
 import net.trajano.openidconnect.core.OpenIdConnectException;
+import net.trajano.openidconnect.core.RedirectedOpenIdProviderException;
 import net.trajano.openidconnect.provider.spi.Authenticator;
 import net.trajano.openidconnect.provider.spi.ClientManager;
 
