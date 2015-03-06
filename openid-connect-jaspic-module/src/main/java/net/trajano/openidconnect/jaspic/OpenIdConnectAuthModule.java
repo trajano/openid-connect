@@ -1,6 +1,7 @@
 package net.trajano.openidconnect.jaspic;
 
 import static net.trajano.openidconnect.core.OpenIdConnectKey.CLIENT_ID;
+import static net.trajano.openidconnect.core.OpenIdConnectKey.CLIENT_SECRET;
 import static net.trajano.openidconnect.core.OpenIdConnectKey.CODE;
 import static net.trajano.openidconnect.core.OpenIdConnectKey.GRANT_TYPE;
 import static net.trajano.openidconnect.core.OpenIdConnectKey.REDIRECT_URI;
@@ -193,16 +194,6 @@ public class OpenIdConnectAuthModule implements ServerAuthModule, ServerAuthCont
     public static final String ACCESS_TOKEN_KEY = "auth_access";
 
     /**
-     * Client ID option key and JSON key.
-     */
-    public static final String CLIENT_ID_KEY = "client_id";
-
-    /**
-     * Client secret option key and JSON key.
-     */
-    public static final String CLIENT_SECRET_KEY = "client_secret";
-
-    /**
      * Cookie context option key. The value is optional.
      */
     public static final String COOKIE_CONTEXT_KEY = "cookie_context";
@@ -262,11 +253,6 @@ public class OpenIdConnectAuthModule implements ServerAuthModule, ServerAuthCont
      * Refresh token attribute name.
      */
     public static final String REFRESH_TOKEN_KEY = "auth_refresh";
-
-    /**
-     * Scope option key. The value is optional and defaults to "openid"
-     */
-    public static final String SCOPE_KEY = "scope";
 
     /**
      * Token URI key. The value is optional and if not specified, the token
@@ -531,8 +517,8 @@ public class OpenIdConnectAuthModule implements ServerAuthModule, ServerAuthCont
         } catch (final BadRequestException e) {
             // workaround for google that does not support BASIC authentication
             // on their endpoint.
-            requestData.putSingle(CLIENT_ID_KEY, clientId);
-            requestData.putSingle(CLIENT_SECRET_KEY, clientSecret);
+            requestData.putSingle(CLIENT_ID, clientId);
+            requestData.putSingle(CLIENT_SECRET, clientSecret);
             final IdTokenResponse authorizationTokenResponse = restClient.target(oidProviderConfig.getTokenEndpoint())
                     .request(MediaType.APPLICATION_JSON_TYPE)
                     .post(Entity.form(requestData), IdTokenResponse.class);
@@ -694,18 +680,18 @@ public class OpenIdConnectAuthModule implements ServerAuthModule, ServerAuthCont
 
         try {
             moduleOptions = options;
-            clientId = getRequiredOption(CLIENT_ID_KEY);
+            clientId = getRequiredOption(CLIENT_ID);
             cookieContext = moduleOptions.get(COOKIE_CONTEXT_KEY);
             redirectionEndpointUri = getRequiredOption(REDIRECTION_ENDPOINT_URI_KEY);
             tokenUri = moduleOptions.get(TOKEN_URI_KEY);
             userInfoUri = moduleOptions.get(USERINFO_URI_KEY);
             logoutUri = moduleOptions.get(LOGOUT_URI_KEY);
             logoutGotoUri = moduleOptions.get(LOGOUT_GOTO_URI_KEY);
-            scope = moduleOptions.get(SCOPE_KEY);
+            scope = moduleOptions.get(SCOPE);
             if (isNullOrEmpty(scope)) {
                 scope = "openid";
             }
-            clientSecret = getRequiredOption(CLIENT_SECRET_KEY);
+            clientSecret = getRequiredOption(CLIENT_SECRET);
             LOGCONFIG.log(Level.CONFIG, "options", moduleOptions);
 
             final String responseModeIn = moduleOptions.get(AuthenticationRequestParam.RESPONSE_MODE);

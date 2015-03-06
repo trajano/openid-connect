@@ -1,5 +1,8 @@
 package net.trajano.openidconnect.jaspic.internal;
 
+import static net.trajano.openidconnect.core.OpenIdConnectKey.CLIENT_ID;
+import static net.trajano.openidconnect.core.OpenIdConnectKey.CLIENT_SECRET;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -59,8 +62,8 @@ public class Initializer implements ServletContextListener {
 
         final Map<String, String> options = new HashMap<>();
 
-        options.put(OpenIdConnectAuthModule.CLIENT_ID_KEY, clientId);
-        options.put(OpenIdConnectAuthModule.CLIENT_SECRET_KEY, clientSecret);
+        options.put(CLIENT_ID, clientId);
+        options.put(CLIENT_SECRET, clientSecret);
         options.put(OpenIdConnectAuthModule.DISABLE_CERTIFICATE_CHECKS_KEY, disableCertificateChecks);
         options.put(OpenIdConnectAuthModule.ISSUER_URI_KEY, issuerUri);
 
