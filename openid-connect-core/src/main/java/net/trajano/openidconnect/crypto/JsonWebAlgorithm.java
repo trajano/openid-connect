@@ -70,6 +70,10 @@ public enum JsonWebAlgorithm {
      */
     HS512("HmacSHA512"),
     /**
+     * Special case where the value is sent unencrypted.
+     */
+    none(null),
+    /**
      * RSA using SHA-256 hash algorithm.
      */
     RS256("SHA256withRSA"),
@@ -91,6 +95,25 @@ public enum JsonWebAlgorithm {
      */
     RSA1_5("RSA/ECB/PKCS1Padding");
 
+    private static final Map<String, JsonWebAlgorithm> REVERSE = new HashMap<>();
+
+    /**
+     * Symettric algorithms with JCA support.
+     */
+    public static final JsonWebAlgorithm[] SYMETTRIC_WITH_JCA = { A128GCM, A256CBC, A256GCM };
+
+    static {
+        for (final JsonWebAlgorithm jwa : EnumSet.allOf(JsonWebAlgorithm.class)) {
+            if (jwa.jcaAlgorithm != null) {
+                REVERSE.put(jwa.jcaAlgorithm, jwa);
+            }
+        }
+    }
+    public static JsonWebAlgorithm fromJca(final String jcaAlgorithm) {
+
+        return REVERSE.get(jcaAlgorithm);
+    }
+
     /**
      * JCA Algorithm.
      */
@@ -107,19 +130,6 @@ public enum JsonWebAlgorithm {
         this.jcaAlgorithm = jcaAlgorithm;
     }
 
-    private static final Map<String, JsonWebAlgorithm> REVERSE = new HashMap<>();
-    static {
-        for (JsonWebAlgorithm jwa : EnumSet.allOf(JsonWebAlgorithm.class)) {
-            if (jwa.jcaAlgorithm != null)
-                REVERSE.put(jwa.jcaAlgorithm, jwa);
-        }
-    }
-
-    /**
-     * Symettric algorithms with JCA support.
-     */
-    public static final JsonWebAlgorithm[] SYMETTRIC_WITH_JCA = { A128GCM, A256CBC, A256GCM };
-
     /**
      * Returns the JCA Algorithm Name.
      *
@@ -128,10 +138,5 @@ public enum JsonWebAlgorithm {
     public String toJca() {
 
         return jcaAlgorithm;
-    }
-
-    public static JsonWebAlgorithm fromJca(String jcaAlgorithm) {
-
-        return REVERSE.get(jcaAlgorithm);
     }
 }
