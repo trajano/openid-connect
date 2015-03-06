@@ -18,7 +18,7 @@ import net.trajano.openidconnect.jaspic.internal.OpenIDConnectModuleConfig;
  * example of how to register the provider in a
  * {@link javax.servlet.ServletContextListener}.
  */
-public class OpenIDConnectModuleConfigProvider implements AuthConfigProvider {
+public class OpenIdConnectModuleConfigProvider implements AuthConfigProvider {
 
     /**
      * {@link AuthConfigFactory} passed in through the constructor. This is not
@@ -43,7 +43,7 @@ public class OpenIDConnectModuleConfigProvider implements AuthConfigProvider {
      * @param authConfigFactory
      *            configuration factory
      */
-    public OpenIDConnectModuleConfigProvider(final Map<String, String> options, final AuthConfigFactory authConfigFactory) {
+    public OpenIdConnectModuleConfigProvider(final Map<String, String> options, final AuthConfigFactory authConfigFactory) {
 
         this.authConfigFactory = authConfigFactory;
         this.options = options;
