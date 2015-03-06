@@ -82,7 +82,7 @@ import net.trajano.openidconnect.token.IdTokenResponse;
  * 
  * @author Archimedes Trajano
  */
-public class OpenIDConnectAuthModule implements ServerAuthModule, ServerAuthContext {
+public class OpenIdConnectAuthModule implements ServerAuthModule, ServerAuthContext {
 
     /**
      * Issuer URI option key.
