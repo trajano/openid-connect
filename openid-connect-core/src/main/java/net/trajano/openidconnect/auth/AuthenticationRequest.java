@@ -1,5 +1,7 @@
 package net.trajano.openidconnect.auth;
 
+import static net.trajano.openidconnect.core.ErrorCode.invalid_request;
+
 import java.io.Serializable;
 import java.net.URI;
 import java.util.ArrayList;
@@ -11,6 +13,8 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.annotation.XmlTransient;
 
+import net.trajano.openidconnect.core.ErrorResponse;
+import net.trajano.openidconnect.core.RedirectedOpenIdProviderException;
 import net.trajano.openidconnect.core.Scope;
 import net.trajano.openidconnect.internal.Util;
 
@@ -275,24 +279,24 @@ public class AuthenticationRequest implements Serializable {
     private void validate() {
 
         if (!scopes.contains(Scope.openid)) {
-            throw new AuthenticationException(this, AuthenticationErrorCode.invalid_request, "the request must contain the 'openid' scope value");
+            throw new RedirectedOpenIdProviderException(this, new ErrorResponse(invalid_request, "the request must contain the 'openid' scope value"));
         }
 
         if (prompts.contains(AuthenticationRequestParam.Prompt.none) && prompts.size() != 1) {
 
-            throw new AuthenticationException(this, AuthenticationErrorCode.invalid_request, "Cannot have 'none' with any other value for 'prompt'");
+            throw new RedirectedOpenIdProviderException(this, new ErrorResponse(invalid_request, "Cannot have 'none' with any other value for 'prompt'"));
 
         }
 
         if (responseTypes.contains(ResponseType.none) && responseTypes.size() != 1) {
 
-            throw new AuthenticationException(this, AuthenticationErrorCode.invalid_request, "Cannot have 'none' with any other value for 'response_type'");
+            throw new RedirectedOpenIdProviderException(this, new ErrorResponse(invalid_request, "Cannot have 'none' with any other value for 'response_type'"));
 
         }
 
         if (responseMode == ResponseMode.query && !codeOnlyResponseType) {
 
-            throw new AuthenticationException(this, AuthenticationErrorCode.invalid_request, "Invalid response mode for the response type requested.");
+            throw new RedirectedOpenIdProviderException(this, new ErrorResponse(invalid_request, "Invalid response mode for the response type requested."));
 
         }
     }

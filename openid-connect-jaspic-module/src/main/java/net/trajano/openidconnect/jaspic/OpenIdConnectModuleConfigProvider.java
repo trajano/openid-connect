@@ -10,7 +10,7 @@ import javax.security.auth.message.config.ClientAuthConfig;
 import javax.security.auth.message.config.ServerAuthConfig;
 
 import net.trajano.openidconnect.jaspic.internal.Initializer;
-import net.trajano.openidconnect.jaspic.internal.OpenIDConnectModuleConfig;
+import net.trajano.openidconnect.jaspic.internal.OpenIdConnectModuleConfig;
 
 /**
  * This is used to provide the server auth module on the application rather than
@@ -18,7 +18,7 @@ import net.trajano.openidconnect.jaspic.internal.OpenIDConnectModuleConfig;
  * example of how to register the provider in a
  * {@link javax.servlet.ServletContextListener}.
  */
-public class OpenIDConnectModuleConfigProvider implements AuthConfigProvider {
+public class OpenIdConnectModuleConfigProvider implements AuthConfigProvider {
 
     /**
      * {@link AuthConfigFactory} passed in through the constructor. This is not
@@ -43,7 +43,7 @@ public class OpenIDConnectModuleConfigProvider implements AuthConfigProvider {
      * @param authConfigFactory
      *            configuration factory
      */
-    public OpenIDConnectModuleConfigProvider(final Map<String, String> options, final AuthConfigFactory authConfigFactory) {
+    public OpenIdConnectModuleConfigProvider(final Map<String, String> options, final AuthConfigFactory authConfigFactory) {
 
         this.authConfigFactory = authConfigFactory;
         this.options = options;
@@ -67,7 +67,7 @@ public class OpenIDConnectModuleConfigProvider implements AuthConfigProvider {
             final String appContext,
             final CallbackHandler handler) throws AuthException {
 
-        return new OpenIDConnectModuleConfig(options, layer, appContext, handler);
+        return new OpenIdConnectModuleConfig(options, layer, appContext, handler);
     }
 
     /**

@@ -1,5 +1,8 @@
 package net.trajano.openidconnect.jaspic.internal;
 
+import static net.trajano.openidconnect.core.OpenIdConnectKey.CLIENT_ID;
+import static net.trajano.openidconnect.core.OpenIdConnectKey.CLIENT_SECRET;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -9,8 +12,8 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
 
-import net.trajano.openidconnect.jaspic.OpenIDConnectAuthModule;
-import net.trajano.openidconnect.jaspic.OpenIDConnectModuleConfigProvider;
+import net.trajano.openidconnect.jaspic.OpenIdConnectAuthModule;
+import net.trajano.openidconnect.jaspic.OpenIdConnectModuleConfigProvider;
 
 /**
  * This initializes the OpenID Connector JASPIC module and registers itself as
@@ -59,10 +62,10 @@ public class Initializer implements ServletContextListener {
 
         final Map<String, String> options = new HashMap<>();
 
-        options.put(OAuthModule.CLIENT_ID_KEY, clientId);
-        options.put(OAuthModule.CLIENT_SECRET_KEY, clientSecret);
-        options.put(OAuthModule.DISABLE_CERTIFICATE_CHECKS_KEY, disableCertificateChecks);
-        options.put(OpenIDConnectAuthModule.ISSUER_URI_KEY, issuerUri);
+        options.put(CLIENT_ID, clientId);
+        options.put(CLIENT_SECRET, clientSecret);
+        options.put(OpenIdConnectAuthModule.DISABLE_CERTIFICATE_CHECKS_KEY, disableCertificateChecks);
+        options.put(OpenIdConnectAuthModule.ISSUER_URI_KEY, issuerUri);
 
         final String contextPath = sce.getServletContext()
                 .getContextPath();
@@ -72,11 +75,11 @@ public class Initializer implements ServletContextListener {
         options.put("redirection_endpoint", contextPath + "/cb");
         options.put("token_uri", contextPath + "/token");
         options.put("userinfo_uri", contextPath + "/userinfo");
-        options.put(OAuthModule.LOGOUT_GOTO_URI_KEY, rootPath);
-        options.put(OAuthModule.LOGOUT_URI_KEY, contextPath + "/logout");
+        options.put(OpenIdConnectAuthModule.LOGOUT_GOTO_URI_KEY, rootPath);
+        options.put(OpenIdConnectAuthModule.LOGOUT_URI_KEY, contextPath + "/logout");
 
         registrationID = AuthConfigFactory.getFactory()
-                .registerConfigProvider(new OpenIDConnectModuleConfigProvider(options, null), "HttpServlet", null, null);
+                .registerConfigProvider(new OpenIdConnectModuleConfigProvider(options, null), "HttpServlet", null, null);
 
     }
 }
