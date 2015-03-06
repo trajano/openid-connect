@@ -5,11 +5,18 @@ import net.trajano.openidconnect.crypto.JsonWebKeySet;
 
 public class JsonWebToken {
 
-    private JoseHeader joseHeader;
+    private final JoseHeader joseHeader;
 
-    private byte[] payload;
+    private final byte[] payload;
 
-    private byte[] signature;
+    private final byte[] signature;
+
+    public JsonWebToken(JoseHeader joseHeader, byte[] payload, byte[] signature) {
+
+        this.joseHeader = joseHeader;
+        this.payload = payload;
+        this.signature = signature;
+    }
 
     @Override
     public String toString() {
