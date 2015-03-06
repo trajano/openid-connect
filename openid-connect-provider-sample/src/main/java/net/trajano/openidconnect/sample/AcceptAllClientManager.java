@@ -21,7 +21,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriBuilder;
 
 import net.trajano.openidconnect.auth.AuthenticationRequest;
-import net.trajano.openidconnect.auth.AuthenticationRequestParam;
+import net.trajano.openidconnect.core.OpenIdConnectKey;
 import net.trajano.openidconnect.core.Scope;
 import net.trajano.openidconnect.provider.spi.Authenticator;
 import net.trajano.openidconnect.provider.spi.ClientManager;
@@ -63,13 +63,13 @@ public class AcceptAllClientManager implements ClientManager, Authenticator, Use
             UriBuilder contextUriBuilder) {
 
         return contextUriBuilder.path("login.jsp")
-                .queryParam(AuthenticationRequestParam.CLIENT_ID, authenticationRequest.getClientId())
-                .queryParam(AuthenticationRequestParam.REDIRECT_URI, authenticationRequest.getRedirectUri())
-                .queryParam(AuthenticationRequestParam.SCOPE, authenticationRequest.getScope())
-                .queryParam(AuthenticationRequestParam.RESPONSE_TYPE, authenticationRequest.getResponseType())
-                .queryParam(AuthenticationRequestParam.STATE, authenticationRequest.getState())
-                .queryParam(AuthenticationRequestParam.NONCE, authenticationRequest.getNonce())
-                .queryParam(AuthenticationRequestParam.RESPONSE_MODE, authenticationRequest.getResponseMode())
+                .queryParam(OpenIdConnectKey.CLIENT_ID, authenticationRequest.getClientId())
+                .queryParam(OpenIdConnectKey.REDIRECT_URI, authenticationRequest.getRedirectUri())
+                .queryParam(OpenIdConnectKey.SCOPE, authenticationRequest.getScope())
+                .queryParam(OpenIdConnectKey.RESPONSE_TYPE, authenticationRequest.getResponseType())
+                .queryParam(OpenIdConnectKey.STATE, authenticationRequest.getState())
+                .queryParam(OpenIdConnectKey.NONCE, authenticationRequest.getNonce())
+                .queryParam(OpenIdConnectKey.RESPONSE_MODE, authenticationRequest.getResponseMode())
                 .build();
     }
 
