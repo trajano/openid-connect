@@ -19,17 +19,17 @@ public class OpenIdConnectException extends BadRequestException {
      */
     private static final long serialVersionUID = 7363379256768742855L;
 
-    public OpenIdConnectException(TokenErrorCode error) {
+    public OpenIdConnectException(ErrorCode error) {
 
         this(new ErrorResponse(error));
     }
 
-    public OpenIdConnectException(TokenErrorCode error, String errorDescription) {
+    public OpenIdConnectException(ErrorCode error, String errorDescription) {
 
         this(new ErrorResponse(error, errorDescription));
     }
 
-    public OpenIdConnectException(TokenErrorCode error, String errorDescription, URI errorUri) {
+    public OpenIdConnectException(ErrorCode error, String errorDescription, URI errorUri) {
 
         this(new ErrorResponse(error, errorDescription, errorUri));
     }

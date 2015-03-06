@@ -25,7 +25,7 @@ public class ErrorResponse {
      * REQUIRED. A single ASCII [USASCII] error code.
      */
     @XmlElement(required = true)
-    private TokenErrorCode error;
+    private ErrorCode error;
 
     /**
      * OPTIONAL. Human-readable ASCII [USASCII] text providing additional
@@ -50,24 +50,24 @@ public class ErrorResponse {
 
     }
 
-    public ErrorResponse(final TokenErrorCode error) {
+    public ErrorResponse(final ErrorCode error) {
 
         this.error = error;
     }
 
-    public ErrorResponse(final TokenErrorCode error, final String errorDescription) {
+    public ErrorResponse(final ErrorCode error, final String errorDescription) {
 
         this(error);
         this.errorDescription = errorDescription;
     }
 
-    public ErrorResponse(final TokenErrorCode error, final String errorDescription, final URI errorUri) {
+    public ErrorResponse(final ErrorCode error, final String errorDescription, final URI errorUri) {
 
         this(error, errorDescription);
         this.errorUri = errorUri;
     }
 
-    public TokenErrorCode getError() {
+    public ErrorCode getError() {
 
         return error;
     }
@@ -82,7 +82,7 @@ public class ErrorResponse {
         return errorUri;
     }
 
-    public void setError(final TokenErrorCode error) {
+    public void setError(final ErrorCode error) {
 
         this.error = error;
     }

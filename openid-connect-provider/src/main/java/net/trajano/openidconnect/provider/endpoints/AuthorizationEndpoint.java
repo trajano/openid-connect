@@ -22,9 +22,9 @@ import net.trajano.openidconnect.auth.AuthenticationRequest;
 import net.trajano.openidconnect.auth.AuthenticationRequestParam;
 import net.trajano.openidconnect.auth.AuthenticationRequestParam.Display;
 import net.trajano.openidconnect.auth.AuthenticationRequestParam.Prompt;
-import net.trajano.openidconnect.core.AuthenticationErrorCode;
+import net.trajano.openidconnect.core.ErrorCode;
 import net.trajano.openidconnect.core.RedirectedOpenIdProviderException;
-import net.trajano.openidconnect.core.TokenErrorCode;
+import net.trajano.openidconnect.core.ErrorCode;
 import net.trajano.openidconnect.core.OpenIdConnectException;
 import net.trajano.openidconnect.provider.spi.Authenticator;
 import net.trajano.openidconnect.provider.spi.ClientManager;
@@ -116,12 +116,12 @@ public class AuthorizationEndpoint {
         final AuthenticationRequest authenticationRequest = new AuthenticationRequest(req);
 
         if (!clientManager.isRedirectUriValidForClient(authenticationRequest.getClientId(), authenticationRequest.getRedirectUri())) {
-            throw new OpenIdConnectException(TokenErrorCode.invalid_grant, "redirect URI is not supported for the client");
+            throw new OpenIdConnectException(ErrorCode.invalid_grant, "redirect URI is not supported for the client");
         }
 
         if (!authenticator.isAuthenticated(authenticationRequest, req) && authenticationRequest.getPrompts()
                 .contains(AuthenticationRequestParam.Prompt.none)) {
-            throw new RedirectedOpenIdProviderException(authenticationRequest, AuthenticationErrorCode.login_required, null);
+            throw new RedirectedOpenIdProviderException(authenticationRequest, ErrorCode.login_required, null);
         }
 
         if (!authenticator.isAuthenticated(authenticationRequest, req)) {

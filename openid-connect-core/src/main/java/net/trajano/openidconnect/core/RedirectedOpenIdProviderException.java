@@ -44,7 +44,7 @@ public class RedirectedOpenIdProviderException extends WebApplicationException {
     private final static String STATE = "state";
 
     private static Response responseBuilder(final URI redirectUri,
-            final AuthenticationErrorCode error,
+            final ErrorCode error,
             final String errorDescription,
             final String state,
             final URI errorUri) {
@@ -64,17 +64,17 @@ public class RedirectedOpenIdProviderException extends WebApplicationException {
                 .build();
     }
 
-    public RedirectedOpenIdProviderException(final AuthenticationRequest authenticationRequest, final AuthenticationErrorCode errorCode) {
+    public RedirectedOpenIdProviderException(final AuthenticationRequest authenticationRequest, final ErrorCode errorCode) {
 
         this(authenticationRequest, errorCode, null);
     }
 
-    public RedirectedOpenIdProviderException(final AuthenticationRequest authenticationRequest, final AuthenticationErrorCode errorCode, final String errorDescription) {
+    public RedirectedOpenIdProviderException(final AuthenticationRequest authenticationRequest, final ErrorCode errorCode, final String errorDescription) {
 
         this(authenticationRequest, errorCode, errorDescription, null);
     }
 
-    public RedirectedOpenIdProviderException(final AuthenticationRequest authenticationRequest, final AuthenticationErrorCode errorCode, final String errorDescription, URI errorUri) {
+    public RedirectedOpenIdProviderException(final AuthenticationRequest authenticationRequest, final ErrorCode errorCode, final String errorDescription, URI errorUri) {
 
         super(responseBuilder(authenticationRequest.getRedirectUri(), errorCode, errorDescription, authenticationRequest.getState(), errorUri));
     }
