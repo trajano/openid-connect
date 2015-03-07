@@ -89,11 +89,24 @@ public class JsonWebToken {
      */
     private final String zip;
 
+    /**
+     * "kid" (Key ID) Header Parameter
+     * <p>
+     * This parameter has the same meaning, syntax, and processing rules as the
+     * kid Header Parameter defined in Section 4.1.4 of [JWS], except that the
+     * key hint references the public key to which the JWE was encrypted; this
+     * can be used to determine the private key needed to decrypt the JWE. This
+     * parameter allows originators to explicitly signal a change of key to JWE
+     * recipients.
+     */
+    private final String kid;
+
     public JsonWebToken(final JoseHeader joseHeader, final byte[][] payloads) {
 
         joseHeaderEncoded = joseHeader.toString();
         alg = joseHeader.getAlg();
         enc = joseHeader.getEnc();
+        kid = joseHeader.getKid();
         zip = joseHeader.getZip();
         this.payloads = payloads;
     }
@@ -107,6 +120,7 @@ public class JsonWebToken {
 
         alg = joseHeader.getAlg();
         enc = joseHeader.getEnc();
+        kid = joseHeader.getKid();
         zip = joseHeader.getZip();
 
         payloads = new byte[tokens.length - 1][];
@@ -114,6 +128,12 @@ public class JsonWebToken {
             payloads[i - 1] = Base64Url.decode(tokens[i]);
         }
 
+    }
+
+    
+    public String getKid() {
+    
+        return kid;
     }
 
     public JsonWebAlgorithm getAlg() {
@@ -169,7 +189,7 @@ public class JsonWebToken {
         final StringBuilder b = new StringBuilder(joseHeaderEncoded);
         for (final byte[] payload : payloads) {
             b.append('.')
-            .append(Base64Url.encode(payload));
+                    .append(Base64Url.encode(payload));
         }
         return b.toString();
 
