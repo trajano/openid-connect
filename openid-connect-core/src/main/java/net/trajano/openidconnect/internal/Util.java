@@ -245,6 +245,16 @@ public class Util {
         return join(stringValues);
     }
 
+    public static List<String> splitToList(String in) {
+
+        return Arrays.asList(in.split("\\s+"));
+    }
+
+    public static Set<String> splitToSet(String in) {
+
+        return new HashSet<>(splitToList(in));
+    }
+
     public static String toLocaleString(final Iterable<Locale> locales) {
 
         final List<String> stringValues = new LinkedList<>();
@@ -274,5 +284,34 @@ public class Util {
         }
         throw new IllegalArgumentException("unable to find the value " + name + " in enum " + enumType);
 
+    }
+
+    public static <E extends Enum<E>> Set<E> splitToSet(Class<E> enumType,
+            final String names) {
+
+        Set<E> ret = new HashSet<>();
+        for (String name : splitToList(names)) {
+            ret.add(valueOf(enumType, name));
+        }
+        return ret;
+    }
+
+    public static <E extends Enum<E>> List<E> splitToList(Class<E> enumType,
+            final String names) {
+
+        List<E> ret = new LinkedList<>();
+        for (String name : splitToList(names)) {
+            ret.add(valueOf(enumType, name));
+        }
+        return ret;
+    }
+
+    public static List<Locale> splitToLocaleList(final String locales) {
+
+        List<Locale> ret = new LinkedList<>();
+        for (String languageTag : splitToList(locales)) {
+            ret.add(Locale.forLanguageTag(languageTag));
+        }
+        return ret;
     }
 }

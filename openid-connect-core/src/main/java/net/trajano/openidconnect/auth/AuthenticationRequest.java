@@ -3,9 +3,11 @@ package net.trajano.openidconnect.auth;
 import static net.trajano.openidconnect.core.ErrorCode.invalid_request;
 import static net.trajano.openidconnect.core.OpenIdConnectKey.UI_LOCALES;
 
+import java.io.ByteArrayInputStream;
 import java.io.Serializable;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -14,6 +16,7 @@ import java.util.Set;
 import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
+import javax.json.JsonReader;
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -21,6 +24,7 @@ import net.trajano.openidconnect.core.ErrorResponse;
 import net.trajano.openidconnect.core.OpenIdConnectKey;
 import net.trajano.openidconnect.core.RedirectedOpenIdProviderException;
 import net.trajano.openidconnect.core.Scope;
+import net.trajano.openidconnect.crypto.Base64Url;
 import net.trajano.openidconnect.internal.Util;
 
 /**
@@ -134,9 +138,101 @@ public class AuthenticationRequest implements Serializable {
         validate();
     }
 
-    public AuthenticationRequest(final String requestParameter) {
+    /**
+     * This is not directly called.
+     *
+     * @param requestParameter
+     *            a Base64Url encoded JSON object.
+     */
+    private AuthenticationRequest(final String requestParameter) {
 
-        throw new RuntimeException();
+        final JsonReader jsonReader = Json.createReader(new ByteArrayInputStream(Base64Url.decode(requestParameter)));
+        final JsonObject requestObject = jsonReader.readObject();
+
+        if (requestObject.containsKey(OpenIdConnectKey.ACR_VALUES)) {
+            acrValues = Util.splitToList(requestObject.getString(OpenIdConnectKey.ACR_VALUES));
+        } else {
+            acrValues = null;
+        }
+        if (requestObject.containsKey(OpenIdConnectKey.CLIENT_ID)) {
+            clientId = requestObject.getString(OpenIdConnectKey.CLIENT_ID);
+        } else {
+            clientId = null;
+        }
+        if (requestObject.containsKey(OpenIdConnectKey.DISPLAY)) {
+            display = Util.valueOf(Display.class, requestObject.getString(OpenIdConnectKey.DISPLAY));
+        } else {
+            display = null;
+        }
+
+        if (requestObject.containsKey(OpenIdConnectKey.ID_TOKEN_HINT)) {
+            idTokenHint = requestObject.getString(OpenIdConnectKey.ID_TOKEN_HINT);
+        } else {
+            idTokenHint = null;
+        }
+
+        if (requestObject.containsKey(OpenIdConnectKey.LOGIN_HINT)) {
+            loginHint = requestObject.getString(OpenIdConnectKey.LOGIN_HINT);
+        } else {
+            loginHint = null;
+        }
+
+        if (requestObject.containsKey(OpenIdConnectKey.MAX_AGE)) {
+            maxAge = requestObject.getInt(OpenIdConnectKey.MAX_AGE);
+        } else {
+            maxAge = null;
+        }
+
+        if (requestObject.containsKey(OpenIdConnectKey.NONCE)) {
+            nonce = requestObject.getString(OpenIdConnectKey.NONCE);
+        } else {
+            nonce = null;
+        }
+
+        if (requestObject.containsKey(OpenIdConnectKey.PROMPT)) {
+            prompts = Util.splitToSet(Prompt.class, requestObject.getString(OpenIdConnectKey.PROMPT));
+        } else {
+            prompts = null;
+        }
+
+        if (requestObject.containsKey(OpenIdConnectKey.REDIRECT_URI)) {
+            redirectUri = URI.create(requestObject.getString(OpenIdConnectKey.REDIRECT_URI));
+        } else {
+            redirectUri = null;
+        }
+
+        if (requestObject.containsKey(OpenIdConnectKey.RESPONSE_MODE)) {
+            responseMode = Util.valueOf(ResponseMode.class, requestObject.getString(OpenIdConnectKey.RESPONSE_MODE));
+        } else {
+            responseMode = null;
+        }
+
+        if (requestObject.containsKey(OpenIdConnectKey.RESPONSE_TYPE)) {
+            responseTypes = Util.splitToSet(ResponseType.class, requestObject.getString(OpenIdConnectKey.RESPONSE_TYPE));
+        } else {
+            responseTypes = null;
+        }
+
+        if (requestObject.containsKey(OpenIdConnectKey.SCOPE)) {
+            scopes = Util.splitToSet(Scope.class, requestObject.getString(OpenIdConnectKey.SCOPE));
+        } else {
+            scopes = null;
+        }
+
+        if (requestObject.containsKey(OpenIdConnectKey.STATE)) {
+            state = requestObject.getString(OpenIdConnectKey.STATE);
+        } else {
+            state = null;
+        }
+
+        if (requestObject.containsKey(OpenIdConnectKey.UI_LOCALES)) {
+            uiLocales = Util.splitToLocaleList(requestObject.getString(OpenIdConnectKey.UI_LOCALES));
+        } else {
+            uiLocales = null;
+        }
+        codeOnlyResponseType = responseTypes.equals(Collections.singleton(ResponseType.code));
+        parent = null;
+
     }
 
     public boolean containsResponseType(final ResponseType responseType) {
@@ -327,6 +423,9 @@ public class AuthenticationRequest implements Serializable {
         }
         if (state != null) {
             b.add(OpenIdConnectKey.STATE, state);
+        }
+        if (acrValues != null) {
+            b.add(OpenIdConnectKey.ACR_VALUES, Util.join(acrValues));
         }
         if (uiLocales != null) {
             b.add(OpenIdConnectKey.UI_LOCALES, Util.toLocaleString(uiLocales));
