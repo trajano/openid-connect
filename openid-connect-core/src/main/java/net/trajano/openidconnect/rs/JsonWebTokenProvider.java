@@ -18,7 +18,7 @@ import javax.ws.rs.ext.MessageBodyReader;
 import javax.ws.rs.ext.MessageBodyWriter;
 import javax.ws.rs.ext.Provider;
 
-import net.trajano.openidconnect.auth.JsonWebToken;
+import net.trajano.openidconnect.crypto.JsonWebToken;
 
 // TODO should we have the reader in jaspic and the writer in the rest api?
 @Provider

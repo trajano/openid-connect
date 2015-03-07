@@ -12,7 +12,9 @@ import net.trajano.openidconnect.crypto.JsonWebKey;
 import net.trajano.openidconnect.internal.Util;
 
 /**
- * @author Archimedes
+ * This is a mutable JOSE header.
+ * 
+ * @author Archimedes Trajano
  */
 public class JoseHeader {
 
@@ -142,148 +144,6 @@ public class JoseHeader {
      */
     private String kid;
 
-    public JoseHeader(String jsonString) {
-
-        JsonObject json = Json.createReader(new StringReader(jsonString))
-                .readObject();
-        Util.populateWithJson(this, json);
-    }
-
-    public JoseHeader() {
-
-        // TODO make this immutable
-    }
-
-    public JsonWebAlgorithm getAlg() {
-
-        return alg;
-    }
-
-    public void setAlg(JsonWebAlgorithm alg) {
-
-        this.alg = alg;
-    }
-
-    public String[] getCrit() {
-
-        return crit;
-    }
-
-    public void setCrit(String[] crit) {
-
-        this.crit = crit;
-    }
-
-    public MediaType getCty() {
-
-        return cty;
-    }
-
-    public void setCty(MediaType cty) {
-
-        this.cty = cty;
-    }
-
-    public JsonWebAlgorithm getEnc() {
-
-        return enc;
-    }
-
-    public void setEnc(JsonWebAlgorithm enc) {
-
-        this.enc = enc;
-    }
-
-    public URI getJku() {
-
-        return jku;
-    }
-
-    public void setJku(URI jku) {
-
-        this.jku = jku;
-    }
-
-    public JsonWebKey getJwk() {
-
-        return jwk;
-    }
-
-    public void setJwk(JsonWebKey jwk) {
-
-        this.jwk = jwk;
-    }
-
-    public String getKid() {
-
-        return kid;
-    }
-
-    public void setKid(String kid) {
-
-        this.kid = kid;
-    }
-
-    public MediaType getTyp() {
-
-        return typ;
-    }
-
-    public void setTyp(MediaType typ) {
-
-        this.typ = typ;
-    }
-
-    public String getX5c() {
-
-        return x5c;
-    }
-
-    public void setX5c(String x5c) {
-
-        this.x5c = x5c;
-    }
-
-    public String getX5t() {
-
-        return x5t;
-    }
-
-    public void setX5t(String x5t) {
-
-        this.x5t = x5t;
-    }
-
-    public String getX5t_s256() {
-
-        return x5t_s256;
-    }
-
-    public void setX5t_s256(String x5t_s256) {
-
-        this.x5t_s256 = x5t_s256;
-    }
-
-    public URI getX5u() {
-
-        return x5u;
-    }
-
-    public void setX5u(URI x5u) {
-
-        this.x5u = x5u;
-    }
-
-    public String getZip() {
-
-        return zip;
-    }
-
-    public void setZip(String zip) {
-
-        this.zip = zip;
-    }
-
     /**
      * "typ" (Type) Header Parameter
      * <p>
@@ -397,11 +257,155 @@ public class JoseHeader {
      */
     private String zip;
 
+    public JoseHeader() {
+
+        // TODO make this immutable
+    }
+
+    public JoseHeader(final String jsonString) {
+
+        final JsonObject json = Json.createReader(new StringReader(jsonString))
+                .readObject();
+        Util.populateWithJson(this, json);
+    }
+
+    public JsonWebAlgorithm getAlg() {
+
+        return alg;
+    }
+
+    public String[] getCrit() {
+
+        return crit;
+    }
+
+    public MediaType getCty() {
+
+        return cty;
+    }
+
+    public JsonWebAlgorithm getEnc() {
+
+        return enc;
+    }
+
+    public URI getJku() {
+
+        return jku;
+    }
+
+    public JsonWebKey getJwk() {
+
+        return jwk;
+    }
+
+    public String getKid() {
+
+        return kid;
+    }
+
+    public MediaType getTyp() {
+
+        return typ;
+    }
+
+    public String getX5c() {
+
+        return x5c;
+    }
+
+    public String getX5t() {
+
+        return x5t;
+    }
+
+    public String getX5t_s256() {
+
+        return x5t_s256;
+    }
+
+    public URI getX5u() {
+
+        return x5u;
+    }
+
+    public String getZip() {
+
+        return zip;
+    }
+
+    public void setAlg(final JsonWebAlgorithm alg) {
+
+        this.alg = alg;
+    }
+
+    public void setCrit(final String[] crit) {
+
+        this.crit = crit;
+    }
+
+    public void setCty(final MediaType cty) {
+
+        this.cty = cty;
+    }
+
+    public void setEnc(final JsonWebAlgorithm enc) {
+
+        this.enc = enc;
+    }
+
+    public void setJku(final URI jku) {
+
+        this.jku = jku;
+    }
+
+    public void setJwk(final JsonWebKey jwk) {
+
+        this.jwk = jwk;
+    }
+
+    public void setKid(final String kid) {
+
+        this.kid = kid;
+    }
+
+    public void setTyp(final MediaType typ) {
+
+        this.typ = typ;
+    }
+
+    public void setX5c(final String x5c) {
+
+        this.x5c = x5c;
+    }
+
+    public void setX5t(final String x5t) {
+
+        this.x5t = x5t;
+    }
+
+    public void setX5t_s256(final String x5t_s256) {
+
+        this.x5t_s256 = x5t_s256;
+    }
+
+    public void setX5u(final URI x5u) {
+
+        this.x5u = x5u;
+    }
+
+    public void setZip(final String zip) {
+
+        this.zip = zip;
+    }
+
     /**
      * Returns a JSON string representing the JOSE header.
      */
     @Override
     public String toString() {
-        return Util.convertToJson(this).toString();
+
+        return Util.convertToJson(this)
+                .toString();
     }
 }
