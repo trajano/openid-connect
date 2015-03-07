@@ -13,6 +13,7 @@ import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.GCMParameterSpec;
+import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
 import net.trajano.openidconnect.auth.JoseHeader;
@@ -22,7 +23,8 @@ public class JWE {
 
     public static byte[] decrypt(final String jwe,
             final JsonWebKey jwk) throws IOException,
-            GeneralSecurityException, DataFormatException {
+            GeneralSecurityException,
+            DataFormatException {
 
         final JsonWebToken jsonWebToken = new JsonWebToken(jwe);
         if (jsonWebToken.getNumberOfPayloads() != 4) {
@@ -44,15 +46,21 @@ public class JWE {
         final byte[] aad = jsonWebToken.getJoseHeaderEncoded()
                 .getBytes(CharSets.US_ASCII);
 
-        final GCMParameterSpec gcmParameterSpec = new GCMParameterSpec(authenticationTag.length * 8, initializationVector);
-
         final Cipher contentCipher = Cipher.getInstance(jsonWebToken.getEnc()
                 .toJca());
-        contentCipher.init(Cipher.DECRYPT_MODE, contentEncryptionKey, gcmParameterSpec);
-        contentCipher.updateAAD(aad);
-
-        contentCipher.update(cipherText);
-        byte[] plaintext = contentCipher.doFinal(authenticationTag);
+        if (jsonWebToken.getEnc() == JsonWebAlgorithm.A128GCM || jsonWebToken.getEnc() == JsonWebAlgorithm.A256GCM) {
+            final GCMParameterSpec spec = new GCMParameterSpec(authenticationTag.length * 8, initializationVector);
+            contentCipher.init(Cipher.DECRYPT_MODE, contentEncryptionKey, spec);
+            contentCipher.updateAAD(aad);
+        } else {
+            IvParameterSpec spec = new IvParameterSpec(initializationVector);
+            contentCipher.init(Cipher.DECRYPT_MODE, contentEncryptionKey, spec);
+        }
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        baos.write(contentCipher.update(cipherText));
+        baos.write(contentCipher.doFinal(authenticationTag));
+        baos.close();
+        byte[] plaintext = baos.toByteArray();
         boolean compress = "DEF".equals(jsonWebToken.getZip());
         if (compress) {
             return inflate(plaintext);
@@ -99,17 +107,23 @@ public class JWE {
         b.append('.');
 
         SecureRandom random = new SecureRandom();
-        byte[] iv = new byte[96];
-        random.nextBytes(iv);
-
+        final byte[] iv;
+        final int authenticationTagBits = 128;
+        final Cipher contentCipher = Cipher.getInstance(enc.toJca());
+        if (joseHeader.getEnc() == JsonWebAlgorithm.A128GCM || joseHeader.getEnc() == JsonWebAlgorithm.A256GCM) {
+            iv = new byte[96];
+            random.nextBytes(iv);
+            final GCMParameterSpec spec = new GCMParameterSpec(authenticationTagBits, iv);
+            contentCipher.init(Cipher.ENCRYPT_MODE, new SecretKeySpec(cek, "AES"), spec);
+            contentCipher.updateAAD(encodedJoseHeader.getBytes(CharSets.US_ASCII));
+        } else {
+            iv = new byte[16];
+            random.nextBytes(iv);
+            IvParameterSpec spec = new IvParameterSpec(iv);
+            contentCipher.init(Cipher.ENCRYPT_MODE, new SecretKeySpec(cek, "AES"), spec);
+        }
         b.append(Base64Url.encode(iv));
         b.append('.');
-
-        final int authenticationTagBits = 128;
-        final GCMParameterSpec spec = new GCMParameterSpec(authenticationTagBits, iv);
-        final Cipher contentCipher = Cipher.getInstance("AES/GCM/NoPadding");
-        contentCipher.init(Cipher.ENCRYPT_MODE, new SecretKeySpec(cek, "AES"), spec);
-        contentCipher.updateAAD(encodedJoseHeader.getBytes(CharSets.US_ASCII));
 
         final byte[] cipherTextAndAuthenticationTag;
         if (compress) {
@@ -139,7 +153,7 @@ public class JWE {
 
     private static byte[] deflate(byte[] uncompressed) throws IOException {
 
-        Deflater deflater = new Deflater(9);
+        Deflater deflater = new Deflater(9, false);
         deflater.setInput(uncompressed);
         deflater.finish();
         ByteArrayOutputStream baos = new ByteArrayOutputStream(uncompressed.length);
@@ -155,7 +169,7 @@ public class JWE {
     private static byte[] inflate(byte[] compressed) throws IOException,
             DataFormatException {
 
-        Inflater inflater = new Inflater();
+        Inflater inflater = new Inflater(false);
         inflater.setInput(compressed);
         inflater.finished();
         ByteArrayOutputStream baos = new ByteArrayOutputStream(compressed.length);

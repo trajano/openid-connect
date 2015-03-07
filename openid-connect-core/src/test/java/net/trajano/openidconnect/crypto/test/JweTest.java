@@ -149,8 +149,8 @@ public class JweTest {
 
         final byte[] plaintext = "atarashii kaze ga fuite, warattari, naitari, utatte mitari, atarashii kaze ga fuite, warattari, naitari, utatte mitari, atarashii kaze ga fuite, warattari, naitari, utatte mitari".getBytes();
 
-        final String compressed = JWE.encrypt(plaintext, publicJwk, JsonWebAlgorithm.RSA_OAEP, JsonWebAlgorithm.A256GCM, true);
-        final String uncompressed = JWE.encrypt(plaintext, publicJwk, JsonWebAlgorithm.RSA_OAEP, JsonWebAlgorithm.A256GCM, false);
+        final String compressed = JWE.encrypt(plaintext, publicJwk, JsonWebAlgorithm.RSA_OAEP, JsonWebAlgorithm.A256CBC, true);
+        final String uncompressed = JWE.encrypt(plaintext, publicJwk, JsonWebAlgorithm.RSA_OAEP, JsonWebAlgorithm.A256CBC, false);
         assertTrue(compressed.length() < uncompressed.length());
     }
 
@@ -197,7 +197,16 @@ public class JweTest {
 
         final String text = "Live long and prosper.";
 
-        final String jwe = JWE.encrypt(text.getBytes(), publicJwk, JsonWebAlgorithm.RSA_OAEP, JsonWebAlgorithm.A256GCM);
+        final String jwe = JWE.encrypt(text.getBytes(), publicJwk, JsonWebAlgorithm.RSA_OAEP, JsonWebAlgorithm.A256CBC);
+        assertEquals(text, new String(JWE.decrypt(jwe, privateJwk)));
+    }
+
+    @Test
+    public void testRandomExampleWithCompression() throws Exception {
+
+        final String text = "Live long and prosper.";
+
+        final String jwe = JWE.encrypt(text.getBytes(), publicJwk, JsonWebAlgorithm.RSA_OAEP, JsonWebAlgorithm.A256CBC, true);
         assertEquals(text, new String(JWE.decrypt(jwe, privateJwk)));
     }
 
@@ -219,7 +228,7 @@ public class JweTest {
         final byte[] plaintext = new byte[204080];
         r.nextBytes(plaintext);
 
-        final String jwe = JWE.encrypt(plaintext, publicJwk, JsonWebAlgorithm.RSA_OAEP, JsonWebAlgorithm.A256GCM, true);
+        final String jwe = JWE.encrypt(plaintext, publicJwk, JsonWebAlgorithm.RSA_OAEP, JsonWebAlgorithm.A256CBC, true);
         assertArrayEquals(plaintext, JWE.decrypt(jwe, privateJwk));
     }
 
