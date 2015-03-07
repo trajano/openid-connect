@@ -30,6 +30,72 @@ import net.trajano.openidconnect.crypto.JsonWebAlgorithm;
 public class OpenIdProviderConfiguration {
 
     /**
+     * <p>
+     * request_object_encryption_alg_values_supported
+     * </p>
+     * <p>
+     * OPTIONAL. JSON array containing a list of the JWE encryption algorithms
+     * (alg values) supported by the Authorization Server for the Request Object
+     * described in Section 2.9 of OpenID Connect Messages 1.0
+     * [OpenID.Messages]. These algorithms are used both when the Request Object
+     * is passed by value and when it is passed by reference.
+     * </p>
+     */
+    @XmlElement(name = "request_object_encryption_alg_values_supported")
+    private Set<JsonWebAlgorithm> requestObjectEncryptionAlgValuesSupported;
+
+    
+    public Set<JsonWebAlgorithm> getRequestObjectEncryptionAlgValuesSupported() {
+    
+        return requestObjectEncryptionAlgValuesSupported;
+    }
+
+    
+    public void setRequestObjectEncryptionAlgValuesSupported(Set<JsonWebAlgorithm> requestObjectEncryptionAlgValuesSupported) {
+    
+        this.requestObjectEncryptionAlgValuesSupported = requestObjectEncryptionAlgValuesSupported;
+    }
+
+    
+    public Set<JsonWebAlgorithm> getRequestObjectEncryptionEncValuesSupported() {
+    
+        return requestObjectEncryptionEncValuesSupported;
+    }
+
+    
+    public void setRequestObjectEncryptionEncValuesSupported(Set<JsonWebAlgorithm> requestObjectEncryptionEncValuesSupported) {
+    
+        this.requestObjectEncryptionEncValuesSupported = requestObjectEncryptionEncValuesSupported;
+    }
+
+    
+    public URI getCheckSessionIframe() {
+    
+        return checkSessionIframe;
+    }
+
+    
+    public void setCheckSessionIframe(URI checkSessionIframe) {
+    
+        this.checkSessionIframe = checkSessionIframe;
+    }
+
+    /**
+     * <p>
+     * request_object_encryption_enc_values_supported
+     * </p>
+     * <p>
+     * OPTIONAL. JSON array containing a list of the JWE encryption algorithms
+     * (enc values) supported by the Authorization Server for the Request Object
+     * described in Section 2.9 of OpenID Connect Messages 1.0
+     * [OpenID.Messages]. These algorithms are used both when the Request Object
+     * is passed by value and when it is passed by reference.
+     * </p>
+     */
+    @XmlElement(name = "request_object_encryption_enc_values_supported")
+    private Set<JsonWebAlgorithm> requestObjectEncryptionEncValuesSupported;
+
+    /**
      * JSON array containing a list of the Authentication Context Class
      * References that this OP supports.
      */

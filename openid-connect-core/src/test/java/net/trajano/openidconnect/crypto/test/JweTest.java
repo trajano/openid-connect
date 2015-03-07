@@ -202,6 +202,15 @@ public class JweTest {
     }
 
     @Test
+    public void testRandomExample2() throws Exception {
+
+        final String text = "Live long and prosper.";
+
+        final String jwe = JWE.encrypt(text.getBytes(), publicJwk, JsonWebAlgorithm.RSA1_5, JsonWebAlgorithm.A256CBC);
+        assertEquals(text, new String(JWE.decrypt(jwe, privateJwk)));
+    }
+
+    @Test
     public void testRandomExampleWithCompression() throws Exception {
 
         final String text = "Live long and prosper.";
