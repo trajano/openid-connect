@@ -11,6 +11,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
+import javax.json.Json;
+import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -55,6 +58,9 @@ public class AuthenticationRequest implements Serializable {
 
     private final String nonce;
 
+    @XmlTransient
+    private final AuthenticationRequest parent;
+
     private final Set<Prompt> prompts;
 
     private final URI redirectUri;
@@ -71,6 +77,16 @@ public class AuthenticationRequest implements Serializable {
 
     public AuthenticationRequest(final HttpServletRequest req) {
 
+        this(req, req.getParameter("request"));
+    }
+
+    public AuthenticationRequest(final HttpServletRequest req, final String requestParameter) {
+
+        if (requestParameter == null) {
+            parent = null;
+        } else {
+            parent = new AuthenticationRequest(requestParameter);
+        }
         scopes = Util.getParameterSet(req, OpenIdConnectKey.SCOPE, Scope.class);
         responseTypes = Util.getParameterSet(req, OpenIdConnectKey.RESPONSE_TYPE, ResponseType.class);
         codeOnlyResponseType = "code".equals(req.getParameter(OpenIdConnectKey.RESPONSE_TYPE));
@@ -116,6 +132,11 @@ public class AuthenticationRequest implements Serializable {
         }
 
         validate();
+    }
+
+    public AuthenticationRequest(final String requestParameter) {
+
+        throw new RuntimeException();
     }
 
     public boolean containsResponseType(final ResponseType responseType) {
@@ -273,6 +294,44 @@ public class AuthenticationRequest implements Serializable {
     public boolean isImplicitFlow() {
 
         return !responseTypes.contains(ResponseType.code);
+    }
+
+    public JsonObject toJsonObject() {
+
+        final JsonObjectBuilder b = Json.createObjectBuilder();
+        b.add(OpenIdConnectKey.CLIENT_ID, clientId);
+        b.add(OpenIdConnectKey.REDIRECT_URI, redirectUri.toASCIIString());
+        if (display != null) {
+            b.add(OpenIdConnectKey.DISPLAY, Util.toString(display));
+        }
+        if (idTokenHint != null) {
+            b.add(OpenIdConnectKey.ID_TOKEN_HINT, idTokenHint);
+        }
+        if (loginHint != null) {
+            b.add(OpenIdConnectKey.LOGIN_HINT, loginHint);
+        }
+        if (maxAge != null) {
+            b.add(OpenIdConnectKey.MAX_AGE, maxAge);
+        }
+        if (nonce != null) {
+            b.add(OpenIdConnectKey.NONCE, nonce);
+        }
+        if (responseMode != null) {
+            b.add(OpenIdConnectKey.RESPONSE_MODE, Util.toString(responseMode));
+        }
+        if (responseTypes != null) {
+            b.add(OpenIdConnectKey.RESPONSE_MODE, Util.toString(responseTypes));
+        }
+        if (scopes != null) {
+            b.add(OpenIdConnectKey.SCOPE, Util.toString(scopes));
+        }
+        if (state != null) {
+            b.add(OpenIdConnectKey.STATE, state);
+        }
+        if (uiLocales != null) {
+            b.add(OpenIdConnectKey.UI_LOCALES, Util.toLocaleString(uiLocales));
+        }
+        return b.build();
     }
 
     /**
