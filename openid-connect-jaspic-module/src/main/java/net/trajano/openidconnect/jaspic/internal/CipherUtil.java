@@ -80,7 +80,7 @@ public final class CipherUtil {
 
         final SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
         return new SecretKeySpec(factory.generateSecret(pbeSpec)
-                .getEncoded(), CIPHER_ALGORITHM);
+                .getEncoded(), "AES");
     }
 
     /**

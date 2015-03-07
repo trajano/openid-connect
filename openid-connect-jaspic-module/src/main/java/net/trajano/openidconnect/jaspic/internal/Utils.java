@@ -22,6 +22,7 @@ import net.trajano.openidconnect.crypto.JsonWebAlgorithm;
  * @author Archimedes Trajano
  */
 public final class Utils {
+
     /**
      * Logger.
      */
@@ -56,7 +57,9 @@ public final class Utils {
      * @throws GeneralSecurityException
      *             problem with crypto APIs or signature was not valid
      */
-    public static byte[] getJwsPayload(final String serialization, final JsonWebKeySet keyset) throws GeneralSecurityException {
+    public static byte[] getJwsPayload(final String serialization,
+            final net.trajano.openidconnect.crypto.JsonWebKeySet keyset) throws GeneralSecurityException {
+
         if (LOG.isLoggable(Level.FINEST)) {
             LOG.finest("serialized payload = " + serialization);
         }
@@ -74,7 +77,7 @@ public final class Utils {
             } else {
                 kid = "";
             }
-            final PublicKey signingKey = keyset.getKey(kid, PublicKey.class);
+            final PublicKey signingKey = (PublicKey) keyset.getKey(kid);
 
             if (signingKey == null) {
                 throw new GeneralSecurityException("No key with id " + kid + " defined");
@@ -101,6 +104,7 @@ public final class Utils {
      * @return <code>true</code> if the request uses the GET method.
      */
     public static boolean isGetRequest(final HttpServletRequest req) {
+
         return "GET".equals(req.getMethod());
     }
 
@@ -112,6 +116,7 @@ public final class Utils {
      * @return <code>true</code> if the request uses the HEAD method.
      */
     public static boolean isHeadRequest(final HttpServletRequest req) {
+
         return "HEAD".equals(req.getMethod());
     }
 
@@ -123,6 +128,7 @@ public final class Utils {
      * @return true if string is null or empty.
      */
     public static boolean isNullOrEmpty(final String s) {
+
         return s == null || s.trim()
                 .length() == 0;
     }
@@ -135,6 +141,7 @@ public final class Utils {
      * @return <code>true</code> if the request uses the GET or HEAD method.
      */
     public static boolean isRetrievalRequest(final HttpServletRequest req) {
+
         return isGetRequest(req) || isHeadRequest(req);
     }
 
@@ -151,6 +158,7 @@ public final class Utils {
      * @return algorithm name
      */
     public static String toJavaAlgorithm(final String alg) {
+
         return JsonWebAlgorithm.valueOf(alg)
                 .toJca();
     }
@@ -164,7 +172,10 @@ public final class Utils {
      *            ID Token JSON.
      * @throws GeneralSecurityException
      */
-    public static void validateIdToken(final String clientId, final JsonObject idTokenJson, final String nonce) throws GeneralSecurityException {
+    public static void validateIdToken(final String clientId,
+            final JsonObject idTokenJson,
+            final String nonce) throws GeneralSecurityException {
+
         // TODO handle multiple audiences
         if (!clientId.equals(idTokenJson.getString("aud"))) {
             throw new GeneralSecurityException(String.format("invalid 'aud' got' %s' expected '%s'", idTokenJson.getString("aud"), clientId));
@@ -187,5 +198,6 @@ public final class Utils {
      * Prevent instantiation of utility class.
      */
     private Utils() {
+
     }
 }
