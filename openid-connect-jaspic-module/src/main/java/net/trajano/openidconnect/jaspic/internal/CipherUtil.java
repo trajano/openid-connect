@@ -6,8 +6,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.security.GeneralSecurityException;
-import java.util.zip.GZIPInputStream;
-import java.util.zip.GZIPOutputStream;
+import java.util.zip.Deflater;
+import java.util.zip.DeflaterOutputStream;
+import java.util.zip.Inflater;
+import java.util.zip.InflaterInputStream;
 
 import javax.crypto.Cipher;
 import javax.crypto.CipherInputStream;
@@ -17,6 +19,8 @@ import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
 
+import net.trajano.openidconnect.crypto.JsonWebAlgorithm;
+
 /**
  * Utility class to decrypt and encrypt data. It is a compressing stream.
  */
@@ -24,7 +28,7 @@ public final class CipherUtil {
     /**
      * Cipher algorithm to use. "AES"
      */
-    private static final String CIPHER_ALGORITHM = "AES";
+    private static final String CIPHER_ALGORITHM = JsonWebAlgorithm.A128GCM.toJca();
 
     /**
      * Creates a decryption stream. It is a compressed then encrypted stream.
@@ -40,7 +44,7 @@ public final class CipherUtil {
     public static InputStream buildDecryptStream(final InputStream inputStream, final SecretKey secret) throws GeneralSecurityException, IOException {
         final Cipher cipher = Cipher.getInstance(CIPHER_ALGORITHM);
         cipher.init(Cipher.DECRYPT_MODE, secret);
-        return new GZIPInputStream(new CipherInputStream(inputStream, cipher));
+        return new InflaterInputStream(new CipherInputStream(inputStream, cipher), new Inflater(false));
     }
 
     /**
@@ -57,7 +61,7 @@ public final class CipherUtil {
     public static OutputStream buildEncryptStream(final OutputStream outputStream, final SecretKey secret) throws GeneralSecurityException, IOException {
         final Cipher cipher = Cipher.getInstance(CIPHER_ALGORITHM);
         cipher.init(Cipher.ENCRYPT_MODE, secret);
-        return new GZIPOutputStream(new CipherOutputStream(outputStream, cipher));
+        return new DeflaterOutputStream(new CipherOutputStream(outputStream, cipher), new Deflater(9, false));
     }
 
     /**
@@ -76,7 +80,7 @@ public final class CipherUtil {
 
         final SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
         return new SecretKeySpec(factory.generateSecret(pbeSpec)
-                .getEncoded(), CIPHER_ALGORITHM);
+                .getEncoded(), "AES");
     }
 
     /**

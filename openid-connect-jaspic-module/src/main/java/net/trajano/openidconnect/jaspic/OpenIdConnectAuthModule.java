@@ -66,10 +66,10 @@ import net.trajano.openidconnect.core.OpenIdConnectKey;
 import net.trajano.openidconnect.core.OpenIdProviderConfiguration;
 import net.trajano.openidconnect.crypto.Base64Url;
 import net.trajano.openidconnect.jaspic.internal.CipherUtil;
-import net.trajano.openidconnect.jaspic.internal.JsonWebKeySet;
 import net.trajano.openidconnect.jaspic.internal.NullHostnameVerifier;
 import net.trajano.openidconnect.jaspic.internal.NullX509TrustManager;
 import net.trajano.openidconnect.jaspic.internal.TokenCookie;
+import net.trajano.openidconnect.rs.JsonWebKeySetProvider;
 import net.trajano.openidconnect.token.IdTokenResponse;
 
 /**
@@ -543,12 +543,12 @@ public class OpenIdConnectAuthModule implements ServerAuthModule, ServerAuthCont
      * @throws GeneralSecurityException
      *             wraps exceptions thrown during processing
      */
-    protected JsonWebKeySet getWebKeys(final Map<String, String> options,
+    private net.trajano.openidconnect.crypto.JsonWebKeySet getWebKeys(final Map<String, String> options,
             final OpenIdProviderConfiguration config) throws GeneralSecurityException {
 
-        return new JsonWebKeySet(restClient.target(config.getJwksUri())
+        return restClient.target(config.getJwksUri())
                 .request(MediaType.APPLICATION_JSON_TYPE)
-                .get(JsonObject.class));
+                .get(net.trajano.openidconnect.crypto.JsonWebKeySet.class);
     }
 
     /**
@@ -587,7 +587,7 @@ public class OpenIdConnectAuthModule implements ServerAuthModule, ServerAuthCont
 
         final OpenIdProviderConfiguration oidProviderConfig = getOpenIDProviderConfig(req, restClient, moduleOptions);
         final IdTokenResponse token = getToken(req, oidProviderConfig);
-        final JsonWebKeySet webKeys = getWebKeys(moduleOptions, oidProviderConfig);
+        final net.trajano.openidconnect.crypto.JsonWebKeySet webKeys = getWebKeys(moduleOptions, oidProviderConfig);
 
         LOG.log(Level.FINEST, "tokenValue", token);
         final JsonObject claimsSet = Json.createReader(new ByteArrayInputStream(getJwsPayload(token.getEncodedIdToken(), webKeys)))
@@ -710,6 +710,7 @@ public class OpenIdConnectAuthModule implements ServerAuthModule, ServerAuthCont
                 } else {
                     restClient = ClientBuilder.newClient();
                 }
+                restClient.register(JsonWebKeySetProvider.class);
 
             }
         } catch (final Exception e) {
@@ -850,7 +851,6 @@ public class OpenIdConnectAuthModule implements ServerAuthModule, ServerAuthCont
                             .resolve(moduleOptions.get(REDIRECTION_ENDPOINT_URI_KEY)))
                     .queryParam(STATE, state)
                     .queryParam(NONCE, nonce);
-            System.out.println("R!" + responseMode);
             if (responseMode != ResponseMode.query) {
                 b.queryParam(RESPONSE_MODE, responseMode.toString());
             }

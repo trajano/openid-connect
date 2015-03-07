@@ -1,4 +1,4 @@
-package net.trajano.openidconnect.jaspic.internal;
+package net.trajano.openidconnect.jaspic.test;
 
 import java.math.BigInteger;
 import java.security.GeneralSecurityException;
