@@ -136,6 +136,54 @@ public class RsaWebKey extends JsonWebKey {
         return e;
     }
 
+    
+    public String getQ() {
+    
+        return q;
+    }
+
+    
+    public void setQ(String q) {
+    
+        this.q = q;
+    }
+
+    
+    public String getDp() {
+    
+        return dp;
+    }
+
+    
+    public void setDp(String dp) {
+    
+        this.dp = dp;
+    }
+
+    
+    public String getDq() {
+    
+        return dq;
+    }
+
+    
+    public void setDq(String dq) {
+    
+        this.dq = dq;
+    }
+
+    
+    public String getQi() {
+    
+        return qi;
+    }
+
+    
+    public void setQi(String qi) {
+    
+        this.qi = qi;
+    }
+
     public String getN() {
 
         return n;
@@ -171,7 +219,7 @@ public class RsaWebKey extends JsonWebKey {
 
         final BigInteger modulus = Base64Url.decodeUint(n);
         final BigInteger publicExponent = Base64Url.decodeUint(e);
-        if (getUse() == KeyUse.sig) {
+        if (getUse() == KeyUse.sig || d == null) {
             return KeyFactory.getInstance("RSA")
                     .generatePublic(new RSAPublicKeySpec(modulus, publicExponent));
         } else {

@@ -7,11 +7,8 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 
 import javax.json.Json;
-import javax.json.JsonArray;
-import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
-import javax.json.JsonValue;
 import javax.json.JsonWriter;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.Produces;
@@ -25,7 +22,6 @@ import javax.ws.rs.ext.Provider;
 import net.trajano.openidconnect.crypto.EcWebKey;
 import net.trajano.openidconnect.crypto.JsonWebAlgorithm;
 import net.trajano.openidconnect.crypto.JsonWebKey;
-import net.trajano.openidconnect.crypto.JsonWebKeySet;
 import net.trajano.openidconnect.crypto.KeyType;
 import net.trajano.openidconnect.crypto.KeyUse;
 import net.trajano.openidconnect.crypto.OctWebKey;
@@ -35,10 +31,10 @@ import net.trajano.openidconnect.crypto.RsaWebKey;
 @Provider
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-public class JsonWebKeySetProvider implements MessageBodyReader<JsonWebKeySet>, MessageBodyWriter<JsonWebKeySet> {
+public class JsonWebKeyProvider implements MessageBodyReader<JsonWebKey>, MessageBodyWriter<JsonWebKey> {
 
     @Override
-    public long getSize(final JsonWebKeySet jwks,
+    public long getSize(final JsonWebKey jwks,
             final Class<?> type,
             final Type genericType,
             final Annotation[] annotations,
@@ -53,7 +49,7 @@ public class JsonWebKeySetProvider implements MessageBodyReader<JsonWebKeySet>, 
             final Annotation[] annotations,
             final MediaType mediaType) {
 
-        return JsonWebKeySet.class.isAssignableFrom(type) && MediaType.APPLICATION_JSON_TYPE.equals(mediaType);
+        return JsonWebKey.class.isAssignableFrom(type) && MediaType.APPLICATION_JSON_TYPE.equals(mediaType);
     }
 
     @Override
@@ -66,7 +62,7 @@ public class JsonWebKeySetProvider implements MessageBodyReader<JsonWebKeySet>, 
     }
 
     @Override
-    public JsonWebKeySet readFrom(final Class<JsonWebKeySet> type,
+    public JsonWebKey readFrom(final Class<JsonWebKey> type,
             final Type genericType,
             final Annotation[] annotations,
             final MediaType mediaType,
@@ -74,57 +70,62 @@ public class JsonWebKeySetProvider implements MessageBodyReader<JsonWebKeySet>, 
             final InputStream inputStream) throws IOException,
             WebApplicationException {
 
-        final JsonArray keysArray = Json.createReader(inputStream)
-                .readObject()
-                .getJsonArray("keys");
+        final JsonObject keyObject = Json.createReader(inputStream)
+                .readObject();
 
-        final JsonWebKeySet keySet = new JsonWebKeySet();
-        for (final JsonValue key : keysArray) {
-            final JsonObject keyObject = (JsonObject) key;
-            final String kid = keyObject.getString("kid");
-            final KeyType kty = KeyType.valueOf(keyObject.getString("kty"));
-            final JsonWebAlgorithm alg = JsonWebAlgorithm.valueOf(keyObject.getString("alg"));
-            final KeyUse use = KeyUse.valueOf(keyObject.getString("use"));
-            if (kty == KeyType.RSA) {
-                final RsaWebKey rsaWebKey = new RsaWebKey();
-                rsaWebKey.setKty(kty);
+        final String kid = keyObject.containsKey("kid") ? keyObject.getString("kid") : null;
+        final KeyType kty = KeyType.valueOf(keyObject.getString("kty"));
+        final JsonWebAlgorithm alg = keyObject.containsKey("alg") ? JsonWebAlgorithm.valueOf(keyObject.getString("alg")) : null;
+        final KeyUse use = keyObject.containsKey("use") ? KeyUse.valueOf(keyObject.getString("use")) : null;
+        if (kty == KeyType.RSA) {
+            final RsaWebKey rsaWebKey = new RsaWebKey();
+            rsaWebKey.setKty(kty);
+            if (kid != null)
                 rsaWebKey.setKid(kid);
+            if (alg != null)
                 rsaWebKey.setAlg(alg);
+            if (use != null)
                 rsaWebKey.setUse(use);
-                if (use == KeyUse.enc) {
-                    rsaWebKey.setD(keyObject.getString("d"));
-                    rsaWebKey.setP(keyObject.getString("p"));
-                }
-                rsaWebKey.setN(keyObject.getString("n"));
-                rsaWebKey.setE(keyObject.getString("e"));
-                keySet.add(rsaWebKey);
-            } else if (kty == KeyType.EC) {
-                final EcWebKey ecWebKey = new EcWebKey();
-                ecWebKey.setKty(kty);
+            if (use == KeyUse.enc || keyObject.containsKey("qi")) {
+                rsaWebKey.setD(keyObject.getString("d"));
+                rsaWebKey.setP(keyObject.getString("p"));
+                rsaWebKey.setDp(keyObject.getString("dp"));
+                rsaWebKey.setDq(keyObject.getString("dq"));
+                rsaWebKey.setQ(keyObject.getString("q"));
+                rsaWebKey.setQi(keyObject.getString("qi"));
+            }
+            rsaWebKey.setN(keyObject.getString("n"));
+            rsaWebKey.setE(keyObject.getString("e"));
+            return rsaWebKey;
+        } else if (kty == KeyType.EC) {
+            final EcWebKey ecWebKey = new EcWebKey();
+            ecWebKey.setKty(kty);
+            if (kid != null)
                 ecWebKey.setKid(kid);
+            if (alg != null)
                 ecWebKey.setAlg(alg);
+            if (use != null)
                 ecWebKey.setUse(use);
 
-                keySet.add(ecWebKey);
-                // keyMap.put(kid, buildEcKey(keyObject));
-            } else if (kty == KeyType.oct) {
-                final OctWebKey octWebKey = new OctWebKey();
-                octWebKey.setKty(kty);
+            return ecWebKey;
+        } else if (kty == KeyType.oct) {
+            final OctWebKey octWebKey = new OctWebKey();
+            octWebKey.setKty(kty);
+            if (kid != null)
                 octWebKey.setKid(kid);
+            if (alg != null)
                 octWebKey.setAlg(alg);
+            if (use != null)
                 octWebKey.setUse(use);
-                keySet.add(octWebKey);
+            return octWebKey;
 
-            } else {
-                throw new IOException("kty of " + kty + " is not supported");
-            }
+        } else {
+            throw new IOException("kty of " + kty + " is not supported");
         }
-
-        return keySet;
-            }
+    }
 
     @Override
-    public void writeTo(final JsonWebKeySet jwks,
+    public void writeTo(final JsonWebKey jwks,
             final Class<?> type,
             final Type genericType,
             final Annotation[] annotations,
@@ -133,16 +134,10 @@ public class JsonWebKeySetProvider implements MessageBodyReader<JsonWebKeySet>, 
             final OutputStream os) throws IOException,
             WebApplicationException {
 
-        JsonArrayBuilder keysArray = Json.createArrayBuilder();
-        for (JsonWebKey key : jwks.getKeys()) {
-            JsonObjectBuilder keyBuilder = Json.createObjectBuilder();
-            key.buildJsonObject(keyBuilder);
-            keysArray.add(keyBuilder);
-        }
-        JsonObject jwksObject = Json.createObjectBuilder()
-                .add("keys", keysArray)
-                .build();
+        JsonObjectBuilder keyBuilder = Json.createObjectBuilder();
+        jwks.buildJsonObject(keyBuilder);
+
         JsonWriter jsonWriter = Json.createWriter(os);
-        jsonWriter.write(jwksObject);
+        jsonWriter.write(keyBuilder.build());
     }
 }

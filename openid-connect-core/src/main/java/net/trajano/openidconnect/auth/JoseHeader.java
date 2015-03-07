@@ -1,12 +1,19 @@
 package net.trajano.openidconnect.auth;
 
+import java.io.StringReader;
 import java.net.URI;
 
+import javax.json.Json;
+import javax.json.JsonObject;
 import javax.ws.rs.core.MediaType;
 
 import net.trajano.openidconnect.crypto.JsonWebAlgorithm;
 import net.trajano.openidconnect.crypto.JsonWebKey;
+import net.trajano.openidconnect.internal.Util;
 
+/**
+ * @author Archimedes
+ */
 public class JoseHeader {
 
     /**
@@ -134,6 +141,18 @@ public class JoseHeader {
      * recipients.
      */
     private String kid;
+
+    public JoseHeader(String jsonString) {
+
+        JsonObject json = Json.createReader(new StringReader(jsonString))
+                .readObject();
+        Util.populateWithJson(this, json);
+    }
+
+    public JoseHeader() {
+
+        // TODO make this immutable
+    }
 
     public JsonWebAlgorithm getAlg() {
 
@@ -377,4 +396,12 @@ public class JoseHeader {
      * </p>
      */
     private String zip;
+
+    /**
+     * Returns a JSON string representing the JOSE header.
+     */
+    @Override
+    public String toString() {
+        return Util.convertToJson(this).toString();
+    }
 }
