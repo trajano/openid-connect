@@ -4,20 +4,18 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.PrivateKey;
-import java.security.SecureRandom;
 import java.util.zip.DataFormatException;
 import java.util.zip.Deflater;
 import java.util.zip.Inflater;
 
 import javax.crypto.Cipher;
-import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import javax.json.JsonObject;
 
-import net.trajano.openidconnect.auth.JoseHeader;
+import net.trajano.openidconnect.auth.JsonWebTokenBuilder;
 import net.trajano.openidconnect.internal.CharSets;
 
 public class JWE {
@@ -54,7 +52,7 @@ public class JWE {
         } else if (jsonWebToken.getEnc() == JsonWebAlgorithm.A128CBC_HS256) {
             final IvParameterSpec spec = new IvParameterSpec(initializationVector);
             contentCipher.init(Cipher.DECRYPT_MODE, contentEncryptionKey, spec);
-            
+
         } else {
             final IvParameterSpec spec = new IvParameterSpec(initializationVector);
             contentCipher.init(Cipher.DECRYPT_MODE, contentEncryptionKey, spec);
@@ -97,75 +95,12 @@ public class JWE {
             final boolean compress) throws IOException,
             GeneralSecurityException {
 
-        final JoseHeader joseHeader = new JoseHeader();
-        joseHeader.setAlg(alg);
-        joseHeader.setEnc(enc);
-        if (jwk.getKid() != null) {
-            joseHeader.setKid(jwk.getKid());
-        }
-        joseHeader.setZip(compress ? "DEF" : null);
-        final String encodedJoseHeader = Base64Url.encode(joseHeader.toString());
-        final StringBuilder b = new StringBuilder(encodedJoseHeader);
-        b.append('.');
-
-        final KeyGenerator keyGenerator = KeyGenerator.getInstance("AES");
-        keyGenerator.init(enc.getBits());
-        final SecretKey secretKey = keyGenerator.generateKey();
-
-        final SecretKey macKey = keyGenerator.generateKey();
-
-        final byte[] cek = secretKey.getEncoded();
-
-        final Cipher cekCipher = Cipher.getInstance(alg.toJca());
-        cekCipher.init(Cipher.ENCRYPT_MODE, jwk.toJcaPublicKey());
-        final byte[] encryptedCek = cekCipher.doFinal(cek);
-
-        b.append(Base64Url.encode(encryptedCek));
-        b.append('.');
-
-        final SecureRandom random = new SecureRandom();
-        final byte[] iv;
-        final int authenticationTagBits = 128;
-        final Cipher contentCipher = Cipher.getInstance(enc.toJca());
-        if (joseHeader.getEnc() == JsonWebAlgorithm.A128GCM || joseHeader.getEnc() == JsonWebAlgorithm.A256GCM) {
-            iv = new byte[96];
-            random.nextBytes(iv);
-            final GCMParameterSpec spec = new GCMParameterSpec(authenticationTagBits, iv);
-            contentCipher.init(Cipher.ENCRYPT_MODE, new SecretKeySpec(cek, "AES"), spec);
-            contentCipher.updateAAD(encodedJoseHeader.getBytes(CharSets.US_ASCII));
-        } else {
-            iv = new byte[16];
-            random.nextBytes(iv);
-            final IvParameterSpec spec = new IvParameterSpec(iv);
-            contentCipher.init(Cipher.ENCRYPT_MODE, new SecretKeySpec(cek, "AES"), spec);
-        }
-        b.append(Base64Url.encode(iv));
-        b.append('.');
-
-        final byte[] cipherTextAndAuthenticationTag;
-        if (compress) {
-            cipherTextAndAuthenticationTag = contentCipher.doFinal(deflate(plaintext));
-        } else {
-            cipherTextAndAuthenticationTag = contentCipher.doFinal(plaintext);
-        }
-        /*
-         * final ByteArrayOutputStream baos = new
-         * ByteArrayOutputStream(plaintext.length); final OutputStream os; if
-         * (compress) { os = new CipherOutputStream(new
-         * DeflaterOutputStream(baos), contentCipher); } else { os = new
-         * CipherOutputStream(baos, contentCipher); } os.write(plaintext);
-         * os.close(); final byte[] cipherTextAndAuthenticationTag =
-         * baos.toByteArray();
-         */
-
-        final String cipherText = Base64Url.encode(cipherTextAndAuthenticationTag, 0, cipherTextAndAuthenticationTag.length - authenticationTagBits / 8);
-        final String authenticationTag = Base64Url.encode(cipherTextAndAuthenticationTag, cipherTextAndAuthenticationTag.length - authenticationTagBits / 8, authenticationTagBits / 8);
-System.out.println(cipherText);
-System.out.println("KDlTtXchhZTGufMYmOYGS4HffxPSUrfmqCHXaI9wOGY");
-        b.append(cipherText);
-        b.append('.');
-        b.append(authenticationTag);
-
+        JsonWebTokenBuilder b = new JsonWebTokenBuilder();
+        b.payload(plaintext);
+        b.jwk(jwk);
+        b.alg(alg);
+        b.enc(enc);
+        b.compress(compress);
         return b.toString();
     }
 

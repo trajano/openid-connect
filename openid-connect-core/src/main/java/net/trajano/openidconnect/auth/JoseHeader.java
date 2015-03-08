@@ -7,8 +7,10 @@ import javax.json.Json;
 import javax.json.JsonObject;
 import javax.ws.rs.core.MediaType;
 
+import net.trajano.openidconnect.crypto.Base64Url;
 import net.trajano.openidconnect.crypto.JsonWebAlgorithm;
 import net.trajano.openidconnect.crypto.JsonWebKey;
+import net.trajano.openidconnect.internal.CharSets;
 import net.trajano.openidconnect.internal.Util;
 
 /**
@@ -407,5 +409,13 @@ public class JoseHeader {
 
         return Util.convertToJson(this)
                 .toString();
+    }
+
+    /**
+     * Gets the encoded version of the JOSE header.
+     * @return
+     */
+    public byte[] getEncoded() {
+        return Base64Url.encode(toString()).getBytes(CharSets.US_ASCII);
     }
 }

@@ -2,6 +2,7 @@ package net.trajano.openidconnect.auth;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.security.GeneralSecurityException;
 import java.security.PrivateKey;
 import java.security.SecureRandom;
@@ -142,10 +143,12 @@ public class JsonWebTokenBuilder {
 
         // JWE
         header.setEnc(enc);
-        return new JsonWebToken(header, buildEncryptedPayload());
+        return new JsonWebToken(header, buildEncryptedPayload(header, payloadBytes));
     }
 
-    private byte[][] buildEncryptedPayload() {
+    private byte[][] buildEncryptedPayload(JoseHeader joseHeader,
+            byte[] payloadBytes) throws IOException,
+            GeneralSecurityException {
 
         final byte[][] payloads = new byte[4][];
 
@@ -165,39 +168,38 @@ public class JsonWebTokenBuilder {
         final int authenticationTagBits = 128;
         final Cipher contentCipher = Cipher.getInstance(enc.toJca());
 
-        
-        if (joseHeader.getEnc() == JsonWebAlgorithm.A128GCM || joseHeader.getEnc() == JsonWebAlgorithm.A256GCM) {
+        if (enc == JsonWebAlgorithm.A128GCM || enc == JsonWebAlgorithm.A256GCM) {
             iv = new byte[96];
             random.nextBytes(iv);
             final GCMParameterSpec spec = new GCMParameterSpec(authenticationTagBits, iv);
             contentCipher.init(Cipher.ENCRYPT_MODE, new SecretKeySpec(cek, "AES"), spec);
-            contentCipher.updateAAD(encodedJoseHeader.getBytes(CharSets.US_ASCII));
+            contentCipher.updateAAD(joseHeader.getEncoded());
         } else {
             iv = new byte[16];
             random.nextBytes(iv);
             final IvParameterSpec spec = new IvParameterSpec(iv);
             contentCipher.init(Cipher.ENCRYPT_MODE, new SecretKeySpec(cek, "AES"), spec);
         }
-        b.append(Base64Url.encode(iv));
-        b.append('.');
+        payloads[1] = iv;
 
-        final byte[] cipherTextAndAuthenticationTag;
-        if (compress) {
-            cipherTextAndAuthenticationTag = contentCipher.doFinal(deflate(plaintext));
-        } else {
-            cipherTextAndAuthenticationTag = contentCipher.doFinal(plaintext);
-        }
+        final ByteBuffer cipherTextAndAuthenticationTag = ByteBuffer.wrap(contentCipher.doFinal(payloadBytes));
 
-        payloads[0] = payloadBytes;
-        payloads[1] = sign(header, payloadBytes);
+        payloads[2] = new byte[cipherTextAndAuthenticationTag.capacity() - authenticationTagBits / 8];
+        payloads[3] = new byte[authenticationTagBits / 8];
 
+        System.out.println(cipherTextAndAuthenticationTag.capacity());
+        System.out.println(payloads[2].length);
+        System.out.println(payloads[3].length);
+        cipherTextAndAuthenticationTag.get(payloads[2])
+                .get(payloads[3]);
+        System.out.println(Base64Url.encode(payloads[2]));
         return payloads;
     }
 
     private byte[] sign(JoseHeader header,
             byte[] payloadBytes) throws GeneralSecurityException {
 
-        final StringBuilder b = new StringBuilder(header.toString()).append('.')
+        final StringBuilder b = new StringBuilder(Base64Url.encode(header.toString())).append('.')
                 .append(Base64Url.encode(payloadBytes));
 
         final Signature signature = Signature.getInstance(alg.toJca());
@@ -220,5 +222,36 @@ public class JsonWebTokenBuilder {
         }
         baos.close();
         return baos.toByteArray();
+    }
+
+    /**
+     * Gets the string representation of the JWT so far.
+     */
+    @Override
+    public String toString() {
+
+        try {
+            return build().toString();
+        } catch (IOException | GeneralSecurityException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public JsonWebTokenBuilder alg(JsonWebAlgorithm alg2) {
+
+        this.alg = alg2;
+        return this;
+    }
+
+    public JsonWebTokenBuilder compress(boolean compressed) {
+
+        this.compressed = compressed;
+        return this;
+    }
+
+    public JsonWebTokenBuilder enc(JsonWebAlgorithm enc2) {
+
+        this.enc = enc2;
+        return this;
     }
 }

@@ -106,7 +106,7 @@ public class JsonWebToken {
 
     public JsonWebToken(final JoseHeader joseHeader, final byte[][] payloads) {
 
-        joseHeaderEncoded = joseHeader.toString();
+        joseHeaderEncoded = new String(joseHeader.getEncoded());
         alg = joseHeader.getAlg();
         enc = joseHeader.getEnc();
         kid = joseHeader.getKid();
