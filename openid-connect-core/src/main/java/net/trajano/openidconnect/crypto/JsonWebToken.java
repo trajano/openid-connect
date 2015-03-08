@@ -2,7 +2,10 @@ package net.trajano.openidconnect.crypto;
 
 import java.io.IOException;
 
+import javax.json.JsonObject;
+
 import net.trajano.openidconnect.auth.JoseHeader;
+import net.trajano.openidconnect.internal.CharSets;
 
 /**
  * The JSON Web Token. It is comprised of a header that is a Base64url encoded
@@ -111,6 +114,25 @@ public class JsonWebToken {
         this.payloads = payloads;
     }
 
+    /**
+     * Builds an unsecure JWT object.
+     * 
+     * @param payload
+     */
+    public JsonWebToken(final JsonObject obj, boolean compressed) {
+
+        JoseHeader header = new JoseHeader();
+        header.setAlg(JsonWebAlgorithm.none);
+        joseHeaderEncoded = Base64Url.encode(header.toString());
+        alg = JsonWebAlgorithm.none;
+        enc = null;
+        kid = null;
+        zip = compressed ? "DEF" : null;
+        payloads = new byte[1][];
+        payloads[0] = obj.toString()
+                .getBytes(CharSets.UTF8);
+    }
+
     public JsonWebToken(final String jwt) throws IOException {
 
         final String[] tokens = jwt.split("\\.");
@@ -130,9 +152,8 @@ public class JsonWebToken {
 
     }
 
-    
     public String getKid() {
-    
+
         return kid;
     }
 
@@ -183,6 +204,9 @@ public class JsonWebToken {
         return zip;
     }
 
+    /**
+     * Builds the serialized JWT.
+     */
     @Override
     public String toString() {
 

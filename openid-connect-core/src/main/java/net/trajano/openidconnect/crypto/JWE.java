@@ -15,18 +15,17 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
+import javax.json.JsonObject;
 
 import net.trajano.openidconnect.auth.JoseHeader;
 import net.trajano.openidconnect.internal.CharSets;
 
 public class JWE {
 
-    public static byte[] decrypt(final String jwe,
+    public static byte[] decrypt(final JsonWebToken jsonWebToken,
             final JsonWebKey jwk) throws IOException,
-            GeneralSecurityException,
-            DataFormatException {
+            GeneralSecurityException {
 
-        final JsonWebToken jsonWebToken = new JsonWebToken(jwe);
         if (jsonWebToken.getNumberOfPayloads() != 4) {
             throw new GeneralSecurityException("invalid number of payloads in JWT for JWE");
         }
@@ -53,49 +52,80 @@ public class JWE {
             contentCipher.init(Cipher.DECRYPT_MODE, contentEncryptionKey, spec);
             contentCipher.updateAAD(aad);
         } else {
-            IvParameterSpec spec = new IvParameterSpec(initializationVector);
+            final IvParameterSpec spec = new IvParameterSpec(initializationVector);
             contentCipher.init(Cipher.DECRYPT_MODE, contentEncryptionKey, spec);
         }
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
         baos.write(contentCipher.update(cipherText));
         baos.write(contentCipher.doFinal(authenticationTag));
         baos.close();
-        byte[] plaintext = baos.toByteArray();
-        boolean compress = "DEF".equals(jsonWebToken.getZip());
-        if (compress) {
-            return inflate(plaintext);
-        } else {
-            return plaintext;
+        final byte[] plaintext = baos.toByteArray();
+        try {
+            final boolean compress = "DEF".equals(jsonWebToken.getZip());
+            if (compress) {
+                return inflate(plaintext);
+            } else {
+                return plaintext;
+            }
+        } catch (final DataFormatException e) {
+            throw new IOException(e);
         }
     }
 
-    public static String encrypt(byte[] plaintext,
-            JsonWebKey jwk,
-            JsonWebAlgorithm alg,
-            JsonWebAlgorithm enc) throws IOException,
+    public static byte[] decrypt(final String jwe,
+            final JsonWebKey jwk) throws IOException,
+            GeneralSecurityException,
+            DataFormatException {
+
+        final JsonWebToken jsonWebToken = new JsonWebToken(jwe);
+        return decrypt(jsonWebToken, jwk);
+    }
+
+    private static byte[] deflate(final byte[] uncompressed) throws IOException {
+
+        final Deflater deflater = new Deflater(9, false);
+        deflater.setInput(uncompressed);
+        deflater.finish();
+        final ByteArrayOutputStream baos = new ByteArrayOutputStream(uncompressed.length);
+        final byte[] buffer = new byte[1024];
+        while (!deflater.finished()) {
+            final int len = deflater.deflate(buffer);
+            baos.write(buffer, 0, len);
+        }
+        baos.close();
+        return baos.toByteArray();
+    }
+
+    public static String encrypt(final byte[] plaintext,
+            final JsonWebKey jwk,
+            final JsonWebAlgorithm alg,
+            final JsonWebAlgorithm enc) throws IOException,
             GeneralSecurityException {
 
         return encrypt(plaintext, jwk, alg, enc, false);
     }
 
-    public static String encrypt(byte[] plaintext,
-            JsonWebKey jwk,
-            JsonWebAlgorithm alg,
-            JsonWebAlgorithm enc,
-            boolean compress) throws IOException,
+    public static String encrypt(final byte[] plaintext,
+            final JsonWebKey jwk,
+            final JsonWebAlgorithm alg,
+            final JsonWebAlgorithm enc,
+            final boolean compress) throws IOException,
             GeneralSecurityException {
 
-        JoseHeader joseHeader = new JoseHeader();
+        final JoseHeader joseHeader = new JoseHeader();
         joseHeader.setAlg(alg);
         joseHeader.setEnc(enc);
+        if (jwk.getKid() != null) {
+            joseHeader.setKid(jwk.getKid());
+        }
         joseHeader.setZip(compress ? "DEF" : null);
-        String encodedJoseHeader = Base64Url.encode(joseHeader.toString());
-        StringBuilder b = new StringBuilder(encodedJoseHeader);
+        final String encodedJoseHeader = Base64Url.encode(joseHeader.toString());
+        final StringBuilder b = new StringBuilder(encodedJoseHeader);
         b.append('.');
 
-        KeyGenerator keyGenerator = KeyGenerator.getInstance("AES");
+        final KeyGenerator keyGenerator = KeyGenerator.getInstance("AES");
         keyGenerator.init(enc.getBits());
-        SecretKey secretKey = keyGenerator.generateKey();
+        final SecretKey secretKey = keyGenerator.generateKey();
 
         final byte[] cek = secretKey.getEncoded();
 
@@ -106,7 +136,7 @@ public class JWE {
         b.append(Base64Url.encode(encryptedCek));
         b.append('.');
 
-        SecureRandom random = new SecureRandom();
+        final SecureRandom random = new SecureRandom();
         final byte[] iv;
         final int authenticationTagBits = 128;
         final Cipher contentCipher = Cipher.getInstance(enc.toJca());
@@ -119,7 +149,7 @@ public class JWE {
         } else {
             iv = new byte[16];
             random.nextBytes(iv);
-            IvParameterSpec spec = new IvParameterSpec(iv);
+            final IvParameterSpec spec = new IvParameterSpec(iv);
             contentCipher.init(Cipher.ENCRYPT_MODE, new SecretKeySpec(cek, "AES"), spec);
         }
         b.append(Base64Url.encode(iv));
@@ -151,31 +181,26 @@ public class JWE {
         return b.toString();
     }
 
-    private static byte[] deflate(byte[] uncompressed) throws IOException {
+    public static String encrypt(final JsonObject obj,
+            final JsonWebKey jwk,
+            final JsonWebAlgorithm alg,
+            final JsonWebAlgorithm enc) throws IOException,
+            GeneralSecurityException {
 
-        Deflater deflater = new Deflater(9, false);
-        deflater.setInput(uncompressed);
-        deflater.finish();
-        ByteArrayOutputStream baos = new ByteArrayOutputStream(uncompressed.length);
-        byte[] buffer = new byte[1024];
-        while (!deflater.finished()) {
-            int len = deflater.deflate(buffer);
-            baos.write(buffer, 0, len);
-        }
-        baos.close();
-        return baos.toByteArray();
+        return encrypt(obj.toString()
+                .getBytes(CharSets.UTF8), jwk, alg, enc, false);
     }
 
-    private static byte[] inflate(byte[] compressed) throws IOException,
-            DataFormatException {
+    private static byte[] inflate(final byte[] compressed) throws IOException,
+    DataFormatException {
 
-        Inflater inflater = new Inflater(false);
+        final Inflater inflater = new Inflater(false);
         inflater.setInput(compressed);
         inflater.finished();
-        ByteArrayOutputStream baos = new ByteArrayOutputStream(compressed.length);
-        byte[] buffer = new byte[1024];
+        final ByteArrayOutputStream baos = new ByteArrayOutputStream(compressed.length);
+        final byte[] buffer = new byte[1024];
         while (!inflater.finished()) {
-            int len = inflater.inflate(buffer);
+            final int len = inflater.inflate(buffer);
             baos.write(buffer, 0, len);
         }
         baos.close();

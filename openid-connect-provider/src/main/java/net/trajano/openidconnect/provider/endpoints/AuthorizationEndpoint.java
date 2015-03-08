@@ -3,7 +3,9 @@ package net.trajano.openidconnect.provider.endpoints;
 import static net.trajano.openidconnect.core.ErrorCode.invalid_grant;
 import static net.trajano.openidconnect.core.ErrorCode.login_required;
 
+import java.io.IOException;
 import java.net.URI;
+import java.security.GeneralSecurityException;
 
 import javax.ejb.EJB;
 import javax.servlet.http.HttpServletRequest;
@@ -61,6 +63,8 @@ public class AuthorizationEndpoint {
      * @param scope
      * @param req
      * @return
+     * @throws GeneralSecurityException
+     * @throws IOException
      */
     @GET
     public Response getOp(@QueryParam(OpenIdConnectKey.ACR_VALUES) final String acrValues,
@@ -77,7 +81,7 @@ public class AuthorizationEndpoint {
             @QueryParam(OpenIdConnectKey.SCOPE) @NotNull final String scope,
             @QueryParam(OpenIdConnectKey.STATE) final String state,
             @QueryParam(OpenIdConnectKey.UI_LOCALES) final String uiLocales,
-            @Context final HttpServletRequest req) {
+            @Context final HttpServletRequest req) throws IOException, GeneralSecurityException {
 
         return op(acrValues, clientId, display, idTokenHint, loginHint, maxAge, nonce, prompt, redirectUri, responseMode, responseType, scope, state, uiLocales, req);
     }
@@ -96,6 +100,8 @@ public class AuthorizationEndpoint {
      * per Section 13.1. If using the HTTP POST method, the request parameters
      * are serialized using Form Serialization, per Section 13.2.
      * </p>
+     * @throws GeneralSecurityException 
+     * @throws IOException 
      */
     @POST
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
@@ -113,7 +119,7 @@ public class AuthorizationEndpoint {
             @FormParam(OpenIdConnectKey.SCOPE) @NotNull final String scope,
             @FormParam(OpenIdConnectKey.STATE) final String state,
             @FormParam(OpenIdConnectKey.UI_LOCALES) final String uiLocales,
-            @Context final HttpServletRequest req) {
+            @Context final HttpServletRequest req) throws IOException, GeneralSecurityException {
 
         final AuthenticationRequest authenticationRequest = new AuthenticationRequest(req);
 

@@ -3,6 +3,7 @@ package net.trajano.openidconnect.crypto;
 import java.security.GeneralSecurityException;
 import java.security.Key;
 import java.security.KeyFactory;
+import java.security.PublicKey;
 import java.security.spec.ECParameterSpec;
 import java.security.spec.ECPoint;
 import java.security.spec.ECPrivateKeySpec;
@@ -83,6 +84,15 @@ public class EcWebKey extends JsonWebKey {
     public void setY(final String y) {
 
         this.y = y;
+    }
+
+    public PublicKey toJcaPublicKey() throws GeneralSecurityException {
+
+        final KeyFactory keyFactory = KeyFactory.getInstance("EC");
+        final ECParameterSpec ecParameterSpec = NamedEllipticCurve.valueOf(crv)
+                .toECParameterSpec();
+        final ECPublicKeySpec keySpec = new ECPublicKeySpec(new ECPoint(Base64Url.decodeUint(x), Base64Url.decodeUint(y)), ecParameterSpec);
+        return keyFactory.generatePublic(keySpec);
     }
 
     @Override

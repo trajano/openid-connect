@@ -1,13 +1,14 @@
 package net.trajano.openidconnect.auth;
 
 import static net.trajano.openidconnect.core.ErrorCode.invalid_request;
-import static net.trajano.openidconnect.core.OpenIdConnectKey.UI_LOCALES;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.Serializable;
 import java.net.URI;
-import java.util.ArrayList;
+import java.security.GeneralSecurityException;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -18,14 +19,19 @@ import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import javax.json.JsonReader;
+import javax.json.JsonValue.ValueType;
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.BadRequestException;
 import javax.xml.bind.annotation.XmlTransient;
 
 import net.trajano.openidconnect.core.ErrorResponse;
 import net.trajano.openidconnect.core.OpenIdConnectKey;
 import net.trajano.openidconnect.core.RedirectedOpenIdProviderException;
 import net.trajano.openidconnect.core.Scope;
-import net.trajano.openidconnect.crypto.Base64Url;
+import net.trajano.openidconnect.crypto.JWE;
+import net.trajano.openidconnect.crypto.JsonWebAlgorithm;
+import net.trajano.openidconnect.crypto.JsonWebKeySet;
+import net.trajano.openidconnect.crypto.JsonWebToken;
 import net.trajano.openidconnect.internal.Util;
 
 /**
@@ -63,9 +69,6 @@ public class AuthenticationRequest implements Serializable {
 
     private final String nonce;
 
-    @XmlTransient
-    private final AuthenticationRequest parent;
-
     private final Set<Prompt> prompts;
 
     private final URI redirectUri;
@@ -80,16 +83,34 @@ public class AuthenticationRequest implements Serializable {
 
     private final List<Locale> uiLocales;
 
-    public AuthenticationRequest(final HttpServletRequest req) {
+    public AuthenticationRequest(final HttpServletRequest req) throws IOException, GeneralSecurityException {
 
-        this(req, req.getParameter("request"));
+        this(req, null);
     }
-    
-    /**
-     * Assign the values based on a map
-     * @param req
-     */
-    private AuthenticationRequest(final Map<String, String> requestMap) {
+
+    public AuthenticationRequest(final HttpServletRequest req, JsonWebKeySet privateJwks) throws IOException, GeneralSecurityException {
+
+        final Map<String, String> requestMap = new HashMap<>();
+
+        final JsonObject requestObject;
+        if (req.getParameter(OpenIdConnectKey.REQUEST) != null && privateJwks != null) {
+            final JsonWebToken jwt = new JsonWebToken(req.getParameter(OpenIdConnectKey.REQUEST));
+            byte[] payload;
+            if (jwt.getAlg() == JsonWebAlgorithm.none) {
+                payload = jwt.getPayload(0);
+            } else if (jwt.getKid() != null) {
+                payload = JWE.decrypt(jwt, privateJwks.getJwk(jwt.getKid()));
+            } else {
+                throw new BadRequestException("unsupported algorithm");
+            }
+            final JsonReader jsonReader = Json.createReader(new ByteArrayInputStream(payload));
+            requestObject = jsonReader.readObject();
+        } else {
+            requestObject = null;
+        }
+
+        for (String key : REQUEST_KEYS)
+            processValueFromMapOrObject(requestMap, key, req, requestObject);
 
         if (requestMap.containsKey(OpenIdConnectKey.ACR_VALUES)) {
             acrValues = Util.splitToList(requestMap.get(OpenIdConnectKey.ACR_VALUES));
@@ -134,7 +155,7 @@ public class AuthenticationRequest implements Serializable {
         if (requestMap.containsKey(OpenIdConnectKey.PROMPT)) {
             prompts = Util.splitToSet(Prompt.class, requestMap.get(OpenIdConnectKey.PROMPT));
         } else {
-            prompts = null;
+            prompts = Collections.emptySet();
         }
 
         if (requestMap.containsKey(OpenIdConnectKey.REDIRECT_URI)) {
@@ -143,16 +164,17 @@ public class AuthenticationRequest implements Serializable {
             redirectUri = null;
         }
 
-        if (requestMap.containsKey(OpenIdConnectKey.RESPONSE_MODE)) {
-            responseMode = Util.valueOf(ResponseMode.class, requestMap.get(OpenIdConnectKey.RESPONSE_MODE));
-        } else {
-            responseMode = null;
-        }
-
         if (requestMap.containsKey(OpenIdConnectKey.RESPONSE_TYPE)) {
             responseTypes = Util.splitToSet(ResponseType.class, requestMap.get(OpenIdConnectKey.RESPONSE_TYPE));
         } else {
-            responseTypes = null;
+            responseTypes = Collections.emptySet();
+        }
+        codeOnlyResponseType = responseTypes.equals(Collections.singleton(ResponseType.code));
+
+        if (requestMap.containsKey(OpenIdConnectKey.RESPONSE_MODE)) {
+            responseMode = Util.valueOf(ResponseMode.class, requestMap.get(OpenIdConnectKey.RESPONSE_MODE));
+        } else {
+            responseMode = getDefaultResponseMode();
         }
 
         if (requestMap.containsKey(OpenIdConnectKey.SCOPE)) {
@@ -172,160 +194,66 @@ public class AuthenticationRequest implements Serializable {
         } else {
             uiLocales = null;
         }
-        codeOnlyResponseType = responseTypes.equals(Collections.singleton(ResponseType.code));
-        parent = null;
-    }
-
-
-    public AuthenticationRequest(final HttpServletRequest req, final String requestParameter) {
-
-        if (requestParameter == null) {
-            parent = null;
-        } else {
-            parent = new AuthenticationRequest(requestParameter);
-        }
-        scopes = Util.getParameterSet(req, OpenIdConnectKey.SCOPE, Scope.class);
-        responseTypes = Util.getParameterSet(req, OpenIdConnectKey.RESPONSE_TYPE, ResponseType.class);
-        codeOnlyResponseType = "code".equals(req.getParameter(OpenIdConnectKey.RESPONSE_TYPE));
-
-        clientId = req.getParameter(OpenIdConnectKey.CLIENT_ID);
-        redirectUri = URI.create(req.getParameter(OpenIdConnectKey.REDIRECT_URI));
-        state = req.getParameter(OpenIdConnectKey.STATE);
-        nonce = Util.getParameter(req, OpenIdConnectKey.NONCE);
-        display = Util.getParameter(req, OpenIdConnectKey.DISPLAY, Display.class);
-        final ResponseMode responseModeIn = Util.getParameter(req, OpenIdConnectKey.RESPONSE_MODE, ResponseMode.class);
-        if (responseModeIn != null) {
-            responseMode = responseModeIn;
-        } else {
-            responseMode = getDefaultResponseMode();
-        }
-
-        prompts = Util.getParameterSet(req, OpenIdConnectKey.PROMPT, Prompt.class);
-
-        final String maxAgeIn = Util.getParameter(req, OpenIdConnectKey.MAX_AGE);
-        if (maxAgeIn != null) {
-            maxAge = Integer.valueOf(maxAgeIn);
-        } else {
-            maxAge = null;
-        }
-
-        uiLocales = new ArrayList<>();
-        if (Util.isNotNullOrEmpty(req.getParameter(UI_LOCALES))) {
-            for (final String uiLocale : req.getParameter(OpenIdConnectKey.UI_LOCALES)
-                    .split("\\s")) {
-                uiLocales.add(new Locale(uiLocale));
-            }
-        }
-
-        idTokenHint = Util.getParameter(req, OpenIdConnectKey.ID_TOKEN_HINT);
-        loginHint = Util.getParameter(req, OpenIdConnectKey.LOGIN_HINT);
-
-        acrValues = new ArrayList<>();
-        if (Util.isNotNullOrEmpty(req.getParameter(OpenIdConnectKey.ACR_VALUES))) {
-            for (final String acrValue : req.getParameter(OpenIdConnectKey.ACR_VALUES)
-                    .split("\\s+")) {
-                acrValues.add(acrValue);
-            }
-        }
 
         validate();
     }
 
+    private static final String[] REQUEST_KEYS = { OpenIdConnectKey.ACR_VALUES, OpenIdConnectKey.CLIENT_ID, OpenIdConnectKey.DISPLAY, OpenIdConnectKey.ID_TOKEN_HINT, OpenIdConnectKey.LOGIN_HINT, OpenIdConnectKey.MAX_AGE, OpenIdConnectKey.NONCE, OpenIdConnectKey.PROMPT, OpenIdConnectKey.REDIRECT_URI, OpenIdConnectKey.RESPONSE_MODE, OpenIdConnectKey.RESPONSE_TYPE, OpenIdConnectKey.SCOPE, OpenIdConnectKey.STATE, OpenIdConnectKey.UI_LOCALES };
+
     /**
-     * This is not directly called.
-     *
-     * @param requestParameter
-     *            a Base64Url encoded JSON object.
+     * <p>
+     * So that the request is a valid OAuth 2.0 Authorization Request, values
+     * for the response_type and client_id parameters MUST be included using the
+     * OAuth 2.0 request syntax, since they are REQUIRED by OAuth 2.0. The
+     * values for these parameters MUST match those in the Request Object, if
+     * present.
+     * </p>
+     * 
+     * @param reqMap
+     * @param key
+     * @param servletRequest
+     * @param requestObject
      */
-    private AuthenticationRequest(final String requestParameter) {
+    private void processValueFromMapOrObject(Map<String, String> reqMap,
+            String key,
+            HttpServletRequest servletRequest,
+            JsonObject requestObject) {
 
-        final JsonReader jsonReader = Json.createReader(new ByteArrayInputStream(Base64Url.decode(requestParameter)));
-        final JsonObject requestObject = jsonReader.readObject();
-
-        if (requestObject.containsKey(OpenIdConnectKey.ACR_VALUES)) {
-            acrValues = Util.splitToList(requestObject.getString(OpenIdConnectKey.ACR_VALUES));
+        final String paramValue;
+        if (servletRequest.getParameter(key) != null) {
+            paramValue = servletRequest.getParameter(key);
         } else {
-            acrValues = null;
-        }
-        if (requestObject.containsKey(OpenIdConnectKey.CLIENT_ID)) {
-            clientId = requestObject.getString(OpenIdConnectKey.CLIENT_ID);
-        } else {
-            clientId = null;
-        }
-        if (requestObject.containsKey(OpenIdConnectKey.DISPLAY)) {
-            display = Util.valueOf(Display.class, requestObject.getString(OpenIdConnectKey.DISPLAY));
-        } else {
-            display = null;
+            paramValue = null;
         }
 
-        if (requestObject.containsKey(OpenIdConnectKey.ID_TOKEN_HINT)) {
-            idTokenHint = requestObject.getString(OpenIdConnectKey.ID_TOKEN_HINT);
+        final String requestObjectValue;
+        if (requestObject == null || !requestObject.containsKey(key)) {
+            requestObjectValue = null;
+        } else if (requestObject.get(key)
+                .getValueType() == ValueType.STRING) {
+            requestObjectValue = requestObject.getString(key);
+        } else if (requestObject.get(key)
+                .getValueType() == ValueType.NUMBER) {
+            requestObjectValue = requestObject.getJsonNumber(key)
+                    .bigIntegerValueExact()
+                    .toString();
         } else {
-            idTokenHint = null;
+            requestObjectValue = null;
         }
 
-        if (requestObject.containsKey(OpenIdConnectKey.LOGIN_HINT)) {
-            loginHint = requestObject.getString(OpenIdConnectKey.LOGIN_HINT);
-        } else {
-            loginHint = null;
+        if (OpenIdConnectKey.CLIENT_ID.equals(key) && paramValue != null & requestObjectValue != null && !paramValue.equals(requestObjectValue)) {
+            throw new BadRequestException("client_id does not match.");
         }
 
-        if (requestObject.containsKey(OpenIdConnectKey.MAX_AGE)) {
-            maxAge = requestObject.getInt(OpenIdConnectKey.MAX_AGE);
-        } else {
-            maxAge = null;
+        if (OpenIdConnectKey.REDIRECT_URI.equals(key) && paramValue != null & requestObjectValue != null && !paramValue.equals(requestObjectValue)) {
+            throw new BadRequestException("redirect_uri does not match.");
         }
 
-        if (requestObject.containsKey(OpenIdConnectKey.NONCE)) {
-            nonce = requestObject.getString(OpenIdConnectKey.NONCE);
-        } else {
-            nonce = null;
+        if (requestObjectValue != null) {
+            reqMap.put(key, requestObjectValue);
+        } else if (paramValue != null) {
+            reqMap.put(key, paramValue);
         }
-
-        if (requestObject.containsKey(OpenIdConnectKey.PROMPT)) {
-            prompts = Util.splitToSet(Prompt.class, requestObject.getString(OpenIdConnectKey.PROMPT));
-        } else {
-            prompts = null;
-        }
-
-        if (requestObject.containsKey(OpenIdConnectKey.REDIRECT_URI)) {
-            redirectUri = URI.create(requestObject.getString(OpenIdConnectKey.REDIRECT_URI));
-        } else {
-            redirectUri = null;
-        }
-
-        if (requestObject.containsKey(OpenIdConnectKey.RESPONSE_MODE)) {
-            responseMode = Util.valueOf(ResponseMode.class, requestObject.getString(OpenIdConnectKey.RESPONSE_MODE));
-        } else {
-            responseMode = null;
-        }
-
-        if (requestObject.containsKey(OpenIdConnectKey.RESPONSE_TYPE)) {
-            responseTypes = Util.splitToSet(ResponseType.class, requestObject.getString(OpenIdConnectKey.RESPONSE_TYPE));
-        } else {
-            responseTypes = null;
-        }
-
-        if (requestObject.containsKey(OpenIdConnectKey.SCOPE)) {
-            scopes = Util.splitToSet(Scope.class, requestObject.getString(OpenIdConnectKey.SCOPE));
-        } else {
-            scopes = null;
-        }
-
-        if (requestObject.containsKey(OpenIdConnectKey.STATE)) {
-            state = requestObject.getString(OpenIdConnectKey.STATE);
-        } else {
-            state = null;
-        }
-
-        if (requestObject.containsKey(OpenIdConnectKey.UI_LOCALES)) {
-            uiLocales = Util.splitToLocaleList(requestObject.getString(OpenIdConnectKey.UI_LOCALES));
-        } else {
-            uiLocales = null;
-        }
-        codeOnlyResponseType = responseTypes.equals(Collections.singleton(ResponseType.code));
-        parent = null;
-
     }
 
     public boolean containsResponseType(final ResponseType responseType) {
@@ -530,6 +458,14 @@ public class AuthenticationRequest implements Serializable {
      * Performs the validation on the Authentication token.
      */
     private void validate() {
+
+        if (redirectUri == null) {
+            throw new BadRequestException("the request must contain the 'redirect_uri'");
+        }
+
+        if (clientId == null) {
+            throw new RedirectedOpenIdProviderException(this, new ErrorResponse(invalid_request, "the request must contain the 'client_id'"));
+        }
 
         if (!scopes.contains(Scope.openid)) {
             throw new RedirectedOpenIdProviderException(this, new ErrorResponse(invalid_request, "the request must contain the 'openid' scope value"));

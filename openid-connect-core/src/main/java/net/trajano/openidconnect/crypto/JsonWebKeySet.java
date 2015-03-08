@@ -30,7 +30,12 @@ public class JsonWebKeySet {
 
     public Key getKey(String kid) throws GeneralSecurityException {
 
-        JsonWebKey jwk = keys.get(kid);
-        return jwk.toJcaKey();
+        return getJwk(kid).toJcaKey();
+    }
+
+    public JsonWebKey getJwk(String kid) {
+
+        return keys.get(kid);
+
     }
 }

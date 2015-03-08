@@ -1,6 +1,7 @@
 package net.trajano.openidconnect.sample;
 
 import java.io.IOException;
+import java.security.GeneralSecurityException;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -49,7 +50,11 @@ public class LoginServlet extends HttpServlet {
             IOException {
 
         String subject = req.getParameter("username");
-        redirector.doCallback(resp, new AuthenticationRequest(req), subject);
+        try {
+            redirector.doCallback(resp, new AuthenticationRequest(req), subject);
+        } catch (GeneralSecurityException e) {
+            throw new ServletException(e);
+        }
     }
 
     @EJB

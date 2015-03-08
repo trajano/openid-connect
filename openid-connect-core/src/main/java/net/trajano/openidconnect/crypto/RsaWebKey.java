@@ -4,6 +4,7 @@ import java.math.BigInteger;
 import java.security.GeneralSecurityException;
 import java.security.Key;
 import java.security.KeyFactory;
+import java.security.PublicKey;
 import java.security.interfaces.RSAPrivateCrtKey;
 import java.security.interfaces.RSAPublicKey;
 import java.security.spec.RSAPrivateCrtKeySpec;
@@ -136,51 +137,43 @@ public class RsaWebKey extends JsonWebKey {
         return e;
     }
 
-    
     public String getQ() {
-    
+
         return q;
     }
 
-    
     public void setQ(String q) {
-    
+
         this.q = q;
     }
 
-    
     public String getDp() {
-    
+
         return dp;
     }
 
-    
     public void setDp(String dp) {
-    
+
         this.dp = dp;
     }
 
-    
     public String getDq() {
-    
+
         return dq;
     }
 
-    
     public void setDq(String dq) {
-    
+
         this.dq = dq;
     }
 
-    
     public String getQi() {
-    
+
         return qi;
     }
 
-    
     public void setQi(String qi) {
-    
+
         this.qi = qi;
     }
 
@@ -212,6 +205,14 @@ public class RsaWebKey extends JsonWebKey {
     public void setP(final String p) {
 
         this.p = p;
+    }
+
+    public PublicKey toJcaPublicKey() throws GeneralSecurityException {
+
+        final BigInteger modulus = Base64Url.decodeUint(n);
+        final BigInteger publicExponent = Base64Url.decodeUint(e);
+        return KeyFactory.getInstance("RSA")
+                .generatePublic(new RSAPublicKeySpec(modulus, publicExponent));
     }
 
     @Override

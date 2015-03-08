@@ -29,6 +29,17 @@ import javax.xml.bind.annotation.XmlTransient;
 
 public class Util {
 
+    @SafeVarargs
+    public static <T> T firstNonNull(T... vals) {
+
+        for (T val : vals) {
+            if (val != null) {
+                return val;
+            }
+        }
+        return null;
+    }
+
     public static JsonObject convertToJson(final Object obj) {
 
         final JsonObjectBuilder b = Json.createObjectBuilder();
