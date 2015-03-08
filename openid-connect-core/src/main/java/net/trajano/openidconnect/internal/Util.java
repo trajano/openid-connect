@@ -221,7 +221,7 @@ public class Util {
                         field.set(obj, ((JsonNumber) entry.getValue()).longValueExact());
                     } else if (field.getType()
                             .isEnum()) {
-                        field.set(obj, valueOf((Class) field.getType(), ((JsonString) entry.getValue()).getString()));
+                        field.set(obj, valueOf((Class<? extends Enum>) field.getType(), ((JsonString) entry.getValue()).getString()));
                     }
                 }
             }
