@@ -2,6 +2,7 @@ package net.trajano.openidconnect.crypto;
 
 import java.security.GeneralSecurityException;
 import java.security.Key;
+import java.security.PublicKey;
 
 import javax.json.JsonObjectBuilder;
 import javax.validation.constraints.NotNull;
@@ -72,6 +73,17 @@ public abstract class JsonWebKey {
      * @return
      */
     public abstract Key toJcaKey() throws GeneralSecurityException;
+
+    /**
+     * Converts the JSON Web key to the JCA Public key. This may be overriden by
+     * keys that can derive their own public key from their private key.
+     * 
+     * @return
+     */
+    public PublicKey toJcaPublicKey() throws GeneralSecurityException {
+
+        return null;
+    }
 
     /**
      * Builds the JSON object.

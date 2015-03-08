@@ -86,6 +86,7 @@ public class EcWebKey extends JsonWebKey {
         this.y = y;
     }
 
+    @Override
     public PublicKey toJcaPublicKey() throws GeneralSecurityException {
 
         final KeyFactory keyFactory = KeyFactory.getInstance("EC");

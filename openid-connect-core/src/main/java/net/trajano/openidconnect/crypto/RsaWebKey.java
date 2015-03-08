@@ -207,6 +207,7 @@ public class RsaWebKey extends JsonWebKey {
         this.p = p;
     }
 
+    @Override
     public PublicKey toJcaPublicKey() throws GeneralSecurityException {
 
         final BigInteger modulus = Base64Url.decodeUint(n);

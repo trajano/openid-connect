@@ -18,7 +18,7 @@ public enum JsonWebAlgorithm {
      * Advanced Encryption Standard (AES) using 128 bit keys in Galois/Counter
      * Mode.
      */
-    A128GCM("AES/GCM/NoPadding", 128),
+    A128GCM("AES/GCM/NoPadding", 128, 96),
     /**
      * Advanced Encryption Standard (AES) Key Wrap Algorithm RFC 3394 [RFC3394]
      * using 128 bit keys.
@@ -28,12 +28,19 @@ public enum JsonWebAlgorithm {
      * Advanced Encryption Standard (AES) using 256 bit keys in Cipher Block
      * Chaining mode.
      */
-    A256CBC("AES/CBC/PKCS5Padding", 256),
+    A256CBC("AES/CBC/PKCS5Padding", 256, 16),
+
+    @XmlEnumValue("A128CBC-HS256")
+    A128CBC_HS256("AES/CBC/PKCS5Padding", 128, 16),
+
+    @XmlEnumValue("A256CBC-HS256")
+    A256CBC_HS256("AES/CBC/PKCS5Padding", 256, 16),
+
     /**
      * Advanced Encryption Standard (AES) using 256 bit keys in Galois/Counter
      * Mode. Note this is only available from JDK8 onwards or Bouncy Castle.
      */
-    A256GCM("AES/GCM/NoPadding", 256),
+    A256GCM("AES/GCM/NoPadding", 256, 96),
     /**
      * Advanced Encryption Standard (AES) Key Wrap Algorithm RFC 3394 [RFC3394]
      * using 256 bit keys.
@@ -126,6 +133,24 @@ public enum JsonWebAlgorithm {
     private final int bits;
 
     /**
+     * Number of bits for the initialization vector if applicable
+     */
+    private final int ivLen;
+
+    /**
+     * Assigns a JCA Algorithm to the JWA.
+     *
+     * @param jcaAlgorithm
+     *            JCA algorithm
+     */
+    private JsonWebAlgorithm(final String jcaAlgorithm, int bits, int ivLen) {
+
+        this.jcaAlgorithm = jcaAlgorithm;
+        this.bits = bits;
+        this.ivLen = ivLen;
+    }
+
+    /**
      * Assigns a JCA Algorithm to the JWA.
      *
      * @param jcaAlgorithm
@@ -133,8 +158,23 @@ public enum JsonWebAlgorithm {
      */
     private JsonWebAlgorithm(final String jcaAlgorithm, int bits) {
 
-        this.jcaAlgorithm = jcaAlgorithm;
-        this.bits = bits;
+        this(jcaAlgorithm, bits, 0);
+    }
+
+    public int getIvLen() {
+
+        return ivLen;
+    }
+
+    /**
+     * Assigns a JCA Algorithm to the JWA.
+     *
+     * @param jcaAlgorithm
+     *            JCA algorithm
+     */
+    private JsonWebAlgorithm(final String jcaAlgorithm) {
+
+        this(jcaAlgorithm, 0, 0);
     }
 
     /**

@@ -51,6 +51,10 @@ public class JWE {
             final GCMParameterSpec spec = new GCMParameterSpec(authenticationTag.length * 8, initializationVector);
             contentCipher.init(Cipher.DECRYPT_MODE, contentEncryptionKey, spec);
             contentCipher.updateAAD(aad);
+        } else if (jsonWebToken.getEnc() == JsonWebAlgorithm.A128CBC_HS256) {
+            final IvParameterSpec spec = new IvParameterSpec(initializationVector);
+            contentCipher.init(Cipher.DECRYPT_MODE, contentEncryptionKey, spec);
+            
         } else {
             final IvParameterSpec spec = new IvParameterSpec(initializationVector);
             contentCipher.init(Cipher.DECRYPT_MODE, contentEncryptionKey, spec);
@@ -60,15 +64,11 @@ public class JWE {
         baos.write(contentCipher.doFinal(authenticationTag));
         baos.close();
         final byte[] plaintext = baos.toByteArray();
-        try {
-            final boolean compress = "DEF".equals(jsonWebToken.getZip());
-            if (compress) {
-                return inflate(plaintext);
-            } else {
-                return plaintext;
-            }
-        } catch (final DataFormatException e) {
-            throw new IOException(e);
+        final boolean compress = "DEF".equals(jsonWebToken.getZip());
+        if (compress) {
+            return inflate(plaintext);
+        } else {
+            return plaintext;
         }
     }
 
@@ -79,21 +79,6 @@ public class JWE {
 
         final JsonWebToken jsonWebToken = new JsonWebToken(jwe);
         return decrypt(jsonWebToken, jwk);
-    }
-
-    private static byte[] deflate(final byte[] uncompressed) throws IOException {
-
-        final Deflater deflater = new Deflater(9, false);
-        deflater.setInput(uncompressed);
-        deflater.finish();
-        final ByteArrayOutputStream baos = new ByteArrayOutputStream(uncompressed.length);
-        final byte[] buffer = new byte[1024];
-        while (!deflater.finished()) {
-            final int len = deflater.deflate(buffer);
-            baos.write(buffer, 0, len);
-        }
-        baos.close();
-        return baos.toByteArray();
     }
 
     public static String encrypt(final byte[] plaintext,
@@ -127,10 +112,12 @@ public class JWE {
         keyGenerator.init(enc.getBits());
         final SecretKey secretKey = keyGenerator.generateKey();
 
+        final SecretKey macKey = keyGenerator.generateKey();
+
         final byte[] cek = secretKey.getEncoded();
 
         final Cipher cekCipher = Cipher.getInstance(alg.toJca());
-        cekCipher.init(Cipher.ENCRYPT_MODE, jwk.toJcaKey());
+        cekCipher.init(Cipher.ENCRYPT_MODE, jwk.toJcaPublicKey());
         final byte[] encryptedCek = cekCipher.doFinal(cek);
 
         b.append(Base64Url.encode(encryptedCek));
@@ -173,7 +160,8 @@ public class JWE {
 
         final String cipherText = Base64Url.encode(cipherTextAndAuthenticationTag, 0, cipherTextAndAuthenticationTag.length - authenticationTagBits / 8);
         final String authenticationTag = Base64Url.encode(cipherTextAndAuthenticationTag, cipherTextAndAuthenticationTag.length - authenticationTagBits / 8, authenticationTagBits / 8);
-
+System.out.println(cipherText);
+System.out.println("KDlTtXchhZTGufMYmOYGS4HffxPSUrfmqCHXaI9wOGY");
         b.append(cipherText);
         b.append('.');
         b.append(authenticationTag);
@@ -191,19 +179,38 @@ public class JWE {
                 .getBytes(CharSets.UTF8), jwk, alg, enc, false);
     }
 
-    private static byte[] inflate(final byte[] compressed) throws IOException,
-    DataFormatException {
+    private static byte[] deflate(final byte[] uncompressed) throws IOException {
+
+        final Deflater deflater = new Deflater(9, false);
+        deflater.setInput(uncompressed);
+        deflater.finish();
+        final ByteArrayOutputStream baos = new ByteArrayOutputStream(uncompressed.length);
+        final byte[] buffer = new byte[1024];
+        while (!deflater.finished()) {
+            final int len = deflater.deflate(buffer);
+            baos.write(buffer, 0, len);
+        }
+        baos.close();
+        return baos.toByteArray();
+    }
+
+    private static byte[] inflate(final byte[] compressed) throws IOException {
 
         final Inflater inflater = new Inflater(false);
         inflater.setInput(compressed);
         inflater.finished();
         final ByteArrayOutputStream baos = new ByteArrayOutputStream(compressed.length);
         final byte[] buffer = new byte[1024];
-        while (!inflater.finished()) {
-            final int len = inflater.inflate(buffer);
-            baos.write(buffer, 0, len);
+        try {
+            while (!inflater.finished()) {
+                int len;
+                len = inflater.inflate(buffer);
+                baos.write(buffer, 0, len);
+            }
+            baos.close();
+            return baos.toByteArray();
+        } catch (DataFormatException e) {
+            throw new IOException(e);
         }
-        baos.close();
-        return baos.toByteArray();
     }
 }
