@@ -249,9 +249,9 @@ public class AuthenticationRequest implements Serializable {
             throw new BadRequestException("redirect_uri does not match.");
         }
 
-        if (requestObjectValue != null) {
+        if (Util.isNotNullOrEmpty(requestObjectValue)) {
             reqMap.put(key, requestObjectValue);
-        } else if (paramValue != null) {
+        } else if (Util.isNotNullOrEmpty(paramValue)) {
             reqMap.put(key, paramValue);
         }
     }

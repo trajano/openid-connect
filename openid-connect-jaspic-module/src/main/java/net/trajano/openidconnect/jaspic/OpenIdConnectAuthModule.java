@@ -781,6 +781,7 @@ public class OpenIdConnectAuthModule implements ServerAuthModule, ServerAuthCont
             }
             return tokenCookie;
         } catch (final GeneralSecurityException | IOException e) {
+            e.printStackTrace();
             LOG.log(Level.FINE, "invalidToken", e.getMessage());
             LOG.throwing(this.getClass()
                     .getName(), "validateRequest", e);
@@ -814,6 +815,7 @@ public class OpenIdConnectAuthModule implements ServerAuthModule, ServerAuthCont
             final HttpServletResponse resp,
             final String reason) throws AuthException {
 
+        System.out.println(reason);
         LOG.log(Level.FINE, "redirecting", new Object[] { reason });
         URI authorizationEndpointUri = null;
         try {
@@ -1003,6 +1005,15 @@ public class OpenIdConnectAuthModule implements ServerAuthModule, ServerAuthCont
             if (!mandatory || tokenCookie != null && !tokenCookie.isExpired()) {
                 return AuthStatus.SUCCESS;
             }
+
+            if (mandatory && tokenCookie != null && tokenCookie.isExpired()) {
+                return redirectToAuthorizationEndpoint(req, resp, "token cookie is expired");
+            }
+
+            if (mandatory && tokenCookie == null) {
+                return redirectToAuthorizationEndpoint(req, resp, "token cookie is missing");
+            }
+
             if (req.isSecure() && isHeadRequest(req) && req.getRequestURI()
                     .equals(tokenUri)) {
                 resp.setContentType(MediaType.APPLICATION_JSON);
@@ -1020,6 +1031,7 @@ public class OpenIdConnectAuthModule implements ServerAuthModule, ServerAuthCont
                 return AuthStatus.SEND_FAILURE;
             }
 
+            System.out.println("H!");
             return redirectToAuthorizationEndpoint(req, resp, "request is not valid");
         } catch (final Exception e) {
             // Any problems with the data should be caught and force redirect to

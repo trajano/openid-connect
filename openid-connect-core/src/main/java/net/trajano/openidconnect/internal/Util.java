@@ -29,17 +29,6 @@ import javax.xml.bind.annotation.XmlTransient;
 
 public class Util {
 
-    @SafeVarargs
-    public static <T> T firstNonNull(T... vals) {
-
-        for (T val : vals) {
-            if (val != null) {
-                return val;
-            }
-        }
-        return null;
-    }
-
     public static JsonObject convertToJson(final Object obj) {
 
         final JsonObjectBuilder b = Json.createObjectBuilder();
@@ -85,6 +74,17 @@ public class Util {
         } catch (IllegalAccessException | SecurityException | NoSuchFieldException e1) {
             throw new RuntimeException(e1);
         }
+    }
+
+    @SafeVarargs
+    public static <T> T firstNonNull(final T... vals) {
+
+        for (final T val : vals) {
+            if (val != null) {
+                return val;
+            }
+        }
+        return null;
     }
 
     /**
@@ -230,6 +230,58 @@ public class Util {
         }
     }
 
+    public static <E extends Enum<E>> List<E> splitToList(final Class<E> enumType,
+            final String names) {
+
+        final List<E> ret = new LinkedList<>();
+        for (final String name : splitToList(names)) {
+            ret.add(valueOf(enumType, name));
+        }
+        return ret;
+    }
+
+    public static List<String> splitToList(final String in) {
+
+        if (in != null) {
+            return Arrays.asList(in.split("\\s+"));
+        } else {
+            return Collections.emptyList();
+        }
+    }
+
+    public static List<Locale> splitToLocaleList(final String locales) {
+
+        final List<Locale> ret = new LinkedList<>();
+        for (final String languageTag : splitToList(locales)) {
+            ret.add(Locale.forLanguageTag(languageTag));
+        }
+        return ret;
+    }
+
+    public static <E extends Enum<E>> Set<E> splitToSet(final Class<E> enumType,
+            final String names) {
+
+        final Set<E> ret = new HashSet<>();
+        for (final String name : splitToList(names)) {
+            ret.add(valueOf(enumType, name));
+        }
+        return ret;
+    }
+
+    public static Set<String> splitToSet(final String in) {
+
+        return new HashSet<>(splitToList(in));
+    }
+
+    public static String toLocaleString(final Iterable<Locale> locales) {
+
+        final List<String> stringValues = new LinkedList<>();
+        for (final Locale locale : locales) {
+            stringValues.add(locale.toLanguageTag());
+        }
+        return join(stringValues);
+    }
+
     public static <E extends Enum<E>> String toString(final E value) {
 
         final Class<E> enumType = value.getDeclaringClass();
@@ -256,28 +308,12 @@ public class Util {
         return join(stringValues);
     }
 
-    public static List<String> splitToList(String in) {
-
-        return Arrays.asList(in.split("\\s+"));
-    }
-
-    public static Set<String> splitToSet(String in) {
-
-        return new HashSet<>(splitToList(in));
-    }
-
-    public static String toLocaleString(final Iterable<Locale> locales) {
-
-        final List<String> stringValues = new LinkedList<>();
-        for (final Locale locale : locales) {
-            stringValues.add(locale.toLanguageTag());
-        }
-        return join(stringValues);
-    }
-
     public static <E extends Enum<E>> E valueOf(final Class<E> enumType,
             final String name) {
 
+        if (!isNotNullOrEmpty(name)) {
+            return null;
+        }
         try {
             for (final E e : enumType.getEnumConstants()) {
                 String ename = e.name();
@@ -295,34 +331,5 @@ public class Util {
         }
         throw new IllegalArgumentException("unable to find the value " + name + " in enum " + enumType);
 
-    }
-
-    public static <E extends Enum<E>> Set<E> splitToSet(Class<E> enumType,
-            final String names) {
-
-        Set<E> ret = new HashSet<>();
-        for (String name : splitToList(names)) {
-            ret.add(valueOf(enumType, name));
-        }
-        return ret;
-    }
-
-    public static <E extends Enum<E>> List<E> splitToList(Class<E> enumType,
-            final String names) {
-
-        List<E> ret = new LinkedList<>();
-        for (String name : splitToList(names)) {
-            ret.add(valueOf(enumType, name));
-        }
-        return ret;
-    }
-
-    public static List<Locale> splitToLocaleList(final String locales) {
-
-        List<Locale> ret = new LinkedList<>();
-        for (String languageTag : splitToList(locales)) {
-            ret.add(Locale.forLanguageTag(languageTag));
-        }
-        return ret;
     }
 }

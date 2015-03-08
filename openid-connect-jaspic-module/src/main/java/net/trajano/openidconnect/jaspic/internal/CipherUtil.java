@@ -19,8 +19,6 @@ import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
 
-import net.trajano.openidconnect.crypto.JsonWebAlgorithm;
-
 /**
  * Utility class to decrypt and encrypt data. It is a compressing stream.
  */
@@ -28,7 +26,7 @@ public final class CipherUtil {
     /**
      * Cipher algorithm to use. "AES"
      */
-    private static final String CIPHER_ALGORITHM = JsonWebAlgorithm.A128GCM.toJca();
+    private static final String CIPHER_ALGORITHM = "AES";
 
     /**
      * Creates a decryption stream. It is a compressed then encrypted stream.
@@ -80,7 +78,7 @@ public final class CipherUtil {
 
         final SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
         return new SecretKeySpec(factory.generateSecret(pbeSpec)
-                .getEncoded(), "AES");
+                .getEncoded(), CIPHER_ALGORITHM);
     }
 
     /**

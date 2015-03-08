@@ -59,7 +59,6 @@ public final class Utils {
      */
     public static byte[] getJwsPayload(final String serialization,
             final net.trajano.openidconnect.crypto.JsonWebKeySet keyset) throws GeneralSecurityException {
-
         if (LOG.isLoggable(Level.FINEST)) {
             LOG.finest("serialized payload = " + serialization);
         }
