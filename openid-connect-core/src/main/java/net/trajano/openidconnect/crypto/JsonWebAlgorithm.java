@@ -12,6 +12,9 @@ import javax.xml.bind.annotation.XmlEnumValue;
  * </p>
  * See Appendix A & B of
  * http://self-issued.info/docs/draft-ietf-jose-json-web-algorithms-00.html.
+ * 
+ * @deprecated eventually the logic will just be string to maps and let the
+ *             {@link JsonWebTokenCrypto} implementation handle it.
  */
 public enum JsonWebAlgorithm {
     /**
