@@ -11,6 +11,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 
 import javax.json.Json;
@@ -83,6 +84,98 @@ public class AuthenticationRequest implements Serializable {
 
         this(req, req.getParameter("request"));
     }
+    
+    /**
+     * Assign the values based on a map
+     * @param req
+     */
+    private AuthenticationRequest(final Map<String, String> requestMap) {
+
+        if (requestMap.containsKey(OpenIdConnectKey.ACR_VALUES)) {
+            acrValues = Util.splitToList(requestMap.get(OpenIdConnectKey.ACR_VALUES));
+        } else {
+            acrValues = null;
+        }
+        if (requestMap.containsKey(OpenIdConnectKey.CLIENT_ID)) {
+            clientId = requestMap.get(OpenIdConnectKey.CLIENT_ID);
+        } else {
+            clientId = null;
+        }
+        if (requestMap.containsKey(OpenIdConnectKey.DISPLAY)) {
+            display = Util.valueOf(Display.class, requestMap.get(OpenIdConnectKey.DISPLAY));
+        } else {
+            display = null;
+        }
+
+        if (requestMap.containsKey(OpenIdConnectKey.ID_TOKEN_HINT)) {
+            idTokenHint = requestMap.get(OpenIdConnectKey.ID_TOKEN_HINT);
+        } else {
+            idTokenHint = null;
+        }
+
+        if (requestMap.containsKey(OpenIdConnectKey.LOGIN_HINT)) {
+            loginHint = requestMap.get(OpenIdConnectKey.LOGIN_HINT);
+        } else {
+            loginHint = null;
+        }
+
+        if (requestMap.containsKey(OpenIdConnectKey.MAX_AGE)) {
+            maxAge = Integer.valueOf(requestMap.get(OpenIdConnectKey.MAX_AGE));
+        } else {
+            maxAge = null;
+        }
+
+        if (requestMap.containsKey(OpenIdConnectKey.NONCE)) {
+            nonce = requestMap.get(OpenIdConnectKey.NONCE);
+        } else {
+            nonce = null;
+        }
+
+        if (requestMap.containsKey(OpenIdConnectKey.PROMPT)) {
+            prompts = Util.splitToSet(Prompt.class, requestMap.get(OpenIdConnectKey.PROMPT));
+        } else {
+            prompts = null;
+        }
+
+        if (requestMap.containsKey(OpenIdConnectKey.REDIRECT_URI)) {
+            redirectUri = URI.create(requestMap.get(OpenIdConnectKey.REDIRECT_URI));
+        } else {
+            redirectUri = null;
+        }
+
+        if (requestMap.containsKey(OpenIdConnectKey.RESPONSE_MODE)) {
+            responseMode = Util.valueOf(ResponseMode.class, requestMap.get(OpenIdConnectKey.RESPONSE_MODE));
+        } else {
+            responseMode = null;
+        }
+
+        if (requestMap.containsKey(OpenIdConnectKey.RESPONSE_TYPE)) {
+            responseTypes = Util.splitToSet(ResponseType.class, requestMap.get(OpenIdConnectKey.RESPONSE_TYPE));
+        } else {
+            responseTypes = null;
+        }
+
+        if (requestMap.containsKey(OpenIdConnectKey.SCOPE)) {
+            scopes = Util.splitToSet(Scope.class, requestMap.get(OpenIdConnectKey.SCOPE));
+        } else {
+            scopes = null;
+        }
+
+        if (requestMap.containsKey(OpenIdConnectKey.STATE)) {
+            state = requestMap.get(OpenIdConnectKey.STATE);
+        } else {
+            state = null;
+        }
+
+        if (requestMap.containsKey(OpenIdConnectKey.UI_LOCALES)) {
+            uiLocales = Util.splitToLocaleList(requestMap.get(OpenIdConnectKey.UI_LOCALES));
+        } else {
+            uiLocales = null;
+        }
+        codeOnlyResponseType = responseTypes.equals(Collections.singleton(ResponseType.code));
+        parent = null;
+    }
+
 
     public AuthenticationRequest(final HttpServletRequest req, final String requestParameter) {
 
