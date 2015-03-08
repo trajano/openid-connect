@@ -4,9 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.security.GeneralSecurityException;
-import java.security.PrivateKey;
 import java.security.SecureRandom;
-import java.security.Signature;
 import java.util.zip.Deflater;
 
 import javax.crypto.Cipher;
@@ -17,11 +15,12 @@ import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import javax.json.JsonObject;
 
-import net.trajano.openidconnect.crypto.Base64Url;
+import net.trajano.openidconnect.crypto.JcaJsonWebTokenSigner;
 import net.trajano.openidconnect.crypto.JsonWebAlgorithm;
 import net.trajano.openidconnect.crypto.JsonWebKey;
 import net.trajano.openidconnect.crypto.JsonWebKeySet;
 import net.trajano.openidconnect.crypto.JsonWebToken;
+import net.trajano.openidconnect.crypto.JsonWebTokenSigner;
 import net.trajano.openidconnect.internal.CharSets;
 
 /**
@@ -32,6 +31,8 @@ import net.trajano.openidconnect.internal.CharSets;
 public class JsonWebTokenBuilder {
 
     private final SecureRandom random = new SecureRandom();
+
+    private final JsonWebTokenSigner signer = new JcaJsonWebTokenSigner();
 
     /**
      * The actual payload.
@@ -137,7 +138,7 @@ public class JsonWebTokenBuilder {
         if (enc == null) {
             final byte[][] payloads = new byte[2][];
             payloads[0] = payloadBytes;
-            payloads[1] = sign(header, payloadBytes);
+            payloads[1] = signer.signaturePayload(header, payloadBytes, jwk);
             return new JsonWebToken(header, payloads);
         }
 
@@ -187,27 +188,11 @@ public class JsonWebTokenBuilder {
         payloads[2] = new byte[cipherTextAndAuthenticationTag.capacity() - authenticationTagBits / 8];
         payloads[3] = new byte[authenticationTagBits / 8];
 
-        System.out.println(cipherTextAndAuthenticationTag.capacity());
-        System.out.println(payloads[2].length);
-        System.out.println(payloads[3].length);
         cipherTextAndAuthenticationTag.get(payloads[2])
                 .get(payloads[3]);
-        System.out.println(Base64Url.encode(payloads[2]));
         return payloads;
     }
 
-    private byte[] sign(JoseHeader header,
-            byte[] payloadBytes) throws GeneralSecurityException {
-
-        final StringBuilder b = new StringBuilder(Base64Url.encode(header.toString())).append('.')
-                .append(Base64Url.encode(payloadBytes));
-
-        final Signature signature = Signature.getInstance(alg.toJca());
-        signature.initSign((PrivateKey) jwk.toJcaKey());
-        signature.update(b.toString()
-                .getBytes(CharSets.US_ASCII));
-        return signature.sign();
-    }
 
     private static byte[] deflate(final byte[] uncompressed) throws IOException {
 

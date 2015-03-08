@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.PrivateKey;
 import java.util.zip.DataFormatException;
-import java.util.zip.Deflater;
 import java.util.zip.Inflater;
 
 import javax.crypto.Cipher;
@@ -112,21 +111,6 @@ public class JWE {
 
         return encrypt(obj.toString()
                 .getBytes(CharSets.UTF8), jwk, alg, enc, false);
-    }
-
-    private static byte[] deflate(final byte[] uncompressed) throws IOException {
-
-        final Deflater deflater = new Deflater(9, false);
-        deflater.setInput(uncompressed);
-        deflater.finish();
-        final ByteArrayOutputStream baos = new ByteArrayOutputStream(uncompressed.length);
-        final byte[] buffer = new byte[1024];
-        while (!deflater.finished()) {
-            final int len = deflater.deflate(buffer);
-            baos.write(buffer, 0, len);
-        }
-        baos.close();
-        return baos.toByteArray();
     }
 
     private static byte[] inflate(final byte[] compressed) throws IOException {
