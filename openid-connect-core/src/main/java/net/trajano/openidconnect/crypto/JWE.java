@@ -14,7 +14,6 @@ import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import javax.json.JsonObject;
 
-import net.trajano.openidconnect.auth.JsonWebTokenBuilder;
 import net.trajano.openidconnect.internal.CharSets;
 
 public class JWE {

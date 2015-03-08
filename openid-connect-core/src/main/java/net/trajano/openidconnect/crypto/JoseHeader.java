@@ -1,4 +1,4 @@
-package net.trajano.openidconnect.auth;
+package net.trajano.openidconnect.crypto;
 
 import java.io.StringReader;
 import java.net.URI;
@@ -7,9 +7,6 @@ import javax.json.Json;
 import javax.json.JsonObject;
 import javax.ws.rs.core.MediaType;
 
-import net.trajano.openidconnect.crypto.Base64Url;
-import net.trajano.openidconnect.crypto.JsonWebAlgorithm;
-import net.trajano.openidconnect.crypto.JsonWebKey;
 import net.trajano.openidconnect.internal.CharSets;
 import net.trajano.openidconnect.internal.Util;
 

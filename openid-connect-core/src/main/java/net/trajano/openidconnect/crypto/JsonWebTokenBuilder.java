@@ -1,27 +1,15 @@
-package net.trajano.openidconnect.auth;
+package net.trajano.openidconnect.crypto;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.security.GeneralSecurityException;
 import java.security.SecureRandom;
 import java.util.zip.Deflater;
 
-import javax.crypto.Cipher;
-import javax.crypto.KeyGenerator;
-import javax.crypto.SecretKey;
-import javax.crypto.spec.GCMParameterSpec;
-import javax.crypto.spec.IvParameterSpec;
-import javax.crypto.spec.SecretKeySpec;
 import javax.json.JsonObject;
 
-import net.trajano.openidconnect.crypto.JcaJsonWebTokenSigner;
-import net.trajano.openidconnect.crypto.JsonWebAlgorithm;
-import net.trajano.openidconnect.crypto.JsonWebKey;
-import net.trajano.openidconnect.crypto.JsonWebKeySet;
-import net.trajano.openidconnect.crypto.JsonWebToken;
-import net.trajano.openidconnect.crypto.JsonWebTokenSigner;
 import net.trajano.openidconnect.internal.CharSets;
+import net.trajano.openidconnect.internal.JcaJsonWebTokenCrypto;
 
 /**
  * Used to build {@link JsonWebToken}
@@ -32,7 +20,7 @@ public class JsonWebTokenBuilder {
 
     private final SecureRandom random = new SecureRandom();
 
-    private final JsonWebTokenSigner signer = new JcaJsonWebTokenSigner();
+    private final JsonWebTokenCrypto crypto = JcaJsonWebTokenCrypto.getInstance();
 
     /**
      * The actual payload.
@@ -136,63 +124,13 @@ public class JsonWebTokenBuilder {
         }
 
         if (enc == null) {
-            final byte[][] payloads = new byte[2][];
-            payloads[0] = payloadBytes;
-            payloads[1] = signer.signaturePayload(header, payloadBytes, jwk);
-            return new JsonWebToken(header, payloads);
+            return new JsonWebToken(header, crypto.buildJWSPayload(header, payloadBytes, jwk));
         }
 
         // JWE
         header.setEnc(enc);
-        return new JsonWebToken(header, buildEncryptedPayload(header, payloadBytes));
+        return new JsonWebToken(header, crypto.buildJWEPayload(header, payloadBytes, jwk));
     }
-
-    private byte[][] buildEncryptedPayload(JoseHeader joseHeader,
-            byte[] payloadBytes) throws IOException,
-            GeneralSecurityException {
-
-        final byte[][] payloads = new byte[4][];
-
-        final KeyGenerator keyGenerator = KeyGenerator.getInstance("AES");
-        keyGenerator.init(enc.getBits());
-        final SecretKey secretKey = keyGenerator.generateKey();
-
-        final byte[] cek = secretKey.getEncoded();
-
-        final Cipher cekCipher = Cipher.getInstance(alg.toJca());
-        cekCipher.init(Cipher.ENCRYPT_MODE, jwk.toJcaKey());
-        final byte[] encryptedCek = cekCipher.doFinal(cek);
-
-        payloads[0] = encryptedCek;
-
-        final byte[] iv;
-        final int authenticationTagBits = 128;
-        final Cipher contentCipher = Cipher.getInstance(enc.toJca());
-
-        if (enc == JsonWebAlgorithm.A128GCM || enc == JsonWebAlgorithm.A256GCM) {
-            iv = new byte[96];
-            random.nextBytes(iv);
-            final GCMParameterSpec spec = new GCMParameterSpec(authenticationTagBits, iv);
-            contentCipher.init(Cipher.ENCRYPT_MODE, new SecretKeySpec(cek, "AES"), spec);
-            contentCipher.updateAAD(joseHeader.getEncoded());
-        } else {
-            iv = new byte[16];
-            random.nextBytes(iv);
-            final IvParameterSpec spec = new IvParameterSpec(iv);
-            contentCipher.init(Cipher.ENCRYPT_MODE, new SecretKeySpec(cek, "AES"), spec);
-        }
-        payloads[1] = iv;
-
-        final ByteBuffer cipherTextAndAuthenticationTag = ByteBuffer.wrap(contentCipher.doFinal(payloadBytes));
-
-        payloads[2] = new byte[cipherTextAndAuthenticationTag.capacity() - authenticationTagBits / 8];
-        payloads[3] = new byte[authenticationTagBits / 8];
-
-        cipherTextAndAuthenticationTag.get(payloads[2])
-                .get(payloads[3]);
-        return payloads;
-    }
-
 
     private static byte[] deflate(final byte[] uncompressed) throws IOException {
 

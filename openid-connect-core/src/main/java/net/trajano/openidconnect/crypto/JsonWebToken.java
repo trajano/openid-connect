@@ -4,7 +4,6 @@ import java.io.IOException;
 
 import javax.json.JsonObject;
 
-import net.trajano.openidconnect.auth.JoseHeader;
 import net.trajano.openidconnect.internal.CharSets;
 
 /**
