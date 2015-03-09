@@ -21,10 +21,10 @@ import javax.ws.rs.BadRequestException;
 import net.trajano.openidconnect.auth.AuthenticationRequest;
 import net.trajano.openidconnect.core.OpenIdConnectKey;
 import net.trajano.openidconnect.core.Scope;
-import net.trajano.openidconnect.crypto.JWE;
 import net.trajano.openidconnect.crypto.JsonWebKey;
 import net.trajano.openidconnect.crypto.JsonWebKeySet;
 import net.trajano.openidconnect.crypto.JsonWebTokenBuilder;
+import net.trajano.openidconnect.crypto.JsonWebTokenProcessor;
 import net.trajano.openidconnect.crypto.RsaWebKey;
 
 import org.junit.Before;
@@ -77,8 +77,8 @@ public class AuthenticationRequestTest {
         final HttpServletRequest req = Mockito.mock(HttpServletRequest.class);
         final JsonObject requestObject = b.build();
         final JsonWebKey jwk = jwks.getKeys()[5];
-        final String encrypted = JWE.encrypt(requestObject, jwk, "RSA-OAEP", "A256CBC");
-        JWE.decrypt(encrypted, privateJwks.getJwk(jwk.getKid()));
+        final String encrypted = new JsonWebTokenBuilder().alg("RSA-OAEP").enc("A256CBC").jwk(jwk).payload(requestObject).toString();
+        new JsonWebTokenProcessor(encrypted).jwks(privateJwks).getPayload();
         when(req.getParameter(OpenIdConnectKey.REQUEST)).thenReturn(encrypted);
         when(req.getParameter(OpenIdConnectKey.CLIENT_ID)).thenReturn("barbar");
         when(req.getParameter(OpenIdConnectKey.SCOPE)).thenReturn("openid");

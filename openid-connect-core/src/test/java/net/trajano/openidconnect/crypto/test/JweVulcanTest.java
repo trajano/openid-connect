@@ -5,7 +5,6 @@ import static org.junit.Assert.assertEquals;
 import java.io.InputStream;
 
 import net.trajano.openidconnect.crypto.Base64Url;
-import net.trajano.openidconnect.crypto.JWE;
 import net.trajano.openidconnect.crypto.JsonWebKey;
 import net.trajano.openidconnect.rs.JsonWebKeyProvider;
 

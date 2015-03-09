@@ -1,4 +1,4 @@
-package net.trajano.openidconnect.crypto;
+package net.trajano.openidconnect.crypto.test;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
@@ -6,8 +6,17 @@ import java.util.zip.DataFormatException;
 
 import javax.json.JsonObject;
 
+import net.trajano.openidconnect.crypto.JsonWebKey;
+import net.trajano.openidconnect.crypto.JsonWebToken;
+import net.trajano.openidconnect.crypto.JsonWebTokenBuilder;
+import net.trajano.openidconnect.crypto.JsonWebTokenProcessor;
 import net.trajano.openidconnect.internal.CharSets;
 
+/**
+ * Support class used for testing JWE.
+ * 
+ * @author Archimedes
+ */
 public class JWE {
 
     public static byte[] decrypt(final JsonWebToken jsonWebToken,
@@ -15,7 +24,8 @@ public class JWE {
             GeneralSecurityException {
 
         JsonWebTokenProcessor p = new JsonWebTokenProcessor(jsonWebToken);
-        p.jwk(jwk);
+        p.allowJwkToBeSet(true)
+                .jwk(jwk);
         return p.getPayload();
     }
 

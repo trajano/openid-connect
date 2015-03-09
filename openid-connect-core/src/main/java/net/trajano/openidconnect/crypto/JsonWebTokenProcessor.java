@@ -12,24 +12,24 @@ import net.trajano.openidconnect.internal.JcaJsonWebTokenCrypto;
 
 public class JsonWebTokenProcessor {
 
-    private final JsonWebTokenCrypto crypto = JcaJsonWebTokenCrypto.getInstance();
-
-    private JsonWebKey jwk = null;
-
-    private JsonWebToken jsonWebToken;
-
     private String alg = JsonWebToken.ALG_NONE;
+
+    /**
+     * Flag to indicate whether jwk can be set directly.
+     */
+    private boolean allowJwkToBeSet = false;
+
+    private final JsonWebTokenCrypto crypto = JcaJsonWebTokenCrypto.getInstance();
 
     private String enc = null;
 
+    private JsonWebToken jsonWebToken;
+
+    private JsonWebKey jwk = null;
+
     private String kid = null;
 
-    public JsonWebTokenProcessor(String serialization) throws IOException {
-
-        this(new JsonWebToken(serialization));
-    }
-
-    public JsonWebTokenProcessor(JsonWebToken jsonWebToken) {
+    public JsonWebTokenProcessor(final JsonWebToken jsonWebToken) {
 
         this.jsonWebToken = jsonWebToken;
         alg = jsonWebToken.getAlg();
@@ -38,8 +38,34 @@ public class JsonWebTokenProcessor {
 
     }
 
+    public JsonWebTokenProcessor(final String serialization) throws IOException {
+
+        this(new JsonWebToken(serialization));
+    }
+
+    public JsonWebTokenProcessor allowJwkToBeSet(final boolean flag) throws IOException {
+
+        allowJwkToBeSet = flag;
+        return this;
+    }
+
+    /**
+     * Gets the payload JSON object.
+     *
+     * @return
+     * @throws IOException
+     * @throws GeneralSecurityException
+     */
+    public JsonObject getJsonPayload() throws IOException,
+    GeneralSecurityException {
+
+        final JsonReader r = Json.createReader(new ByteArrayInputStream(getPayload()));
+        return r.readObject();
+
+    }
+
     public byte[] getPayload() throws IOException,
-            GeneralSecurityException {
+    GeneralSecurityException {
 
         byte[] payload;
         if (!JsonWebToken.ALG_NONE.equals(alg) && jwk == null) {
@@ -67,34 +93,22 @@ public class JsonWebTokenProcessor {
 
     }
 
-    public JsonWebTokenProcessor jwks(JsonWebKeySet jwks) throws IOException {
+    public JsonWebTokenProcessor jwk(final JsonWebKey jwk) throws IOException {
 
-        if (kid != null) {
-            jwk = jwks.getJwk(kid);
+        if (!allowJwkToBeSet) {
+            throw new IOException("jwk cannot be explicitly set");
         }
-        return this;
-
-    }
-
-    public JsonWebTokenProcessor jwk(JsonWebKey jwk) throws IOException {
-
         this.jwk = jwk;
         return this;
 
     }
 
-    /**
-     * Gets the payload JSON object.
-     * 
-     * @return
-     * @throws IOException
-     * @throws GeneralSecurityException
-     */
-    public JsonObject getJsonPayload() throws IOException,
-            GeneralSecurityException {
+    public JsonWebTokenProcessor jwks(final JsonWebKeySet jwks) throws IOException {
 
-        JsonReader r = Json.createReader(new ByteArrayInputStream(getPayload()));
-        return r.readObject();
+        if (kid != null) {
+            jwk = jwks.getJwk(kid);
+        }
+        return this;
 
     }
 

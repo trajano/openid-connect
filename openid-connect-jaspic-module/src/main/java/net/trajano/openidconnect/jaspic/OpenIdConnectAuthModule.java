@@ -10,14 +10,12 @@ import static net.trajano.openidconnect.core.OpenIdConnectKey.RESPONSE_MODE;
 import static net.trajano.openidconnect.core.OpenIdConnectKey.RESPONSE_TYPE;
 import static net.trajano.openidconnect.core.OpenIdConnectKey.SCOPE;
 import static net.trajano.openidconnect.core.OpenIdConnectKey.STATE;
-import static net.trajano.openidconnect.jaspic.internal.Utils.getJwsPayload;
 import static net.trajano.openidconnect.jaspic.internal.Utils.isGetRequest;
 import static net.trajano.openidconnect.jaspic.internal.Utils.isHeadRequest;
 import static net.trajano.openidconnect.jaspic.internal.Utils.isNullOrEmpty;
 import static net.trajano.openidconnect.jaspic.internal.Utils.isRetrievalRequest;
 import static net.trajano.openidconnect.jaspic.internal.Utils.validateIdToken;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URI;
@@ -32,7 +30,6 @@ import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
 import javax.crypto.SecretKey;
-import javax.json.Json;
 import javax.json.JsonObject;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
@@ -68,6 +65,7 @@ import net.trajano.openidconnect.core.OpenIdConnectKey;
 import net.trajano.openidconnect.core.OpenIdProviderConfiguration;
 import net.trajano.openidconnect.crypto.Base64Url;
 import net.trajano.openidconnect.crypto.JsonWebTokenBuilder;
+import net.trajano.openidconnect.crypto.JsonWebTokenProcessor;
 import net.trajano.openidconnect.jaspic.internal.CipherUtil;
 import net.trajano.openidconnect.jaspic.internal.NullHostnameVerifier;
 import net.trajano.openidconnect.jaspic.internal.NullX509TrustManager;
@@ -596,8 +594,8 @@ public class OpenIdConnectAuthModule implements ServerAuthModule, ServerAuthCont
         final net.trajano.openidconnect.crypto.JsonWebKeySet webKeys = getWebKeys(oidProviderConfig);
 
         LOG.log(Level.FINEST, "tokenValue", token);
-        final JsonObject claimsSet = Json.createReader(new ByteArrayInputStream(getJwsPayload(token.getEncodedIdToken(), webKeys)))
-                .readObject();
+        final JsonObject claimsSet = new JsonWebTokenProcessor(token.getEncodedIdToken()).jwks(webKeys)
+                .getJsonPayload();
 
         final String nonce = getNonceFromCookie(req);
         validateIdToken(clientId, claimsSet, nonce);

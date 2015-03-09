@@ -158,6 +158,7 @@ public class DefaultKeyProvider implements KeyProvider {
      * Signs the content using JWT.
      */
     @Override
+    @Deprecated
     public String sign(final byte[] content) throws GeneralSecurityException {
 
         final SigningKey signingKey = signingKeys[random.nextInt(signingKeys.length)];

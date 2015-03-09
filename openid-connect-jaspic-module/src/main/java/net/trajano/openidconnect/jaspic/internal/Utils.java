@@ -1,18 +1,10 @@
 package net.trajano.openidconnect.jaspic.internal;
 
-import java.io.ByteArrayInputStream;
 import java.security.GeneralSecurityException;
-import java.security.PublicKey;
-import java.security.Signature;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.json.Json;
 import javax.json.JsonObject;
 import javax.servlet.http.HttpServletRequest;
-
-import net.trajano.openidconnect.crypto.Base64Url;
-import net.trajano.openidconnect.crypto.JsonWebAlgorithm;
 
 /**
  * Utility methods. Normally these would be in a separate JAR file like
@@ -35,64 +27,6 @@ public final class Utils {
 
     static {
         LOG = Logger.getLogger("net.trajano.oidc.jaspic", MESSAGES);
-    }
-
-    /**
-     * Gets the JWS Payload from a <a href=
-     * "http://tools.ietf.org/html/draft-ietf-jose-json-web-signature-30#section-3.1"
-     * >JWS Compact Serialization</a>. The validation follows the rules in <a
-     * href=
-     * "http://tools.ietf.org/html/draft-ietf-jose-json-web-signature-30#section-5.2"
-     * >Message Signature or MAC validation section of JSON Web Signature</a>.
-     * <p>
-     * Note that "jku", "jwk", "x5u" and "x5c" should nor will <b>never</b> be
-     * implemented. It does not make sense for the serialization to contain its
-     * own validation.
-     *
-     * @param serialization
-     *            JWS compact serialization
-     * @param keyset
-     *            JSON web key used to validate the token
-     * @return the JWS payload
-     * @throws GeneralSecurityException
-     *             problem with crypto APIs or signature was not valid
-     */
-    public static byte[] getJwsPayload(final String serialization,
-            final net.trajano.openidconnect.crypto.JsonWebKeySet keyset) throws GeneralSecurityException {
-        if (LOG.isLoggable(Level.FINEST)) {
-            LOG.finest("serialized payload = " + serialization);
-        }
-        final String[] jwtParts = serialization.split("\\.");
-
-        final JsonObject joseHeader = Json.createReader(new ByteArrayInputStream(Base64Url.decode(jwtParts[0])))
-                .readObject();
-
-        // Handle plaintext JWTs
-        if (!"none".equals(joseHeader.getString("alg"))) {
-
-            final String kid;
-            if (joseHeader.containsKey("kid")) {
-                kid = joseHeader.getString("kid");
-            } else {
-                kid = "";
-            }
-            final PublicKey signingKey = (PublicKey) keyset.getKey(kid);
-
-            if (signingKey == null) {
-                throw new GeneralSecurityException("No key with id " + kid + " defined");
-            }
-
-            final Signature signature = Signature.getInstance(toJavaAlgorithm(joseHeader.getString("alg")));
-
-            final byte[] jwtSignatureBytes = Base64Url.decode(jwtParts[2]);
-
-            signature.initVerify(signingKey);
-            signature.update((jwtParts[0] + "." + jwtParts[1]).getBytes());
-            if (!signature.verify(jwtSignatureBytes)) {
-                throw new GeneralSecurityException("signature verification failed");
-            }
-        }
-        return Base64Url.decode(jwtParts[1]);
     }
 
     /**
@@ -142,24 +76,6 @@ public final class Utils {
     public static boolean isRetrievalRequest(final HttpServletRequest req) {
 
         return isGetRequest(req) || isHeadRequest(req);
-    }
-
-    /**
-     * Maps <a href=
-     * "http://tools.ietf.org/html/draft-ietf-jose-json-web-algorithms-29">JSON
-     * Web Algorithm</a> names to <a href=
-     * "http://docs.oracle.com/javase/7/docs/technotes/guides/security/SunProviders.html"
-     * >Java Crypto</a> names. If the mapping is not known then the original
-     * value is returned.
-     *
-     * @param alg
-     *            algorithm name
-     * @return algorithm name
-     */
-    public static String toJavaAlgorithm(final String alg) {
-
-        return JsonWebAlgorithm.valueOf(alg)
-                .toJca();
     }
 
     /**

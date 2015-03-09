@@ -115,7 +115,7 @@ public class JsonWebTokenBuilder {
     public JsonWebTokenBuilder jwk(final JsonWebKey jwk) {
 
         this.jwk = jwk;
-        if (jwk.getAlg() != null) {
+        if (jwk.getAlg() == null) {
             alg = jwk.getAlg();
         }
         return this;

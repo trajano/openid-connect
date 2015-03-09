@@ -14,6 +14,15 @@ import javax.crypto.Mac;
 
 import net.trajano.openidconnect.crypto.NamedEllipticCurve;
 
+/**
+ * <p>
+ * This maps the algorithms to their JCA counterparts.
+ * </p>
+ * See Appendix A & B of
+ * http://self-issued.info/docs/draft-ietf-jose-json-web-algorithms-00.html.
+ * 
+ * @author Archimedes
+ */
 public class JcaJsonWebAlgorithm {
 
     /**

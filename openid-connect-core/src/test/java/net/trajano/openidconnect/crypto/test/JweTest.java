@@ -15,7 +15,6 @@ import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
 import net.trajano.openidconnect.crypto.Base64Url;
-import net.trajano.openidconnect.crypto.JWE;
 import net.trajano.openidconnect.crypto.JoseHeader;
 import net.trajano.openidconnect.crypto.JsonWebKey;
 import net.trajano.openidconnect.internal.JcaJsonWebAlgorithm;
