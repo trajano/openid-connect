@@ -1,13 +1,14 @@
 package net.trajano.openidconnect.core;
 
 import java.net.URI;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-
-import net.trajano.openidconnect.crypto.JsonWebAlgorithm;
 
 /**
  * <p>
@@ -42,41 +43,36 @@ public class OpenIdProviderConfiguration {
      * </p>
      */
     @XmlElement(name = "request_object_encryption_alg_values_supported")
-    private Set<JsonWebAlgorithm> requestObjectEncryptionAlgValuesSupported;
+    private Set<String> requestObjectEncryptionAlgValuesSupported;
 
-    
-    public Set<JsonWebAlgorithm> getRequestObjectEncryptionAlgValuesSupported() {
-    
+    public Set<String> getRequestObjectEncryptionAlgValuesSupported() {
+
         return requestObjectEncryptionAlgValuesSupported;
     }
 
-    
-    public void setRequestObjectEncryptionAlgValuesSupported(Set<JsonWebAlgorithm> requestObjectEncryptionAlgValuesSupported) {
-    
-        this.requestObjectEncryptionAlgValuesSupported = requestObjectEncryptionAlgValuesSupported;
+    public void setRequestObjectEncryptionAlgValuesSupported(String... alg) {
+
+        this.requestObjectEncryptionAlgValuesSupported = new HashSet<>(Arrays.asList(alg));
     }
 
-    
-    public Set<JsonWebAlgorithm> getRequestObjectEncryptionEncValuesSupported() {
-    
+    public Set<String> getRequestObjectEncryptionEncValuesSupported() {
+
         return requestObjectEncryptionEncValuesSupported;
     }
 
-    
-    public void setRequestObjectEncryptionEncValuesSupported(Set<JsonWebAlgorithm> requestObjectEncryptionEncValuesSupported) {
-    
-        this.requestObjectEncryptionEncValuesSupported = requestObjectEncryptionEncValuesSupported;
+    public void setRequestObjectEncryptionEncValuesSupported(String... enc) {
+
+        this.requestObjectEncryptionEncValuesSupported = new HashSet<>(Arrays.asList(enc));
+
     }
 
-    
     public URI getCheckSessionIframe() {
-    
+
         return checkSessionIframe;
     }
 
-    
     public void setCheckSessionIframe(URI checkSessionIframe) {
-    
+
         this.checkSessionIframe = checkSessionIframe;
     }
 
@@ -93,7 +89,7 @@ public class OpenIdProviderConfiguration {
      * </p>
      */
     @XmlElement(name = "request_object_encryption_enc_values_supported")
-    private Set<JsonWebAlgorithm> requestObjectEncryptionEncValuesSupported;
+    private Set<String> requestObjectEncryptionEncValuesSupported;
 
     /**
      * JSON array containing a list of the Authentication Context Class
@@ -144,13 +140,13 @@ public class OpenIdProviderConfiguration {
     private URI endSessionEndpoint;
 
     @XmlElement(name = "id_token_encryption_alg_values_supported")
-    private Set<JsonWebAlgorithm> idTokenEncryptionAlgValuesSupported;
+    private List<String> idTokenEncryptionAlgValuesSupported;
 
     @XmlElement(name = "id_token_encryption_enc_values_supported")
-    private Set<JsonWebAlgorithm> idTokenEncryptionEncValuesSupported;
+    private List<String> idTokenEncryptionEncValuesSupported;
 
     @XmlElement(name = "id_token_signing_alg_values_supported")
-    private Set<JsonWebAlgorithm> idTokenSigningAlgValuesSupported;
+    private List<String> idTokenSigningAlgValuesSupported;
 
     /**
      * URL using the https scheme with no query or fragment component that the
@@ -186,7 +182,7 @@ public class OpenIdProviderConfiguration {
     private URI registrationEndpoint;
 
     @XmlElement(name = "request_object_signing_alg_values_supported")
-    private Set<JsonWebAlgorithm> requestObjectSigningAlgValuesSupported;
+    private List<String> requestObjectSigningAlgValuesSupported;
 
     /**
      * Boolean value specifying whether the OP supports use of the request
@@ -258,16 +254,16 @@ public class OpenIdProviderConfiguration {
     Set<String> tokenEndpointAuthMethodsSupported;
 
     @XmlElement(name = "token_endpoint_auth_signing_alg_values_supported")
-    private Set<JsonWebAlgorithm> tokenEndpointAuthSigningAlgValuesSupported;
+    private Set<String> tokenEndpointAuthSigningAlgValuesSupported;
 
     @XmlElement(name = "ui_locales_supported")
     private Set<Locale> uiLocalesSupported;
 
     @XmlElement(name = "userinfo_encryption_alg_values_supported")
-    private Set<JsonWebAlgorithm> userinfoEncryptionAlgValuesSupported;
+    private Set<String> userinfoEncryptionAlgValuesSupported;
 
     @XmlElement(name = "userinfo_encryption_enc_values_supported")
-    private Set<JsonWebAlgorithm> userinfoEncryptionEncValuesSupported;
+    private Set<String> userinfoEncryptionEncValuesSupported;
 
     /**
      * URL of the OP's UserInfo Endpoint [OpenID.Core]. This URL MUST use the
@@ -277,7 +273,7 @@ public class OpenIdProviderConfiguration {
     private URI userinfoEndpoint;
 
     @XmlElement(name = "userinfo_signing_alg_values_supported")
-    private Set<JsonWebAlgorithm> userinfoSigningAlgValuesSupported;
+    private Set<String> userinfoSigningAlgValuesSupported;
 
     public Set<String> getAcrValuesSupported() {
 
@@ -309,17 +305,17 @@ public class OpenIdProviderConfiguration {
         return endSessionEndpoint;
     }
 
-    public Set<JsonWebAlgorithm> getIdTokenEncryptionAlgValuesSupported() {
+    public List<String> getIdTokenEncryptionAlgValuesSupported() {
 
         return idTokenEncryptionAlgValuesSupported;
     }
 
-    public Set<JsonWebAlgorithm> getIdTokenEncryptionEncValuesSupported() {
+    public List<String> getIdTokenEncryptionEncValuesSupported() {
 
         return idTokenEncryptionEncValuesSupported;
     }
 
-    public Set<JsonWebAlgorithm> getIdTokenSigningAlgValuesSupported() {
+    public List<String> getIdTokenSigningAlgValuesSupported() {
 
         return idTokenSigningAlgValuesSupported;
     }
@@ -339,7 +335,7 @@ public class OpenIdProviderConfiguration {
         return registrationEndpoint;
     }
 
-    public Set<JsonWebAlgorithm> getRequestObjectSigningAlgValuesSupported() {
+    public List<String> getRequestObjectSigningAlgValuesSupported() {
 
         return requestObjectSigningAlgValuesSupported;
     }
@@ -379,7 +375,7 @@ public class OpenIdProviderConfiguration {
         return tokenEndpointAuthMethodsSupported;
     }
 
-    public Set<JsonWebAlgorithm> getTokenEndpointAuthSigningAlgValuesSupported() {
+    public Set<String> getTokenEndpointAuthSigningAlgValuesSupported() {
 
         return tokenEndpointAuthSigningAlgValuesSupported;
     }
@@ -389,12 +385,12 @@ public class OpenIdProviderConfiguration {
         return uiLocalesSupported;
     }
 
-    public Set<JsonWebAlgorithm> getUserinfoEncryptionAlgValuesSupported() {
+    public Set<String> getUserinfoEncryptionAlgValuesSupported() {
 
         return userinfoEncryptionAlgValuesSupported;
     }
 
-    public Set<JsonWebAlgorithm> getUserinfoEncryptionEncValuesSupported() {
+    public Set<String> getUserinfoEncryptionEncValuesSupported() {
 
         return userinfoEncryptionEncValuesSupported;
     }
@@ -404,7 +400,7 @@ public class OpenIdProviderConfiguration {
         return userinfoEndpoint;
     }
 
-    public Set<JsonWebAlgorithm> getUserinfoSigningAlgValuesSupported() {
+    public Set<String> getUserinfoSigningAlgValuesSupported() {
 
         return userinfoSigningAlgValuesSupported;
     }
@@ -464,19 +460,19 @@ public class OpenIdProviderConfiguration {
         this.endSessionEndpoint = endSessionEndpoint;
     }
 
-    public void setIdTokenEncryptionAlgValuesSupported(final Set<JsonWebAlgorithm> idTokenEncryptionAlgValuesSupported) {
+    public void setIdTokenEncryptionAlgValuesSupported(final String... alg) {
 
-        this.idTokenEncryptionAlgValuesSupported = idTokenEncryptionAlgValuesSupported;
+        this.idTokenEncryptionAlgValuesSupported = Arrays.asList(alg);
     }
 
-    public void setIdTokenEncryptionEncValuesSupported(final Set<JsonWebAlgorithm> idTokenEncryptionEncValuesSupported) {
+    public void setIdTokenEncryptionEncValuesSupported(final String... enc) {
 
-        this.idTokenEncryptionEncValuesSupported = idTokenEncryptionEncValuesSupported;
+        this.idTokenEncryptionEncValuesSupported = Arrays.asList(enc);
     }
 
-    public void setIdTokenSigningAlgValuesSupported(final Set<JsonWebAlgorithm> idTokenSigningAlgValuesSupported) {
+    public void setIdTokenSigningAlgValuesSupported(final String... alg) {
 
-        this.idTokenSigningAlgValuesSupported = idTokenSigningAlgValuesSupported;
+        this.idTokenSigningAlgValuesSupported = Arrays.asList(alg);
     }
 
     public void setIssuer(final String issuer) {
@@ -494,9 +490,9 @@ public class OpenIdProviderConfiguration {
         this.registrationEndpoint = registrationEndpoint;
     }
 
-    public void setRequestObjectSigningAlgValuesSupported(final Set<JsonWebAlgorithm> requestObjectSigningAlgValuesSupported) {
+    public void setRequestObjectSigningAlgValuesSupported(final String... alg) {
 
-        this.requestObjectSigningAlgValuesSupported = requestObjectSigningAlgValuesSupported;
+        this.requestObjectSigningAlgValuesSupported = Arrays.asList(alg);
     }
 
     public void setRequestParameterSupported(final boolean requestParameterSupported) {
@@ -544,7 +540,7 @@ public class OpenIdProviderConfiguration {
         this.tokenEndpointAuthMethodsSupported = tokenEndpointAuthMethodsSupported;
     }
 
-    public void setTokenEndpointAuthSigningAlgValuesSupported(final Set<JsonWebAlgorithm> tokenEndpointAuthSigningAlgValuesSupported) {
+    public void setTokenEndpointAuthSigningAlgValuesSupported(final Set<String> tokenEndpointAuthSigningAlgValuesSupported) {
 
         this.tokenEndpointAuthSigningAlgValuesSupported = tokenEndpointAuthSigningAlgValuesSupported;
     }
@@ -554,12 +550,12 @@ public class OpenIdProviderConfiguration {
         this.uiLocalesSupported = uiLocalesSupported;
     }
 
-    public void setUserinfoEncryptionAlgValuesSupported(final Set<JsonWebAlgorithm> userinfoEncryptionAlgValuesSupported) {
+    public void setUserinfoEncryptionAlgValuesSupported(final Set<String> userinfoEncryptionAlgValuesSupported) {
 
         this.userinfoEncryptionAlgValuesSupported = userinfoEncryptionAlgValuesSupported;
     }
 
-    public void setUserinfoEncryptionEncValuesSupported(final Set<JsonWebAlgorithm> userinfoEncryptionEncValuesSupported) {
+    public void setUserinfoEncryptionEncValuesSupported(final Set<String> userinfoEncryptionEncValuesSupported) {
 
         this.userinfoEncryptionEncValuesSupported = userinfoEncryptionEncValuesSupported;
     }
@@ -569,7 +565,7 @@ public class OpenIdProviderConfiguration {
         this.userinfoEndpoint = userinfoEndpoint;
     }
 
-    public void setUserinfoSigningAlgValuesSupported(final Set<JsonWebAlgorithm> userinfoSigningAlgValuesSupported) {
+    public void setUserinfoSigningAlgValuesSupported(final Set<String> userinfoSigningAlgValuesSupported) {
 
         this.userinfoSigningAlgValuesSupported = userinfoSigningAlgValuesSupported;
     }

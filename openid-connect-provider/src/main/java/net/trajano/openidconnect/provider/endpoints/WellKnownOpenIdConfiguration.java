@@ -16,7 +16,6 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 
 import net.trajano.openidconnect.core.OpenIdProviderConfiguration;
-import net.trajano.openidconnect.crypto.JsonWebAlgorithm;
 import net.trajano.openidconnect.provider.internal.HashSet2;
 import net.trajano.openidconnect.provider.spi.ClientManager;
 import net.trajano.openidconnect.provider.spi.KeyProvider;
@@ -109,8 +108,9 @@ public class WellKnownOpenIdConfiguration {
         openIdConfiguration.setScopesSupported(new HashSet2<String>("openid", "email", "profile"));
         openIdConfiguration.setResponseTypesSupported(new HashSet2<String>(CODE, ID_TOKEN, ID_TOKEN_TOKEN, CODE_ID_TOKEN, CODE_TOKEN, CODE_ID_TOKEN_TOKEN));
         openIdConfiguration.setRequestParameterSupported(true);
-        openIdConfiguration.setRequestObjectEncryptionAlgValuesSupported(new HashSet2<JsonWebAlgorithm>(JsonWebAlgorithm.RSA_OAEP, JsonWebAlgorithm.RSA1_5));
-        openIdConfiguration.setRequestObjectEncryptionEncValuesSupported(new HashSet2<JsonWebAlgorithm>(JsonWebAlgorithm.A256CBC));
+        openIdConfiguration.setIdTokenSigningAlgValuesSupported("RS256");
+        openIdConfiguration.setRequestObjectEncryptionAlgValuesSupported("RSA-OAEP", "RSA1_5");
+        openIdConfiguration.setRequestObjectEncryptionEncValuesSupported("A256CBC");
 
         final CacheControl cacheControl = new CacheControl();
         cacheControl.setPrivate(false);
