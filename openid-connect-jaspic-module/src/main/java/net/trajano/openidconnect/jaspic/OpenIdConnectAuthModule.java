@@ -61,10 +61,14 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 
+import net.trajano.openidconnect.auth.AuthenticationRequest;
 import net.trajano.openidconnect.auth.ResponseMode;
+import net.trajano.openidconnect.auth.ResponseType;
 import net.trajano.openidconnect.core.OpenIdConnectKey;
 import net.trajano.openidconnect.core.OpenIdProviderConfiguration;
 import net.trajano.openidconnect.crypto.Base64Url;
+import net.trajano.openidconnect.crypto.JsonWebAlgorithm;
+import net.trajano.openidconnect.crypto.JsonWebTokenBuilder;
 import net.trajano.openidconnect.jaspic.internal.CipherUtil;
 import net.trajano.openidconnect.jaspic.internal.NullHostnameVerifier;
 import net.trajano.openidconnect.jaspic.internal.NullX509TrustManager;
@@ -82,10 +86,37 @@ import net.trajano.openidconnect.token.IdTokenResponse;
  * applications and uses the OAuth token to manage the authentication state. The
  * e-mail addresses are not requested.
  * </p>
- * 
+ *
  * @author Archimedes Trajano
  */
 public class OpenIdConnectAuthModule implements ServerAuthModule, ServerAuthContext {
+
+    /**
+     * Access token attribute name.
+     */
+    public static final String ACCESS_TOKEN_KEY = "auth_access";
+
+    /**
+     * Cookie context option key. The value is optional.
+     */
+    public static final String COOKIE_CONTEXT_KEY = "cookie_context";
+
+    /**
+     * Disable HTTP certificate checks key. This this is set to true, the auth
+     * module will disable HTTPS certificate checks for the REST client
+     * connections. This should only be used in development.
+     */
+    public static final String DISABLE_CERTIFICATE_CHECKS_KEY = "disable_certificate_checks";
+
+    /**
+     * https prefix.
+     */
+    protected static final String HTTPS_PREFIX = "https://";
+
+    /**
+     * Open ID token attribute name.
+     */
+    public static final String ID_TOKEN_KEY = "auth_idtoken";
 
     /**
      * Issuer URI option key.
@@ -98,14 +129,76 @@ public class OpenIdConnectAuthModule implements ServerAuthModule, ServerAuthCont
     private static final Logger LOG;
 
     /**
+     * Logger for configuration.
+     */
+    protected static final Logger LOGCONFIG;
+
+    /**
+     * URI to go to when the user has logged out relative to the context path.
+     */
+    public static final String LOGOUT_GOTO_URI_KEY = "logout_goto_uri";
+
+    public static final String LOGOUT_URI_KEY = "logout_uri";
+
+    /**
      * Messages resource path.
      */
     private static final String MESSAGES = "META-INF/Messages";
 
     /**
+     * Age cookie name. The value of this cookie is an encrypted version of the
+     * IP Address and will expire based on the max age of the token.
+     */
+    public static final String NET_TRAJANO_AUTH_AGE = "net.trajano.oidc.age";
+
+    /**
+     * ID token cookie name. This one expires when the browser closes.
+     */
+    public static final String NET_TRAJANO_AUTH_ID = "net.trajano.oidc.id";
+
+    /**
+     * Nonce cookie name. This one expires when the browser closes.
+     */
+    public static final String NET_TRAJANO_AUTH_NONCE = "net.trajano.oidc.nonce";
+
+    /**
      * Resource bundle.
      */
     private static final ResourceBundle R;
+
+    /**
+     * Redirection endpoint URI key. The value is optional and defaults to the
+     * context root of the application.
+     */
+    public static final String REDIRECTION_ENDPOINT_URI_KEY = "redirection_endpoint"; //$NON-NLS-1$
+
+    /**
+     * Refresh token attribute name.
+     */
+    public static final String REFRESH_TOKEN_KEY = "auth_refresh";
+
+    /**
+     * Token URI key. The value is optional and if not specified, the token
+     * request functionality will not be available.
+     */
+    public static final String TOKEN_URI_KEY = "token_uri";
+
+    /**
+     * User info attribute name.
+     */
+    public static final String USERINFO_KEY = "auth_userinfo";
+
+    /**
+     * User Info URI key. The value is optional and if not specified, the
+     * userinfo request functionality will not be available.
+     */
+    public static final String USERINFO_URI_KEY = "userinfo_uri";
+
+    static {
+        LOG = Logger.getLogger("net.trajano.oidc.jaspic", MESSAGES);
+        LOGCONFIG = Logger.getLogger("net.trajano.oidc.jaspic.config", MESSAGES);
+        R = ResourceBundle.getBundle(MESSAGES);
+    }
 
     /**
      * Client ID. This is set through {@value #CLIENT_ID_KEY} option.
@@ -191,117 +284,6 @@ public class OpenIdConnectAuthModule implements ServerAuthModule, ServerAuthCont
     private String userInfoUri;
 
     /**
-     * Access token attribute name.
-     */
-    public static final String ACCESS_TOKEN_KEY = "auth_access";
-
-    /**
-     * Cookie context option key. The value is optional.
-     */
-    public static final String COOKIE_CONTEXT_KEY = "cookie_context";
-
-    /**
-     * Disable HTTP certificate checks key. This this is set to true, the auth
-     * module will disable HTTPS certificate checks for the REST client
-     * connections. This should only be used in development.
-     */
-    public static final String DISABLE_CERTIFICATE_CHECKS_KEY = "disable_certificate_checks";
-
-    /**
-     * https prefix.
-     */
-    protected static final String HTTPS_PREFIX = "https://";
-
-    /**
-     * Open ID token attribute name.
-     */
-    public static final String ID_TOKEN_KEY = "auth_idtoken";
-
-    /**
-     * Logger for configuration.
-     */
-    protected static final Logger LOGCONFIG;
-
-    /**
-     * URI to go to when the user has logged out relative to the context path.
-     */
-    public static final String LOGOUT_GOTO_URI_KEY = "logout_goto_uri";
-
-    public static final String LOGOUT_URI_KEY = "logout_uri";
-
-    /**
-     * Age cookie name. The value of this cookie is an encrypted version of the
-     * IP Address and will expire based on the max age of the token.
-     */
-    public static final String NET_TRAJANO_AUTH_AGE = "net.trajano.oidc.age";
-
-    /**
-     * ID token cookie name. This one expires when the browser closes.
-     */
-    public static final String NET_TRAJANO_AUTH_ID = "net.trajano.oidc.id";
-
-    /**
-     * Nonce cookie name. This one expires when the browser closes.
-     */
-    public static final String NET_TRAJANO_AUTH_NONCE = "net.trajano.oidc.nonce";
-
-    /**
-     * Redirection endpoint URI key. The value is optional and defaults to the
-     * context root of the application.
-     */
-    public static final String REDIRECTION_ENDPOINT_URI_KEY = "redirection_endpoint"; //$NON-NLS-1$
-
-    /**
-     * Refresh token attribute name.
-     */
-    public static final String REFRESH_TOKEN_KEY = "auth_refresh";
-
-    /**
-     * Token URI key. The value is optional and if not specified, the token
-     * request functionality will not be available.
-     */
-    public static final String TOKEN_URI_KEY = "token_uri";
-
-    /**
-     * User info attribute name.
-     */
-    public static final String USERINFO_KEY = "auth_userinfo";
-
-    /**
-     * User Info URI key. The value is optional and if not specified, the
-     * userinfo request functionality will not be available.
-     */
-    public static final String USERINFO_URI_KEY = "userinfo_uri";
-
-    /**
-     * Lets subclasses change the provider configuration.
-     *
-     * @param req
-     *            request message
-     * @param client
-     *            REST client
-     * @param options
-     *            module options
-     * @return configuration
-     * @throws AuthException
-     *             wraps exceptions thrown during processing
-     */
-    protected OpenIdProviderConfiguration getOpenIDProviderConfig(final HttpServletRequest req,
-            final Client restClient,
-            final Map<String, String> options) throws AuthException {
-
-        final String issuerUri = options.get(ISSUER_URI_KEY);
-        if (issuerUri == null) {
-            LOG.log(Level.SEVERE, "missingOption", ISSUER_URI_KEY);
-            throw new AuthException(MessageFormat.format(R.getString("missingOption"), ISSUER_URI_KEY));
-        }
-        return restClient.target(URI.create(issuerUri)
-                .resolve("/.well-known/openid-configuration"))
-                .request(MediaType.APPLICATION_JSON_TYPE)
-                .get(OpenIdProviderConfiguration.class);
-    }
-
-    /**
      * Builds a REST client that bypasses SSL security checks. Made public so it
      * can be used for testing.
      *
@@ -374,7 +356,7 @@ public class OpenIdConnectAuthModule implements ServerAuthModule, ServerAuthCont
      * @throws IOException
      */
     private String getIdToken(final HttpServletRequest req) throws GeneralSecurityException,
-            IOException {
+    IOException {
 
         final Cookie[] cookies = req.getCookies();
         if (cookies == null) {
@@ -409,7 +391,7 @@ public class OpenIdConnectAuthModule implements ServerAuthModule, ServerAuthCont
      * @throws IOException
      */
     private String getNonceFromCookie(final HttpServletRequest req) throws GeneralSecurityException,
-            IOException {
+    IOException {
 
         final Cookie[] cookies = req.getCookies();
         if (cookies == null) {
@@ -422,6 +404,34 @@ public class OpenIdConnectAuthModule implements ServerAuthModule, ServerAuthCont
             }
         }
         return null;
+    }
+
+    /**
+     * Lets subclasses change the provider configuration.
+     *
+     * @param req
+     *            request message
+     * @param client
+     *            REST client
+     * @param options
+     *            module options
+     * @return configuration
+     * @throws AuthException
+     *             wraps exceptions thrown during processing
+     */
+    protected OpenIdProviderConfiguration getOpenIDProviderConfig(final HttpServletRequest req,
+            final Client restClient,
+            final Map<String, String> options) throws AuthException {
+
+        final String issuerUri = options.get(ISSUER_URI_KEY);
+        if (issuerUri == null) {
+            LOG.log(Level.SEVERE, "missingOption", ISSUER_URI_KEY);
+            throw new AuthException(MessageFormat.format(R.getString("missingOption"), ISSUER_URI_KEY));
+        }
+        return restClient.target(URI.create(issuerUri)
+                .resolve("/.well-known/openid-configuration"))
+                .request(MediaType.APPLICATION_JSON_TYPE)
+                .get(OpenIdProviderConfiguration.class);
     }
 
     /**
@@ -535,16 +545,13 @@ public class OpenIdConnectAuthModule implements ServerAuthModule, ServerAuthCont
      * Gets the web keys from the options and the OpenID provider configuration.
      * This may be overridden by clients.
      *
-     * @param options
-     *            module options
      * @param config
      *            provider configuration
      * @return web keys
      * @throws GeneralSecurityException
      *             wraps exceptions thrown during processing
      */
-    private net.trajano.openidconnect.crypto.JsonWebKeySet getWebKeys(final Map<String, String> options,
-            final OpenIdProviderConfiguration config) throws GeneralSecurityException {
+    private net.trajano.openidconnect.crypto.JsonWebKeySet getWebKeys(final OpenIdProviderConfiguration config) throws GeneralSecurityException {
 
         return restClient.target(config.getJwksUri())
                 .request(MediaType.APPLICATION_JSON_TYPE)
@@ -587,7 +594,7 @@ public class OpenIdConnectAuthModule implements ServerAuthModule, ServerAuthCont
 
         final OpenIdProviderConfiguration oidProviderConfig = getOpenIDProviderConfig(req, restClient, moduleOptions);
         final IdTokenResponse token = getToken(req, oidProviderConfig);
-        final net.trajano.openidconnect.crypto.JsonWebKeySet webKeys = getWebKeys(moduleOptions, oidProviderConfig);
+        final net.trajano.openidconnect.crypto.JsonWebKeySet webKeys = getWebKeys(oidProviderConfig);
 
         LOG.log(Level.FINEST, "tokenValue", token);
         final JsonObject claimsSet = Json.createReader(new ByteArrayInputStream(getJwsPayload(token.getEncodedIdToken(), webKeys)))
@@ -815,7 +822,6 @@ public class OpenIdConnectAuthModule implements ServerAuthModule, ServerAuthCont
             final HttpServletResponse resp,
             final String reason) throws AuthException {
 
-        System.out.println(reason);
         LOG.log(Level.FINE, "redirecting", new Object[] { reason });
         URI authorizationEndpointUri = null;
         try {
@@ -844,17 +850,43 @@ public class OpenIdConnectAuthModule implements ServerAuthModule, ServerAuthCont
             nonceCookie.setHttpOnly(true);
             nonceCookie.setSecure(true);
             resp.addCookie(nonceCookie);
-            final UriBuilder b = UriBuilder.fromUri(oidProviderConfig.getAuthorizationEndpoint())
-                    .queryParam(CLIENT_ID, clientId)
-                    .queryParam(RESPONSE_TYPE, "code")
-                    .queryParam(SCOPE, scope)
-                    .queryParam(REDIRECT_URI, URI.create(req.getRequestURL()
-                            .toString())
-                            .resolve(moduleOptions.get(REDIRECTION_ENDPOINT_URI_KEY)))
-                    .queryParam(STATE, state)
-                    .queryParam(NONCE, nonce);
-            if (responseMode != ResponseMode.query) {
-                b.queryParam(RESPONSE_MODE, responseMode.toString());
+
+            final UriBuilder b = UriBuilder.fromUri(oidProviderConfig.getAuthorizationEndpoint());
+            if (oidProviderConfig.isRequestParameterSupported()) {
+                final URI redirectUri = URI.create(req.getRequestURL()
+                        .toString())
+                        .resolve(moduleOptions.get(REDIRECTION_ENDPOINT_URI_KEY));
+
+                final AuthenticationRequest.Builder ab = new AuthenticationRequest.Builder().clientId(clientId)
+                        .scope(scope)
+                        .redirectUri(redirectUri)
+                        .responseType(ResponseType.code)
+                        .state(state)
+                        .nonce(nonce)
+                        .responseMode(responseMode);
+
+                final JsonWebTokenBuilder jwtBuilder = new JsonWebTokenBuilder().alg(JsonWebAlgorithm.RSA_OAEP)
+                        .enc(JsonWebAlgorithm.A256CBC)
+                        .compress(true)
+                        .jwk(getWebKeys(oidProviderConfig))
+                        .payload(ab.build()
+                                .toJsonObject());
+                b.queryParam(OpenIdConnectKey.REQUEST, jwtBuilder.build()
+                        .toString());
+
+            } else {
+                b.queryParam(CLIENT_ID, clientId)
+                .queryParam(RESPONSE_TYPE, "code")
+                .queryParam(SCOPE, scope)
+                .queryParam(REDIRECT_URI, URI.create(req.getRequestURL()
+                        .toString())
+                        .resolve(moduleOptions.get(REDIRECTION_ENDPOINT_URI_KEY)))
+                        .queryParam(STATE, state)
+                        .queryParam(NONCE, nonce);
+
+                if (responseMode != ResponseMode.query) {
+                    b.queryParam(RESPONSE_MODE, responseMode.toString());
+                }
             }
             authorizationEndpointUri = b.build();
             deleteAuthCookies(resp);
@@ -958,7 +990,7 @@ public class OpenIdConnectAuthModule implements ServerAuthModule, ServerAuthCont
                     .equals(tokenUri)) {
                 resp.setContentType(MediaType.APPLICATION_JSON);
                 resp.getWriter()
-                        .print(tokenCookie.getIdToken());
+                .print(tokenCookie.getIdToken());
                 return AuthStatus.SEND_SUCCESS;
             }
 
@@ -966,7 +998,7 @@ public class OpenIdConnectAuthModule implements ServerAuthModule, ServerAuthCont
                     .equals(userInfoUri)) {
                 resp.setContentType(MediaType.APPLICATION_JSON);
                 resp.getWriter()
-                        .print(tokenCookie.getUserInfo());
+                .print(tokenCookie.getUserInfo());
                 return AuthStatus.SEND_SUCCESS;
             }
 
@@ -1041,11 +1073,5 @@ public class OpenIdConnectAuthModule implements ServerAuthModule, ServerAuthCont
                     .getName(), "validateRequest", e);
             return redirectToAuthorizationEndpoint(req, resp, e.getMessage());
         }
-    }
-
-    static {
-        LOG = Logger.getLogger("net.trajano.oidc.jaspic", MESSAGES);
-        LOGCONFIG = Logger.getLogger("net.trajano.oidc.jaspic.config", MESSAGES);
-        R = ResourceBundle.getBundle(MESSAGES);
     }
 }

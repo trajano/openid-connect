@@ -4,18 +4,14 @@ import static net.trajano.openidconnect.core.ErrorCode.invalid_grant;
 import static net.trajano.openidconnect.core.ErrorCode.login_required;
 
 import java.io.IOException;
-import java.net.URI;
 import java.security.GeneralSecurityException;
 
 import javax.ejb.EJB;
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
-import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
@@ -24,14 +20,13 @@ import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriBuilder;
 
 import net.trajano.openidconnect.auth.AuthenticationRequest;
-import net.trajano.openidconnect.auth.Display;
 import net.trajano.openidconnect.auth.Prompt;
 import net.trajano.openidconnect.core.ErrorResponse;
 import net.trajano.openidconnect.core.OpenIdConnectException;
-import net.trajano.openidconnect.core.OpenIdConnectKey;
 import net.trajano.openidconnect.core.RedirectedOpenIdProviderException;
 import net.trajano.openidconnect.provider.spi.Authenticator;
 import net.trajano.openidconnect.provider.spi.ClientManager;
+import net.trajano.openidconnect.provider.spi.KeyProvider;
 
 /**
  * <p>
@@ -53,6 +48,8 @@ public class AuthorizationEndpoint {
 
     private Authenticator authenticator;
 
+    private KeyProvider keyProvider;
+
     private ClientManager clientManager;
 
     /**
@@ -67,23 +64,10 @@ public class AuthorizationEndpoint {
      * @throws IOException
      */
     @GET
-    public Response getOp(@QueryParam(OpenIdConnectKey.ACR_VALUES) final String acrValues,
-            @QueryParam(OpenIdConnectKey.CLIENT_ID) @NotNull final String clientId,
-            @QueryParam(OpenIdConnectKey.DISPLAY) final Display display,
-            @QueryParam(OpenIdConnectKey.ID_TOKEN_HINT) final String idTokenHint,
-            @QueryParam(OpenIdConnectKey.LOGIN_HINT) final String loginHint,
-            @QueryParam(OpenIdConnectKey.MAX_AGE) final Integer maxAge,
-            @QueryParam(OpenIdConnectKey.NONCE) final String nonce,
-            @QueryParam(OpenIdConnectKey.PROMPT) final Prompt prompt,
-            @QueryParam(OpenIdConnectKey.REDIRECT_URI) @NotNull final URI redirectUri,
-            @QueryParam(OpenIdConnectKey.RESPONSE_MODE) final String responseMode,
-            @QueryParam(OpenIdConnectKey.RESPONSE_TYPE) @NotNull final String responseType,
-            @QueryParam(OpenIdConnectKey.SCOPE) @NotNull final String scope,
-            @QueryParam(OpenIdConnectKey.STATE) final String state,
-            @QueryParam(OpenIdConnectKey.UI_LOCALES) final String uiLocales,
-            @Context final HttpServletRequest req) throws IOException, GeneralSecurityException {
+    public Response getOp(@Context final HttpServletRequest req) throws IOException,
+            GeneralSecurityException {
 
-        return op(acrValues, clientId, display, idTokenHint, loginHint, maxAge, nonce, prompt, redirectUri, responseMode, responseType, scope, state, uiLocales, req);
+        return op(req);
     }
 
     /**
@@ -100,28 +84,16 @@ public class AuthorizationEndpoint {
      * per Section 13.1. If using the HTTP POST method, the request parameters
      * are serialized using Form Serialization, per Section 13.2.
      * </p>
-     * @throws GeneralSecurityException 
-     * @throws IOException 
+     * 
+     * @throws GeneralSecurityException
+     * @throws IOException
      */
     @POST
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-    public Response op(@FormParam(OpenIdConnectKey.ACR_VALUES) final String acrValues,
-            @FormParam(OpenIdConnectKey.CLIENT_ID) @NotNull final String clientId,
-            @FormParam(OpenIdConnectKey.DISPLAY) final Display display,
-            @FormParam(OpenIdConnectKey.ID_TOKEN_HINT) final String idTokenHint,
-            @FormParam(OpenIdConnectKey.LOGIN_HINT) final String loginHint,
-            @FormParam(OpenIdConnectKey.MAX_AGE) final Integer maxAge,
-            @FormParam(OpenIdConnectKey.NONCE) final String nonce,
-            @FormParam(OpenIdConnectKey.PROMPT) final Prompt prompt,
-            @FormParam(OpenIdConnectKey.REDIRECT_URI) @NotNull final URI redirectUri,
-            @FormParam(OpenIdConnectKey.RESPONSE_MODE) final String responseMode,
-            @FormParam(OpenIdConnectKey.RESPONSE_TYPE) @NotNull final String responseType,
-            @FormParam(OpenIdConnectKey.SCOPE) @NotNull final String scope,
-            @FormParam(OpenIdConnectKey.STATE) final String state,
-            @FormParam(OpenIdConnectKey.UI_LOCALES) final String uiLocales,
-            @Context final HttpServletRequest req) throws IOException, GeneralSecurityException {
+    public Response op(@Context final HttpServletRequest req) throws IOException,
+            GeneralSecurityException {
 
-        final AuthenticationRequest authenticationRequest = new AuthenticationRequest(req);
+        final AuthenticationRequest authenticationRequest = new AuthenticationRequest(req, keyProvider.getPrivateJwks());
 
         if (!clientManager.isRedirectUriValidForClient(authenticationRequest.getClientId(), authenticationRequest.getRedirectUri())) {
             throw new OpenIdConnectException(invalid_grant, "redirect URI is not supported for the client");
@@ -155,6 +127,12 @@ public class AuthorizationEndpoint {
     public void setClientManager(final ClientManager clientManager) {
 
         this.clientManager = clientManager;
+    }
+
+    @EJB
+    public void setKeyProvider(final KeyProvider keyProvider) {
+
+        this.keyProvider = keyProvider;
     }
 
 }

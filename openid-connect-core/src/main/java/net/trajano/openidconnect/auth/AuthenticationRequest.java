@@ -2,7 +2,6 @@ package net.trajano.openidconnect.auth;
 
 import static net.trajano.openidconnect.core.ErrorCode.invalid_request;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.Serializable;
 import java.net.URI;
@@ -18,9 +17,9 @@ import java.util.Set;
 import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
-import javax.json.JsonReader;
 import javax.json.JsonValue.ValueType;
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.constraints.NotNull;
 import javax.ws.rs.BadRequestException;
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -28,10 +27,9 @@ import net.trajano.openidconnect.core.ErrorResponse;
 import net.trajano.openidconnect.core.OpenIdConnectKey;
 import net.trajano.openidconnect.core.RedirectedOpenIdProviderException;
 import net.trajano.openidconnect.core.Scope;
-import net.trajano.openidconnect.crypto.JWE;
-import net.trajano.openidconnect.crypto.JsonWebAlgorithm;
 import net.trajano.openidconnect.crypto.JsonWebKeySet;
 import net.trajano.openidconnect.crypto.JsonWebToken;
+import net.trajano.openidconnect.crypto.JsonWebTokenProcessor;
 import net.trajano.openidconnect.internal.Util;
 
 /**
@@ -44,9 +42,154 @@ import net.trajano.openidconnect.internal.Util;
 public class AuthenticationRequest implements Serializable {
 
     /**
+     * Builder for the Authentication request
+     *
+     * @author Archimedes
+     */
+    public static class Builder {
+
+        private final Map<String, String> requestMap = new HashMap<>();
+
+        public AuthenticationRequest build() throws IOException,
+                GeneralSecurityException {
+
+            return new AuthenticationRequest(requestMap);
+        }
+
+        public Builder clientId(final String s) {
+
+            requestMap.put(OpenIdConnectKey.CLIENT_ID, s);
+            return this;
+        }
+
+        public Builder nonce(final String s) {
+
+            requestMap.put(OpenIdConnectKey.NONCE, s);
+            return this;
+        }
+
+        public Builder redirectUri(final URI uri) {
+
+            requestMap.put(OpenIdConnectKey.REDIRECT_URI, uri.toASCIIString());
+            return this;
+        }
+
+        public Builder state(final String s) {
+
+            requestMap.put(OpenIdConnectKey.STATE, s);
+            return this;
+        }
+
+        public Builder scope(String scope) {
+
+            requestMap.put(OpenIdConnectKey.SCOPE, scope);
+            return this;
+        }
+
+        public Builder responseMode(ResponseMode mode) {
+
+            if (mode != ResponseMode.query) {
+                requestMap.put(OpenIdConnectKey.RESPONSE_MODE, mode.name());
+            }
+            return this;
+        }
+
+        public Builder responseType(@NotNull ResponseType code,
+                ResponseType... oth) {
+
+            StringBuilder b = new StringBuilder(code.name());
+            for (ResponseType type : oth) {
+                b.append(' ');
+                b.append(type.name());
+            }
+            requestMap.put(OpenIdConnectKey.RESPONSE_TYPE, b.toString());
+            return this;
+        }
+    }
+
+    private static final String[] REQUEST_KEYS = { OpenIdConnectKey.ACR_VALUES, OpenIdConnectKey.CLIENT_ID, OpenIdConnectKey.DISPLAY, OpenIdConnectKey.ID_TOKEN_HINT, OpenIdConnectKey.LOGIN_HINT, OpenIdConnectKey.MAX_AGE, OpenIdConnectKey.NONCE, OpenIdConnectKey.PROMPT, OpenIdConnectKey.REDIRECT_URI, OpenIdConnectKey.RESPONSE_MODE, OpenIdConnectKey.RESPONSE_TYPE, OpenIdConnectKey.SCOPE, OpenIdConnectKey.STATE, OpenIdConnectKey.UI_LOCALES };
+
+    /**
      *
      */
     private static final long serialVersionUID = 6520962711562750670L;
+
+    private static Map<String, String> buildRequestMap(final HttpServletRequest req,
+            final JsonWebKeySet privateJwks) throws IOException,
+            GeneralSecurityException {
+
+        final Map<String, String> requestMap = new HashMap<>();
+
+        final JsonObject requestObject;
+        if (req.getParameter(OpenIdConnectKey.REQUEST) != null && privateJwks != null) {
+            System.out.println(privateJwks.getKeys()[0]);
+            final JsonWebToken jwt = new JsonWebToken(req.getParameter(OpenIdConnectKey.REQUEST));
+            JsonWebTokenProcessor p = new JsonWebTokenProcessor(jwt).jwks(privateJwks);
+            requestObject = p.getPayloadAsJsonObject();
+        } else {
+            requestObject = null;
+        }
+        for (final String key : REQUEST_KEYS) {
+            processValueFromMapOrObject(requestMap, key, req, requestObject);
+        }
+        return requestMap;
+    }
+
+    /**
+     * <p>
+     * So that the request is a valid OAuth 2.0 Authorization Request, values
+     * for the response_type and client_id parameters MUST be included using the
+     * OAuth 2.0 request syntax, since they are REQUIRED by OAuth 2.0. The
+     * values for these parameters MUST match those in the Request Object, if
+     * present.
+     * </p>
+     *
+     * @param reqMap
+     * @param key
+     * @param servletRequest
+     * @param requestObject
+     */
+    private static void processValueFromMapOrObject(final Map<String, String> reqMap,
+            final String key,
+            final HttpServletRequest servletRequest,
+            final JsonObject requestObject) {
+
+        final String paramValue;
+        if (servletRequest.getParameter(key) != null) {
+            paramValue = servletRequest.getParameter(key);
+        } else {
+            paramValue = null;
+        }
+
+        final String requestObjectValue;
+        if (requestObject == null || !requestObject.containsKey(key)) {
+            requestObjectValue = null;
+        } else if (requestObject.get(key)
+                .getValueType() == ValueType.STRING) {
+            requestObjectValue = requestObject.getString(key);
+        } else if (requestObject.get(key)
+                .getValueType() == ValueType.NUMBER) {
+            requestObjectValue = requestObject.getJsonNumber(key)
+                    .bigIntegerValueExact()
+                    .toString();
+        } else {
+            requestObjectValue = null;
+        }
+
+        if (OpenIdConnectKey.CLIENT_ID.equals(key) && paramValue != null & requestObjectValue != null && !paramValue.equals(requestObjectValue)) {
+            throw new BadRequestException("client_id does not match.");
+        }
+
+        if (OpenIdConnectKey.REDIRECT_URI.equals(key) && paramValue != null & requestObjectValue != null && !paramValue.equals(requestObjectValue)) {
+            throw new BadRequestException("redirect_uri does not match.");
+        }
+
+        if (Util.isNotNullOrEmpty(requestObjectValue)) {
+            reqMap.put(key, requestObjectValue);
+        } else if (Util.isNotNullOrEmpty(paramValue)) {
+            reqMap.put(key, paramValue);
+        }
+    }
 
     private final List<String> acrValues;
 
@@ -88,30 +231,14 @@ public class AuthenticationRequest implements Serializable {
         this(req, null);
     }
 
-    public AuthenticationRequest(final HttpServletRequest req, JsonWebKeySet privateJwks) throws IOException, GeneralSecurityException {
+    public AuthenticationRequest(final HttpServletRequest req, final JsonWebKeySet privateJwks) throws IOException, GeneralSecurityException {
 
-        final Map<String, String> requestMap = new HashMap<>();
+        this(buildRequestMap(req, privateJwks));
+    }
 
-        final JsonObject requestObject;
-        if (req.getParameter(OpenIdConnectKey.REQUEST) != null && privateJwks != null) {
-            final JsonWebToken jwt = new JsonWebToken(req.getParameter(OpenIdConnectKey.REQUEST));
-            byte[] payload;
-            if (jwt.getAlg() == JsonWebAlgorithm.none) {
-                payload = jwt.getPayload(0);
-            } else if (jwt.getKid() != null) {
-                payload = JWE.decrypt(jwt, privateJwks.getJwk(jwt.getKid()));
-            } else {
-                throw new BadRequestException("unsupported algorithm");
-            }
-            final JsonReader jsonReader = Json.createReader(new ByteArrayInputStream(payload));
-            requestObject = jsonReader.readObject();
-        } else {
-            requestObject = null;
-        }
+    private AuthenticationRequest(final Map<String, String> requestMap) throws IOException, GeneralSecurityException {
 
-        for (String key : REQUEST_KEYS)
-            processValueFromMapOrObject(requestMap, key, req, requestObject);
-
+        System.out.println(requestMap);
         if (requestMap.containsKey(OpenIdConnectKey.ACR_VALUES)) {
             acrValues = Util.splitToList(requestMap.get(OpenIdConnectKey.ACR_VALUES));
         } else {
@@ -196,64 +323,6 @@ public class AuthenticationRequest implements Serializable {
         }
 
         validate();
-    }
-
-    private static final String[] REQUEST_KEYS = { OpenIdConnectKey.ACR_VALUES, OpenIdConnectKey.CLIENT_ID, OpenIdConnectKey.DISPLAY, OpenIdConnectKey.ID_TOKEN_HINT, OpenIdConnectKey.LOGIN_HINT, OpenIdConnectKey.MAX_AGE, OpenIdConnectKey.NONCE, OpenIdConnectKey.PROMPT, OpenIdConnectKey.REDIRECT_URI, OpenIdConnectKey.RESPONSE_MODE, OpenIdConnectKey.RESPONSE_TYPE, OpenIdConnectKey.SCOPE, OpenIdConnectKey.STATE, OpenIdConnectKey.UI_LOCALES };
-
-    /**
-     * <p>
-     * So that the request is a valid OAuth 2.0 Authorization Request, values
-     * for the response_type and client_id parameters MUST be included using the
-     * OAuth 2.0 request syntax, since they are REQUIRED by OAuth 2.0. The
-     * values for these parameters MUST match those in the Request Object, if
-     * present.
-     * </p>
-     * 
-     * @param reqMap
-     * @param key
-     * @param servletRequest
-     * @param requestObject
-     */
-    private void processValueFromMapOrObject(Map<String, String> reqMap,
-            String key,
-            HttpServletRequest servletRequest,
-            JsonObject requestObject) {
-
-        final String paramValue;
-        if (servletRequest.getParameter(key) != null) {
-            paramValue = servletRequest.getParameter(key);
-        } else {
-            paramValue = null;
-        }
-
-        final String requestObjectValue;
-        if (requestObject == null || !requestObject.containsKey(key)) {
-            requestObjectValue = null;
-        } else if (requestObject.get(key)
-                .getValueType() == ValueType.STRING) {
-            requestObjectValue = requestObject.getString(key);
-        } else if (requestObject.get(key)
-                .getValueType() == ValueType.NUMBER) {
-            requestObjectValue = requestObject.getJsonNumber(key)
-                    .bigIntegerValueExact()
-                    .toString();
-        } else {
-            requestObjectValue = null;
-        }
-
-        if (OpenIdConnectKey.CLIENT_ID.equals(key) && paramValue != null & requestObjectValue != null && !paramValue.equals(requestObjectValue)) {
-            throw new BadRequestException("client_id does not match.");
-        }
-
-        if (OpenIdConnectKey.REDIRECT_URI.equals(key) && paramValue != null & requestObjectValue != null && !paramValue.equals(requestObjectValue)) {
-            throw new BadRequestException("redirect_uri does not match.");
-        }
-
-        if (Util.isNotNullOrEmpty(requestObjectValue)) {
-            reqMap.put(key, requestObjectValue);
-        } else if (Util.isNotNullOrEmpty(paramValue)) {
-            reqMap.put(key, paramValue);
-        }
     }
 
     public boolean containsResponseType(final ResponseType responseType) {
@@ -437,7 +506,7 @@ public class AuthenticationRequest implements Serializable {
             b.add(OpenIdConnectKey.RESPONSE_MODE, Util.toString(responseMode));
         }
         if (responseTypes != null) {
-            b.add(OpenIdConnectKey.RESPONSE_MODE, Util.toString(responseTypes));
+            b.add(OpenIdConnectKey.RESPONSE_TYPE, Util.toString(responseTypes));
         }
         if (scopes != null) {
             b.add(OpenIdConnectKey.SCOPE, Util.toString(scopes));

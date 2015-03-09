@@ -20,6 +20,7 @@ import javax.ws.rs.core.Response;
 import net.trajano.openidconnect.provider.internal.AuthorizationUtil;
 import net.trajano.openidconnect.provider.internal.ClientCredentials;
 import net.trajano.openidconnect.provider.spi.ClientManager;
+import net.trajano.openidconnect.provider.spi.KeyProvider;
 import net.trajano.openidconnect.provider.spi.TokenProvider;
 import net.trajano.openidconnect.token.GrantType;
 import net.trajano.openidconnect.token.IdTokenResponse;
@@ -29,14 +30,17 @@ import net.trajano.openidconnect.token.IdTokenResponse;
 public class TokenEndpoint {
 
     @EJB
-    ClientManager cm;
+    private ClientManager cm;
 
     @EJB
-    TokenProvider tp;
+    private KeyProvider kp;
+    
+    @EJB
+    private TokenProvider tp;
 
     @GET
     public Response getOp(@QueryParam("grant_type") @NotNull final GrantType grantType,
-            @QueryParam("code") final String code,
+            @QueryParam("code")  @NotNull final String code,
             @QueryParam("redirect_uri") final URI redirectUri,
             @Context final HttpServletRequest req) {
 
@@ -46,7 +50,7 @@ public class TokenEndpoint {
     @POST
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     public Response op(@FormParam("grant_type") @NotNull final GrantType grantType,
-            @FormParam("code") final String code,
+            @FormParam("code") @NotNull final String code,
             @FormParam("redirect_uri") final URI redirectUri,
             @Context final HttpServletRequest req) {
 
@@ -54,7 +58,7 @@ public class TokenEndpoint {
 
         final IdTokenResponse responseToken = tp.getByCode(code, true);
 
-        if (!responseToken.getIdToken()
+        if (!responseToken.getIdToken(kp.getJwks())
                 .getAud()
                 .equals(cred.getClientId())) {
             throw new WebApplicationException();

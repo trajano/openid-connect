@@ -72,20 +72,6 @@ public class IdTokenResponse extends TokenResponse {
     }
 
     /**
-     * Gets the ID Token without signature validation.
-     *
-     * @return
-     */
-    public IdToken getIdToken() {
-
-        try {
-            return getIdToken(null);
-        } catch (IOException | GeneralSecurityException e) {
-            throw new WebApplicationException(e);
-        }
-    }
-
-    /**
      * Gets the ID Token with signature validation.
      *
      * @param keyMap
@@ -94,10 +80,13 @@ public class IdTokenResponse extends TokenResponse {
      * @throws IOException
      * @throws GeneralSecurityException
      */
-    public IdToken getIdToken(final JsonWebKeySet jwks) throws IOException,
-            GeneralSecurityException {
+    public IdToken getIdToken(final JsonWebKeySet jwks) {
 
-        return new IdTokenProvider().readFrom(IdToken.class, null, null, MediaType.APPLICATION_JSON_TYPE, null, new ByteArrayInputStream(JwtUtil.getJwsPayload(encodedIdToken, jwks)));
+        try {
+            return new IdTokenProvider().readFrom(IdToken.class, null, null, MediaType.APPLICATION_JSON_TYPE, null, new ByteArrayInputStream(JwtUtil.getJwsPayload(encodedIdToken, jwks)));
+        } catch (IOException | GeneralSecurityException e) {
+            throw new WebApplicationException(e);
+        }
 
     }
 
