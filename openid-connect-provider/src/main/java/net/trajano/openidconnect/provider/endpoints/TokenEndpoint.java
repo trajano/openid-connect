@@ -1,6 +1,8 @@
 package net.trajano.openidconnect.provider.endpoints;
 
+import java.io.IOException;
 import java.net.URI;
+import java.security.GeneralSecurityException;
 
 import javax.ejb.EJB;
 import javax.servlet.http.HttpServletRequest;
@@ -17,6 +19,8 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import net.trajano.openidconnect.core.ErrorCode;
+import net.trajano.openidconnect.core.OpenIdConnectException;
 import net.trajano.openidconnect.provider.internal.AuthorizationUtil;
 import net.trajano.openidconnect.provider.internal.ClientCredentials;
 import net.trajano.openidconnect.provider.spi.ClientManager;
@@ -24,6 +28,7 @@ import net.trajano.openidconnect.provider.spi.KeyProvider;
 import net.trajano.openidconnect.provider.spi.TokenProvider;
 import net.trajano.openidconnect.token.GrantType;
 import net.trajano.openidconnect.token.IdTokenResponse;
+import net.trajano.openidconnect.token.TokenResponse;
 
 @Path("token")
 @Produces(MediaType.APPLICATION_JSON)
@@ -34,36 +39,47 @@ public class TokenEndpoint {
 
     @EJB
     private KeyProvider kp;
-    
+
     @EJB
     private TokenProvider tp;
 
     @GET
     public Response getOp(@QueryParam("grant_type") @NotNull final GrantType grantType,
-            @QueryParam("code")  @NotNull final String code,
+            @QueryParam("code") final String code,
+            @QueryParam("refresh_token") final String refreshToken,
             @QueryParam("redirect_uri") final URI redirectUri,
-            @Context final HttpServletRequest req) {
+            @Context final HttpServletRequest req) throws IOException, GeneralSecurityException {
 
-        return op(grantType, code, redirectUri, req);
+        return op(grantType, code, refreshToken, redirectUri, req);
     }
 
     @POST
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     public Response op(@FormParam("grant_type") @NotNull final GrantType grantType,
-            @FormParam("code") @NotNull final String code,
+            @FormParam("code") final String code,
+            @FormParam("refresh_token") final String refreshToken,
             @FormParam("redirect_uri") final URI redirectUri,
-            @Context final HttpServletRequest req) {
+            @Context final HttpServletRequest req) throws IOException,
+            GeneralSecurityException {
 
         final ClientCredentials cred = AuthorizationUtil.processBasicOrQuery(req);
 
-        final IdTokenResponse responseToken = tp.getByCode(code, true);
-
-        if (!responseToken.getIdToken(kp.getJwks())
-                .getAud()
-                .equals(cred.getClientId())) {
-            throw new WebApplicationException();
+        if (grantType == GrantType.authorization_code) {
+            final IdTokenResponse responseToken = tp.getByCode(code, true);
+            if (!responseToken.getIdToken(kp.getJwks())
+                    .getAud()
+                    .equals(cred.getClientId())) {
+                throw new WebApplicationException();
+            }
+            return Response.ok(responseToken)
+                    .build();
+        } else if (grantType == GrantType.refresh_token) {
+            final TokenResponse responseToken = tp.refreshToken(cred.getClientId(), refreshToken, null, null);
+            return Response.ok(responseToken)
+                    .build();
+        } else {
+            throw new OpenIdConnectException(ErrorCode.invalid_grant);
         }
-        return Response.ok(responseToken)
-                .build();
+
     }
 }

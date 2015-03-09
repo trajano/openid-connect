@@ -177,6 +177,8 @@ public final class OpenIdConnectKey {
      */
     public static final String UI_LOCALES = "ui_locales";
 
+    public static final String REFRESH_TOKEN = "refresh_token";
+
     private OpenIdConnectKey() {
 
     }

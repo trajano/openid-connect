@@ -298,8 +298,8 @@ public class IdToken {
      * 
      * @param expirationInSeconds
      */
-    public void resetIssueAndExpiration(int expirationInSeconds) {
 
+    public void resetIssueAndExpiration(int expirationInSeconds) {
         iat = System.currentTimeMillis() / 1000;
         exp = iat + expirationInSeconds;
     }

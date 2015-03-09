@@ -9,6 +9,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 import javax.ejb.EJB;
 import javax.ejb.Lock;
@@ -48,9 +50,9 @@ public class AcceptAllClientManager implements ClientManager, Authenticator, Use
     public Map<String, IdTokenResponse> codeToTokenResponse = new HashMap<>();
 
     @EJB
-    KeyProvider keyProvider;
+    private KeyProvider keyProvider;
 
-    private Map<String, IdTokenResponse> refreshTokenToTokenResponse = new HashMap<>();
+    private ConcurrentMap<String, IdTokenResponse> refreshTokenToTokenResponse = new ConcurrentHashMap<>();
 
     @Override
     public URI authenticate(final AuthenticationRequest authenticationRequest,
@@ -59,7 +61,8 @@ public class AcceptAllClientManager implements ClientManager, Authenticator, Use
 
         String reqJwt = req.getParameter(OpenIdConnectKey.REQUEST);
         if (reqJwt == null) {
-            final JsonWebTokenBuilder b = new JsonWebTokenBuilder().payload(authenticationRequest.toJsonObject()).compress(true);
+            final JsonWebTokenBuilder b = new JsonWebTokenBuilder().payload(authenticationRequest.toJsonObject())
+                    .compress(true);
             reqJwt = b.toString();
         }
         return contextUriBuilder.path("login.jsp")
@@ -147,13 +150,13 @@ public class AcceptAllClientManager implements ClientManager, Authenticator, Use
     }
 
     @Override
-    public TokenResponse refreshToken(final String clientId,
-            final String token,
+    public IdTokenResponse refreshToken(final String clientId,
+            final String refreshTokenIn,
             final Set<Scope> scopes,
-            final int expiresIn) throws IOException,
+            final Integer expiresIn) throws IOException,
             GeneralSecurityException {
 
-        final IdTokenResponse idTokenResponse = refreshTokenToTokenResponse.get(token);
+        final IdTokenResponse idTokenResponse = refreshTokenToTokenResponse.remove(refreshTokenIn);
         if (!clientId.equals(idTokenResponse.getIdToken(keyProvider.getPrivateJwks())
                 .getAud())) {
             throw new WebApplicationException();
@@ -164,9 +167,20 @@ public class AcceptAllClientManager implements ClientManager, Authenticator, Use
         if (scopes != null && scopes.containsAll(scopes)) {
             idTokenResponse.setScopes(scopes);
         }
-        idTokenResponse.setAccessToken(keyProvider.nextEncodedToken());
+
+        // remove from map we are getting a new one
+        accessTokenToTokenResponse.remove(idTokenResponse.getAccessToken());
+        String newAccessToken = keyProvider.nextEncodedToken();
+        String newRefreshToken = keyProvider.nextEncodedToken();
+
+        idTokenResponse.setAccessToken(newAccessToken);
+        idTokenResponse.setRefreshToken(newRefreshToken);
         final IdToken idToken = idTokenResponse.getIdToken(keyProvider.getJwks());
-        idToken.resetIssueAndExpiration(expiresIn);
+        if (expiresIn != null)
+            idToken.resetIssueAndExpiration(expiresIn);
+        else {
+            idToken.resetIssueAndExpiration(ONE_HOUR);
+        }
 
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
         new IdTokenProvider().writeTo(idToken, IdToken.class, IdToken.class, null, MediaType.APPLICATION_JSON_TYPE, null, baos);
@@ -174,10 +188,10 @@ public class AcceptAllClientManager implements ClientManager, Authenticator, Use
 
         idTokenResponse.setEncodedIdToken(keyProvider.sign(baos.toByteArray()));
 
-        final TokenResponse response = new TokenResponse();
-        response.setAccessToken(idTokenResponse.getAccessToken());
-        response.setExpiresIn(expiresIn);
-        return null;
+        accessTokenToTokenResponse.put(newAccessToken, idTokenResponse);
+        refreshTokenToTokenResponse.put(newRefreshToken, idTokenResponse);
+
+        return idTokenResponse;
     }
 
     @Override

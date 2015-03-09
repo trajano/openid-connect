@@ -71,6 +71,7 @@ import net.trajano.openidconnect.jaspic.internal.NullHostnameVerifier;
 import net.trajano.openidconnect.jaspic.internal.NullX509TrustManager;
 import net.trajano.openidconnect.jaspic.internal.TokenCookie;
 import net.trajano.openidconnect.rs.JsonWebKeySetProvider;
+import net.trajano.openidconnect.token.GrantType;
 import net.trajano.openidconnect.token.IdTokenResponse;
 
 /**
@@ -539,6 +540,49 @@ public class OpenIdConnectAuthModule implements ServerAuthModule, ServerAuthCont
     }
 
     /**
+     * Sends a request to the token endpoint to get the token for the code.
+     *
+     * @param req
+     *            servlet request
+     * @param oidProviderConfig
+     *            OpenID provider config
+     * @return token response
+     */
+    protected IdTokenResponse getTokenViaRefresh(final HttpServletRequest req,
+            final String refreshToken,
+            final OpenIdProviderConfiguration oidProviderConfig) throws IOException {
+
+        final MultivaluedMap<String, String> requestData = new MultivaluedHashMap<>();
+        requestData.putSingle(OpenIdConnectKey.REFRESH_TOKEN, refreshToken);
+        requestData.putSingle(GRANT_TYPE, GrantType.refresh_token.name());
+        requestData.putSingle(REDIRECT_URI, getRedirectionEndpointUri(req).toASCIIString());
+
+        try {
+            final String authorization = "Basic " + Encoding.base64Encode(clientId + ":" + clientSecret);
+            final IdTokenResponse authorizationTokenResponse = restClient.target(oidProviderConfig.getTokenEndpoint())
+                    .request(MediaType.APPLICATION_JSON_TYPE)
+                    .header("Authorization", authorization)
+                    .post(Entity.form(requestData), IdTokenResponse.class);
+            if (LOG.isLoggable(Level.FINEST)) {
+                LOG.finest("authorization token response =  " + authorizationTokenResponse);
+            }
+            return authorizationTokenResponse;
+        } catch (final BadRequestException e) {
+            // workaround for google that does not support BASIC authentication
+            // on their endpoint.
+            requestData.putSingle(CLIENT_ID, clientId);
+            requestData.putSingle(CLIENT_SECRET, clientSecret);
+            final IdTokenResponse authorizationTokenResponse = restClient.target(oidProviderConfig.getTokenEndpoint())
+                    .request(MediaType.APPLICATION_JSON_TYPE)
+                    .post(Entity.form(requestData), IdTokenResponse.class);
+            if (LOG.isLoggable(Level.FINEST)) {
+                LOG.finest("authorization token response =  " + authorizationTokenResponse);
+            }
+            return authorizationTokenResponse;
+        }
+    }
+
+    /**
      * Gets the web keys from the options and the OpenID provider configuration.
      * This may be overridden by clients.
      *
@@ -766,13 +810,63 @@ public class OpenIdConnectAuthModule implements ServerAuthModule, ServerAuthCont
      * @return token cookie.
      */
     private TokenCookie processTokenCookie(final Subject subject,
-            final HttpServletRequest req) {
+            final HttpServletRequest req,
+            HttpServletResponse resp) {
 
         try {
             final String idToken = getIdToken(req);
             TokenCookie tokenCookie = null;
             if (idToken != null) {
                 tokenCookie = new TokenCookie(idToken, secret);
+                if (tokenCookie.isExpired() && tokenCookie.getRefreshToken() != null) {
+                    System.out.println("REFRESH with " + tokenCookie.getRefreshToken());
+                    final OpenIdProviderConfiguration oidProviderConfig = getOpenIDProviderConfig(req, restClient, moduleOptions);
+                    final IdTokenResponse token = getTokenViaRefresh(req, tokenCookie.getRefreshToken(), oidProviderConfig);
+                    final net.trajano.openidconnect.crypto.JsonWebKeySet webKeys = getWebKeys(oidProviderConfig);
+
+                    final JsonObject claimsSet = new JsonWebTokenProcessor(token.getEncodedIdToken()).jwks(webKeys)
+                            .getJsonPayload();
+
+                    final String iss = googleWorkaround(claimsSet.getString("iss"));
+                    final String issuer = googleWorkaround(oidProviderConfig.getIssuer());
+                    if (!iss.equals(issuer)) {
+                        LOG.log(Level.SEVERE, "issuerMismatch", new Object[] { iss, issuer });
+                        throw new GeneralSecurityException(MessageFormat.format(R.getString("issuerMismatch"), iss, issuer));
+                    }
+                    updateSubjectPrincipal(subject, claimsSet);
+
+                    if (oidProviderConfig.getUserinfoEndpoint() != null && Pattern.compile("\\bprofile\\b")
+                            .matcher(scope)
+                            .find()) {
+                        final Response userInfoResponse = restClient.target(oidProviderConfig.getUserinfoEndpoint())
+                                .request(MediaType.APPLICATION_JSON_TYPE)
+                                .header("Authorization", token.getTokenType() + " " + token.getAccessToken())
+                                .get();
+                        if (userInfoResponse.getStatus() == 200) {
+                            tokenCookie = new TokenCookie(token.getAccessToken(), token.getRefreshToken(), claimsSet, userInfoResponse.readEntity(JsonObject.class));
+                        } else {
+                            LOG.log(Level.WARNING, "unableToGetProfile");
+                            tokenCookie = new TokenCookie(claimsSet);
+                        }
+                    } else {
+                        tokenCookie = new TokenCookie(claimsSet);
+                    }
+
+                    final String requestCookieContext;
+                    if (isNullOrEmpty(cookieContext)) {
+                        requestCookieContext = req.getContextPath();
+                    } else {
+                        requestCookieContext = cookieContext;
+                    }
+
+                    final Cookie idTokenCookie = new Cookie(NET_TRAJANO_AUTH_ID, tokenCookie.toCookieValue(clientId, clientSecret));
+                    idTokenCookie.setMaxAge(-1);
+                    idTokenCookie.setSecure(true);
+                    idTokenCookie.setHttpOnly(true);
+                    idTokenCookie.setPath(requestCookieContext);
+                    resp.addCookie(idTokenCookie);
+
+                }
                 validateIdToken(clientId, tokenCookie.getIdToken(), null);
                 updateSubjectPrincipal(subject, tokenCookie.getIdToken());
 
@@ -984,7 +1078,7 @@ public class OpenIdConnectAuthModule implements ServerAuthModule, ServerAuthCont
         final HttpServletResponse resp = (HttpServletResponse) messageInfo.getResponseMessage();
 
         try {
-            final TokenCookie tokenCookie = processTokenCookie(clientSubject, req);
+            final TokenCookie tokenCookie = processTokenCookie(clientSubject, req, resp);
 
             if (tokenCookie != null && req.isSecure() && isGetRequest(req) && req.getRequestURI()
                     .equals(tokenUri)) {
