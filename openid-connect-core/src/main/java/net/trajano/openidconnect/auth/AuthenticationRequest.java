@@ -125,7 +125,7 @@ public class AuthenticationRequest implements Serializable {
             System.out.println(privateJwks.getKeys()[0]);
             final JsonWebToken jwt = new JsonWebToken(req.getParameter(OpenIdConnectKey.REQUEST));
             JsonWebTokenProcessor p = new JsonWebTokenProcessor(jwt).jwks(privateJwks);
-            requestObject = p.getPayloadAsJsonObject();
+            requestObject = p.getJsonPayload();
         } else {
             requestObject = null;
         }
@@ -233,7 +233,6 @@ public class AuthenticationRequest implements Serializable {
 
     private AuthenticationRequest(final Map<String, String> requestMap) throws IOException, GeneralSecurityException {
 
-        System.out.println(requestMap);
         if (requestMap.containsKey(OpenIdConnectKey.ACR_VALUES)) {
             acrValues = Util.splitToList(requestMap.get(OpenIdConnectKey.ACR_VALUES));
         } else {

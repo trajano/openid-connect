@@ -10,6 +10,7 @@ import net.trajano.openidconnect.provider.endpoints.Jwks;
 import net.trajano.openidconnect.provider.endpoints.TokenEndpoint;
 import net.trajano.openidconnect.provider.endpoints.UserinfoEndpoint;
 import net.trajano.openidconnect.rs.IdTokenProvider;
+import net.trajano.openidconnect.rs.JsonWebKeyProvider;
 import net.trajano.openidconnect.rs.JsonWebKeySetProvider;
 
 @ApplicationPath("V1")
@@ -22,6 +23,7 @@ public class ProviderV1 extends Application {
                 .put(TokenEndpoint.class)
                 .put(IdTokenProvider.class)
                 .put(Jwks.class)
+                .put(JsonWebKeyProvider.class)
                 .put(JsonWebKeySetProvider.class)
                 .put(UserinfoEndpoint.class);
         return classes;

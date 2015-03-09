@@ -83,7 +83,14 @@ public class JsonWebTokenProcessor {
 
     }
 
-    public JsonObject getPayloadAsJsonObject() throws IOException,
+    /**
+     * Gets the payload JSON object.
+     * 
+     * @return
+     * @throws IOException
+     * @throws GeneralSecurityException
+     */
+    public JsonObject getJsonPayload() throws IOException,
             GeneralSecurityException {
 
         JsonReader r = Json.createReader(new ByteArrayInputStream(getPayload()));
