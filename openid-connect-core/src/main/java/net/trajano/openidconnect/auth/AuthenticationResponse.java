@@ -1,5 +1,8 @@
 package net.trajano.openidconnect.auth;
 
+import java.net.URI;
+
+import javax.xml.bind.annotation.XmlTransient;
 
 public class AuthenticationResponse {
 
@@ -12,6 +15,22 @@ public class AuthenticationResponse {
     private String state;
 
     private String tokenType;
+
+    @XmlTransient
+    private URI redirectUri;
+
+    @XmlTransient
+    private ResponseMode responseMode;
+
+    public URI getRedirectUri() {
+
+        return redirectUri;
+    }
+
+    public void setRedirectUri(URI redirectUri) {
+
+        this.redirectUri = redirectUri;
+    }
 
     public String getAccessToken() {
 
@@ -59,6 +78,17 @@ public class AuthenticationResponse {
     public void setState(final String state) {
 
         this.state = state;
+    }
+
+    public ResponseMode getResponseMode() {
+
+        return responseMode;
+    }
+
+    public void setResponseMode(ResponseMode responseMode) {
+
+        this.responseMode = responseMode;
+
     }
 
 }

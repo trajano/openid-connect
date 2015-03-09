@@ -11,7 +11,7 @@
 	</security-role-mapping>
 	<security-role-mapping>
 		<role-name>users</role-name>
-		<group-name>https://auth.angelstone.co/</group-name>
+		<group-name>https://localhost:8181</group-name>
 	</security-role-mapping>
 	<security-role-mapping>
 		<role-name>users</role-name>

@@ -18,7 +18,6 @@ import javax.ws.rs.core.UriBuilder;
 import net.trajano.openidconnect.core.OpenIdProviderConfiguration;
 import net.trajano.openidconnect.crypto.JsonWebAlgorithm;
 import net.trajano.openidconnect.provider.internal.HashSet2;
-import net.trajano.openidconnect.provider.spi.ClientManager;
 import net.trajano.openidconnect.provider.spi.KeyProvider;
 
 @Path("openid-configuration")
@@ -40,8 +39,6 @@ public class WellKnownOpenIdConfiguration {
      * Authorization endpoint mapping that is built during {@link #init()}
      */
     private String authorizationMapping;
-
-    private ClientManager clientManager;
 
     /**
      * JWKS URI mapping that is built during {@link #init()}
@@ -90,12 +87,14 @@ public class WellKnownOpenIdConfiguration {
     public Response op(@Context final HttpServletRequest request) {
 
         final OpenIdProviderConfiguration openIdConfiguration = new OpenIdProviderConfiguration();
-        openIdConfiguration.setIssuer(clientManager.getIssuer()
-                .toASCIIString());
 
         final UriBuilder baseUri = UriBuilder.fromUri(create(request.getRequestURL()
                 .toString()))
-                .scheme("https");
+                .scheme("https")
+                .replaceQuery(null)
+                .fragment(null);
+        openIdConfiguration.setIssuer(baseUri.replacePath(request.getContextPath())
+                .build());
         openIdConfiguration.setJwksUri(baseUri.replacePath(request.getContextPath() + jwksMapping)
                 .build());
         openIdConfiguration.setAuthorizationEndpoint(baseUri.replacePath(request.getContextPath() + authorizationMapping)
@@ -109,6 +108,7 @@ public class WellKnownOpenIdConfiguration {
         openIdConfiguration.setScopesSupported(new HashSet2<String>("openid", "email", "profile"));
         openIdConfiguration.setResponseTypesSupported(new HashSet2<String>(CODE, ID_TOKEN, ID_TOKEN_TOKEN, CODE_ID_TOKEN, CODE_TOKEN, CODE_ID_TOKEN_TOKEN));
         openIdConfiguration.setRequestParameterSupported(true);
+        openIdConfiguration.setRequestUriParameterSupported(false);
         openIdConfiguration.setIdTokenSigningAlgValuesSupported(JsonWebAlgorithm.getSigAlgorithms());
         openIdConfiguration.setRequestObjectEncryptionAlgValuesSupported(JsonWebAlgorithm.getKexAlgorithms());
         openIdConfiguration.setRequestObjectEncryptionEncValuesSupported(JsonWebAlgorithm.getEncAlgorithms());
@@ -122,12 +122,6 @@ public class WellKnownOpenIdConfiguration {
                 .tag(keyProvider.getSecretKeyId())
                 .build();
 
-    }
-
-    @EJB
-    public void setClientManager(final ClientManager clientManager) {
-
-        this.clientManager = clientManager;
     }
 
     @EJB

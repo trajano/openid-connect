@@ -31,7 +31,7 @@ public interface TokenProvider {
      *            subject
      * @return authorization code
      */
-    IdToken buildIdToken(String subject,
+    IdToken buildIdToken(String subject, String issuer,
             AuthenticationRequest request);
 
     Collection<IdTokenResponse> getAllTokenResponses();

@@ -1,15 +1,19 @@
 package net.trajano.openidconnect.provider.ejb;
 
+import static java.net.URI.create;
+
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriBuilder;
 
 import net.trajano.openidconnect.auth.AuthenticationRequest;
 import net.trajano.openidconnect.auth.AuthenticationResponse;
@@ -18,6 +22,7 @@ import net.trajano.openidconnect.auth.ResponseType;
 import net.trajano.openidconnect.provider.internal.AuthenticationResponseConverter;
 import net.trajano.openidconnect.provider.internal.CacheConstants;
 import net.trajano.openidconnect.provider.spi.AuthenticationResponseProvider;
+import net.trajano.openidconnect.provider.spi.KeyProvider;
 import net.trajano.openidconnect.provider.spi.TokenProvider;
 import net.trajano.openidconnect.token.IdToken;
 import net.trajano.openidconnect.token.IdTokenResponse;
@@ -32,6 +37,8 @@ import net.trajano.openidconnect.token.TokenResponse;
  */
 @Stateless
 public class DefaultAuthenticationResponseProvider implements AuthenticationResponseProvider {
+
+    private KeyProvider keyProvider;
 
     private TokenProvider tokenProvider;
 
@@ -50,13 +57,22 @@ public class DefaultAuthenticationResponseProvider implements AuthenticationResp
      * @throws IOException
      */
     @Override
-    public AuthenticationResponse buildAuthenticationResponse(final AuthenticationRequest request,
+    public AuthenticationResponse buildAuthenticationResponse(final HttpServletRequest req,
             final String subject) throws IOException,
             GeneralSecurityException {
 
+        final AuthenticationRequest request = new AuthenticationRequest(req, keyProvider.getPrivateJwks());
         final AuthenticationResponse response = new AuthenticationResponse();
 
-        final IdToken idToken = tokenProvider.buildIdToken(subject, request);
+        final UriBuilder issuerUri = UriBuilder.fromUri(create(req.getRequestURL()
+                .toString()))
+                .scheme("https")
+                .replacePath(req.getContextPath())
+                .replaceQuery(null)
+                .fragment(null);
+
+        final IdToken idToken = tokenProvider.buildIdToken(subject, issuerUri.build()
+                .toASCIIString(), request);
         final String code = tokenProvider.store(idToken, request);
 
         if (request.getState() != null) {
@@ -74,6 +90,8 @@ public class DefaultAuthenticationResponseProvider implements AuthenticationResp
         if (request.containsResponseType(ResponseType.code)) {
             response.setCode(code);
         }
+        response.setRedirectUri(request.getRedirectUri());
+        response.setResponseMode(request.getResponseMode());
         return response;
     }
 
@@ -88,20 +106,20 @@ public class DefaultAuthenticationResponseProvider implements AuthenticationResp
      * @return
      */
     @Override
-    public Response buildResponse(final AuthenticationRequest request,
+    public Response buildResponse(final HttpServletRequest req,
             final String subject) {
 
         final AuthenticationResponse response;
         try {
-            response = buildAuthenticationResponse(request, subject);
+            response = buildAuthenticationResponse(req, subject);
         } catch (IOException | GeneralSecurityException e) {
             throw new WebApplicationException(e);
         }
-        final AuthenticationResponseConverter converter = new AuthenticationResponseConverter(request.getRedirectUri(), response);
-        if (request.getResponseMode() == ResponseMode.query) {
+        final AuthenticationResponseConverter converter = new AuthenticationResponseConverter(response.getRedirectUri(), response);
+        if (response.getResponseMode() == ResponseMode.query) {
             return Response.temporaryRedirect(converter.toQueryUri())
                     .build();
-        } else if (request.getResponseMode() == ResponseMode.form_post) {
+        } else if (response.getResponseMode() == ResponseMode.form_post) {
 
             return Response.ok(converter.toFormPost())
                     .type(MediaType.TEXT_HTML_TYPE)
@@ -126,18 +144,19 @@ public class DefaultAuthenticationResponseProvider implements AuthenticationResp
      * @throws IOException
      */
     @Override
-    public void doCallback(final HttpServletResponse response,
-            final AuthenticationRequest request,
+    public void doCallback(final HttpServletRequest req,
+            final HttpServletResponse response,
             final String subject) throws IOException,
             ServletException {
 
         try {
-            final AuthenticationResponseConverter authenticationResponse = new AuthenticationResponseConverter(request.getRedirectUri(), buildAuthenticationResponse(request, subject));
-            if (request.getResponseMode() == ResponseMode.query) {
+            final AuthenticationResponse authResponse = buildAuthenticationResponse(req, subject);
+            final AuthenticationResponseConverter authenticationResponse = new AuthenticationResponseConverter(authResponse.getRedirectUri(), authResponse);
+            if (authResponse.getResponseMode() == ResponseMode.query) {
                 response.sendRedirect(authenticationResponse.toQueryUri()
                         .toASCIIString());
 
-            } else if (request.getResponseMode() == ResponseMode.form_post) {
+            } else if (authResponse.getResponseMode() == ResponseMode.form_post) {
                 final String formPost = authenticationResponse.toFormPost();
                 response.setContentLength(formPost.length());
                 response.getWriter()
@@ -149,6 +168,12 @@ public class DefaultAuthenticationResponseProvider implements AuthenticationResp
         } catch (final GeneralSecurityException e) {
             throw new ServletException(e);
         }
+    }
+
+    @EJB
+    public void setKeyProvider(final KeyProvider keyProvider) {
+
+        this.keyProvider = keyProvider;
     }
 
     @EJB

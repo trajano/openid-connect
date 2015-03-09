@@ -5,10 +5,10 @@ import java.security.GeneralSecurityException;
 
 import javax.ejb.Local;
 import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.Response;
 
-import net.trajano.openidconnect.auth.AuthenticationRequest;
 import net.trajano.openidconnect.auth.AuthenticationResponse;
 
 /**
@@ -31,7 +31,7 @@ public interface AuthenticationResponseProvider {
      *            {@link TokenProvider}
      * @return
      */
-    Response buildResponse(AuthenticationRequest request,
+    Response buildResponse(HttpServletRequest req,
             String subject);
 
     /**
@@ -48,8 +48,8 @@ public interface AuthenticationResponseProvider {
      * @throws IOException
      * @throws ServletException
      */
-    void doCallback(HttpServletResponse response,
-            AuthenticationRequest request,
+    void doCallback(HttpServletRequest req,
+            HttpServletResponse response,
             String subject) throws IOException,
             ServletException;
 
@@ -66,7 +66,7 @@ public interface AuthenticationResponseProvider {
      * @throws IOException
      * @throws GeneralSecurityException
      */
-    AuthenticationResponse buildAuthenticationResponse(AuthenticationRequest request,
+    AuthenticationResponse buildAuthenticationResponse(HttpServletRequest req,
             String subject) throws IOException,
             GeneralSecurityException;
 

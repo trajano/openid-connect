@@ -70,6 +70,7 @@ public class AcceptAllClientManager implements ClientManager, Authenticator, Use
 
     @Override
     public IdToken buildIdToken(final String subject,
+            String issuer,
             final AuthenticationRequest req) {
 
         final IdToken idToken = new IdToken();
@@ -78,8 +79,9 @@ public class AcceptAllClientManager implements ClientManager, Authenticator, Use
         idToken.setAuthTime(System.currentTimeMillis() / 1000);
         idToken.setAud(req.getClientId());
         idToken.setAzp(req.getClientId());
-        idToken.setIss(getIssuer().toASCIIString());
+        idToken.setIss(issuer);
         idToken.resetIssueAndExpiration(ONE_HOUR);
+        System.out.println(idToken.getIss());
         return idToken;
     }
 
@@ -105,12 +107,6 @@ public class AcceptAllClientManager implements ClientManager, Authenticator, Use
             codeToTokenResponse.remove(code);
         }
         return tokenResponse;
-    }
-
-    @Override
-    public URI getIssuer() {
-
-        return URI.create("https://helloworld");
     }
 
     @Override

@@ -597,6 +597,7 @@ public class OpenIdConnectAuthModule implements ServerAuthModule, ServerAuthCont
         final JsonObject claimsSet = new JsonWebTokenProcessor(token.getEncodedIdToken()).jwks(webKeys)
                 .getJsonPayload();
 
+        System.out.println(claimsSet);
         final String nonce = getNonceFromCookie(req);
         validateIdToken(clientId, claimsSet, nonce);
 
@@ -1063,7 +1064,6 @@ public class OpenIdConnectAuthModule implements ServerAuthModule, ServerAuthCont
                 return AuthStatus.SEND_FAILURE;
             }
 
-            System.out.println("H!");
             return redirectToAuthorizationEndpoint(req, resp, "request is not valid");
         } catch (final Exception e) {
             // Any problems with the data should be caught and force redirect to

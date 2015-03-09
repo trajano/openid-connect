@@ -197,7 +197,13 @@ public class OpenIdProviderConfiguration {
      * true.
      */
     @XmlElement(name = "request_uri_parameter_supported")
-    private final boolean requestUriParameterSupported = true;
+    private boolean requestUriParameterSupported = true;
+
+    
+    public void setRequestUriParameterSupported(boolean requestUriParameterSupported) {
+    
+        this.requestUriParameterSupported = requestUriParameterSupported;
+    }
 
     /**
      * Boolean value specifying whether the OP requires any request_uri values
@@ -477,6 +483,10 @@ public class OpenIdProviderConfiguration {
     public void setIssuer(final String issuer) {
 
         this.issuer = issuer;
+    }
+    public void setIssuer(final URI issuer) {
+
+        this.issuer = issuer.toASCIIString();
     }
 
     public void setJwksUri(final URI jwksUri) {

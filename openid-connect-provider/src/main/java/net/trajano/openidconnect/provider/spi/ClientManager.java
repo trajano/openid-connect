@@ -17,13 +17,6 @@ public interface ClientManager {
             String clientSecret);
 
     /**
-     * The issuer URI. This is also used as the realm.
-     *
-     * @return
-     */
-    URI getIssuer();
-
-    /**
      * Checks if the redirect URI is valid for a given client ID.
      *
      * @param clientId

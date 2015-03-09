@@ -1,7 +1,6 @@
 package net.trajano.openidconnect.sample;
 
 import java.io.IOException;
-import java.security.GeneralSecurityException;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -11,10 +10,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import net.trajano.openidconnect.auth.AuthenticationRequest;
 import net.trajano.openidconnect.provider.spi.AuthenticationResponseProvider;
-import net.trajano.openidconnect.provider.spi.KeyProvider;
-import net.trajano.openidconnect.provider.spi.TokenProvider;
 
 @WebServlet(urlPatterns = "/doLogin")
 @Stateless
@@ -31,19 +27,10 @@ public class LoginServlet extends HttpServlet {
             IOException {
 
         String subject = req.getParameter("username");
-        try {
-            redirector.doCallback(resp, new AuthenticationRequest(req, kp.getPrivateJwks()), subject);
-        } catch (GeneralSecurityException e) {
-            throw new ServletException(e);
-        }
+        redirector.doCallback(req, resp, subject);
     }
 
     @EJB
     private AuthenticationResponseProvider redirector;
 
-    @EJB
-    private KeyProvider kp;
-
-    @EJB
-    private TokenProvider tp;
 }
