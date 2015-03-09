@@ -1,10 +1,8 @@
 package net.trajano.openidconnect.crypto;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.SecureRandom;
-import java.util.zip.Deflater;
 
 import javax.json.JsonObject;
 
@@ -12,7 +10,8 @@ import net.trajano.openidconnect.internal.CharSets;
 import net.trajano.openidconnect.internal.JcaJsonWebTokenCrypto;
 
 /**
- * Used to build {@link JsonWebToken}
+ * Used to build {@link JsonWebToken}. It will handle signing and encryption of
+ * data as needed.
  * 
  * @author Archimedes
  */
@@ -80,7 +79,7 @@ public class JsonWebTokenBuilder {
     /**
      * Chooses a random key from the JWKS.
      * 
-     * @param jwk
+     * @param jwks JWK set
      * @return
      */
     public JsonWebTokenBuilder jwk(JsonWebKeySet jwks) {
@@ -100,7 +99,7 @@ public class JsonWebTokenBuilder {
         byte[] payloadBytes = uncompressedPayloadBytes;
         if (compressed) {
             header.setZip("DEF");
-            payloadBytes = deflate(payloadBytes);
+            payloadBytes = crypto.deflate(payloadBytes);
         }
 
         if (alg == JsonWebAlgorithm.none && jwk == null) {
@@ -132,20 +131,7 @@ public class JsonWebTokenBuilder {
         return new JsonWebToken(header, crypto.buildJWEPayload(header, payloadBytes, jwk));
     }
 
-    private static byte[] deflate(final byte[] uncompressed) throws IOException {
-
-        final Deflater deflater = new Deflater(9, false);
-        deflater.setInput(uncompressed);
-        deflater.finish();
-        final ByteArrayOutputStream baos = new ByteArrayOutputStream(uncompressed.length);
-        final byte[] buffer = new byte[1024];
-        while (!deflater.finished()) {
-            final int len = deflater.deflate(buffer);
-            baos.write(buffer, 0, len);
-        }
-        baos.close();
-        return baos.toByteArray();
-    }
+    
 
     /**
      * Gets the string representation of the JWT so far.

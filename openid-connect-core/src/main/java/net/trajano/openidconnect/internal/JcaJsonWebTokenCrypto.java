@@ -1,11 +1,17 @@
 package net.trajano.openidconnect.internal;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.security.GeneralSecurityException;
 import java.security.PrivateKey;
+import java.security.PublicKey;
 import java.security.SecureRandom;
 import java.security.Signature;
+import java.security.SignatureException;
+import java.util.zip.DataFormatException;
+import java.util.zip.Deflater;
+import java.util.zip.Inflater;
 
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
@@ -18,6 +24,7 @@ import net.trajano.openidconnect.crypto.Base64Url;
 import net.trajano.openidconnect.crypto.JoseHeader;
 import net.trajano.openidconnect.crypto.JsonWebAlgorithm;
 import net.trajano.openidconnect.crypto.JsonWebKey;
+import net.trajano.openidconnect.crypto.JsonWebToken;
 import net.trajano.openidconnect.crypto.JsonWebTokenCrypto;
 
 public class JcaJsonWebTokenCrypto implements JsonWebTokenCrypto {
@@ -99,5 +106,74 @@ public class JcaJsonWebTokenCrypto implements JsonWebTokenCrypto {
         cipherTextAndAuthenticationTag.get(payloads[2])
                 .get(payloads[3]);
         return payloads;
+    }
+
+    @Override
+    public byte[] inflate(final byte[] compressed) throws IOException {
+
+        final Inflater inflater = new Inflater(false);
+        inflater.setInput(compressed);
+        inflater.finished();
+        final ByteArrayOutputStream baos = new ByteArrayOutputStream(compressed.length);
+        final byte[] buffer = new byte[1024];
+        try {
+            while (!inflater.finished()) {
+                int len;
+                len = inflater.inflate(buffer);
+                baos.write(buffer, 0, len);
+            }
+            baos.close();
+            return baos.toByteArray();
+        } catch (DataFormatException e) {
+            throw new IOException(e);
+        }
+    }
+
+    @Override
+    public byte[] deflate(final byte[] uncompressed) throws IOException {
+
+        final Deflater deflater = new Deflater(9, false);
+        deflater.setInput(uncompressed);
+        deflater.finish();
+        final ByteArrayOutputStream baos = new ByteArrayOutputStream(uncompressed.length);
+        final byte[] buffer = new byte[1024];
+        while (!deflater.finished()) {
+            final int len = deflater.deflate(buffer);
+            baos.write(buffer, 0, len);
+        }
+        baos.close();
+        return baos.toByteArray();
+    }
+
+    @Override
+    public byte[] getJWEPayload(JsonWebToken jsonWebToken,
+            JsonWebKey jwk) {
+
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public byte[] getJWSPayload(JsonWebToken jsonWebToken,
+            JsonWebKey jwk,
+            JsonWebAlgorithm alg) throws GeneralSecurityException {
+
+        final PublicKey signingKey = (PublicKey) jwk.toJcaPublicKey();
+
+        final Signature signature = Signature.getInstance(alg.toJca());
+
+        final byte[] jwtSignatureBytes = jsonWebToken.getPayload(1);
+
+        signature.initVerify(signingKey);
+        signature.update(jsonWebToken.getJoseHeaderEncoded()
+                .getBytes());
+        signature.update((byte) '.');
+        signature.update(Base64Url.encode(jsonWebToken.getPayload(0))
+                .getBytes());
+        if (!signature.verify(jwtSignatureBytes)) {
+            throw new SignatureException("signature verification failed");
+        }
+
+        return jsonWebToken.getPayload(0);
     }
 }

@@ -29,4 +29,17 @@ public interface JsonWebTokenCrypto {
             JsonWebKey jwk) throws IOException,
             GeneralSecurityException;
 
+    byte[] getJWSPayload(JsonWebToken jsonWebToken,
+            JsonWebKey jwk,
+            JsonWebAlgorithm alg) throws IOException,
+            GeneralSecurityException;;
+
+    byte[] getJWEPayload(JsonWebToken jsonWebToken,
+            JsonWebKey jwk) throws IOException,
+            GeneralSecurityException;;
+
+    byte[] inflate(byte[] compressed) throws IOException;
+
+    byte[] deflate(byte[] uncompressed) throws IOException;
+
 }
