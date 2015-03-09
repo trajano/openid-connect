@@ -63,7 +63,7 @@ import net.trajano.openidconnect.auth.ResponseMode;
 import net.trajano.openidconnect.auth.ResponseType;
 import net.trajano.openidconnect.core.OpenIdConnectKey;
 import net.trajano.openidconnect.core.OpenIdProviderConfiguration;
-import net.trajano.openidconnect.crypto.Base64Url;
+import net.trajano.openidconnect.crypto.Encoding;
 import net.trajano.openidconnect.crypto.JsonWebTokenBuilder;
 import net.trajano.openidconnect.crypto.JsonWebTokenProcessor;
 import net.trajano.openidconnect.jaspic.internal.CipherUtil;
@@ -366,7 +366,7 @@ public class OpenIdConnectAuthModule implements ServerAuthModule, ServerAuthCont
                 idToken = cookie.getValue();
             } else if (NET_TRAJANO_AUTH_AGE.equals(cookie.getName())) {
                 final String remoteAddr = req.getRemoteAddr();
-                final String cookieAddr = new String(CipherUtil.decrypt(Base64Url.decode(cookie.getValue()), secret), "US-ASCII");
+                final String cookieAddr = new String(CipherUtil.decrypt(Encoding.base64urlDecode(cookie.getValue()), secret), "US-ASCII");
                 if (!remoteAddr.equals(cookieAddr)) {
                     throw new AuthException(MessageFormat.format(R.getString("ipaddressMismatch"), remoteAddr, cookieAddr));
                 }
@@ -397,7 +397,7 @@ public class OpenIdConnectAuthModule implements ServerAuthModule, ServerAuthCont
 
         for (final Cookie cookie : cookies) {
             if (NET_TRAJANO_AUTH_NONCE.equals(cookie.getName())) {
-                return new String(CipherUtil.decrypt(Base64Url.decode(cookie.getValue()), secret), "US-ASCII");
+                return new String(CipherUtil.decrypt(Encoding.base64urlDecode(cookie.getValue()), secret), "US-ASCII");
             }
         }
         return null;
@@ -514,7 +514,7 @@ public class OpenIdConnectAuthModule implements ServerAuthModule, ServerAuthCont
         requestData.putSingle(REDIRECT_URI, getRedirectionEndpointUri(req).toASCIIString());
 
         try {
-            final String authorization = "Basic " + Base64Url.encode((clientId + ":" + clientSecret).getBytes("UTF8"));
+            final String authorization = "Basic " + Encoding.base64Encode((clientId + ":" + clientSecret).getBytes("UTF8"));
             final IdTokenResponse authorizationTokenResponse = restClient.target(oidProviderConfig.getTokenEndpoint())
                     .request(MediaType.APPLICATION_JSON_TYPE)
                     .header("Authorization", authorization)
@@ -646,7 +646,7 @@ public class OpenIdConnectAuthModule implements ServerAuthModule, ServerAuthCont
         idTokenCookie.setPath(requestCookieContext);
         resp.addCookie(idTokenCookie);
 
-        final Cookie ageCookie = new Cookie(NET_TRAJANO_AUTH_AGE, Base64Url.encode(CipherUtil.encrypt(req.getRemoteAddr()
+        final Cookie ageCookie = new Cookie(NET_TRAJANO_AUTH_AGE, Encoding.base64Encode(CipherUtil.encrypt(req.getRemoteAddr()
                 .getBytes("US-ASCII"), secret)));
         if (isNullOrEmpty(req.getParameter("expires_in"))) {
             ageCookie.setMaxAge(3600);
@@ -660,7 +660,7 @@ public class OpenIdConnectAuthModule implements ServerAuthModule, ServerAuthCont
         resp.addCookie(ageCookie);
 
         final String stateEncoded = req.getParameter("state");
-        final String redirectUri = new String(Base64Url.decode(stateEncoded));
+        final String redirectUri = new String(Encoding.base64urlDecode(stateEncoded));
         resp.sendRedirect(resp.encodeRedirectURL(req.getContextPath() + redirectUri));
 
         return AuthStatus.SEND_SUCCESS;
@@ -751,7 +751,7 @@ public class OpenIdConnectAuthModule implements ServerAuthModule, ServerAuthCont
 
         final byte[] bytes = new byte[8];
         random.nextBytes(bytes);
-        return Base64Url.encode(bytes);
+        return Encoding.base64Encode(bytes);
     }
 
     /**
@@ -832,7 +832,7 @@ public class OpenIdConnectAuthModule implements ServerAuthModule, ServerAuthCont
                 stateBuilder.append('?');
                 stateBuilder.append(req.getQueryString());
             }
-            final String state = Base64Url.encode(stateBuilder.toString());
+            final String state = Encoding.base64Encode(stateBuilder.toString());
 
             final String requestCookieContext;
             if (isNullOrEmpty(cookieContext)) {
@@ -842,7 +842,7 @@ public class OpenIdConnectAuthModule implements ServerAuthModule, ServerAuthCont
             }
 
             final String nonce = nextNonce();
-            final Cookie nonceCookie = new Cookie(NET_TRAJANO_AUTH_NONCE, Base64Url.encode(CipherUtil.encrypt(nonce.getBytes(), secret)));
+            final Cookie nonceCookie = new Cookie(NET_TRAJANO_AUTH_NONCE, Encoding.base64Encode(CipherUtil.encrypt(nonce.getBytes(), secret)));
             nonceCookie.setMaxAge(-1);
             nonceCookie.setPath(requestCookieContext);
             nonceCookie.setHttpOnly(true);

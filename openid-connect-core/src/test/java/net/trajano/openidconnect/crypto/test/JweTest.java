@@ -14,7 +14,7 @@ import javax.crypto.Cipher;
 import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
-import net.trajano.openidconnect.crypto.Base64Url;
+import net.trajano.openidconnect.crypto.Encoding;
 import net.trajano.openidconnect.crypto.JoseHeader;
 import net.trajano.openidconnect.crypto.JsonWebAlgorithm;
 import net.trajano.openidconnect.crypto.JsonWebKey;
@@ -104,7 +104,7 @@ public class JweTest {
     @Test
     public void testCekEncryptDecryptWithProvidedKey() throws Exception {
 
-        final byte[] encryptedCek = Base64Url.decode("OKOawDo13gRp2ojaHV7LFpZcgV7T6DVZKTyKOMTYUmKoTCVJRgckCL9kiMT03JGeipsEdY3mx_etLbbWSrFr05kLzcSr4qKAq7YN7e9jwQRb23nfa6c9d-StnImGyFDbSv04uVuxIp5Zms1gNxKKK2Da14B8S4rzVRltdYwam_lDp5XnZAYpQdb76FdIKLaVmqgfwX7XWRxv2322i-vDxRfqNzo_tETKzpVLzfiwQyeyPGLBIO56YJ7eObdv0je81860ppamavo35UgoRdbYaBcoh9QcfylQr66oc6vFWXRcZ_ZT2LawVCWTIy3brGPi6UklfCpIMfIjf7iGdXKHzg");
+        final byte[] encryptedCek = Encoding.base64urlDecode("OKOawDo13gRp2ojaHV7LFpZcgV7T6DVZKTyKOMTYUmKoTCVJRgckCL9kiMT03JGeipsEdY3mx_etLbbWSrFr05kLzcSr4qKAq7YN7e9jwQRb23nfa6c9d-StnImGyFDbSv04uVuxIp5Zms1gNxKKK2Da14B8S4rzVRltdYwam_lDp5XnZAYpQdb76FdIKLaVmqgfwX7XWRxv2322i-vDxRfqNzo_tETKzpVLzfiwQyeyPGLBIO56YJ7eObdv0je81860ppamavo35UgoRdbYaBcoh9QcfylQr66oc6vFWXRcZ_ZT2LawVCWTIy3brGPi6UklfCpIMfIjf7iGdXKHzg");
         {
             final Cipher cipher = Cipher.getInstance(RSA_OAEP_JCA);
             cipher.init(Cipher.DECRYPT_MODE, privateJwk.toJcaKey());
@@ -150,8 +150,8 @@ public class JweTest {
         contentCipher.init(Cipher.ENCRYPT_MODE, new SecretKeySpec(cek, "AES"), spec);
         contentCipher.updateAAD(aad);
         final byte[] cipherTextAndAuthenticationTag = contentCipher.doFinal(decoded.getBytes());
-        final String cipherText = Base64Url.encode(cipherTextAndAuthenticationTag, 0, cipherTextAndAuthenticationTag.length - 128 / 8);
-        final String authenticationTag = Base64Url.encode(cipherTextAndAuthenticationTag, cipherTextAndAuthenticationTag.length - 128 / 8, 128 / 8);
+        final String cipherText = Encoding.base64Encode(cipherTextAndAuthenticationTag, 0, cipherTextAndAuthenticationTag.length - 128 / 8);
+        final String authenticationTag = Encoding.base64Encode(cipherTextAndAuthenticationTag, cipherTextAndAuthenticationTag.length - 128 / 8, 128 / 8);
 
         assertEquals("5eym8TW_c8SuK0ltJ3rpYIzOeDQz7TALvtu6UG9oMo4vpzs9tX_EFShS8iB7j6jiSdiwkIr3ajwQzaBtQD_A", cipherText);
         assertEquals("XFBoMYUZodetZdvTiFvSkQ", authenticationTag);
@@ -160,8 +160,8 @@ public class JweTest {
     @Test
     public void testKeyEncodings() {
 
-        assertEquals("eyJhbGciOiJSU0EtT0FFUCIsImVuYyI6IkEyNTZHQ00ifQ", Base64Url.encode(joseHeader));
-        assertEquals("48V1_ALb6US04U3b", Base64Url.encode(iv));
+        assertEquals("eyJhbGciOiJSU0EtT0FFUCIsImVuYyI6IkEyNTZHQ00ifQ", Encoding.base64Encode(joseHeader));
+        assertEquals("48V1_ALb6US04U3b", Encoding.base64Encode(iv));
 
     }
 

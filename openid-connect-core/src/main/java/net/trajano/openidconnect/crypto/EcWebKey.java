@@ -92,7 +92,7 @@ public class EcWebKey extends JsonWebKey {
         final KeyFactory keyFactory = KeyFactory.getInstance("EC");
         final ECParameterSpec ecParameterSpec = NamedEllipticCurve.valueOf(crv)
                 .toECParameterSpec();
-        final ECPublicKeySpec keySpec = new ECPublicKeySpec(new ECPoint(Base64Url.decodeUint(x), Base64Url.decodeUint(y)), ecParameterSpec);
+        final ECPublicKeySpec keySpec = new ECPublicKeySpec(new ECPoint(Encoding.base64urlDecodeUint(x), Encoding.base64urlDecodeUint(y)), ecParameterSpec);
         return keyFactory.generatePublic(keySpec);
     }
 
@@ -103,11 +103,11 @@ public class EcWebKey extends JsonWebKey {
         final ECParameterSpec ecParameterSpec = NamedEllipticCurve.valueOf(crv)
                 .toECParameterSpec();
         if (getUse() == KeyUse.sig) {
-            final ECPublicKeySpec keySpec = new ECPublicKeySpec(new ECPoint(Base64Url.decodeUint(x), Base64Url.decodeUint(y)), ecParameterSpec);
+            final ECPublicKeySpec keySpec = new ECPublicKeySpec(new ECPoint(Encoding.base64urlDecodeUint(x), Encoding.base64urlDecodeUint(y)), ecParameterSpec);
             return keyFactory.generatePublic(keySpec);
         } else {
 
-            final ECPrivateKeySpec keySpec = new ECPrivateKeySpec(Base64Url.decodeUint(d), ecParameterSpec);
+            final ECPrivateKeySpec keySpec = new ECPrivateKeySpec(Encoding.base64urlDecodeUint(d), ecParameterSpec);
             return keyFactory.generatePrivate(keySpec);
         }
 

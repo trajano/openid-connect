@@ -119,7 +119,7 @@ public class JsonWebToken {
         final String[] tokens = jwt.split("\\.");
 
         joseHeaderEncoded = tokens[0];
-        final JoseHeader joseHeader = new JoseHeader(Base64Url.decodeToString(joseHeaderEncoded));
+        final JoseHeader joseHeader = new JoseHeader(Encoding.base64DecodeToString(joseHeaderEncoded));
 
         alg = joseHeader.getAlg();
         enc = joseHeader.getEnc();
@@ -128,7 +128,7 @@ public class JsonWebToken {
 
         payloads = new byte[tokens.length - 1][];
         for (int i = 1; i < tokens.length; ++i) {
-            payloads[i - 1] = Base64Url.decode(tokens[i]);
+            payloads[i - 1] = Encoding.base64urlDecode(tokens[i]);
         }
 
     }
@@ -157,7 +157,7 @@ public class JsonWebToken {
      */
     public JoseHeader getJoseHeader() {
 
-        return new JoseHeader(Base64Url.decodeToString(joseHeaderEncoded));
+        return new JoseHeader(Encoding.base64DecodeToString(joseHeaderEncoded));
     }
 
     /**
@@ -194,7 +194,7 @@ public class JsonWebToken {
         final StringBuilder b = new StringBuilder(joseHeaderEncoded);
         for (final byte[] payload : payloads) {
             b.append('.')
-                    .append(Base64Url.encode(payload));
+                    .append(Encoding.base64Encode(payload));
         }
         return b.toString();
 

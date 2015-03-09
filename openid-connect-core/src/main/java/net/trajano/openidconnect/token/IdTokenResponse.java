@@ -12,7 +12,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import net.trajano.openidconnect.crypto.JsonWebKeySet;
-import net.trajano.openidconnect.crypto.JwtUtil;
+import net.trajano.openidconnect.crypto.JsonWebTokenProcessor;
 import net.trajano.openidconnect.rs.IdTokenProvider;
 
 /**
@@ -83,7 +83,8 @@ public class IdTokenResponse extends TokenResponse {
     public IdToken getIdToken(final JsonWebKeySet jwks) {
 
         try {
-            return new IdTokenProvider().readFrom(IdToken.class, null, null, MediaType.APPLICATION_JSON_TYPE, null, new ByteArrayInputStream(JwtUtil.getJwsPayload(encodedIdToken, jwks)));
+            final JsonWebTokenProcessor p = new JsonWebTokenProcessor(encodedIdToken).jwks(jwks);
+            return new IdTokenProvider().readFrom(IdToken.class, null, null, MediaType.APPLICATION_JSON_TYPE, null, new ByteArrayInputStream(p.getPayload()));
         } catch (IOException | GeneralSecurityException e) {
             throw new WebApplicationException(e);
         }

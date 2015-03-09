@@ -30,8 +30,8 @@ public class RsaWebKey extends JsonWebKey {
         setKty(KeyType.RSA);
         setKid(kid);
         setUse(KeyUse.sig);
-        n = (Base64Url.encodeUint(publicKey.getModulus()));
-        e = (Base64Url.encodeUint(publicKey.getPublicExponent()));
+        n = (Encoding.base64EncodeUint(publicKey.getModulus()));
+        e = (Encoding.base64EncodeUint(publicKey.getPublicExponent()));
     }
 
     public RsaWebKey(String kid, RSAPrivateCrtKey privateKey) {
@@ -39,14 +39,14 @@ public class RsaWebKey extends JsonWebKey {
         setKty(KeyType.RSA);
         setKid(kid);
         setUse(KeyUse.enc);
-        n = (Base64Url.encodeUint(privateKey.getModulus()));
-        e = (Base64Url.encodeUint(privateKey.getPublicExponent()));
-        p = (Base64Url.encodeUint(privateKey.getPrimeP()));
-        q = (Base64Url.encodeUint(privateKey.getPrimeQ()));
-        dp = (Base64Url.encodeUint(privateKey.getPrimeExponentP()));
-        dq = (Base64Url.encodeUint(privateKey.getPrimeExponentQ()));
-        d = (Base64Url.encodeUint(privateKey.getPrivateExponent()));
-        qi = (Base64Url.encodeUint(privateKey.getCrtCoefficient()));
+        n = (Encoding.base64EncodeUint(privateKey.getModulus()));
+        e = (Encoding.base64EncodeUint(privateKey.getPublicExponent()));
+        p = (Encoding.base64EncodeUint(privateKey.getPrimeP()));
+        q = (Encoding.base64EncodeUint(privateKey.getPrimeQ()));
+        dp = (Encoding.base64EncodeUint(privateKey.getPrimeExponentP()));
+        dq = (Encoding.base64EncodeUint(privateKey.getPrimeExponentQ()));
+        d = (Encoding.base64EncodeUint(privateKey.getPrivateExponent()));
+        qi = (Encoding.base64EncodeUint(privateKey.getCrtCoefficient()));
 
     }
 
@@ -210,8 +210,8 @@ public class RsaWebKey extends JsonWebKey {
     @Override
     public PublicKey toJcaPublicKey() throws GeneralSecurityException {
 
-        final BigInteger modulus = Base64Url.decodeUint(n);
-        final BigInteger publicExponent = Base64Url.decodeUint(e);
+        final BigInteger modulus = Encoding.base64urlDecodeUint(n);
+        final BigInteger publicExponent = Encoding.base64urlDecodeUint(e);
         return KeyFactory.getInstance("RSA")
                 .generatePublic(new RSAPublicKeySpec(modulus, publicExponent));
     }
@@ -219,19 +219,19 @@ public class RsaWebKey extends JsonWebKey {
     @Override
     public Key toJcaKey() throws GeneralSecurityException {
 
-        final BigInteger modulus = Base64Url.decodeUint(n);
-        final BigInteger publicExponent = Base64Url.decodeUint(e);
+        final BigInteger modulus = Encoding.base64urlDecodeUint(n);
+        final BigInteger publicExponent = Encoding.base64urlDecodeUint(e);
         if (getUse() == KeyUse.sig || d == null) {
             return KeyFactory.getInstance("RSA")
                     .generatePublic(new RSAPublicKeySpec(modulus, publicExponent));
         } else {
 
-            final BigInteger privateExponent = Base64Url.decodeUint(d);
-            final BigInteger primeP = Base64Url.decodeUint(p);
-            final BigInteger primeQ = Base64Url.decodeUint(q);
-            final BigInteger primeExponentP = Base64Url.decodeUint(dp);
-            final BigInteger primeExponentQ = Base64Url.decodeUint(dq);
-            final BigInteger crtCoefficent = Base64Url.decodeUint(qi);
+            final BigInteger privateExponent = Encoding.base64urlDecodeUint(d);
+            final BigInteger primeP = Encoding.base64urlDecodeUint(p);
+            final BigInteger primeQ = Encoding.base64urlDecodeUint(q);
+            final BigInteger primeExponentP = Encoding.base64urlDecodeUint(dp);
+            final BigInteger primeExponentQ = Encoding.base64urlDecodeUint(dq);
+            final BigInteger crtCoefficent = Encoding.base64urlDecodeUint(qi);
             return KeyFactory.getInstance("RSA")
                     .generatePrivate(new RSAPrivateCrtKeySpec(modulus, publicExponent, privateExponent, primeP, primeQ, primeExponentP, primeExponentQ, crtCoefficent));
         }

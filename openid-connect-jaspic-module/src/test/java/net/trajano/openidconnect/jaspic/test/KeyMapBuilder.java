@@ -12,7 +12,7 @@ import java.util.Map;
 import javax.json.JsonObject;
 import javax.json.JsonValue;
 
-import net.trajano.openidconnect.crypto.Base64Url;
+import net.trajano.openidconnect.crypto.Encoding;
 import net.trajano.openidconnect.crypto.JsonWebKey;
 import net.trajano.openidconnect.crypto.JsonWebKeySet;
 
@@ -76,8 +76,8 @@ public class KeyMapBuilder {
 
     private static Key buildRsaPublicKey(final JsonObject keyObject) throws GeneralSecurityException {
 
-        final BigInteger modulus = Base64Url.decodeUint(keyObject.getString("n"));
-        final BigInteger publicExponent = Base64Url.decodeUint(keyObject.getString("e"));
+        final BigInteger modulus = Encoding.base64urlDecodeUint(keyObject.getString("n"));
+        final BigInteger publicExponent = Encoding.base64urlDecodeUint(keyObject.getString("e"));
         return KeyFactory.getInstance("RSA")
                 .generatePublic(new RSAPublicKeySpec(modulus, publicExponent));
     }

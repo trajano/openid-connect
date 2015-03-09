@@ -26,14 +26,14 @@ public class OctWebKey extends JsonWebKey {
 
         this();
         setAlg(alg);
-        k = Base64Url.encode(secretKey.getEncoded());
+        k = Encoding.base64Encode(secretKey.getEncoded());
 
     }
 
     public OctWebKey(byte[] keyBytes) {
 
         this();
-        k = Base64Url.encode(keyBytes);
+        k = Encoding.base64Encode(keyBytes);
     }
 
     public String getK() {
@@ -49,7 +49,7 @@ public class OctWebKey extends JsonWebKey {
     @Override
     public Key toJcaKey() throws GeneralSecurityException {
 
-        return new SecretKeySpec(Base64Url.decode(k), "AES");
+        return new SecretKeySpec(Encoding.base64urlDecode(k), "AES");
     }
 
     @Override

@@ -2,7 +2,7 @@ package net.trajano.openidconnect.crypto.test;
 
 import java.math.BigInteger;
 
-import net.trajano.openidconnect.crypto.Base64Url;
+import net.trajano.openidconnect.crypto.Encoding;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -22,10 +22,10 @@ public class Base64UrlTest {
     @Test
     public void test65537() {
 
-        Assert.assertEquals(65537, Base64Url.decodeUint("AQAB")
+        Assert.assertEquals(65537, Encoding.base64urlDecodeUint("AQAB")
                 .intValue());
 
-        Assert.assertEquals("AQAB", Base64Url.encodeUint(new BigInteger("65537")));
+        Assert.assertEquals("AQAB", Encoding.base64EncodeUint(new BigInteger("65537")));
 
     }
 
@@ -37,13 +37,13 @@ public class Base64UrlTest {
     @Test
     public void testZeroDecode() {
 
-        Assert.assertEquals(BigInteger.ZERO, Base64Url.decodeUint("AA"));
+        Assert.assertEquals(BigInteger.ZERO, Encoding.base64urlDecodeUint("AA"));
 
     }
 
     @Test
     public void testZeroEncode() {
 
-        Assert.assertEquals("AA", Base64Url.encodeUint(BigInteger.ZERO));
+        Assert.assertEquals("AA", Encoding.base64EncodeUint(BigInteger.ZERO));
     }
 }

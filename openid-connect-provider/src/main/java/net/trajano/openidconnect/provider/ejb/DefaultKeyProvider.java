@@ -19,7 +19,7 @@ import javax.ejb.LockType;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 
-import net.trajano.openidconnect.crypto.Base64Url;
+import net.trajano.openidconnect.crypto.Encoding;
 import net.trajano.openidconnect.crypto.JsonWebAlgorithm;
 import net.trajano.openidconnect.crypto.JsonWebKey;
 import net.trajano.openidconnect.crypto.JsonWebKeySet;
@@ -100,7 +100,7 @@ public class DefaultKeyProvider implements KeyProvider {
                 final RSAPublicKey publicKey = (RSAPublicKey) keyPair.getPublic();
 
                 final SigningKey d = new SigningKey();
-                d.encodedJoseHeader = Base64Url.encodeUsAscii(String.format("{\"alg\":\"%s\",\"kid\":\"%s\"}", "RS256", keyId));
+                d.encodedJoseHeader = Encoding.base64EncodeAscii(String.format("{\"alg\":\"%s\",\"kid\":\"%s\"}", "RS256", keyId));
                 d.privateKey = privateKey;
                 signingKeys[i] = d;
 
@@ -151,7 +151,7 @@ public class DefaultKeyProvider implements KeyProvider {
 
         final byte[] randomTokenBytes = new byte[16];
         random.nextBytes(randomTokenBytes);
-        return Base64Url.encode(randomTokenBytes);
+        return Encoding.base64Encode(randomTokenBytes);
     }
 
     /**
@@ -163,14 +163,14 @@ public class DefaultKeyProvider implements KeyProvider {
 
         final SigningKey signingKey = signingKeys[random.nextInt(signingKeys.length)];
         final StringBuilder b = new StringBuilder(signingKey.encodedJoseHeader).append('.')
-                .append(Base64Url.encode(content));
+                .append(Encoding.base64Encode(content));
 
         final Signature signature = Signature.getInstance("SHA256withRSA");
         signature.initSign(signingKey.privateKey);
         signature.update(b.toString()
                 .getBytes());
         return b.append('.')
-                .append(Base64Url.encode(signature.sign()))
+                .append(Encoding.base64Encode(signature.sign()))
                 .toString();
     }
 
@@ -182,14 +182,14 @@ public class DefaultKeyProvider implements KeyProvider {
 
         final SigningKey signingKey = signingKeys[new Random().nextInt() % signingKeys.length];
         final StringBuilder b = new StringBuilder(signingKey.encodedJoseHeader).append('.')
-                .append(Base64Url.encode(content));
+                .append(Encoding.base64Encode(content));
 
         final Signature signature = Signature.getInstance("SHA256withRSA");
         signature.initSign(signingKey.privateKey);
         signature.update(b.toString()
                 .getBytes());
         return b.append('.')
-                .append(Base64Url.encode(signature.sign()))
+                .append(Encoding.base64Encode(signature.sign()))
                 .toString();
     }
 
