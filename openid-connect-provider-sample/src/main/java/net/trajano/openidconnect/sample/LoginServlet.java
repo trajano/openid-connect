@@ -10,7 +10,6 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.core.MediaType;
 
 import net.trajano.openidconnect.auth.AuthenticationRequest;
 import net.trajano.openidconnect.provider.spi.AuthenticationResponseProvider;
@@ -27,31 +26,13 @@ public class LoginServlet extends HttpServlet {
     private static final long serialVersionUID = -129656605271663835L;
 
     @Override
-    protected void doGet(HttpServletRequest req,
-            HttpServletResponse resp) throws ServletException,
-            IOException {
-
-        resp.setContentType(MediaType.TEXT_PLAIN);
-        resp.getWriter()
-                .print(kp);
-        resp.getWriter()
-                .print(tp);
-
-        resp.getWriter()
-                .println();
-        resp.getWriter()
-                .println(tp.getAllTokenResponses());
-
-    }
-
-    @Override
     protected void doPost(HttpServletRequest req,
             HttpServletResponse resp) throws ServletException,
             IOException {
 
         String subject = req.getParameter("username");
         try {
-            redirector.doCallback(resp, new AuthenticationRequest(req), subject);
+            redirector.doCallback(resp, new AuthenticationRequest(req, kp.getPrivateJwks()), subject);
         } catch (GeneralSecurityException e) {
             throw new ServletException(e);
         }

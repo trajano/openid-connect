@@ -57,13 +57,7 @@ public class AcceptAllClientManager implements ClientManager, Authenticator, Use
             final UriBuilder contextUriBuilder) {
 
         return contextUriBuilder.path("login.jsp")
-                .queryParam(OpenIdConnectKey.CLIENT_ID, authenticationRequest.getClientId())
-                .queryParam(OpenIdConnectKey.REDIRECT_URI, authenticationRequest.getRedirectUri())
-                .queryParam(OpenIdConnectKey.SCOPE, authenticationRequest.getScope())
-                .queryParam(OpenIdConnectKey.RESPONSE_TYPE, authenticationRequest.getResponseType())
-                .queryParam(OpenIdConnectKey.STATE, authenticationRequest.getState())
-                .queryParam(OpenIdConnectKey.NONCE, authenticationRequest.getNonce())
-                .queryParam(OpenIdConnectKey.RESPONSE_MODE, authenticationRequest.getResponseMode())
+                .queryParam(OpenIdConnectKey.REQUEST, req.getParameter(OpenIdConnectKey.REQUEST))
                 .build();
     }
 

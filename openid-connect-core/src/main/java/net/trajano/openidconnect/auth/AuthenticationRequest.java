@@ -226,11 +226,6 @@ public class AuthenticationRequest implements Serializable {
 
     private final List<Locale> uiLocales;
 
-    public AuthenticationRequest(final HttpServletRequest req) throws IOException, GeneralSecurityException {
-
-        this(req, null);
-    }
-
     public AuthenticationRequest(final HttpServletRequest req, final JsonWebKeySet privateJwks) throws IOException, GeneralSecurityException {
 
         this(buildRequestMap(req, privateJwks));
