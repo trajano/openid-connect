@@ -22,13 +22,13 @@ import javax.crypto.spec.SecretKeySpec;
 
 import net.trajano.openidconnect.crypto.Base64Url;
 import net.trajano.openidconnect.crypto.JoseHeader;
+import net.trajano.openidconnect.crypto.JsonWebAlgorithm;
 import net.trajano.openidconnect.crypto.JsonWebKey;
 import net.trajano.openidconnect.crypto.JsonWebToken;
 import net.trajano.openidconnect.crypto.JsonWebTokenCrypto;
 
 public class JcaJsonWebTokenCrypto implements JsonWebTokenCrypto {
 
-    private JcaJsonWebAlgorithm algos = new JcaJsonWebAlgorithm();
 
     private static final JcaJsonWebTokenCrypto INSTANCE = new JcaJsonWebTokenCrypto();
 
@@ -49,7 +49,7 @@ public class JcaJsonWebTokenCrypto implements JsonWebTokenCrypto {
         final StringBuilder b = new StringBuilder(Base64Url.encode(header.toString())).append('.')
                 .append(Base64Url.encode(payloadBytes));
 
-        final Signature signature = Signature.getInstance(algos.toJca(jwk.getAlg()));
+        final Signature signature = Signature.getInstance(JsonWebAlgorithm.toJca(jwk.getAlg()));
         signature.initSign((PrivateKey) jwk.toJcaKey());
         signature.update(b.toString()
                 .getBytes(CharSets.US_ASCII));
@@ -66,22 +66,22 @@ public class JcaJsonWebTokenCrypto implements JsonWebTokenCrypto {
         final byte[][] payloads = new byte[4][];
 
         final KeyGenerator keyGenerator = KeyGenerator.getInstance("AES");
-        keyGenerator.init(algos.getKeySize(joseHeader.getEnc()));
+        keyGenerator.init(JsonWebAlgorithm.getKeySize(joseHeader.getEnc()));
 
         final SecretKey secretKey = keyGenerator.generateKey();
 
         final byte[] cek = secretKey.getEncoded();
 
-        final Cipher cekCipher = Cipher.getInstance(algos.toJca(joseHeader.getAlg()));
+        final Cipher cekCipher = Cipher.getInstance(JsonWebAlgorithm.toJca(joseHeader.getAlg()));
         cekCipher.init(Cipher.ENCRYPT_MODE, jwk.toJcaKey());
         final byte[] encryptedCek = cekCipher.doFinal(cek);
 
         payloads[0] = encryptedCek;
 
-        final byte[] iv = new byte[algos.getIvLen(joseHeader.getEnc())];
+        final byte[] iv = new byte[JsonWebAlgorithm.getIvLen(joseHeader.getEnc())];
         random.nextBytes(iv);
         final int authenticationTagBits = 128;
-        final Cipher contentCipher = Cipher.getInstance(algos.toJca(joseHeader.getEnc()));
+        final Cipher contentCipher = Cipher.getInstance(JsonWebAlgorithm.toJca(joseHeader.getEnc()));
 
         if ("A128GCM".equals(joseHeader.getEnc()) || "A256GCM".equals(joseHeader.getEnc())) {
             final GCMParameterSpec spec = new GCMParameterSpec(authenticationTagBits, iv);
@@ -151,7 +151,7 @@ public class JcaJsonWebTokenCrypto implements JsonWebTokenCrypto {
         final byte[] authenticationTag = jsonWebToken.getPayload(3);
         final PrivateKey privateKey = (PrivateKey) jwk.toJcaKey();
 
-        final Cipher encryptionKeyCipher = Cipher.getInstance(algos.toJca((jsonWebToken.getAlg())));
+        final Cipher encryptionKeyCipher = Cipher.getInstance(JsonWebAlgorithm.toJca((jsonWebToken.getAlg())));
         encryptionKeyCipher.init(Cipher.DECRYPT_MODE, privateKey);
         final byte[] decryptedKey = encryptionKeyCipher.doFinal(encryptedKey);
 
@@ -160,9 +160,9 @@ public class JcaJsonWebTokenCrypto implements JsonWebTokenCrypto {
         final byte[] aad = jsonWebToken.getJoseHeaderEncoded()
                 .getBytes(CharSets.US_ASCII);
 
-        final Cipher contentCipher = Cipher.getInstance(algos.toJca(jsonWebToken.getEnc()));
+        final Cipher contentCipher = Cipher.getInstance(JsonWebAlgorithm.toJca(jsonWebToken.getEnc()));
 
-        if (algos.isGcm(jsonWebToken.getEnc())) {
+        if (JsonWebAlgorithm.isGcm(jsonWebToken.getEnc())) {
             final GCMParameterSpec spec = new GCMParameterSpec(authenticationTag.length * 8, initializationVector);
             contentCipher.init(Cipher.DECRYPT_MODE, contentEncryptionKey, spec);
             contentCipher.updateAAD(aad);
@@ -184,7 +184,7 @@ public class JcaJsonWebTokenCrypto implements JsonWebTokenCrypto {
 
         final PublicKey signingKey = (PublicKey) jwk.toJcaPublicKey();
 
-        final Signature signature = Signature.getInstance(algos.toJca(alg));
+        final Signature signature = Signature.getInstance(JsonWebAlgorithm.toJca(alg));
 
         final byte[] jwtSignatureBytes = jsonWebToken.getPayload(1);
 

@@ -20,11 +20,11 @@ import javax.ejb.Singleton;
 import javax.ejb.Startup;
 
 import net.trajano.openidconnect.crypto.Base64Url;
+import net.trajano.openidconnect.crypto.JsonWebAlgorithm;
 import net.trajano.openidconnect.crypto.JsonWebKey;
 import net.trajano.openidconnect.crypto.JsonWebKeySet;
 import net.trajano.openidconnect.crypto.OctWebKey;
 import net.trajano.openidconnect.crypto.RsaWebKey;
-import net.trajano.openidconnect.internal.JcaJsonWebAlgorithm;
 import net.trajano.openidconnect.provider.spi.KeyProvider;
 
 /**
@@ -105,12 +105,12 @@ public class DefaultKeyProvider implements KeyProvider {
                 signingKeys[i] = d;
 
                 JsonWebKey jwk = new RsaWebKey(keyId, publicKey);
-                jwk.setAlg(JcaJsonWebAlgorithm.RS256);
+                jwk.setAlg(JsonWebAlgorithm.RS256);
 
                 jwks.add(jwk);
 
                 JsonWebKey privateJwk = new RsaWebKey(keyId, privateKey);
-                privateJwk.setAlg(JcaJsonWebAlgorithm.RS256);
+                privateJwk.setAlg(JsonWebAlgorithm.RS256);
                 privateJwks.add(privateJwk);
 
             }
@@ -118,7 +118,7 @@ public class DefaultKeyProvider implements KeyProvider {
             final KeyGenerator keyGenerator = KeyGenerator.getInstance("AES");
             keyGenerator.init(128);
             secretKey = keyGenerator.generateKey();
-            OctWebKey secretJwk = new OctWebKey(secretKey, JcaJsonWebAlgorithm.A256CBC);
+            OctWebKey secretJwk = new OctWebKey(secretKey, JsonWebAlgorithm.A256CBC);
             secretKeyId = nextEncodedToken();
             secretJwk.setKid(secretKeyId);
             privateJwks.add(secretJwk);

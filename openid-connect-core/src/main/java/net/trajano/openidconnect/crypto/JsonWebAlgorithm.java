@@ -1,4 +1,4 @@
-package net.trajano.openidconnect.internal;
+package net.trajano.openidconnect.crypto;
 
 import java.security.GeneralSecurityException;
 import java.security.Signature;
@@ -12,18 +12,29 @@ import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
 import javax.crypto.Mac;
 
-import net.trajano.openidconnect.crypto.NamedEllipticCurve;
+import net.trajano.openidconnect.internal.Log;
 
 /**
  * <p>
- * This maps the algorithms to their JCA counterparts.
+ * This maps the algorithms to their JCA counterparts. This is a singleton to
+ * prevent multiple instantiations that cost environment analysis time.
  * </p>
  * See Appendix A & B of
  * http://self-issued.info/docs/draft-ietf-jose-json-web-algorithms-00.html.
  * 
  * @author Archimedes
  */
-public class JcaJsonWebAlgorithm {
+public class JsonWebAlgorithm {
+
+    /**
+     * Logger
+     */
+    public static Log LOG = Log.getInstance();
+
+    /**
+     * Instance.
+     */
+    private static JsonWebAlgorithm INSTANCE = new JsonWebAlgorithm();
 
     /**
      * Encryption algorithms list. The data is in order of preference with the
@@ -101,7 +112,7 @@ public class JcaJsonWebAlgorithm {
             jwaEcMap.put(jwa, crv.toECParameterSpec());
             sigs.add(jwa);
         } catch (GeneralSecurityException e) {
-            System.out.println(jwa + " is not supported");
+            LOG.fine("algNotSupportedForSig", new Object[] { jwa });
         }
     }
 
@@ -120,7 +131,7 @@ public class JcaJsonWebAlgorithm {
             jwaJcaMap.put(jwa, jca);
             sigs.add(jwa);
         } catch (GeneralSecurityException e) {
-            System.out.println(jwa + " is not supported");
+            LOG.fine("algNotSupportedForSig", new Object[] { jwa });
         }
     }
 
@@ -139,7 +150,7 @@ public class JcaJsonWebAlgorithm {
             jwaJcaMap.put(jwa, jca);
             kexs.add(jwa);
         } catch (GeneralSecurityException e) {
-            System.out.println(jwa + " is not supported");
+            LOG.fine("algNotSupportedForKex", new Object[] { jwa });
         }
     }
 
@@ -171,11 +182,11 @@ public class JcaJsonWebAlgorithm {
             jwaIvLenMap.put(jwa, ivLen);
             encs.add(jwa);
         } catch (GeneralSecurityException e) {
-            System.out.println(jwa + " is not supported");
+            LOG.fine("algNotSupportedForEnc", new Object[] { jwa });
         }
     }
 
-    public JcaJsonWebAlgorithm() {
+    private JsonWebAlgorithm() {
 
         /**
          * Advanced Encryption Standard (AES) using 256 bit keys in
@@ -277,22 +288,22 @@ public class JcaJsonWebAlgorithm {
 
     }
 
-    public String toJca(String jwa) {
+    public static String toJca(String jwa) {
 
-        return jwaJcaMap.get(jwa);
+        return INSTANCE.jwaJcaMap.get(jwa);
     }
 
-    public int getIvLen(String enc) {
+    public static int getIvLen(String enc) {
 
-        return jwaIvLenMap.get(enc);
+        return INSTANCE.jwaIvLenMap.get(enc);
     }
 
-    public int getKeySize(String enc) {
+    public static int getKeySize(String enc) {
 
-        return jwaKeySizeMap.get(enc);
+        return INSTANCE.jwaKeySizeMap.get(enc);
     }
 
-    public boolean isGcm(String enc) {
+    public static boolean isGcm(String enc) {
 
         return "A256GCM".equals(enc) || "A128GCM".equals(enc);
     }
