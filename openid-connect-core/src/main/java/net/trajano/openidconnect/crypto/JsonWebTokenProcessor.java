@@ -105,6 +105,8 @@ public class JsonWebTokenProcessor {
 
         if (kid != null) {
             jwk = jwks.getJwk(kid);
+        } else if (jwks.getKeys().length == 1) {
+            jwk = jwks.getKeys()[0];
         }
         return this;
 

@@ -43,9 +43,21 @@ public final class Encoding {
      *            bytes to encode
      * @return Base64 string
      */
-    public static String base64Encode(final byte[] bytes) {
+    public static String base64urlEncode(final byte[] bytes) {
 
-        return base64Encode(bytes, 0, bytes.length);
+        return base64Encode(bytes, 0, bytes.length, false);
+    }
+
+    /**
+     * Encodes bytes into a base64 string as UTF8
+     *
+     * @param bytes
+     *            bytes to encode
+     * @return Base64 string
+     */
+    public static String base64Encode(final String s) {
+
+        return base64Encode(s.getBytes(UTF8), 0, s.getBytes(UTF8).length, true);
     }
 
     /**
@@ -61,7 +73,8 @@ public final class Encoding {
      */
     public static String base64Encode(final byte[] bytes,
             final int offset,
-            final int length) {
+            final int length,
+            final boolean padding) {
 
         final StringBuilder buffer = new StringBuilder(length * 3);
         for (int i = offset; i < offset + length; i += 3) {
@@ -70,44 +83,50 @@ public final class Encoding {
             int p0 = bytes[i] & 0xFC;
             p0 >>= 2;
 
-        int p1 = bytes[i] & 0x03;
-        p1 <<= 4;
+            int p1 = bytes[i] & 0x03;
+            p1 <<= 4;
 
-        int p2;
-        int p3;
-        if (i + 1 < offset + length) {
-            p2 = bytes[i + 1] & 0xF0;
-            p2 >>= 4;
-        p3 = bytes[i + 1] & 0x0F;
-        p3 <<= 2;
-        } else {
-            p2 = 0;
-            p3 = 0;
-        }
-        int p4;
-        int p5;
-        if (i + 2 < offset + length) {
-            p4 = bytes[i + 2] & 0xC0;
-            p4 >>= 6;
-        p5 = bytes[i + 2] & 0x3F;
-        } else {
-            p4 = 0;
-            p5 = 0;
-        }
+            int p2;
+            int p3;
+            if (i + 1 < offset + length) {
+                p2 = bytes[i + 1] & 0xF0;
+                p2 >>= 4;
+                p3 = bytes[i + 1] & 0x0F;
+                p3 <<= 2;
+            } else {
+                p2 = 0;
+                p3 = 0;
+            }
+            int p4;
+            int p5;
+            if (i + 2 < offset + length) {
+                p4 = bytes[i + 2] & 0xC0;
+                p4 >>= 6;
+                p5 = bytes[i + 2] & 0x3F;
+            } else {
+                p4 = 0;
+                p5 = 0;
+            }
 
-        if (i + 2 < offset + length) {
-            buffer.append(ENCODE_MAP[p0]);
-            buffer.append(ENCODE_MAP[p1 | p2]);
-            buffer.append(ENCODE_MAP[p3 | p4]);
-            buffer.append(ENCODE_MAP[p5]);
-        } else if (i + 1 < offset + length) {
-            buffer.append(ENCODE_MAP[p0]);
-            buffer.append(ENCODE_MAP[p1 | p2]);
-            buffer.append(ENCODE_MAP[p3]);
-        } else {
-            buffer.append(ENCODE_MAP[p0]);
-            buffer.append(ENCODE_MAP[p1 | p2]);
-        }
+            if (i + 2 < offset + length) {
+                buffer.append(ENCODE_MAP[p0]);
+                buffer.append(ENCODE_MAP[p1 | p2]);
+                buffer.append(ENCODE_MAP[p3 | p4]);
+                buffer.append(ENCODE_MAP[p5]);
+            } else if (i + 1 < offset + length) {
+                buffer.append(ENCODE_MAP[p0]);
+                buffer.append(ENCODE_MAP[p1 | p2]);
+                buffer.append(ENCODE_MAP[p3]);
+                if (padding) {
+                    buffer.append('=');
+                }
+            } else {
+                buffer.append(ENCODE_MAP[p0]);
+                buffer.append(ENCODE_MAP[p1 | p2]);
+                if (padding) {
+                    buffer.append("==");
+                }
+            }
         }
         return buffer.toString();
     }
@@ -119,9 +138,9 @@ public final class Encoding {
      *            string to encode
      * @return Base64 string
      */
-    public static String base64Encode(final String s) {
+    public static String base64UrlEncode(final String s) {
 
-        return base64Encode(s.getBytes(UTF8));
+        return base64urlEncode(s.getBytes(UTF8));
     }
 
     /**
@@ -133,7 +152,7 @@ public final class Encoding {
      */
     public static String base64EncodeAscii(final String s) {
 
-        return base64Encode(s.getBytes(US_ASCII));
+        return base64urlEncode(s.getBytes(US_ASCII));
     }
 
     /**
@@ -145,7 +164,7 @@ public final class Encoding {
      */
     public static String base64EncodeUint(final BigInteger v) {
 
-        return base64Encode(v.toByteArray());
+        return base64urlEncode(v.toByteArray());
     }
 
     /**
@@ -184,9 +203,9 @@ public final class Encoding {
                 buffer[offset + i - p] = (byte) (DECODE_MAP[base64Chars[i]] << 2);
             } else if (i % 4 == 1 && offset + i - p - 1 < buffer.length) {
                 buffer[offset + i - p - 1] |= DECODE_MAP[base64Chars[i]] >> 4;
-            if (offset + i - p < buffer.length) {
-                buffer[offset + i - p] = (byte) (DECODE_MAP[base64Chars[i]] << 4);
-            }
+                if (offset + i - p < buffer.length) {
+                    buffer[offset + i - p] = (byte) (DECODE_MAP[base64Chars[i]] << 4);
+                }
             } else if (i % 4 == 2 && offset + i - p - 1 < buffer.length) {
                 buffer[offset + i - p - 1] |= DECODE_MAP[base64Chars[i]] >>> 2;
                 if (offset + i - p < buffer.length) {
@@ -238,5 +257,12 @@ public final class Encoding {
      */
     private Encoding() {
 
+    }
+
+    public static String base64UrlEncode(byte[] bytes,
+            int offset,
+            int len) {
+
+        return base64Encode(bytes, offset, len, false);
     }
 }

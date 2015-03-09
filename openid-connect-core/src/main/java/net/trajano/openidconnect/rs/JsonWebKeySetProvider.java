@@ -80,9 +80,9 @@ public class JsonWebKeySetProvider implements MessageBodyReader<JsonWebKeySet>, 
         final JsonWebKeySet keySet = new JsonWebKeySet();
         for (final JsonValue key : keysArray) {
             final JsonObject keyObject = (JsonObject) key;
-            final String kid = keyObject.getString("kid");
+            final String kid = keyObject.containsKey("kid") ? keyObject.getString("kid") : null;
             final KeyType kty = KeyType.valueOf(keyObject.getString("kty"));
-            final String alg = keyObject.getString("alg");
+            final String alg = keyObject.containsKey("alg") ? keyObject.getString("alg") : null;
             final KeyUse use = KeyUse.valueOf(keyObject.getString("use"));
             if (kty == KeyType.RSA) {
                 final RsaWebKey rsaWebKey = new RsaWebKey();
@@ -120,7 +120,7 @@ public class JsonWebKeySetProvider implements MessageBodyReader<JsonWebKeySet>, 
         }
 
         return keySet;
-            }
+    }
 
     @Override
     public void writeTo(final JsonWebKeySet jwks,

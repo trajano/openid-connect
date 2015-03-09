@@ -194,7 +194,7 @@ public class JsonWebToken {
         final StringBuilder b = new StringBuilder(joseHeaderEncoded);
         for (final byte[] payload : payloads) {
             b.append('.')
-                    .append(Encoding.base64Encode(payload));
+                    .append(Encoding.base64urlEncode(payload));
         }
         return b.toString();
 

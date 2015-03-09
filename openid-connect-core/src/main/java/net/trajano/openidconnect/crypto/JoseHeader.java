@@ -415,7 +415,7 @@ public class JoseHeader {
      */
     public byte[] getEncoded() {
 
-        return Encoding.base64Encode(toString())
+        return Encoding.base64UrlEncode(toString())
                 .getBytes(CharSets.US_ASCII);
     }
 }

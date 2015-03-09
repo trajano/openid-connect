@@ -150,8 +150,8 @@ public class JweTest {
         contentCipher.init(Cipher.ENCRYPT_MODE, new SecretKeySpec(cek, "AES"), spec);
         contentCipher.updateAAD(aad);
         final byte[] cipherTextAndAuthenticationTag = contentCipher.doFinal(decoded.getBytes());
-        final String cipherText = Encoding.base64Encode(cipherTextAndAuthenticationTag, 0, cipherTextAndAuthenticationTag.length - 128 / 8);
-        final String authenticationTag = Encoding.base64Encode(cipherTextAndAuthenticationTag, cipherTextAndAuthenticationTag.length - 128 / 8, 128 / 8);
+        final String cipherText = Encoding.base64UrlEncode(cipherTextAndAuthenticationTag, 0, cipherTextAndAuthenticationTag.length - 128 / 8);
+        final String authenticationTag = Encoding.base64UrlEncode(cipherTextAndAuthenticationTag, cipherTextAndAuthenticationTag.length - 128 / 8, 128 / 8);
 
         assertEquals("5eym8TW_c8SuK0ltJ3rpYIzOeDQz7TALvtu6UG9oMo4vpzs9tX_EFShS8iB7j6jiSdiwkIr3ajwQzaBtQD_A", cipherText);
         assertEquals("XFBoMYUZodetZdvTiFvSkQ", authenticationTag);
@@ -160,8 +160,8 @@ public class JweTest {
     @Test
     public void testKeyEncodings() {
 
-        assertEquals("eyJhbGciOiJSU0EtT0FFUCIsImVuYyI6IkEyNTZHQ00ifQ", Encoding.base64Encode(joseHeader));
-        assertEquals("48V1_ALb6US04U3b", Encoding.base64Encode(iv));
+        assertEquals("eyJhbGciOiJSU0EtT0FFUCIsImVuYyI6IkEyNTZHQ00ifQ", Encoding.base64UrlEncode(joseHeader));
+        assertEquals("48V1_ALb6US04U3b", Encoding.base64urlEncode(iv));
 
     }
 

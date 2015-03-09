@@ -61,7 +61,7 @@ public class JcaJsonWebTokenCrypto implements JsonWebTokenCrypto {
             mac.init(jwk.toJcaKey());
             mac.update(header.getEncoded());
             mac.update((byte) '.');
-            mac.update(Encoding.base64Encode(payloadBytes)
+            mac.update(Encoding.base64urlEncode(payloadBytes)
                     .getBytes(CharSets.US_ASCII));
             payloads[1] = mac.doFinal();
         } else {
@@ -69,7 +69,7 @@ public class JcaJsonWebTokenCrypto implements JsonWebTokenCrypto {
             signature.initSign((PrivateKey) jwk.toJcaKey());
             signature.update(header.getEncoded());
             signature.update((byte) '.');
-            signature.update(Encoding.base64Encode(payloadBytes)
+            signature.update(Encoding.base64urlEncode(payloadBytes)
                     .getBytes(CharSets.US_ASCII));
             payloads[1] = signature.sign();
 
@@ -359,7 +359,7 @@ public class JcaJsonWebTokenCrypto implements JsonWebTokenCrypto {
             mac.update(jsonWebToken.getJoseHeaderEncoded()
                     .getBytes());
             mac.update((byte) '.');
-            byte[] macValue = mac.doFinal(Encoding.base64Encode(jsonWebToken.getPayload(0))
+            byte[] macValue = mac.doFinal(Encoding.base64urlEncode(jsonWebToken.getPayload(0))
                     .getBytes());
             if (!MessageDigest.isEqual(macValue, jsonWebToken.getPayload(1))) {
                 throw new SignatureException("signature verification failed");
@@ -375,7 +375,7 @@ public class JcaJsonWebTokenCrypto implements JsonWebTokenCrypto {
             signature.update(jsonWebToken.getJoseHeaderEncoded()
                     .getBytes());
             signature.update((byte) '.');
-            signature.update(Encoding.base64Encode(jsonWebToken.getPayload(0))
+            signature.update(Encoding.base64urlEncode(jsonWebToken.getPayload(0))
                     .getBytes());
             if (!signature.verify(jwtSignatureBytes)) {
                 throw new SignatureException("signature verification failed");

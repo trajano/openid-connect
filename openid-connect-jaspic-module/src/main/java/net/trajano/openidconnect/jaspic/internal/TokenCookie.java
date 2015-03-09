@@ -120,7 +120,7 @@ public class TokenCookie {
             final SecretKey secret) throws GeneralSecurityException {
 
         try {
-            return Encoding.base64Encode(CipherUtil.encrypt(jsonObject.toString()
+            return Encoding.base64urlEncode(CipherUtil.encrypt(jsonObject.toString()
                     .getBytes("UTF-8"), secret));
         } catch (final IOException e) {
             throw new GeneralSecurityException(e);

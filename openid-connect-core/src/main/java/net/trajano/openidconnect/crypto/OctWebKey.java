@@ -26,14 +26,14 @@ public class OctWebKey extends JsonWebKey {
 
         this();
         setAlg(alg);
-        k = Encoding.base64Encode(secretKey.getEncoded());
+        k = Encoding.base64urlEncode(secretKey.getEncoded());
 
     }
 
     public OctWebKey(byte[] keyBytes) {
 
         this();
-        k = Encoding.base64Encode(keyBytes);
+        k = Encoding.base64urlEncode(keyBytes);
     }
 
     public String getK() {

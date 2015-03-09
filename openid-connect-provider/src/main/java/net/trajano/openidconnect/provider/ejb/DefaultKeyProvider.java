@@ -151,7 +151,7 @@ public class DefaultKeyProvider implements KeyProvider {
 
         final byte[] randomTokenBytes = new byte[16];
         random.nextBytes(randomTokenBytes);
-        return Encoding.base64Encode(randomTokenBytes);
+        return Encoding.base64urlEncode(randomTokenBytes);
     }
 
     /**
@@ -163,14 +163,14 @@ public class DefaultKeyProvider implements KeyProvider {
 
         final SigningKey signingKey = signingKeys[random.nextInt(signingKeys.length)];
         final StringBuilder b = new StringBuilder(signingKey.encodedJoseHeader).append('.')
-                .append(Encoding.base64Encode(content));
+                .append(Encoding.base64urlEncode(content));
 
         final Signature signature = Signature.getInstance("SHA256withRSA");
         signature.initSign(signingKey.privateKey);
         signature.update(b.toString()
                 .getBytes());
         return b.append('.')
-                .append(Encoding.base64Encode(signature.sign()))
+                .append(Encoding.base64urlEncode(signature.sign()))
                 .toString();
     }
 
@@ -182,14 +182,14 @@ public class DefaultKeyProvider implements KeyProvider {
 
         final SigningKey signingKey = signingKeys[new Random().nextInt() % signingKeys.length];
         final StringBuilder b = new StringBuilder(signingKey.encodedJoseHeader).append('.')
-                .append(Encoding.base64Encode(content));
+                .append(Encoding.base64UrlEncode(content));
 
         final Signature signature = Signature.getInstance("SHA256withRSA");
         signature.initSign(signingKey.privateKey);
         signature.update(b.toString()
                 .getBytes());
         return b.append('.')
-                .append(Encoding.base64Encode(signature.sign()))
+                .append(Encoding.base64urlEncode(signature.sign()))
                 .toString();
     }
 
