@@ -1,7 +1,7 @@
 package net.trajano.openidconnect.jaspic.test;
 
-import static net.trajano.openidconnect.crypto.Encoding.base64urlEncode;
 import static net.trajano.openidconnect.crypto.Encoding.base64urlDecode;
+import static net.trajano.openidconnect.crypto.Encoding.base64urlEncode;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.mock;
@@ -357,6 +357,7 @@ public class HerokuTest {
         final String nonceCookieValue = base64urlEncode(CipherUtil.encrypt(tokenCookie.getIdToken()
                 .getString("nonce")
                 .getBytes(), secretKey));
+        assertNotNull(nonceCookieValue);
         assertEquals(8, base64urlDecode(tokenCookie.getIdToken()
                 .getString("nonce")).length);
 

@@ -3,6 +3,7 @@ package net.trajano.openidconnect.crypto.test;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -58,6 +59,8 @@ public class JwksTest {
 		final RSAPrivateCrtKey privateKey = (RSAPrivateCrtKey) keyPair
 				.getPrivate();
 		final RSAPublicKey publicKey = (RSAPublicKey) keyPair.getPublic();
+		assertNotNull(privateKey);
+		assertNotNull(publicKey);
 
 	}
 
