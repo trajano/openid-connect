@@ -37,7 +37,7 @@ public class JoseHeader {
      * of the JSON Web Algorithms (JWA) [JWA] specification.
      * </p>
      */
-    private JsonWebAlgorithm alg = JsonWebAlgorithm.none;
+    private String alg = JsonWebToken.ALG_NONE;
 
     /**
      * "crit" (Critical) Header Parameter
@@ -106,7 +106,7 @@ public class JoseHeader {
      * of the JSON Web Algorithms (JWA) [JWA] specification.
      * </p>
      */
-    private JsonWebAlgorithm enc;
+    private String enc;
 
     /**
      * "jku" (JWK Set URL) Header Parameter
@@ -268,7 +268,7 @@ public class JoseHeader {
         Util.populateWithJson(this, json);
     }
 
-    public JsonWebAlgorithm getAlg() {
+    public String getAlg() {
 
         return alg;
     }
@@ -283,7 +283,7 @@ public class JoseHeader {
         return cty;
     }
 
-    public JsonWebAlgorithm getEnc() {
+    public String getEnc() {
 
         return enc;
     }
@@ -333,7 +333,7 @@ public class JoseHeader {
         return zip;
     }
 
-    public void setAlg(final JsonWebAlgorithm alg) {
+    public void setAlg(final String alg) {
 
         this.alg = alg;
     }
@@ -348,7 +348,7 @@ public class JoseHeader {
         this.cty = cty;
     }
 
-    public void setEnc(final JsonWebAlgorithm enc) {
+    public void setEnc(final String enc) {
 
         this.enc = enc;
     }
@@ -410,9 +410,12 @@ public class JoseHeader {
 
     /**
      * Gets the encoded version of the JOSE header.
+     * 
      * @return
      */
     public byte[] getEncoded() {
-        return Base64Url.encode(toString()).getBytes(CharSets.US_ASCII);
+
+        return Base64Url.encode(toString())
+                .getBytes(CharSets.US_ASCII);
     }
 }

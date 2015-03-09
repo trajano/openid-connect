@@ -16,6 +16,11 @@ import net.trajano.openidconnect.internal.CharSets;
 public class JsonWebToken {
 
     /**
+     * Constant for the "none" algorithm.
+     */
+    public static final String ALG_NONE = "none";
+
+    /**
      * <p>
      * "alg" (Algorithm) Header Parameter
      * </p>

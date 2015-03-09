@@ -66,8 +66,11 @@ public class JcaJsonWebTokenCrypto implements JsonWebTokenCrypto {
         final byte[][] payloads = new byte[4][];
 
         final KeyGenerator keyGenerator = KeyGenerator.getInstance("AES");
-        keyGenerator.init(joseHeader.getEnc()
-                .getBits());
+        if ("A128GCM".equals(joseHeader.getEnc()) || "A128CBC".equals(joseHeader.getEnc())) {
+            keyGenerator.init(128);
+        } else if ("A256GCM".equals(joseHeader.getEnc()) || "A256CBC".equals(joseHeader.getEnc())) {
+            keyGenerator.init(256);
+        }
         final SecretKey secretKey = keyGenerator.generateKey();
 
         final byte[] cek = secretKey.getEncoded();
@@ -84,7 +87,7 @@ public class JcaJsonWebTokenCrypto implements JsonWebTokenCrypto {
         final Cipher contentCipher = Cipher.getInstance(joseHeader.getEnc()
                 .toJca());
 
-        if (joseHeader.getEnc() == JsonWebAlgorithm.A128GCM || joseHeader.getEnc() == JsonWebAlgorithm.A256GCM) {
+        if ("A128GCM".equals(joseHeader.getEnc()) || "A256GCM".equals(joseHeader.getEnc())) {
             iv = new byte[96];
             random.nextBytes(iv);
             final GCMParameterSpec spec = new GCMParameterSpec(authenticationTagBits, iv);
