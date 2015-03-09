@@ -10,6 +10,10 @@ import java.util.Set;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import net.trajano.openidconnect.auth.Display;
+import net.trajano.openidconnect.auth.ResponseMode;
+import net.trajano.openidconnect.token.GrantType;
+
 /**
  * <p>
  * The response is a set of Claims about the OpenID Provider's configuration,
@@ -29,67 +33,6 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlRootElement
 public class OpenIdProviderConfiguration {
-
-    /**
-     * <p>
-     * request_object_encryption_alg_values_supported
-     * </p>
-     * <p>
-     * OPTIONAL. JSON array containing a list of the JWE encryption algorithms
-     * (alg values) supported by the Authorization Server for the Request Object
-     * described in Section 2.9 of OpenID Connect Messages 1.0
-     * [OpenID.Messages]. These algorithms are used both when the Request Object
-     * is passed by value and when it is passed by reference.
-     * </p>
-     */
-    @XmlElement(name = "request_object_encryption_alg_values_supported")
-    private List<String> requestObjectEncryptionAlgValuesSupported;
-
-    public List<String> getRequestObjectEncryptionAlgValuesSupported() {
-
-        return requestObjectEncryptionAlgValuesSupported;
-    }
-
-    public void setRequestObjectEncryptionAlgValuesSupported(String... alg) {
-
-        this.requestObjectEncryptionAlgValuesSupported = Arrays.asList(alg);
-    }
-
-    public List<String> getRequestObjectEncryptionEncValuesSupported() {
-
-        return requestObjectEncryptionEncValuesSupported;
-    }
-
-    public void setRequestObjectEncryptionEncValuesSupported(String... enc) {
-
-        this.requestObjectEncryptionEncValuesSupported = Arrays.asList(enc);
-
-    }
-
-    public URI getCheckSessionIframe() {
-
-        return checkSessionIframe;
-    }
-
-    public void setCheckSessionIframe(URI checkSessionIframe) {
-
-        this.checkSessionIframe = checkSessionIframe;
-    }
-
-    /**
-     * <p>
-     * request_object_encryption_enc_values_supported
-     * </p>
-     * <p>
-     * OPTIONAL. JSON array containing a list of the JWE encryption algorithms
-     * (enc values) supported by the Authorization Server for the Request Object
-     * described in Section 2.9 of OpenID Connect Messages 1.0
-     * [OpenID.Messages]. These algorithms are used both when the Request Object
-     * is passed by value and when it is passed by reference.
-     * </p>
-     */
-    @XmlElement(name = "request_object_encryption_enc_values_supported")
-    private List<String> requestObjectEncryptionEncValuesSupported;
 
     /**
      * JSON array containing a list of the Authentication Context Class
@@ -123,14 +66,43 @@ public class OpenIdProviderConfiguration {
     @XmlElement(name = "claims_parameter_supported")
     private boolean claimsParameterSupported;
 
+    /**
+     * <p>
+     * claims_supported RECOMMENDED. JSON array containing a list of the Claim
+     * Names of the Claims that the OpenID Provider MAY be able to supply values
+     * for. Note that for privacy or other reasons, this might not be an
+     * exhaustive list.
+     * </p>
+     * <p>
+     * Implementers of the OP would set this rather than being part of the
+     * framework.
+     * </p>
+     */
     @XmlElement(name = "claims_supported")
     private Set<String> claimsSupported;
 
+    /**
+     * OPTIONAL. JSON array containing a list of the Claim Types that the OpenID
+     * Provider supports. These Claim Types are described in Section 5.6 of
+     * OpenID Connect Core 1.0 [OpenID.Core]. Values defined by this
+     * specification are normal, aggregated, and distributed. If omitted, the
+     * implementation supports only normal Claims.
+     */
     @XmlElement(name = "claim_types_supported")
     private Set<String> claimTypesSupported;
 
+    /**
+     * OPTIONAL. JSON array containing a list of the display parameter values
+     * that the OpenID Provider supports. These values are described in Section
+     * 3.1.2.1 of OpenID Connect Core 1.0 [OpenID.Core].
+     * <p>
+     * This is in the order of preference where the first entry has the highest
+     * preference. This would be described be the implementation rather than the
+     * framework.
+     * </p>
+     */
     @XmlElement(name = "display_values_supported")
-    private Set<String> displayValuesSupported;
+    private List<Display> displayValuesSupported;
 
     /**
      * URL at the OP to which an RP can perform a redirect to request that the
@@ -138,6 +110,16 @@ public class OpenIdProviderConfiguration {
      */
     @XmlElement(name = "end_session_endpoint")
     private URI endSessionEndpoint;
+
+    /**
+     * OPTIONAL. JSON array containing a list of the OAuth 2.0 Grant Type values
+     * that this OP supports. Dynamic OpenID Providers MUST support the
+     * authorization_code and implicit Grant Type values and MAY support other
+     * Grant Types. If omitted, the default value is ["authorization_code",
+     * "implicit"].
+     */
+    @XmlElement(name = "grant_types_supported")
+    private List<GrantType> grantTypesSupported;
 
     @XmlElement(name = "id_token_encryption_alg_values_supported")
     private List<String> idTokenEncryptionAlgValuesSupported;
@@ -181,6 +163,36 @@ public class OpenIdProviderConfiguration {
     @XmlElement(name = "registration_endpoint")
     private URI registrationEndpoint;
 
+    /**
+     * <p>
+     * request_object_encryption_alg_values_supported
+     * </p>
+     * <p>
+     * OPTIONAL. JSON array containing a list of the JWE encryption algorithms
+     * (alg values) supported by the Authorization Server for the Request Object
+     * described in Section 2.9 of OpenID Connect Messages 1.0
+     * [OpenID.Messages]. These algorithms are used both when the Request Object
+     * is passed by value and when it is passed by reference.
+     * </p>
+     */
+    @XmlElement(name = "request_object_encryption_alg_values_supported")
+    private List<String> requestObjectEncryptionAlgValuesSupported;
+
+    /**
+     * <p>
+     * request_object_encryption_enc_values_supported
+     * </p>
+     * <p>
+     * OPTIONAL. JSON array containing a list of the JWE encryption algorithms
+     * (enc values) supported by the Authorization Server for the Request Object
+     * described in Section 2.9 of OpenID Connect Messages 1.0
+     * [OpenID.Messages]. These algorithms are used both when the Request Object
+     * is passed by value and when it is passed by reference.
+     * </p>
+     */
+    @XmlElement(name = "request_object_encryption_enc_values_supported")
+    private List<String> requestObjectEncryptionEncValuesSupported;
+
     @XmlElement(name = "request_object_signing_alg_values_supported")
     private List<String> requestObjectSigningAlgValuesSupported;
 
@@ -200,11 +212,6 @@ public class OpenIdProviderConfiguration {
     @XmlElement(name = "request_uri_parameter_supported")
     private boolean requestUriParameterSupported = true;
 
-    public void setRequestUriParameterSupported(boolean requestUriParameterSupported) {
-
-        this.requestUriParameterSupported = requestUriParameterSupported;
-    }
-
     /**
      * Boolean value specifying whether the OP requires any request_uri values
      * used to be pre-registered using the request_uris registration parameter.
@@ -213,6 +220,16 @@ public class OpenIdProviderConfiguration {
      */
     @XmlElement(name = "require_request_uri_registration")
     private boolean requireRequestUriRegistration;
+
+    /**
+     * response_modes_supported OPTIONAL. JSON array containing a list of the
+     * OAuth 2.0 response_mode values that this OP supports, as specified in
+     * OAuth 2.0 Multiple Response Type Encoding Practices [OAuth.Responses]. If
+     * omitted, the default for Dynamic OpenID Providers is ["query",
+     * "fragment"]
+     */
+    @XmlElement(name = "response_modes_supported")
+    private List<ResponseMode> responseModesSupported;
 
     /**
      * <p>
@@ -260,8 +277,18 @@ public class OpenIdProviderConfiguration {
     @XmlElement(name = "token_endpoint")
     private URI tokenEndpoint;
 
+    /**
+     * token_endpoint_auth_methods_supported OPTIONAL. JSON array containing a
+     * list of Client Authentication methods supported by this Token Endpoint.
+     * The options are client_secret_post, client_secret_basic,
+     * client_secret_jwt, and private_key_jwt, as described in Section 9 of
+     * OpenID Connect Core 1.0 [OpenID.Core]. Other authentication methods MAY
+     * be defined by extensions. If omitted, the default is client_secret_basic
+     * -- the HTTP Basic Authentication Scheme specified in Section 2.3.1 of
+     * OAuth 2.0 [RFC6749].
+     */
     @XmlElement(name = "token_endpoint_auth_methods_supported")
-    Set<String> tokenEndpointAuthMethodsSupported;
+    private List<TokenEndPointAuthMethod> tokenEndpointAuthMethodsSupported;
 
     @XmlElement(name = "token_endpoint_auth_signing_alg_values_supported")
     private Set<String> tokenEndpointAuthSigningAlgValuesSupported;
@@ -295,6 +322,11 @@ public class OpenIdProviderConfiguration {
         return authorizationEndpoint;
     }
 
+    public URI getCheckSessionIframe() {
+
+        return checkSessionIframe;
+    }
+
     public Set<String> getClaimsSupported() {
 
         return claimsSupported;
@@ -305,7 +337,7 @@ public class OpenIdProviderConfiguration {
         return claimTypesSupported;
     }
 
-    public Set<String> getDisplayValuesSupported() {
+    public List<Display> getDisplayValuesSupported() {
 
         return displayValuesSupported;
     }
@@ -313,6 +345,11 @@ public class OpenIdProviderConfiguration {
     public URI getEndSessionEndpoint() {
 
         return endSessionEndpoint;
+    }
+
+    public List<GrantType> getGrantTypesSupported() {
+
+        return grantTypesSupported;
     }
 
     public List<String> getIdTokenEncryptionAlgValuesSupported() {
@@ -343,6 +380,16 @@ public class OpenIdProviderConfiguration {
     public URI getRegistrationEndpoint() {
 
         return registrationEndpoint;
+    }
+
+    public List<String> getRequestObjectEncryptionAlgValuesSupported() {
+
+        return requestObjectEncryptionAlgValuesSupported;
+    }
+
+    public List<String> getRequestObjectEncryptionEncValuesSupported() {
+
+        return requestObjectEncryptionEncValuesSupported;
     }
 
     public List<String> getRequestObjectSigningAlgValuesSupported() {
@@ -380,7 +427,7 @@ public class OpenIdProviderConfiguration {
         return tokenEndpoint;
     }
 
-    public Set<String> getTokenEndpointAuthMethodsSupported() {
+    public List<TokenEndPointAuthMethod> getTokenEndpointAuthMethodsSupported() {
 
         return tokenEndpointAuthMethodsSupported;
     }
@@ -445,6 +492,11 @@ public class OpenIdProviderConfiguration {
         this.authorizationEndpoint = authorizationEndpoint;
     }
 
+    public void setCheckSessionIframe(final URI checkSessionIframe) {
+
+        this.checkSessionIframe = checkSessionIframe;
+    }
+
     public void setClaimsParameterSupported(final boolean claimsParameterSupported) {
 
         this.claimsParameterSupported = claimsParameterSupported;
@@ -460,9 +512,9 @@ public class OpenIdProviderConfiguration {
         this.claimTypesSupported = claimTypesSupported;
     }
 
-    public void setDisplayValuesSupported(final Set<String> displayValuesSupported) {
+    public void setDisplayValuesSupported(final Display... displayValuesSupported) {
 
-        this.displayValuesSupported = displayValuesSupported;
+        this.displayValuesSupported = Arrays.asList(displayValuesSupported);
     }
 
     public void setEndSessionEndpoint(final URI endSessionEndpoint) {
@@ -470,19 +522,24 @@ public class OpenIdProviderConfiguration {
         this.endSessionEndpoint = endSessionEndpoint;
     }
 
+    public void setGrantTypesSupported(final GrantType... grantTypesSupported) {
+
+        this.grantTypesSupported = Arrays.asList(grantTypesSupported);
+    }
+
     public void setIdTokenEncryptionAlgValuesSupported(final String... alg) {
 
-        this.idTokenEncryptionAlgValuesSupported = Arrays.asList(alg);
+        idTokenEncryptionAlgValuesSupported = Arrays.asList(alg);
     }
 
     public void setIdTokenEncryptionEncValuesSupported(final String... enc) {
 
-        this.idTokenEncryptionEncValuesSupported = Arrays.asList(enc);
+        idTokenEncryptionEncValuesSupported = Arrays.asList(enc);
     }
 
     public void setIdTokenSigningAlgValuesSupported(final String... alg) {
 
-        this.idTokenSigningAlgValuesSupported = Arrays.asList(alg);
+        idTokenSigningAlgValuesSupported = Arrays.asList(alg);
     }
 
     public void setIssuer(final String issuer) {
@@ -505,14 +562,30 @@ public class OpenIdProviderConfiguration {
         this.registrationEndpoint = registrationEndpoint;
     }
 
+    public void setRequestObjectEncryptionAlgValuesSupported(final String... alg) {
+
+        requestObjectEncryptionAlgValuesSupported = Arrays.asList(alg);
+    }
+
+    public void setRequestObjectEncryptionEncValuesSupported(final String... enc) {
+
+        requestObjectEncryptionEncValuesSupported = Arrays.asList(enc);
+
+    }
+
     public void setRequestObjectSigningAlgValuesSupported(final String... alg) {
 
-        this.requestObjectSigningAlgValuesSupported = Arrays.asList(alg);
+        requestObjectSigningAlgValuesSupported = Arrays.asList(alg);
     }
 
     public void setRequestParameterSupported(final boolean requestParameterSupported) {
 
         this.requestParameterSupported = requestParameterSupported;
+    }
+
+    public void setRequestUriParameterSupported(final boolean requestUriParameterSupported) {
+
+        this.requestUriParameterSupported = requestUriParameterSupported;
     }
 
     public void setRequireRequestUriRegistration(final boolean requireRequestUriRegistration) {
@@ -550,9 +623,9 @@ public class OpenIdProviderConfiguration {
         this.tokenEndpoint = tokenEndpoint;
     }
 
-    public void setTokenEndpointAuthMethodsSupported(final Set<String> tokenEndpointAuthMethodsSupported) {
+    public void setTokenEndpointAuthMethodsSupported(final TokenEndPointAuthMethod... tokenEndpointAuthMethodsSupported) {
 
-        this.tokenEndpointAuthMethodsSupported = tokenEndpointAuthMethodsSupported;
+        this.tokenEndpointAuthMethodsSupported = Arrays.asList(tokenEndpointAuthMethodsSupported);
     }
 
     public void setTokenEndpointAuthSigningAlgValuesSupported(final Set<String> tokenEndpointAuthSigningAlgValuesSupported) {
@@ -583,6 +656,16 @@ public class OpenIdProviderConfiguration {
     public void setUserinfoSigningAlgValuesSupported(final Set<String> userinfoSigningAlgValuesSupported) {
 
         this.userinfoSigningAlgValuesSupported = userinfoSigningAlgValuesSupported;
+    }
+
+    public List<ResponseMode> getResponseModesSupported() {
+
+        return responseModesSupported;
+    }
+
+    public void setResponseModesSupported(ResponseMode... responseModesSupported) {
+
+        this.responseModesSupported = Arrays.asList(responseModesSupported);
     }
 
 }

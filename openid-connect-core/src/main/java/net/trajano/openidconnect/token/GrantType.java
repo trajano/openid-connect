@@ -2,5 +2,5 @@ package net.trajano.openidconnect.token;
 
 
 public enum GrantType {
-    authorization_code
+    authorization_code, implicit
 }

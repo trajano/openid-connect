@@ -15,10 +15,13 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 
+import net.trajano.openidconnect.auth.ResponseMode;
 import net.trajano.openidconnect.core.OpenIdProviderConfiguration;
 import net.trajano.openidconnect.core.Scope;
+import net.trajano.openidconnect.core.TokenEndPointAuthMethod;
 import net.trajano.openidconnect.crypto.JsonWebAlgorithm;
 import net.trajano.openidconnect.provider.spi.KeyProvider;
+import net.trajano.openidconnect.token.GrantType;
 
 @Path("openid-configuration")
 public class WellKnownOpenIdConfiguration {
@@ -108,10 +111,13 @@ public class WellKnownOpenIdConfiguration {
         openIdConfiguration.setScopesSupported(Scope.openid, Scope.email, Scope.profile);
         openIdConfiguration.setResponseTypesSupported(CODE, ID_TOKEN, ID_TOKEN_TOKEN, CODE_ID_TOKEN, CODE_TOKEN, CODE_ID_TOKEN_TOKEN);
         openIdConfiguration.setRequestParameterSupported(true);
+        openIdConfiguration.setGrantTypesSupported(GrantType.authorization_code, GrantType.implicit);
         openIdConfiguration.setRequestUriParameterSupported(false);
+        openIdConfiguration.setTokenEndpointAuthMethodsSupported(TokenEndPointAuthMethod.client_secret_basic, TokenEndPointAuthMethod.client_secret_post);        
         openIdConfiguration.setIdTokenSigningAlgValuesSupported(JsonWebAlgorithm.getSigAlgorithms());
         openIdConfiguration.setRequestObjectEncryptionAlgValuesSupported(JsonWebAlgorithm.getKexAlgorithms());
         openIdConfiguration.setRequestObjectEncryptionEncValuesSupported(JsonWebAlgorithm.getEncAlgorithms());
+        openIdConfiguration.setResponseModesSupported(ResponseMode.fragment, ResponseMode.query, ResponseMode.form_post);
 
         final CacheControl cacheControl = new CacheControl();
         cacheControl.setPrivate(false);

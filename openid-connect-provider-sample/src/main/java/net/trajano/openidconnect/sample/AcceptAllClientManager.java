@@ -23,6 +23,7 @@ import javax.ws.rs.core.UriBuilder;
 import net.trajano.openidconnect.auth.AuthenticationRequest;
 import net.trajano.openidconnect.core.OpenIdConnectKey;
 import net.trajano.openidconnect.core.Scope;
+import net.trajano.openidconnect.crypto.JsonWebTokenBuilder;
 import net.trajano.openidconnect.provider.spi.Authenticator;
 import net.trajano.openidconnect.provider.spi.ClientManager;
 import net.trajano.openidconnect.provider.spi.KeyProvider;
@@ -56,8 +57,13 @@ public class AcceptAllClientManager implements ClientManager, Authenticator, Use
             final HttpServletRequest req,
             final UriBuilder contextUriBuilder) {
 
+        String reqJwt = req.getParameter(OpenIdConnectKey.REQUEST);
+        if (reqJwt == null) {
+            final JsonWebTokenBuilder b = new JsonWebTokenBuilder().payload(authenticationRequest.toJsonObject()).compress(true);
+            reqJwt = b.toString();
+        }
         return contextUriBuilder.path("login.jsp")
-                .queryParam(OpenIdConnectKey.REQUEST, req.getParameter(OpenIdConnectKey.REQUEST))
+                .queryParam(OpenIdConnectKey.REQUEST, reqJwt)
                 .build();
     }
 
