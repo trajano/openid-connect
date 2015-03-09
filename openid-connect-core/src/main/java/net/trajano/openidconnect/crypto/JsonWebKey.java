@@ -16,7 +16,7 @@ import javax.xml.bind.annotation.XmlSeeAlso;
 public abstract class JsonWebKey {
 
     @XmlElement
-    private JsonWebAlgorithm alg;
+    private String alg;
 
     @XmlElement(name = "kid")
     private String kid;
@@ -27,7 +27,7 @@ public abstract class JsonWebKey {
     @XmlElement
     private KeyUse use;
 
-    public JsonWebAlgorithm getAlg() {
+    public String getAlg() {
 
         return alg;
     }
@@ -47,7 +47,7 @@ public abstract class JsonWebKey {
         return use;
     }
 
-    public void setAlg(final JsonWebAlgorithm alg) {
+    public void setAlg(final String alg) {
 
         this.alg = alg;
     }

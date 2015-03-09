@@ -2,7 +2,6 @@ package net.trajano.openidconnect.core;
 
 import java.net.URI;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
@@ -43,26 +42,26 @@ public class OpenIdProviderConfiguration {
      * </p>
      */
     @XmlElement(name = "request_object_encryption_alg_values_supported")
-    private Set<String> requestObjectEncryptionAlgValuesSupported;
+    private List<String> requestObjectEncryptionAlgValuesSupported;
 
-    public Set<String> getRequestObjectEncryptionAlgValuesSupported() {
+    public List<String> getRequestObjectEncryptionAlgValuesSupported() {
 
         return requestObjectEncryptionAlgValuesSupported;
     }
 
     public void setRequestObjectEncryptionAlgValuesSupported(String... alg) {
 
-        this.requestObjectEncryptionAlgValuesSupported = new HashSet<>(Arrays.asList(alg));
+        this.requestObjectEncryptionAlgValuesSupported = Arrays.asList(alg);
     }
 
-    public Set<String> getRequestObjectEncryptionEncValuesSupported() {
+    public List<String> getRequestObjectEncryptionEncValuesSupported() {
 
         return requestObjectEncryptionEncValuesSupported;
     }
 
     public void setRequestObjectEncryptionEncValuesSupported(String... enc) {
 
-        this.requestObjectEncryptionEncValuesSupported = new HashSet<>(Arrays.asList(enc));
+        this.requestObjectEncryptionEncValuesSupported = Arrays.asList(enc);
 
     }
 
@@ -89,7 +88,7 @@ public class OpenIdProviderConfiguration {
      * </p>
      */
     @XmlElement(name = "request_object_encryption_enc_values_supported")
-    private Set<String> requestObjectEncryptionEncValuesSupported;
+    private List<String> requestObjectEncryptionEncValuesSupported;
 
     /**
      * JSON array containing a list of the Authentication Context Class

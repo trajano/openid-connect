@@ -23,7 +23,6 @@ import javax.ws.rs.ext.MessageBodyWriter;
 import javax.ws.rs.ext.Provider;
 
 import net.trajano.openidconnect.crypto.EcWebKey;
-import net.trajano.openidconnect.crypto.JsonWebAlgorithm;
 import net.trajano.openidconnect.crypto.JsonWebKey;
 import net.trajano.openidconnect.crypto.JsonWebKeySet;
 import net.trajano.openidconnect.crypto.KeyType;
@@ -83,7 +82,7 @@ public class JsonWebKeySetProvider implements MessageBodyReader<JsonWebKeySet>, 
             final JsonObject keyObject = (JsonObject) key;
             final String kid = keyObject.getString("kid");
             final KeyType kty = KeyType.valueOf(keyObject.getString("kty"));
-            final JsonWebAlgorithm alg = JsonWebAlgorithm.valueOf(keyObject.getString("alg"));
+            final String alg = keyObject.getString("alg");
             final KeyUse use = KeyUse.valueOf(keyObject.getString("use"));
             if (kty == KeyType.RSA) {
                 final RsaWebKey rsaWebKey = new RsaWebKey();

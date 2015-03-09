@@ -67,7 +67,6 @@ import net.trajano.openidconnect.auth.ResponseType;
 import net.trajano.openidconnect.core.OpenIdConnectKey;
 import net.trajano.openidconnect.core.OpenIdProviderConfiguration;
 import net.trajano.openidconnect.crypto.Base64Url;
-import net.trajano.openidconnect.crypto.JsonWebAlgorithm;
 import net.trajano.openidconnect.crypto.JsonWebTokenBuilder;
 import net.trajano.openidconnect.jaspic.internal.CipherUtil;
 import net.trajano.openidconnect.jaspic.internal.NullHostnameVerifier;
@@ -356,7 +355,7 @@ public class OpenIdConnectAuthModule implements ServerAuthModule, ServerAuthCont
      * @throws IOException
      */
     private String getIdToken(final HttpServletRequest req) throws GeneralSecurityException,
-    IOException {
+            IOException {
 
         final Cookie[] cookies = req.getCookies();
         if (cookies == null) {
@@ -391,7 +390,7 @@ public class OpenIdConnectAuthModule implements ServerAuthModule, ServerAuthCont
      * @throws IOException
      */
     private String getNonceFromCookie(final HttpServletRequest req) throws GeneralSecurityException,
-    IOException {
+            IOException {
 
         final Cookie[] cookies = req.getCookies();
         if (cookies == null) {
@@ -865,8 +864,11 @@ public class OpenIdConnectAuthModule implements ServerAuthModule, ServerAuthCont
                         .nonce(nonce)
                         .responseMode(responseMode);
 
-                final JsonWebTokenBuilder jwtBuilder = new JsonWebTokenBuilder().alg(JsonWebAlgorithm.RSA_OAEP)
-                        .enc(JsonWebAlgorithm.A256CBC)
+                // TODO compare with own list.
+                final JsonWebTokenBuilder jwtBuilder = new JsonWebTokenBuilder().alg(oidProviderConfig.getRequestObjectEncryptionAlgValuesSupported()
+                        .get(0))
+                        .enc(oidProviderConfig.getRequestObjectEncryptionEncValuesSupported()
+                                .get(0))
                         .compress(true)
                         .jwk(getWebKeys(oidProviderConfig))
                         .payload(ab.build()
@@ -876,11 +878,11 @@ public class OpenIdConnectAuthModule implements ServerAuthModule, ServerAuthCont
 
             } else {
                 b.queryParam(CLIENT_ID, clientId)
-                .queryParam(RESPONSE_TYPE, "code")
-                .queryParam(SCOPE, scope)
-                .queryParam(REDIRECT_URI, URI.create(req.getRequestURL()
-                        .toString())
-                        .resolve(moduleOptions.get(REDIRECTION_ENDPOINT_URI_KEY)))
+                        .queryParam(RESPONSE_TYPE, "code")
+                        .queryParam(SCOPE, scope)
+                        .queryParam(REDIRECT_URI, URI.create(req.getRequestURL()
+                                .toString())
+                                .resolve(moduleOptions.get(REDIRECTION_ENDPOINT_URI_KEY)))
                         .queryParam(STATE, state)
                         .queryParam(NONCE, nonce);
 
@@ -990,7 +992,7 @@ public class OpenIdConnectAuthModule implements ServerAuthModule, ServerAuthCont
                     .equals(tokenUri)) {
                 resp.setContentType(MediaType.APPLICATION_JSON);
                 resp.getWriter()
-                .print(tokenCookie.getIdToken());
+                        .print(tokenCookie.getIdToken());
                 return AuthStatus.SEND_SUCCESS;
             }
 
@@ -998,7 +1000,7 @@ public class OpenIdConnectAuthModule implements ServerAuthModule, ServerAuthCont
                     .equals(userInfoUri)) {
                 resp.setContentType(MediaType.APPLICATION_JSON);
                 resp.getWriter()
-                .print(tokenCookie.getUserInfo());
+                        .print(tokenCookie.getUserInfo());
                 return AuthStatus.SEND_SUCCESS;
             }
 

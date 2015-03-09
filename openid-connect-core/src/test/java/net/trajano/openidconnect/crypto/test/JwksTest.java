@@ -21,11 +21,11 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.ext.MessageBodyReader;
 import javax.ws.rs.ext.MessageBodyWriter;
 
-import net.trajano.openidconnect.crypto.JsonWebAlgorithm;
 import net.trajano.openidconnect.crypto.JsonWebKey;
 import net.trajano.openidconnect.crypto.JsonWebKeySet;
 import net.trajano.openidconnect.crypto.NamedEllipticCurve;
 import net.trajano.openidconnect.crypto.OctWebKey;
+import net.trajano.openidconnect.internal.JcaJsonWebAlgorithm;
 import net.trajano.openidconnect.rs.JsonWebKeySetProvider;
 
 import org.junit.Test;
@@ -53,7 +53,6 @@ public class JwksTest {
 
         System.out.println(publicKey.getAlgorithm());
         System.out.println(privateKey.getAlgorithm());
-        System.out.println(JsonWebAlgorithm.fromJca(publicKey.getAlgorithm()));
 
     }
 
@@ -64,8 +63,7 @@ public class JwksTest {
         keyGenerator.init(128);
         SecretKey secretKey = keyGenerator.generateKey();
 
-        OctWebKey octWebKey = new OctWebKey(secretKey, JsonWebAlgorithm.A128GCM);
-        octWebKey.setAlg(JsonWebAlgorithm.A128GCM);
+        OctWebKey octWebKey = new OctWebKey(secretKey, JcaJsonWebAlgorithm.A128CBC);
         octWebKey.setKid("f");
 
         JsonObjectBuilder b = Json.createObjectBuilder();
@@ -86,8 +84,8 @@ public class JwksTest {
 
         final JsonWebKey[] keys = jwks.getKeys();
         assertEquals(2, keys.length);
-        assertEquals(JsonWebAlgorithm.RS256, keys[0].getAlg());
-        assertEquals(JsonWebAlgorithm.RS256, keys[1].getAlg());
+        assertEquals(JcaJsonWebAlgorithm.RS256, keys[0].getAlg());
+        assertEquals(JcaJsonWebAlgorithm.RS256, keys[1].getAlg());
 
         final RSAPublicKey jcaKey = (RSAPublicKey) keys[1].toJcaKey();
         assertNotEquals(jcaKey.getModulus(), BigInteger.ZERO);
@@ -102,8 +100,8 @@ public class JwksTest {
 
         final JsonWebKey[] keys = jwks.getKeys();
         assertEquals(2, keys.length);
-        assertEquals(JsonWebAlgorithm.RS256, keys[0].getAlg());
-        assertEquals(JsonWebAlgorithm.RS256, keys[1].getAlg());
+        assertEquals(JcaJsonWebAlgorithm.RS256, keys[0].getAlg());
+        assertEquals(JcaJsonWebAlgorithm.RS256, keys[1].getAlg());
 
         final RSAPublicKey jcaKey = (RSAPublicKey) keys[1].toJcaKey();
         assertNotEquals(jcaKey.getModulus(), BigInteger.ZERO);

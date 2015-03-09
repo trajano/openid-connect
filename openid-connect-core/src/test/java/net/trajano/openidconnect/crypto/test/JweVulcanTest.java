@@ -6,7 +6,6 @@ import java.io.InputStream;
 
 import net.trajano.openidconnect.crypto.Base64Url;
 import net.trajano.openidconnect.crypto.JWE;
-import net.trajano.openidconnect.crypto.JsonWebAlgorithm;
 import net.trajano.openidconnect.crypto.JsonWebKey;
 import net.trajano.openidconnect.rs.JsonWebKeyProvider;
 
@@ -85,7 +84,7 @@ public class JweVulcanTest {
     @Test
     public void testEncryptDecryptJweExampleFromSpec() throws Exception {
 
-        final String jwe = JWE.encrypt(decoded.getBytes(), privateJwk, JsonWebAlgorithm.RSA1_5, JsonWebAlgorithm.A128CBC_HS256);
+        final String jwe = JWE.encrypt(decoded.getBytes(), privateJwk, "RSA1_5", "A128CBC-HS256");
         System.out.println(jwe);
         assertEquals(decoded, new String(JWE.decrypt(jwe, privateJwk)));
     }

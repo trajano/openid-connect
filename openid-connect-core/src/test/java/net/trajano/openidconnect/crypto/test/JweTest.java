@@ -17,9 +17,8 @@ import javax.crypto.spec.SecretKeySpec;
 import net.trajano.openidconnect.crypto.Base64Url;
 import net.trajano.openidconnect.crypto.JWE;
 import net.trajano.openidconnect.crypto.JoseHeader;
-import net.trajano.openidconnect.crypto.JsonWebAlgorithm;
 import net.trajano.openidconnect.crypto.JsonWebKey;
-import net.trajano.openidconnect.crypto.JsonWebToken;
+import net.trajano.openidconnect.internal.JcaJsonWebAlgorithm;
 import net.trajano.openidconnect.rs.JsonWebKeyProvider;
 
 import org.junit.Before;
@@ -38,7 +37,7 @@ public class JweTest {
     private String joseHeader = "{\"alg\":\"RSA-OAEP\",\"enc\":\"A256GCM\"}";
 
     final String jwe = "eyJhbGciOiJSU0EtT0FFUCIsImVuYyI6IkEyNTZHQ00ifQ."
-            // encrypted key
+    // encrypted key
             + "OKOawDo13gRp2ojaHV7LFpZcgV7T6DVZKTyKOMTYUmKoTCVJRgckCL9kiMT03JGeipsEdY3mx_etLbbWSrFr05kLzcSr4qKAq7YN7e9jwQRb23nfa6c9d-StnImGyFDbSv04uVuxIp5Zms1gNxKKK2Da14B8S4rzVRltdYwam_lDp5XnZAYpQdb76FdIKLaVmqgfwX7XWRxv2322i-vDxRfqNzo_tETKzpVLzfiwQyeyPGLBIO56YJ7eObdv0je81860ppamavo35UgoRdbYaBcoh9QcfylQr66oc6vFWXRcZ_ZT2LawVCWTIy3brGPi6UklfCpIMfIjf7iGdXKHzg."
 
             // initialization vector (aka salt)
@@ -98,25 +97,9 @@ public class JweTest {
     public void testBuildJoseHeader() throws Exception {
 
         final JoseHeader header = new JoseHeader();
-        header.setAlg(JsonWebAlgorithm.RSA_OAEP);
-        header.setEnc(JsonWebAlgorithm.A256GCM);
+        header.setAlg(JcaJsonWebAlgorithm.RSA_OAEP);
+        header.setEnc(JcaJsonWebAlgorithm.A256GCM);
         assertEquals(joseHeader, header.toString());
-    }
-
-    @Test
-    public void testCekEncryptDecrypt() throws Exception {
-
-        final byte[] encryptedCek;
-        {
-            final Cipher cipher = Cipher.getInstance(JsonWebAlgorithm.RSA_OAEP.toJca());
-            cipher.init(Cipher.ENCRYPT_MODE, publicJwk.toJcaKey());
-            encryptedCek = cipher.doFinal(cek);
-        }
-        {
-            final Cipher cipher = Cipher.getInstance(JsonWebAlgorithm.RSA_OAEP.toJca());
-            cipher.init(Cipher.DECRYPT_MODE, privateJwk.toJcaKey());
-            assertArrayEquals(cek, cipher.doFinal(encryptedCek));
-        }
     }
 
     @Test
@@ -124,7 +107,7 @@ public class JweTest {
 
         final byte[] encryptedCek = Base64Url.decode("OKOawDo13gRp2ojaHV7LFpZcgV7T6DVZKTyKOMTYUmKoTCVJRgckCL9kiMT03JGeipsEdY3mx_etLbbWSrFr05kLzcSr4qKAq7YN7e9jwQRb23nfa6c9d-StnImGyFDbSv04uVuxIp5Zms1gNxKKK2Da14B8S4rzVRltdYwam_lDp5XnZAYpQdb76FdIKLaVmqgfwX7XWRxv2322i-vDxRfqNzo_tETKzpVLzfiwQyeyPGLBIO56YJ7eObdv0je81860ppamavo35UgoRdbYaBcoh9QcfylQr66oc6vFWXRcZ_ZT2LawVCWTIy3brGPi6UklfCpIMfIjf7iGdXKHzg");
         {
-            final Cipher cipher = Cipher.getInstance(JsonWebAlgorithm.RSA_OAEP.toJca());
+            final Cipher cipher = Cipher.getInstance(RSA_OAEP_JCA);
             cipher.init(Cipher.DECRYPT_MODE, privateJwk.toJcaKey());
             assertArrayEquals(cek, cipher.doFinal(encryptedCek));
         }
@@ -139,7 +122,7 @@ public class JweTest {
     @Test
     public void testEncryptDecryptJweExampleFromSpec() throws Exception {
 
-        final String jwe = JWE.encrypt(decoded.getBytes(), publicJwk, JsonWebAlgorithm.RSA_OAEP, JsonWebAlgorithm.A256GCM);
+        final String jwe = JWE.encrypt(decoded.getBytes(), publicJwk, JcaJsonWebAlgorithm.RSA_OAEP, JcaJsonWebAlgorithm.A256GCM);
         System.out.println(jwe);
         assertEquals(decoded, new String(JWE.decrypt(jwe, privateJwk)));
     }
@@ -149,26 +132,18 @@ public class JweTest {
 
         final byte[] plaintext = "atarashii kaze ga fuite, warattari, naitari, utatte mitari, atarashii kaze ga fuite, warattari, naitari, utatte mitari, atarashii kaze ga fuite, warattari, naitari, utatte mitari".getBytes();
 
-        final String compressed = JWE.encrypt(plaintext, publicJwk, JsonWebAlgorithm.RSA_OAEP, JsonWebAlgorithm.A256CBC, true);
-        final String uncompressed = JWE.encrypt(plaintext, publicJwk, JsonWebAlgorithm.RSA_OAEP, JsonWebAlgorithm.A256CBC, false);
+        final String compressed = JWE.encrypt(plaintext, publicJwk, JcaJsonWebAlgorithm.RSA_OAEP, JcaJsonWebAlgorithm.A256CBC, true);
+        final String uncompressed = JWE.encrypt(plaintext, publicJwk, JcaJsonWebAlgorithm.RSA_OAEP, JcaJsonWebAlgorithm.A256CBC, false);
         assertTrue(compressed.length() < uncompressed.length());
     }
 
-    @Test
-    public void testJoseHeader() throws Exception {
-
-        final JsonWebToken jwt = new JsonWebToken(jwe);
-        final JoseHeader joseHeader = jwt.getJoseHeader();
-        assertEquals(JsonWebAlgorithm.RSA_OAEP, joseHeader.getAlg());
-        assertEquals(JsonWebAlgorithm.A256GCM, joseHeader.getEnc());
-    }
+    private static final String RSA_OAEP_JCA = "RSA/ECB/OAEPWithSHA-1AndMGF1Padding";
 
     @Test
     public void testJweExampleFromSpecJweAssembly() throws Exception {
 
-        final String decoded = "The true sign of intelligence is not knowledge but imagination.";
-
-        final Cipher cekCipher = Cipher.getInstance(JsonWebAlgorithm.RSA_OAEP.toJca());
+        // RSA-OAEP
+        final Cipher cekCipher = Cipher.getInstance(RSA_OAEP_JCA);
         cekCipher.init(Cipher.ENCRYPT_MODE, publicJwk.toJcaKey());
         cekCipher.doFinal(cek);
 
@@ -197,7 +172,7 @@ public class JweTest {
 
         final String text = "Live long and prosper.";
 
-        final String jwe = JWE.encrypt(text.getBytes(), publicJwk, JsonWebAlgorithm.RSA_OAEP, JsonWebAlgorithm.A256CBC);
+        final String jwe = JWE.encrypt(text.getBytes(), publicJwk, JcaJsonWebAlgorithm.RSA_OAEP, JcaJsonWebAlgorithm.A256CBC);
         assertEquals(text, new String(JWE.decrypt(jwe, privateJwk)));
     }
 
@@ -206,7 +181,7 @@ public class JweTest {
 
         final String text = "Live long and prosper.";
 
-        final String jwe = JWE.encrypt(text.getBytes(), publicJwk, JsonWebAlgorithm.RSA1_5, JsonWebAlgorithm.A256CBC);
+        final String jwe = JWE.encrypt(text.getBytes(), publicJwk, JcaJsonWebAlgorithm.RSA1_5, JcaJsonWebAlgorithm.A256CBC);
         assertEquals(text, new String(JWE.decrypt(jwe, privateJwk)));
     }
 
@@ -215,7 +190,7 @@ public class JweTest {
 
         final String text = "Live long and prosper.";
 
-        final String jwe = JWE.encrypt(text.getBytes(), publicJwk, JsonWebAlgorithm.RSA_OAEP, JsonWebAlgorithm.A256CBC, true);
+        final String jwe = JWE.encrypt(text.getBytes(), publicJwk, JcaJsonWebAlgorithm.RSA_OAEP, JcaJsonWebAlgorithm.A256CBC, true);
         assertEquals(text, new String(JWE.decrypt(jwe, privateJwk)));
     }
 
@@ -226,7 +201,7 @@ public class JweTest {
         final byte[] plaintext = new byte[204080];
         r.nextBytes(plaintext);
 
-        final String jwe = JWE.encrypt(plaintext, publicJwk, JsonWebAlgorithm.RSA_OAEP, JsonWebAlgorithm.A256GCM);
+        final String jwe = JWE.encrypt(plaintext, publicJwk, JcaJsonWebAlgorithm.RSA_OAEP, JcaJsonWebAlgorithm.A256GCM);
         assertArrayEquals(plaintext, JWE.decrypt(jwe, privateJwk));
     }
 
@@ -237,7 +212,7 @@ public class JweTest {
         final byte[] plaintext = new byte[204080];
         r.nextBytes(plaintext);
 
-        final String jwe = JWE.encrypt(plaintext, publicJwk, JsonWebAlgorithm.RSA_OAEP, JsonWebAlgorithm.A256CBC, true);
+        final String jwe = JWE.encrypt(plaintext, publicJwk, JcaJsonWebAlgorithm.RSA_OAEP, JcaJsonWebAlgorithm.A256CBC, true);
         assertArrayEquals(plaintext, JWE.decrypt(jwe, privateJwk));
     }
 

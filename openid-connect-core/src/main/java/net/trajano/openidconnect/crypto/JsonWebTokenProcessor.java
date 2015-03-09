@@ -18,9 +18,9 @@ public class JsonWebTokenProcessor {
 
     private JsonWebToken jsonWebToken;
 
-    private JsonWebAlgorithm alg = JsonWebAlgorithm.none;
+    private String alg = JsonWebToken.ALG_NONE;
 
-    private JsonWebAlgorithm enc = null;
+    private String enc = null;
 
     private String kid = null;
 
@@ -42,9 +42,9 @@ public class JsonWebTokenProcessor {
             GeneralSecurityException {
 
         byte[] payload;
-        if (JsonWebAlgorithm.none == alg && jwk == null) {
+        if (!JsonWebToken.ALG_NONE.equals(alg) && jwk == null) {
             throw new GeneralSecurityException("unable to get key");
-        } else if (JsonWebAlgorithm.none == alg) {
+        } else if (JsonWebToken.ALG_NONE.equals(alg)) {
             payload = jsonWebToken.getPayload(0);
         } else if (enc != null) {
             if (jsonWebToken.getNumberOfPayloads() != 4) {

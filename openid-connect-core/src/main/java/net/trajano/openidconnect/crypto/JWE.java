@@ -30,8 +30,8 @@ public class JWE {
 
     public static String encrypt(final byte[] plaintext,
             final JsonWebKey jwk,
-            final JsonWebAlgorithm alg,
-            final JsonWebAlgorithm enc) throws IOException,
+            final String alg,
+            final String enc) throws IOException,
             GeneralSecurityException {
 
         return encrypt(plaintext, jwk, alg, enc, false);
@@ -39,8 +39,8 @@ public class JWE {
 
     public static String encrypt(final byte[] plaintext,
             final JsonWebKey jwk,
-            final JsonWebAlgorithm alg,
-            final JsonWebAlgorithm enc,
+            final String alg,
+            final String enc,
             final boolean compress) throws IOException,
             GeneralSecurityException {
 
@@ -55,8 +55,8 @@ public class JWE {
 
     public static String encrypt(final JsonObject obj,
             final JsonWebKey jwk,
-            final JsonWebAlgorithm alg,
-            final JsonWebAlgorithm enc) throws IOException,
+            final String alg,
+            final String enc) throws IOException,
             GeneralSecurityException {
 
         return encrypt(obj.toString()

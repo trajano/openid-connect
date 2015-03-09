@@ -1,5 +1,7 @@
 package net.trajano.openidconnect.crypto;
 
+import static net.trajano.openidconnect.crypto.JsonWebToken.ALG_NONE;
+
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.SecureRandom;
@@ -12,29 +14,24 @@ import net.trajano.openidconnect.internal.JcaJsonWebTokenCrypto;
 /**
  * Used to build {@link JsonWebToken}. It will handle signing and encryption of
  * data as needed.
- * 
+ *
  * @author Archimedes
  */
 public class JsonWebTokenBuilder {
 
-    private final SecureRandom random = new SecureRandom();
+    /**
+     * Algorithm applied to the JWT. Defaults to none.
+     */
+    private String alg = JsonWebToken.ALG_NONE;
+
+    private boolean compressed;
 
     private final JsonWebTokenCrypto crypto = JcaJsonWebTokenCrypto.getInstance();
 
     /**
-     * The actual payload.
-     */
-    private byte[] uncompressedPayloadBytes;
-
-    /**
-     * Algorithm applied to the JWT. Defaults to none.
-     */
-    private JsonWebAlgorithm alg = JsonWebAlgorithm.none;
-
-    /**
      * Encryption algorithm.
      */
-    private JsonWebAlgorithm enc;
+    private String enc;
 
     /**
      * Json Web Key to apply. If it is an encryption one it will do JWE else it
@@ -42,58 +39,23 @@ public class JsonWebTokenBuilder {
      */
     private JsonWebKey jwk;
 
-    private boolean compressed;
-
-    public JsonWebTokenBuilder payload(JsonObject jsonObject) {
-
-        return payload(jsonObject.toString());
-    }
-
-    public JsonWebTokenBuilder payload(String s) {
-
-        return payload(s.getBytes(CharSets.UTF8));
-    }
-
-    public JsonWebTokenBuilder payload(byte[] payloadBytes) {
-
-        this.uncompressedPayloadBytes = payloadBytes;
-        return this;
-    }
+    private final SecureRandom random = new SecureRandom();
 
     /**
-     * Sets the JSON Web Key. This will also set the algorithm if it is defined
-     * in the key.
-     * 
-     * @param jwk
-     * @return
+     * The actual payload.
      */
-    public JsonWebTokenBuilder jwk(JsonWebKey jwk) {
+    private byte[] uncompressedPayloadBytes;
 
-        this.jwk = jwk;
-        if (jwk.getAlg() != null) {
-            alg = jwk.getAlg();
-        }
-        return this;
-    }
+    public JsonWebTokenBuilder alg(final String alg2) {
 
-    /**
-     * Chooses a random key from the JWKS.
-     * 
-     * @param jwks JWK set
-     * @return
-     */
-    public JsonWebTokenBuilder jwk(JsonWebKeySet jwks) {
-
-        final JsonWebKey[] keys = jwks.getKeys();
-
-        this.jwk = keys[random.nextInt(keys.length)];
+        alg = alg2;
         return this;
     }
 
     public JsonWebToken build() throws IOException,
             GeneralSecurityException {
 
-        JoseHeader header = new JoseHeader();
+        final JoseHeader header = new JoseHeader();
         header.setAlg(alg);
 
         byte[] payloadBytes = uncompressedPayloadBytes;
@@ -102,13 +64,13 @@ public class JsonWebTokenBuilder {
             payloadBytes = crypto.deflate(payloadBytes);
         }
 
-        if (alg == JsonWebAlgorithm.none && jwk == null) {
+        if (ALG_NONE.equals(alg) && jwk == null) {
             final byte[][] payloads = new byte[1][];
             payloads[0] = payloadBytes;
             return new JsonWebToken(header, payloads);
         }
 
-        if (alg == JsonWebAlgorithm.none && jwk != null) {
+        if (ALG_NONE.equals(alg) && jwk != null) {
             throw new IOException("JWK must not be defined for any alg that is none");
         }
 
@@ -131,7 +93,64 @@ public class JsonWebTokenBuilder {
         return new JsonWebToken(header, crypto.buildJWEPayload(header, payloadBytes, jwk));
     }
 
-    
+    public JsonWebTokenBuilder compress(final boolean compressed) {
+
+        this.compressed = compressed;
+        return this;
+    }
+
+    public JsonWebTokenBuilder enc(final String enc2) {
+
+        enc = enc2;
+        return this;
+    }
+
+    /**
+     * Sets the JSON Web Key. This will also set the algorithm if it is defined
+     * in the key.
+     *
+     * @param jwk
+     * @return
+     */
+    public JsonWebTokenBuilder jwk(final JsonWebKey jwk) {
+
+        this.jwk = jwk;
+        if (jwk.getAlg() != null) {
+            alg = jwk.getAlg();
+        }
+        return this;
+    }
+
+    /**
+     * Chooses a random key from the JWKS.
+     *
+     * @param jwks
+     *            JWK set
+     * @return
+     */
+    public JsonWebTokenBuilder jwk(final JsonWebKeySet jwks) {
+
+        final JsonWebKey[] keys = jwks.getKeys();
+
+        jwk = keys[random.nextInt(keys.length)];
+        return this;
+    }
+
+    public JsonWebTokenBuilder payload(final byte[] payloadBytes) {
+
+        uncompressedPayloadBytes = payloadBytes;
+        return this;
+    }
+
+    public JsonWebTokenBuilder payload(final JsonObject jsonObject) {
+
+        return payload(jsonObject.toString());
+    }
+
+    public JsonWebTokenBuilder payload(final String s) {
+
+        return payload(s.getBytes(CharSets.UTF8));
+    }
 
     /**
      * Gets the string representation of the JWT so far.
@@ -144,23 +163,5 @@ public class JsonWebTokenBuilder {
         } catch (IOException | GeneralSecurityException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    public JsonWebTokenBuilder alg(JsonWebAlgorithm alg2) {
-
-        this.alg = alg2;
-        return this;
-    }
-
-    public JsonWebTokenBuilder compress(boolean compressed) {
-
-        this.compressed = compressed;
-        return this;
-    }
-
-    public JsonWebTokenBuilder enc(JsonWebAlgorithm enc2) {
-
-        this.enc = enc2;
-        return this;
     }
 }

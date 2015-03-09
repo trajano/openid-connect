@@ -2,10 +2,6 @@ package net.trajano.openidconnect.crypto;
 
 import java.io.IOException;
 
-import javax.json.JsonObject;
-
-import net.trajano.openidconnect.internal.CharSets;
-
 /**
  * The JSON Web Token. It is comprised of a header that is a Base64url encoded
  * JSON followed by 1 to many Base64url encoded payloads joined by '.'
@@ -40,7 +36,7 @@ public class JsonWebToken {
      * of the JSON Web Algorithms (JWA) [JWA] specification.
      * </p>
      */
-    private final JsonWebAlgorithm alg;
+    private final String alg;
 
     /**
      * <p>
@@ -66,7 +62,7 @@ public class JsonWebToken {
      * of the JSON Web Algorithms (JWA) [JWA] specification.
      * </p>
      */
-    private final JsonWebAlgorithm enc;
+    private final String enc;
 
     private final String joseHeaderEncoded;
 
@@ -118,25 +114,6 @@ public class JsonWebToken {
         this.payloads = payloads;
     }
 
-    /**
-     * Builds an unsecure JWT object.
-     * 
-     * @param payload
-     */
-    public JsonWebToken(final JsonObject obj, boolean compressed) {
-
-        JoseHeader header = new JoseHeader();
-        header.setAlg(JsonWebAlgorithm.none);
-        joseHeaderEncoded = Base64Url.encode(header.toString());
-        alg = JsonWebAlgorithm.none;
-        enc = null;
-        kid = null;
-        zip = compressed ? "DEF" : null;
-        payloads = new byte[1][];
-        payloads[0] = obj.toString()
-                .getBytes(CharSets.UTF8);
-    }
-
     public JsonWebToken(final String jwt) throws IOException {
 
         final String[] tokens = jwt.split("\\.");
@@ -161,12 +138,12 @@ public class JsonWebToken {
         return kid;
     }
 
-    public JsonWebAlgorithm getAlg() {
+    public String getAlg() {
 
         return alg;
     }
 
-    public JsonWebAlgorithm getEnc() {
+    public String getEnc() {
 
         return enc;
     }

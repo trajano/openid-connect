@@ -31,7 +31,7 @@ public interface JsonWebTokenCrypto {
 
     byte[] getJWSPayload(JsonWebToken jsonWebToken,
             JsonWebKey jwk,
-            JsonWebAlgorithm alg) throws IOException,
+            String alg) throws IOException,
             GeneralSecurityException;;
 
     byte[] getJWEPayload(JsonWebToken jsonWebToken,

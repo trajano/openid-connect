@@ -22,7 +22,7 @@ public class OctWebKey extends JsonWebKey {
         setUse(KeyUse.enc);
     }
 
-    public OctWebKey(SecretKey secretKey, JsonWebAlgorithm alg) {
+    public OctWebKey(SecretKey secretKey, String alg) {
 
         this();
         setAlg(alg);
@@ -43,12 +43,7 @@ public class OctWebKey extends JsonWebKey {
     @Override
     public Key toJcaKey() throws GeneralSecurityException {
 
-        for (JsonWebAlgorithm jwa : JsonWebAlgorithm.SYMETTRIC_WITH_JCA) {
-            if (jwa.equals(getAlg())) {
-                return new SecretKeySpec(Base64Url.decode(k), jwa.toJca());
-            }
-        }
-        return null;
+        return new SecretKeySpec(Base64Url.decode(k), "AES");
     }
 
     @Override
