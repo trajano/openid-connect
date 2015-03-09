@@ -6,6 +6,7 @@ import java.io.InputStream;
 
 import net.trajano.openidconnect.crypto.Base64Url;
 import net.trajano.openidconnect.crypto.JsonWebKey;
+import net.trajano.openidconnect.crypto.JsonWebToken;
 import net.trajano.openidconnect.rs.JsonWebKeyProvider;
 
 import org.junit.Before;
@@ -85,6 +86,42 @@ public class JweVulcanTest {
 
         final String jwe = JWE.encrypt(decoded.getBytes(), privateJwk, "RSA1_5", "A128CBC-HS256");
         System.out.println(jwe);
-        assertEquals(decoded, new String(JWE.decrypt(jwe, privateJwk)));
+        System.out.println(jwe.split("\\.")[2]);
+        final JsonWebToken jsonWebToken = new JsonWebToken(jwe);
+        System.out.println(jsonWebToken.getJoseHeader());
+        assertEquals(decoded, new String(JWE.decrypt(jsonWebToken, privateJwk)));
+    }
+
+    @Test
+    public void testEncryptDecryptJweExampleFromSpec4() throws Exception {
+
+        final String jwe = JWE.encrypt(decoded.getBytes(), privateJwk, "RSA-OAEP", "A128CBC-HS256");
+        System.out.println(jwe);
+        System.out.println(jwe.split("\\.")[2]);
+        final JsonWebToken jsonWebToken = new JsonWebToken(jwe);
+        System.out.println(jsonWebToken.getJoseHeader());
+        assertEquals(decoded, new String(JWE.decrypt(jsonWebToken, privateJwk)));
+    }
+
+    @Test
+    public void testEncryptDecryptJweExampleFromSpec2() throws Exception {
+
+        final String jwe = JWE.encrypt(decoded.getBytes(), privateJwk, "RSA1_5", "A128CBC");
+        System.out.println(jwe);
+        System.out.println(jwe.split("\\.")[2]);
+        final JsonWebToken jsonWebToken = new JsonWebToken(jwe);
+        System.out.println(jsonWebToken.getJoseHeader());
+        assertEquals(decoded, new String(JWE.decrypt(jsonWebToken, privateJwk)));
+    }
+
+    @Test
+    public void testEncryptDecryptJweExampleFromSpec3() throws Exception {
+
+        final String jwe = JWE.encrypt(decoded.getBytes(), privateJwk, "RSA-OAEP", "A128CBC");
+        System.out.println(jwe);
+        System.out.println(jwe.split("\\.")[2]);
+        final JsonWebToken jsonWebToken = new JsonWebToken(jwe);
+        System.out.println(jsonWebToken.getJoseHeader());
+        assertEquals(decoded, new String(JWE.decrypt(jsonWebToken, privateJwk)));
     }
 }

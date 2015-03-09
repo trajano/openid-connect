@@ -18,6 +18,7 @@ import java.util.zip.Inflater;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
+import javax.crypto.CipherOutputStream;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.KeyGenerator;
 import javax.crypto.Mac;
@@ -69,7 +70,7 @@ public class JcaJsonWebTokenCrypto implements JsonWebTokenCrypto {
             JsonWebKey jwk) throws IOException,
             GeneralSecurityException {
 
-        String macAlg = JsonWebAlgorithm.getMacAlg(joseHeader.getAlg());
+        String macAlg = JsonWebAlgorithm.getMacAlg(joseHeader.getEnc());
         if (macAlg == null) {
             return buildNoMacJWEPayload(joseHeader, payloadBytes, jwk);
         } else {
@@ -86,10 +87,49 @@ public class JcaJsonWebTokenCrypto implements JsonWebTokenCrypto {
         final byte[][] payloads = new byte[4][];
 
         final KeyGenerator keyGenerator = KeyGenerator.getInstance("AES");
-        keyGenerator.init(JsonWebAlgorithm.getKeySize(joseHeader.getEnc()));
+        final int keySize = JsonWebAlgorithm.getKeySize(joseHeader.getEnc());
+        keyGenerator.init(keySize);
 
-        // TODO Auto-generated method stub
-        return null;
+        final SecretKey secretKey = keyGenerator.generateKey();
+        final SecretKey macKey = keyGenerator.generateKey();
+
+        ByteArrayOutputStream cekStream = new ByteArrayOutputStream();
+
+        final Cipher cekCipher = Cipher.getInstance(JsonWebAlgorithm.toJca(joseHeader.getAlg()));
+        cekCipher.init(Cipher.ENCRYPT_MODE, jwk.toJcaPublicKey());
+        CipherOutputStream os = new CipherOutputStream(cekStream, cekCipher);
+        os.write(macKey.getEncoded());
+        os.write(secretKey.getEncoded());
+        os.close();
+
+        final byte[] encryptedCek = cekStream.toByteArray();
+        System.out.println(Base64Url.encode(encryptedCek));
+        System.out.println(encryptedCek.length);
+        payloads[0] = encryptedCek;
+
+        final byte[] iv = new byte[JsonWebAlgorithm.getIvLen(joseHeader.getEnc())];
+        random.nextBytes(iv);
+        payloads[1] = iv;
+
+        final int authenticationTagBits = 128;
+        final Cipher contentCipher = Cipher.getInstance(JsonWebAlgorithm.toJca(joseHeader.getEnc()));
+
+        final byte[] aad = joseHeader.getEncoded();
+        if (JsonWebAlgorithm.isGcm(joseHeader.getEnc())) {
+            final GCMParameterSpec spec = new GCMParameterSpec(authenticationTagBits, iv);
+            contentCipher.init(Cipher.ENCRYPT_MODE, secretKey, spec);
+            contentCipher.updateAAD(aad);
+        } else {
+            final IvParameterSpec spec = new IvParameterSpec(iv);
+            contentCipher.init(Cipher.ENCRYPT_MODE, secretKey, spec);
+        }
+        byte[] cipherText = contentCipher.doFinal(payloadBytes);
+        payloads[2] = cipherText;
+
+        byte[] hmacValue = calculateMac(macKey, iv, cipherText, aad, macAlg);
+        payloads[3] = new byte[authenticationTagBits / 8];
+        System.arraycopy(hmacValue, 0, payloads[3], 0, authenticationTagBits / 8);
+        return payloads;
     }
 
     public byte[][] buildNoMacJWEPayload(JoseHeader joseHeader,
@@ -107,25 +147,26 @@ public class JcaJsonWebTokenCrypto implements JsonWebTokenCrypto {
         final byte[] cek = secretKey.getEncoded();
 
         final Cipher cekCipher = Cipher.getInstance(JsonWebAlgorithm.toJca(joseHeader.getAlg()));
-        cekCipher.init(Cipher.ENCRYPT_MODE, jwk.toJcaKey());
+        cekCipher.init(Cipher.ENCRYPT_MODE, jwk.toJcaPublicKey());
         final byte[] encryptedCek = cekCipher.doFinal(cek);
 
         payloads[0] = encryptedCek;
 
         final byte[] iv = new byte[JsonWebAlgorithm.getIvLen(joseHeader.getEnc())];
         random.nextBytes(iv);
+        payloads[1] = iv;
+
         final int authenticationTagBits = 128;
         final Cipher contentCipher = Cipher.getInstance(JsonWebAlgorithm.toJca(joseHeader.getEnc()));
 
-        if ("A128GCM".equals(joseHeader.getEnc()) || "A256GCM".equals(joseHeader.getEnc())) {
+        if (JsonWebAlgorithm.isGcm(joseHeader.getEnc())) {
             final GCMParameterSpec spec = new GCMParameterSpec(authenticationTagBits, iv);
-            contentCipher.init(Cipher.ENCRYPT_MODE, new SecretKeySpec(cek, "AES"), spec);
+            contentCipher.init(Cipher.ENCRYPT_MODE, secretKey, spec);
             contentCipher.updateAAD(joseHeader.getEncoded());
         } else {
             final IvParameterSpec spec = new IvParameterSpec(iv);
-            contentCipher.init(Cipher.ENCRYPT_MODE, new SecretKeySpec(cek, "AES"), spec);
+            contentCipher.init(Cipher.ENCRYPT_MODE, secretKey, spec);
         }
-        payloads[1] = iv;
 
         final ByteBuffer cipherTextAndAuthenticationTag = ByteBuffer.wrap(contentCipher.doFinal(payloadBytes));
 
@@ -190,14 +231,14 @@ public class JcaJsonWebTokenCrypto implements JsonWebTokenCrypto {
 
         final Cipher encryptionKeyCipher = Cipher.getInstance(JsonWebAlgorithm.toJca(jsonWebToken.getAlg()));
         encryptionKeyCipher.init(Cipher.DECRYPT_MODE, privateKey);
+        System.out.println(privateKey);
         final byte[] decryptedKey = encryptionKeyCipher.doFinal(encryptedKey);
 
         final String macAlg = JsonWebAlgorithm.getMacAlg(jsonWebToken.getEnc());
         if (macAlg == null) {
             return getNoMacJWEPayload(decryptedKey, initializationVector, cipherText, authenticationTag, aad, enc);
         } else {
-            return getJWEPayloadWithMac(decryptedKey, initializationVector, cipherText, authenticationTag, aad, enc, macAlg, jsonWebToken.getJoseHeaderEncoded()
-                    .length());
+            return getJWEPayloadWithMac(decryptedKey, initializationVector, cipherText, authenticationTag, aad, enc, macAlg);
         }
 
     }
@@ -240,21 +281,14 @@ public class JcaJsonWebTokenCrypto implements JsonWebTokenCrypto {
             final byte[] authenticationTag,
             final byte[] aad,
             final String enc,
-            String macAlg,
-            final int joseHeaderSize) throws GeneralSecurityException,
+            String macAlg) throws GeneralSecurityException,
             IOException {
 
         final int keyLength = JsonWebAlgorithm.getKeySize(enc) / 8;
         final int macLength = encryptionKey.length - keyLength;
         final SecretKey macKey = new SecretKeySpec(encryptionKey, 0, macLength, "AES");
-        final Mac mac = Mac.getInstance(macAlg);
-        mac.init(macKey);
 
         final SecretKey contentEncryptionKey = new SecretKeySpec(encryptionKey, macLength, keyLength, "AES");
-        // for (byte b : contentEncryptionKey.getEncoded()) {
-        // System.out.println(b);
-        // }
-        // System.out.println("===");
         final Cipher contentCipher = Cipher.getInstance(JsonWebAlgorithm.toJca(enc));
 
         if (JsonWebAlgorithm.isGcm(enc)) {
@@ -269,6 +303,26 @@ public class JcaJsonWebTokenCrypto implements JsonWebTokenCrypto {
         baos.write(contentCipher.doFinal(cipherText));
         baos.close();
 
+        byte[] hmacValue = calculateMac(macKey, initializationVector, cipherText, aad, macAlg);
+
+        for (int i = 0; i < authenticationTag.length; ++i) {
+            if (hmacValue[i] != authenticationTag[i]) {
+                throw new GeneralSecurityException("MAC validation failed");
+            }
+        }
+
+        return baos.toByteArray();
+    }
+
+    private byte[] calculateMac(final SecretKey macKey,
+            final byte[] initializationVector,
+            final byte[] cipherText,
+            final byte[] aad,
+            String macAlg) throws NoSuchAlgorithmException,
+            InvalidKeyException {
+
+        final Mac mac = Mac.getInstance(macAlg);
+        mac.init(macKey);
         long bits = aad.length * 8;
         byte[] al = new byte[8];
         for (int i = 7; i >= 0; --i) {
@@ -280,14 +334,7 @@ public class JcaJsonWebTokenCrypto implements JsonWebTokenCrypto {
         mac.update(initializationVector);
         mac.update(cipherText);
         byte[] hmacValue = mac.doFinal(al);
-
-        for (int i = 0; i < authenticationTag.length; ++i) {
-            if (hmacValue[i] != authenticationTag[i]) {
-                throw new GeneralSecurityException("MAC validation failed");
-            }
-        }
-
-        return baos.toByteArray();
+        return hmacValue;
     }
 
     @Override
