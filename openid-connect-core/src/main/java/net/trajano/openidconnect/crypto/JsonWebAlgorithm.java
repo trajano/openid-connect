@@ -75,6 +75,11 @@ public class JsonWebAlgorithm {
     private final Map<String, Integer> jwaIvLenMap = new HashMap<>();
 
     /**
+     * A map of AES JWA names to MAC algorithms if available.
+     */
+    private Map<String, String> jwaJcaMacMap = new HashMap<>();
+
+    /**
      * RSA using Optimal Asymmetric Encryption Padding (OAEP).
      */
     public static final String RSA_OAEP = "RSA-OAEP";
@@ -176,6 +181,7 @@ public class JsonWebAlgorithm {
                     .init(Cipher.ENCRYPT_MODE, gen.generateKey());
             if (jcaMac != null) {
                 Mac.getInstance(jcaMac);
+                jwaJcaMacMap.put(jwa, jcaMac);
             }
             jwaJcaMap.put(jwa, jca);
             jwaKeySizeMap.put(jwa, keySize);
@@ -229,19 +235,19 @@ public class JsonWebAlgorithm {
          * Advanced Encryption Standard (AES) using 256 bit keys in Cipher Block
          * Chaining mode. With HMAC using SHA-512 hash algorithm.
          */
-        putEncIfAvailable("A128CBC-HS512", "AES/CBC/PKCS5Padding", "HmacSHA512", 256, 16);
+        putEncIfAvailable("A128CBC-HS512", "AES/CBC/PKCS5Padding", "HmacSHA512", 128, 16);
 
         /**
          * Advanced Encryption Standard (AES) using 256 bit keys in Cipher Block
          * Chaining mode. With HMAC using SHA-384 hash algorithm.
          */
-        putEncIfAvailable("A128CBC-HS384", "AES/CBC/PKCS5Padding", "HmacSHA384", 256, 16);
+        putEncIfAvailable("A128CBC-HS384", "AES/CBC/PKCS5Padding", "HmacSHA384", 128, 16);
 
         /**
          * Advanced Encryption Standard (AES) using 256 bit keys in Cipher Block
          * Chaining mode. With HMAC using SHA-256 hash algorithm.
          */
-        putEncIfAvailable("A128CBC-HS256", "AES/CBC/PKCS5Padding", "HmacSHA256", 256, 16);
+        putEncIfAvailable("A128CBC-HS256", "AES/CBC/PKCS5Padding", "HmacSHA256", 128, 16);
 
         /**
          * Advanced Encryption Standard (AES) using 128 bit keys in Cipher Block
@@ -296,6 +302,11 @@ public class JsonWebAlgorithm {
     public static int getIvLen(String enc) {
 
         return INSTANCE.jwaIvLenMap.get(enc);
+    }
+
+    public static String getMacAlg(String enc) {
+
+        return INSTANCE.jwaJcaMacMap.get(enc);
     }
 
     public static int getKeySize(String enc) {
