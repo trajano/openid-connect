@@ -54,7 +54,6 @@ public class JcaJsonWebTokenCrypto implements JsonWebTokenCrypto {
 
         final byte[][] payloads = new byte[2][];
         payloads[0] = payloadBytes;
-        System.out.println(header.getAlg());
 
         if (JsonWebAlgorithm.isMac(header.getAlg())) {
             Mac mac = Mac.getInstance(JsonWebAlgorithm.toJca(header.getAlg()));

@@ -122,7 +122,6 @@ public class AuthenticationRequest implements Serializable {
 
         final JsonObject requestObject;
         if (req.getParameter(OpenIdConnectKey.REQUEST) != null && privateJwks != null) {
-            System.out.println(privateJwks.getKeys()[0]);
             final JsonWebToken jwt = new JsonWebToken(req.getParameter(OpenIdConnectKey.REQUEST));
             JsonWebTokenProcessor p = new JsonWebTokenProcessor(jwt).jwks(privateJwks);
             requestObject = p.getJsonPayload();

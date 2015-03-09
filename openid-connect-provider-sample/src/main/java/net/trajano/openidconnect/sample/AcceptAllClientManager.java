@@ -41,7 +41,7 @@ import net.trajano.openidconnect.userinfo.Userinfo;
 @Lock(LockType.READ)
 public class AcceptAllClientManager implements ClientManager, Authenticator, UserinfoProvider, TokenProvider {
 
-    private static final int ONE_HOUR = 3600;
+    private static final int ONE_HOUR = 120;
 
     private Map<String, IdTokenResponse> accessTokenToTokenResponse = new HashMap<>();
 
@@ -87,7 +87,6 @@ public class AcceptAllClientManager implements ClientManager, Authenticator, Use
         idToken.setAzp(req.getClientId());
         idToken.setIss(issuer);
         idToken.resetIssueAndExpiration(ONE_HOUR);
-        System.out.println(idToken.getIss());
         return idToken;
     }
 
