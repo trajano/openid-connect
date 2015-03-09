@@ -16,8 +16,8 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 
 import net.trajano.openidconnect.core.OpenIdProviderConfiguration;
+import net.trajano.openidconnect.core.Scope;
 import net.trajano.openidconnect.crypto.JsonWebAlgorithm;
-import net.trajano.openidconnect.provider.internal.HashSet2;
 import net.trajano.openidconnect.provider.spi.KeyProvider;
 
 @Path("openid-configuration")
@@ -105,8 +105,8 @@ public class WellKnownOpenIdConfiguration {
                 .build());
         openIdConfiguration.setUserinfoEndpoint(baseUri.replacePath(request.getContextPath() + userinfoMapping)
                 .build());
-        openIdConfiguration.setScopesSupported(new HashSet2<String>("openid", "email", "profile"));
-        openIdConfiguration.setResponseTypesSupported(new HashSet2<String>(CODE, ID_TOKEN, ID_TOKEN_TOKEN, CODE_ID_TOKEN, CODE_TOKEN, CODE_ID_TOKEN_TOKEN));
+        openIdConfiguration.setScopesSupported(Scope.openid, Scope.email, Scope.profile);
+        openIdConfiguration.setResponseTypesSupported(CODE, ID_TOKEN, ID_TOKEN_TOKEN, CODE_ID_TOKEN, CODE_TOKEN, CODE_ID_TOKEN_TOKEN);
         openIdConfiguration.setRequestParameterSupported(true);
         openIdConfiguration.setRequestUriParameterSupported(false);
         openIdConfiguration.setIdTokenSigningAlgValuesSupported(JsonWebAlgorithm.getSigAlgorithms());

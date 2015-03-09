@@ -2,6 +2,7 @@ package net.trajano.openidconnect.core;
 
 import java.net.URI;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
@@ -199,9 +200,8 @@ public class OpenIdProviderConfiguration {
     @XmlElement(name = "request_uri_parameter_supported")
     private boolean requestUriParameterSupported = true;
 
-    
     public void setRequestUriParameterSupported(boolean requestUriParameterSupported) {
-    
+
         this.requestUriParameterSupported = requestUriParameterSupported;
     }
 
@@ -215,12 +215,17 @@ public class OpenIdProviderConfiguration {
     private boolean requireRequestUriRegistration;
 
     /**
+     * <p>
      * JSON array containing a list of the OAuth 2.0 response_type values that
      * this OP supports. Dynamic OpenID Providers MUST support the code,
      * id_token, and the token id_token Response Type values.
+     * </p>
+     * <p>
+     * This is ordered by order of preference.
+     * </p>
      */
     @XmlElement(name = "response_types_supported")
-    private Set<String> responseTypesSupported;
+    private List<String> responseTypesSupported;
 
     @XmlElement(name = "revocation_endpoint")
     private URI revocationEndpoint;
@@ -233,7 +238,7 @@ public class OpenIdProviderConfiguration {
      * listed, if supported.
      */
     @XmlElement(name = "scopes_supported")
-    private Set<String> scopesSupported;
+    private Set<Scope> scopesSupported;
 
     /**
      * URL of a page containing human-readable information that developers might
@@ -345,7 +350,7 @@ public class OpenIdProviderConfiguration {
         return requestObjectSigningAlgValuesSupported;
     }
 
-    public Set<String> getResponseTypesSupported() {
+    public List<String> getResponseTypesSupported() {
 
         return responseTypesSupported;
     }
@@ -355,7 +360,7 @@ public class OpenIdProviderConfiguration {
         return revocationEndpoint;
     }
 
-    public Set<String> getScopesSupported() {
+    public Set<Scope> getScopesSupported() {
 
         return scopesSupported;
     }
@@ -484,6 +489,7 @@ public class OpenIdProviderConfiguration {
 
         this.issuer = issuer;
     }
+
     public void setIssuer(final URI issuer) {
 
         this.issuer = issuer.toASCIIString();
@@ -514,9 +520,9 @@ public class OpenIdProviderConfiguration {
         this.requireRequestUriRegistration = requireRequestUriRegistration;
     }
 
-    public void setResponseTypesSupported(final Set<String> responseTypesSupported) {
+    public void setResponseTypesSupported(final String... responseTypesSupported) {
 
-        this.responseTypesSupported = responseTypesSupported;
+        this.responseTypesSupported = Arrays.asList(responseTypesSupported);
     }
 
     public void setRevocationEndpoint(final URI revocationEndpoint) {
@@ -524,9 +530,9 @@ public class OpenIdProviderConfiguration {
         this.revocationEndpoint = revocationEndpoint;
     }
 
-    public void setScopesSupported(final Set<String> scopesSupported) {
+    public void setScopesSupported(final Scope... scopesSupported) {
 
-        this.scopesSupported = scopesSupported;
+        this.scopesSupported = new HashSet<>(Arrays.asList(scopesSupported));
     }
 
     public void setServiceDocumentation(final URI serviceDocumentation) {
@@ -578,4 +584,5 @@ public class OpenIdProviderConfiguration {
 
         this.userinfoSigningAlgValuesSupported = userinfoSigningAlgValuesSupported;
     }
+
 }

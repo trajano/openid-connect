@@ -1,5 +1,6 @@
 package net.trajano.openidconnect.provider.internal;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.ws.rs.ApplicationPath;
@@ -13,7 +14,9 @@ public class ProviderWellKnown extends Application {
     @Override
     public Set<Class<?>> getClasses() {
 
-        return new HashSet2<Class<?>>(WellKnownOpenIdConfiguration.class);
+        final Set<Class<?>> classes = new HashSet<>();
+        classes.add(WellKnownOpenIdConfiguration.class);
+        return classes;
     }
 
 }
