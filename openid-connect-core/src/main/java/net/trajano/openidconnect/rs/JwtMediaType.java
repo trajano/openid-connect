@@ -1,4 +1,4 @@
-package net.trajano.openidconnect.auth;
+package net.trajano.openidconnect.rs;
 
 import javax.ws.rs.core.MediaType;
 

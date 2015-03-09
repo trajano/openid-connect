@@ -1,9 +1,7 @@
-package net.trajano.openidconnect.auth;
+package net.trajano.openidconnect.rs;
 
 import java.util.Arrays;
 import java.util.Collection;
-
-import net.trajano.openidconnect.rs.AuthenticationRequestJsonProvider;
 
 /**
  * Utility class to help in registrations.

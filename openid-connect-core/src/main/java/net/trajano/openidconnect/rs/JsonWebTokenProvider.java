@@ -1,6 +1,6 @@
 package net.trajano.openidconnect.rs;
 
-import static net.trajano.openidconnect.auth.JwtMediaType.APPLICATION_JWT;
+import static net.trajano.openidconnect.rs.JwtMediaType.APPLICATION_JWT;
 
 import java.io.IOException;
 import java.io.InputStream;
