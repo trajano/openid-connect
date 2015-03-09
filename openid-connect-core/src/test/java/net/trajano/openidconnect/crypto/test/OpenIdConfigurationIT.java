@@ -17,16 +17,40 @@ public class OpenIdConfigurationIT {
     @Test
     public void google() throws Exception {
 
-        Client client = ClientBuilder.newBuilder()
+        test("https://accounts.google.com");
+    }
+
+    @Test
+    public void heroku() throws Exception {
+
+        test("https://connect-op.herokuapp.com");
+    }
+
+    @Test
+    public void microsoft() throws Exception {
+
+        test("https://login.windows.net/common");
+    }
+
+    @Test
+    public void salesforce() throws Exception {
+
+        test("http://login.salesforce.com");
+    }
+
+    private void test(final String issuer) {
+
+        final Client client = ClientBuilder.newBuilder()
                 .register(JsonWebKeySetProvider.class)
                 .build();
-        OpenIdProviderConfiguration opconfig = client.target("https://accounts.google.com/.well-known/openid-configuration")
+        final OpenIdProviderConfiguration opconfig = client.target(issuer + "/.well-known/openid-configuration")
                 .request(MediaType.APPLICATION_JSON_TYPE)
                 .get(OpenIdProviderConfiguration.class);
-        JsonWebKeySet jsonWebKeySet = client.target(opconfig.getJwksUri())
+        final JsonWebKeySet jsonWebKeySet = client.target(opconfig.getJwksUri())
                 .request(MediaType.APPLICATION_JSON_TYPE)
                 .get(JsonWebKeySet.class);
         assertTrue(jsonWebKeySet.getKeys().length > 0);
 
     }
+
 }
