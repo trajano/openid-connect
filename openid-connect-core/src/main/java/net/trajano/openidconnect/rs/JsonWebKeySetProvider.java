@@ -52,7 +52,7 @@ public class JsonWebKeySetProvider implements MessageBodyReader<JsonWebKeySet>, 
             final Annotation[] annotations,
             final MediaType mediaType) {
 
-        return JsonWebKeySet.class.isAssignableFrom(type) && MediaType.APPLICATION_JSON_TYPE.equals(mediaType);
+        return JsonWebKeySet.class.isAssignableFrom(type) && MediaType.APPLICATION_JSON_TYPE.isCompatible(mediaType);
     }
 
     @Override
