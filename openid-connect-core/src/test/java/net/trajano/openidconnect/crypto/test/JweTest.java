@@ -122,7 +122,6 @@ public class JweTest {
     public void testEncryptDecryptJweExampleFromSpec() throws Exception {
 
         final String jwe = JWE.encrypt(decoded.getBytes(), publicJwk, JsonWebAlgorithm.RSA_OAEP, JsonWebAlgorithm.A256GCM);
-        System.out.println(jwe);
         assertEquals(decoded, new String(JWE.decrypt(jwe, privateJwk)));
     }
 

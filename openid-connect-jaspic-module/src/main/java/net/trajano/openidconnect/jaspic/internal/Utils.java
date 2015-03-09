@@ -1,7 +1,6 @@
 package net.trajano.openidconnect.jaspic.internal;
 
 import java.security.GeneralSecurityException;
-import java.util.logging.Logger;
 
 import javax.json.JsonObject;
 import javax.servlet.http.HttpServletRequest;
@@ -14,20 +13,6 @@ import javax.servlet.http.HttpServletRequest;
  * @author Archimedes Trajano
  */
 public final class Utils {
-
-    /**
-     * Logger.
-     */
-    private static final Logger LOG;
-
-    /**
-     * Messages resource path.
-     */
-    private static final String MESSAGES = "META-INF/Messages";
-
-    static {
-        LOG = Logger.getLogger("net.trajano.oidc.jaspic", MESSAGES);
-    }
 
     /**
      * Checks if the request uses the GET method.

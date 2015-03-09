@@ -103,8 +103,6 @@ public class JcaJsonWebTokenCrypto implements JsonWebTokenCrypto {
         os.close();
 
         final byte[] encryptedCek = cekStream.toByteArray();
-        System.out.println(Base64Url.encode(encryptedCek));
-        System.out.println(encryptedCek.length);
         payloads[0] = encryptedCek;
 
         final byte[] iv = new byte[JsonWebAlgorithm.getIvLen(joseHeader.getEnc())];
@@ -231,7 +229,7 @@ public class JcaJsonWebTokenCrypto implements JsonWebTokenCrypto {
 
         final Cipher encryptionKeyCipher = Cipher.getInstance(JsonWebAlgorithm.toJca(jsonWebToken.getAlg()));
         encryptionKeyCipher.init(Cipher.DECRYPT_MODE, privateKey);
-        System.out.println(privateKey);
+
         final byte[] decryptedKey = encryptionKeyCipher.doFinal(encryptedKey);
 
         final String macAlg = JsonWebAlgorithm.getMacAlg(jsonWebToken.getEnc());
