@@ -68,9 +68,7 @@ public class JsonWebTokenProcessor {
     GeneralSecurityException {
 
         byte[] payload;
-        if (!JsonWebToken.ALG_NONE.equals(alg) && jwk == null) {
-            throw new GeneralSecurityException("unable to get key");
-        } else if (JsonWebToken.ALG_NONE.equals(alg)) {
+        if (JsonWebToken.ALG_NONE.equals(alg)) {
             payload = jsonWebToken.getPayload(0);
         } else if (enc != null) {
             if (jsonWebToken.getNumberOfPayloads() != 4) {

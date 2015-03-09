@@ -46,6 +46,12 @@ public class JsonWebTokenBuilder {
      */
     private byte[] uncompressedPayloadBytes;
 
+    /**
+     * Sets the algorithm. This should be done after setting the jwk/jwks.
+     * 
+     * @param alg2
+     * @return
+     */
     public JsonWebTokenBuilder alg(final String alg2) {
 
         alg = alg2;
@@ -115,7 +121,7 @@ public class JsonWebTokenBuilder {
     public JsonWebTokenBuilder jwk(final JsonWebKey jwk) {
 
         this.jwk = jwk;
-        if (jwk.getAlg() == null) {
+        if (jwk.getAlg() != null) {
             alg = jwk.getAlg();
         }
         return this;

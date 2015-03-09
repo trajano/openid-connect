@@ -6,6 +6,7 @@ import java.nio.ByteBuffer;
 import java.security.GeneralSecurityException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
+import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
@@ -53,14 +54,26 @@ public class JcaJsonWebTokenCrypto implements JsonWebTokenCrypto {
 
         final byte[][] payloads = new byte[2][];
         payloads[0] = payloadBytes;
-        final StringBuilder b = new StringBuilder(Base64Url.encode(header.toString())).append('.')
-                .append(Base64Url.encode(payloadBytes));
+        System.out.println(header.getAlg());
 
-        final Signature signature = Signature.getInstance(JsonWebAlgorithm.toJca(jwk.getAlg()));
-        signature.initSign((PrivateKey) jwk.toJcaKey());
-        signature.update(b.toString()
-                .getBytes(CharSets.US_ASCII));
-        payloads[1] = signature.sign();
+        if (JsonWebAlgorithm.isMac(header.getAlg())) {
+            Mac mac = Mac.getInstance(JsonWebAlgorithm.toJca(header.getAlg()));
+            mac.init(jwk.toJcaKey());
+            mac.update(header.getEncoded());
+            mac.update((byte) '.');
+            mac.update(Base64Url.encode(payloadBytes)
+                    .getBytes(CharSets.US_ASCII));
+            payloads[1] = mac.doFinal();
+        } else {
+            final Signature signature = Signature.getInstance(JsonWebAlgorithm.toJca(header.getAlg()));
+            signature.initSign((PrivateKey) jwk.toJcaKey());
+            signature.update(header.getEncoded());
+            signature.update((byte) '.');
+            signature.update(Base64Url.encode(payloadBytes)
+                    .getBytes(CharSets.US_ASCII));
+            payloads[1] = signature.sign();
+
+        }
         return payloads;
     }
 
@@ -340,22 +353,34 @@ public class JcaJsonWebTokenCrypto implements JsonWebTokenCrypto {
             JsonWebKey jwk,
             String alg) throws GeneralSecurityException {
 
-        final PublicKey signingKey = (PublicKey) jwk.toJcaPublicKey();
+        if (JsonWebAlgorithm.isMac(alg)) {
+            Mac mac = Mac.getInstance(JsonWebAlgorithm.toJca(alg));
+            mac.init(jwk.toJcaKey());
+            mac.update(jsonWebToken.getJoseHeaderEncoded()
+                    .getBytes());
+            mac.update((byte) '.');
+            byte[] macValue = mac.doFinal(Base64Url.encode(jsonWebToken.getPayload(0))
+                    .getBytes());
+            if (!MessageDigest.isEqual(macValue, jsonWebToken.getPayload(1))) {
+                throw new SignatureException("signature verification failed");
+            }
+        } else {
+            final PublicKey signingKey = (PublicKey) jwk.toJcaPublicKey();
 
-        final Signature signature = Signature.getInstance(JsonWebAlgorithm.toJca(alg));
+            final Signature signature = Signature.getInstance(JsonWebAlgorithm.toJca(alg));
 
-        final byte[] jwtSignatureBytes = jsonWebToken.getPayload(1);
+            final byte[] jwtSignatureBytes = jsonWebToken.getPayload(1);
 
-        signature.initVerify(signingKey);
-        signature.update(jsonWebToken.getJoseHeaderEncoded()
-                .getBytes());
-        signature.update((byte) '.');
-        signature.update(Base64Url.encode(jsonWebToken.getPayload(0))
-                .getBytes());
-        if (!signature.verify(jwtSignatureBytes)) {
-            throw new SignatureException("signature verification failed");
+            signature.initVerify(signingKey);
+            signature.update(jsonWebToken.getJoseHeaderEncoded()
+                    .getBytes());
+            signature.update((byte) '.');
+            signature.update(Base64Url.encode(jsonWebToken.getPayload(0))
+                    .getBytes());
+            if (!signature.verify(jwtSignatureBytes)) {
+                throw new SignatureException("signature verification failed");
+            }
         }
-
         return jsonWebToken.getPayload(0);
     }
 }

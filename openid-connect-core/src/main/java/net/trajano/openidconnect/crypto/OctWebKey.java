@@ -30,6 +30,12 @@ public class OctWebKey extends JsonWebKey {
 
     }
 
+    public OctWebKey(byte[] keyBytes) {
+
+        this();
+        k = Base64Url.encode(keyBytes);
+    }
+
     public String getK() {
 
         return k;

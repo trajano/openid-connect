@@ -4,9 +4,11 @@ import java.security.GeneralSecurityException;
 import java.security.Signature;
 import java.security.spec.ECParameterSpec;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
@@ -77,7 +79,12 @@ public class JsonWebAlgorithm {
     /**
      * A map of AES JWA names to MAC algorithms if available.
      */
-    private Map<String, String> jwaJcaMacMap = new HashMap<>();
+    private final Map<String, String> jwaJcaMacMap = new HashMap<>();
+
+    /**
+     * Set of mac algorithms registered.
+     */
+    private final Set<String> macs = new HashSet<>();
 
     /**
      * RSA using Optimal Asymmetric Encryption Padding (OAEP).
@@ -135,6 +142,26 @@ public class JsonWebAlgorithm {
             Signature.getInstance(jca);
             jwaJcaMap.put(jwa, jca);
             sigs.add(jwa);
+        } catch (GeneralSecurityException e) {
+            LOG.fine("algNotSupportedForSig", new Object[] { jwa });
+        }
+    }
+
+    /**
+     * Adds to the jwaToJca map if the algorithm is available for the bit length
+     * specified
+     * 
+     * @param jwa
+     * @param jca
+     */
+    private void putMacIfAvailable(String jwa,
+            String jca) {
+
+        try {
+            Mac.getInstance(jca);
+            jwaJcaMap.put(jwa, jca);
+            sigs.add(jwa);
+            macs.add(jwa);
         } catch (GeneralSecurityException e) {
             LOG.fine("algNotSupportedForSig", new Object[] { jwa });
         }
@@ -283,6 +310,10 @@ public class JsonWebAlgorithm {
          */
         putRsaIfAvailable("RS256", "SHA256withRSA");
 
+        putMacIfAvailable("HS512", "HmacSHA512");
+        putMacIfAvailable("HS384", "HmacSHA384");
+        putMacIfAvailable("HS256", "HmacSHA256");
+
         /**
          * RSA using Optimal Asymmetric Encryption Padding (OAEP).
          */
@@ -317,6 +348,26 @@ public class JsonWebAlgorithm {
     public static boolean isGcm(String enc) {
 
         return "A256GCM".equals(enc) || "A128GCM".equals(enc);
+    }
+
+    public static String[] getEncAlgorithms() {
+
+        return INSTANCE.encs.toArray(new String[0]);
+    }
+
+    public static String[] getSigAlgorithms() {
+
+        return INSTANCE.sigs.toArray(new String[0]);
+    }
+
+    public static String[] getKexAlgorithms() {
+
+        return INSTANCE.kexs.toArray(new String[0]);
+    }
+
+    public static boolean isMac(String alg) {
+
+        return INSTANCE.macs.contains(alg);
     }
 
 }

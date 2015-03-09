@@ -77,7 +77,7 @@ public class AuthenticationRequestTest {
         final HttpServletRequest req = Mockito.mock(HttpServletRequest.class);
         final JsonObject requestObject = b.build();
         final JsonWebKey jwk = jwks.getKeys()[5];
-        final String encrypted = new JsonWebTokenBuilder().alg("RSA-OAEP").enc("A256CBC").jwk(jwk).payload(requestObject).toString();
+        final String encrypted = new JsonWebTokenBuilder().jwk(jwk).alg("RSA-OAEP").enc("A256CBC").payload(requestObject).toString();
         new JsonWebTokenProcessor(encrypted).jwks(privateJwks).getPayload();
         when(req.getParameter(OpenIdConnectKey.REQUEST)).thenReturn(encrypted);
         when(req.getParameter(OpenIdConnectKey.CLIENT_ID)).thenReturn("barbar");
