@@ -47,8 +47,14 @@ public class JsonWebTokenProcessor {
         } else if (JsonWebAlgorithm.none == alg) {
             payload = jsonWebToken.getPayload(0);
         } else if (enc != null) {
+            if (jsonWebToken.getNumberOfPayloads() != 4) {
+                throw new GeneralSecurityException("invalid number of payloads in JWT for JWE");
+            }
             payload = crypto.getJWEPayload(jsonWebToken, jwk);
         } else if (enc == null && alg != null) {
+            if (jsonWebToken.getNumberOfPayloads() != 2) {
+                throw new GeneralSecurityException("invalid number of payloads in JWT for JWS");
+            }
             payload = crypto.getJWSPayload(jsonWebToken, jwk, alg);
         } else {
             throw new GeneralSecurityException("invalid JOSE header");

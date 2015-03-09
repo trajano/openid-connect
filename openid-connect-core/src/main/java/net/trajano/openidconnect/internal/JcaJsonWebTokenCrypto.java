@@ -147,10 +147,44 @@ public class JcaJsonWebTokenCrypto implements JsonWebTokenCrypto {
 
     @Override
     public byte[] getJWEPayload(JsonWebToken jsonWebToken,
-            JsonWebKey jwk) {
+            JsonWebKey jwk) throws IOException,
+            GeneralSecurityException {
 
-        // TODO Auto-generated method stub
-        return null;
+        final byte[] encryptedKey = jsonWebToken.getPayload(0);
+        final byte[] initializationVector = jsonWebToken.getPayload(1);
+        final byte[] cipherText = jsonWebToken.getPayload(2);
+        final byte[] authenticationTag = jsonWebToken.getPayload(3);
+        final PrivateKey privateKey = (PrivateKey) jwk.toJcaKey();
+
+        final Cipher encryptionKeyCipher = Cipher.getInstance(jsonWebToken.getAlg()
+                .toJca());
+        encryptionKeyCipher.init(Cipher.DECRYPT_MODE, privateKey);
+        final byte[] decryptedKey = encryptionKeyCipher.doFinal(encryptedKey);
+
+        final SecretKey contentEncryptionKey = new SecretKeySpec(decryptedKey, "AES");
+
+        final byte[] aad = jsonWebToken.getJoseHeaderEncoded()
+                .getBytes(CharSets.US_ASCII);
+
+        final Cipher contentCipher = Cipher.getInstance(jsonWebToken.getEnc()
+                .toJca());
+        if (jsonWebToken.getEnc() == JsonWebAlgorithm.A128GCM || jsonWebToken.getEnc() == JsonWebAlgorithm.A256GCM) {
+            final GCMParameterSpec spec = new GCMParameterSpec(authenticationTag.length * 8, initializationVector);
+            contentCipher.init(Cipher.DECRYPT_MODE, contentEncryptionKey, spec);
+            contentCipher.updateAAD(aad);
+        } else if (jsonWebToken.getEnc() == JsonWebAlgorithm.A128CBC_HS256) {
+            final IvParameterSpec spec = new IvParameterSpec(initializationVector);
+            contentCipher.init(Cipher.DECRYPT_MODE, contentEncryptionKey, spec);
+
+        } else {
+            final IvParameterSpec spec = new IvParameterSpec(initializationVector);
+            contentCipher.init(Cipher.DECRYPT_MODE, contentEncryptionKey, spec);
+        }
+        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        baos.write(contentCipher.update(cipherText));
+        baos.write(contentCipher.doFinal(authenticationTag));
+        baos.close();
+        return baos.toByteArray();
     }
 
     @Override
