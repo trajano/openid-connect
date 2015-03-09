@@ -12,17 +12,29 @@ import net.trajano.openidconnect.auth.AuthenticationRequest;
 public interface Authenticator {
 
     /**
+     * <p>
      * Obtains the URI to the start of the authentication process. This must be
      * the full URL including the necessary query parameters.
+     * </p>
      * <p>
-     * The simplest way of doing this is to pass the query parameters that are
-     * needed as-is, but it is recommended that the request data be encoded and
-     * passed as a single query parameter to reduce the amount of parameters
-     * that need to be passed
+     * The simplest way of doing this is to pass the "request" parameter that
+     * encodes the original authentication request.
+     * </p>
+     * 
+     * <pre>
+     * return contextUriBuilder.path(&quot;login.jsp&quot;)
+     *         .queryParam(OpenIdConnectKey.REQUEST, requestJwt)
+     *         .build();
+     * </pre>
+     * <p>
+     * Depending on some values on the authentication request such as "display"
+     * or "ui-locale" a different URI can be provided.
      * </p>
      *
      * @param authenticationRequest
      *            authentication request
+     * @param requestJwt
+     *            the request encoded in a JWT
      * @param req
      *            servlet request
      * @param contextUriBuilder
@@ -33,6 +45,7 @@ public interface Authenticator {
      * @throws ServletException
      */
     URI authenticate(AuthenticationRequest authenticationRequest,
+            String requestJwt,
             HttpServletRequest req,
             UriBuilder contextUri);
 

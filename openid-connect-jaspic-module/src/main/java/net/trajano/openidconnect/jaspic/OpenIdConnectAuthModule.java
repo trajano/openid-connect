@@ -4,10 +4,8 @@ import static net.trajano.openidconnect.core.OpenIdConnectKey.CLIENT_ID;
 import static net.trajano.openidconnect.core.OpenIdConnectKey.CLIENT_SECRET;
 import static net.trajano.openidconnect.core.OpenIdConnectKey.CODE;
 import static net.trajano.openidconnect.core.OpenIdConnectKey.GRANT_TYPE;
-import static net.trajano.openidconnect.core.OpenIdConnectKey.NONCE;
 import static net.trajano.openidconnect.core.OpenIdConnectKey.REDIRECT_URI;
 import static net.trajano.openidconnect.core.OpenIdConnectKey.RESPONSE_MODE;
-import static net.trajano.openidconnect.core.OpenIdConnectKey.RESPONSE_TYPE;
 import static net.trajano.openidconnect.core.OpenIdConnectKey.SCOPE;
 import static net.trajano.openidconnect.core.OpenIdConnectKey.STATE;
 import static net.trajano.openidconnect.jaspic.internal.Utils.isGetRequest;
@@ -942,19 +940,22 @@ public class OpenIdConnectAuthModule implements ServerAuthModule, ServerAuthCont
             nonceCookie.setSecure(true);
             resp.addCookie(nonceCookie);
 
+            final URI redirectUri = URI.create(req.getRequestURL()
+                    .toString())
+                    .resolve(moduleOptions.get(REDIRECTION_ENDPOINT_URI_KEY));
+
+            final AuthenticationRequest ab = new AuthenticationRequest.Builder().clientId(clientId)
+                    .scope(scope)
+                    .redirectUri(redirectUri)
+                    .responseType(ResponseType.code)
+                    .state(state)
+                    .nonce(nonce)
+                    .uiLocale(req.getLocales())
+                    .responseMode(responseMode)
+                    .build();
+
             final UriBuilder b = UriBuilder.fromUri(oidProviderConfig.getAuthorizationEndpoint());
             if (oidProviderConfig.isRequestParameterSupported()) {
-                final URI redirectUri = URI.create(req.getRequestURL()
-                        .toString())
-                        .resolve(moduleOptions.get(REDIRECTION_ENDPOINT_URI_KEY));
-
-                final AuthenticationRequest.Builder ab = new AuthenticationRequest.Builder().clientId(clientId)
-                        .scope(scope)
-                        .redirectUri(redirectUri)
-                        .responseType(ResponseType.code)
-                        .state(state)
-                        .nonce(nonce)
-                        .responseMode(responseMode);
 
                 // TODO compare with own list.
                 final JsonWebTokenBuilder jwtBuilder = new JsonWebTokenBuilder().alg(oidProviderConfig.getRequestObjectEncryptionAlgValuesSupported()
@@ -963,20 +964,12 @@ public class OpenIdConnectAuthModule implements ServerAuthModule, ServerAuthCont
                                 .get(0))
                         .compress(true)
                         .jwk(getWebKeys(oidProviderConfig))
-                        .payload(ab.build()
-                                .toJsonObject());
+                        .payload(ab.toJsonObject());
                 b.queryParam(OpenIdConnectKey.REQUEST, jwtBuilder.build()
                         .toString());
 
             } else {
-                b.queryParam(CLIENT_ID, clientId)
-                        .queryParam(RESPONSE_TYPE, "code")
-                        .queryParam(SCOPE, scope)
-                        .queryParam(REDIRECT_URI, URI.create(req.getRequestURL()
-                                .toString())
-                                .resolve(moduleOptions.get(REDIRECTION_ENDPOINT_URI_KEY)))
-                        .queryParam(STATE, state)
-                        .queryParam(NONCE, nonce);
+                ab.addQueryParams(b);
 
                 if (responseMode != ResponseMode.query) {
                     b.queryParam(RESPONSE_MODE, responseMode.toString());

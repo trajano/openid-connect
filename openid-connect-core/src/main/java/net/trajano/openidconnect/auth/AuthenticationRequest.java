@@ -7,11 +7,13 @@ import java.io.Serializable;
 import java.net.URI;
 import java.security.GeneralSecurityException;
 import java.util.Collections;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.json.Json;
@@ -21,6 +23,7 @@ import javax.json.JsonValue.ValueType;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.BadRequestException;
+import javax.ws.rs.core.UriBuilder;
 import javax.xml.bind.annotation.XmlTransient;
 
 import net.trajano.openidconnect.core.ErrorResponse;
@@ -103,6 +106,20 @@ public class AuthenticationRequest implements Serializable {
                 b.append(type.name());
             }
             requestMap.put(OpenIdConnectKey.RESPONSE_TYPE, b.toString());
+            return this;
+        }
+
+        public Builder uiLocale(Enumeration<Locale> locales) {
+
+            StringBuilder b = new StringBuilder(locales.nextElement()
+                    .toLanguageTag());
+
+            while (locales.hasMoreElements()) {
+                b.append(' ');
+                b.append(locales.nextElement()
+                        .toLanguageTag());
+            }
+            requestMap.put(OpenIdConnectKey.UI_LOCALES, b.toString());
             return this;
         }
     }
@@ -230,8 +247,14 @@ public class AuthenticationRequest implements Serializable {
         this(buildRequestMap(req, privateJwks));
     }
 
+    /**
+     * Stringified values for the request.
+     */
+    private final Map<String, String> requestMap;
+
     private AuthenticationRequest(final Map<String, String> requestMap) throws IOException, GeneralSecurityException {
 
+        this.requestMap = requestMap;
         if (requestMap.containsKey(OpenIdConnectKey.ACR_VALUES)) {
             acrValues = Util.splitToList(requestMap.get(OpenIdConnectKey.ACR_VALUES));
         } else {
@@ -549,6 +572,13 @@ public class AuthenticationRequest implements Serializable {
 
             throw new RedirectedOpenIdProviderException(this, new ErrorResponse(invalid_request, "Invalid response mode for the response type requested."));
 
+        }
+    }
+
+    public void addQueryParams(UriBuilder b) {
+
+        for (Entry<String, String> entry : requestMap.entrySet()) {
+            b.queryParam(entry.getKey(), entry.getValue());
         }
     }
 }

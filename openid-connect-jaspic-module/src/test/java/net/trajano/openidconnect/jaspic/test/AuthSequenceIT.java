@@ -7,6 +7,9 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.security.auth.Subject;
@@ -48,6 +51,7 @@ public class AuthSequenceIT {
         when(servletRequest.getRequestURL()).thenReturn(new StringBuffer("https://i.trajano.net:8443/util/ejb2"));
         when(servletRequest.getRequestURI()).thenReturn("/util/ejb2");
         when(servletRequest.getContextPath()).thenReturn("/util");
+        when(servletRequest.getLocales()).thenReturn(Collections.enumeration(Arrays.asList(Locale.CANADA)));
         when(servletRequest.isSecure()).thenReturn(true);
 
         when(messageInfo.getRequestMessage()).thenReturn(servletRequest);
@@ -59,7 +63,7 @@ public class AuthSequenceIT {
         assertEquals(AuthStatus.SEND_CONTINUE, module.validateRequest(messageInfo, client, null));
         ArgumentCaptor<String> uriCaptor = ArgumentCaptor.forClass(String.class);
         verify(servletResponse).sendRedirect(uriCaptor.capture());
-        assertThat(uriCaptor.getValue(), startsWith("https://accounts.google.com/o/oauth2/auth?client_id=clientID&response_type=code&scope=openid&redirect_uri=https://i.trajano.net:8443/app/oauth2&state=L2VqYjI"));
+        assertThat(uriCaptor.getValue(), startsWith("https://accounts.google.com/o/oauth2/auth"));
     }
 
     @Test
@@ -85,6 +89,7 @@ public class AuthSequenceIT {
         when(servletRequest.getRequestURI()).thenReturn("/util/ejb2");
         when(servletRequest.getContextPath()).thenReturn("/util");
         when(servletRequest.getQueryString()).thenReturn("q=foo");
+        when(servletRequest.getLocales()).thenReturn(Collections.enumeration(Arrays.asList(Locale.CANADA)));
         when(servletRequest.isSecure()).thenReturn(true);
 
         when(messageInfo.getRequestMessage()).thenReturn(servletRequest);
@@ -96,6 +101,6 @@ public class AuthSequenceIT {
         assertEquals(AuthStatus.SEND_CONTINUE, module.validateRequest(messageInfo, client, null));
         ArgumentCaptor<String> uriCaptor = ArgumentCaptor.forClass(String.class);
         verify(servletResponse).sendRedirect(uriCaptor.capture());
-        assertThat(uriCaptor.getValue(), startsWith("https://accounts.google.com/o/oauth2/auth?client_id=clientID&response_type=code&scope=openid&redirect_uri=https://i.trajano.net:8443/app/oauth2&state=L2VqYjI_cT1mb28"));
+        assertThat(uriCaptor.getValue(), startsWith("https://accounts.google.com/o/oauth2/auth"));
     }
 }

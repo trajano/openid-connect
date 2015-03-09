@@ -23,7 +23,9 @@ import net.trajano.openidconnect.auth.AuthenticationRequest;
 import net.trajano.openidconnect.auth.Prompt;
 import net.trajano.openidconnect.core.ErrorResponse;
 import net.trajano.openidconnect.core.OpenIdConnectException;
+import net.trajano.openidconnect.core.OpenIdConnectKey;
 import net.trajano.openidconnect.core.RedirectedOpenIdProviderException;
+import net.trajano.openidconnect.crypto.JsonWebTokenBuilder;
 import net.trajano.openidconnect.provider.spi.Authenticator;
 import net.trajano.openidconnect.provider.spi.ClientManager;
 import net.trajano.openidconnect.provider.spi.KeyProvider;
@@ -105,11 +107,18 @@ public class AuthorizationEndpoint {
         }
 
         if (!authenticator.isAuthenticated(authenticationRequest, req)) {
-            // TODO allow encoding perhaps with key? Make sure it's in an EJB.
+
+            String reqJwt = req.getParameter(OpenIdConnectKey.REQUEST);
+            if (reqJwt == null) {
+                final JsonWebTokenBuilder b = new JsonWebTokenBuilder().payload(authenticationRequest.toJsonObject())
+                        .compress(true);
+                reqJwt = b.toString();
+            }
+
             final UriBuilder uriBuilder = UriBuilder.fromUri(req.getRequestURL()
                     .toString())
                     .replacePath(req.getContextPath());
-            return Response.temporaryRedirect(authenticator.authenticate(authenticationRequest, req, uriBuilder))
+            return Response.temporaryRedirect(authenticator.authenticate(authenticationRequest, reqJwt, req, uriBuilder))
                     .build();
         }
 
