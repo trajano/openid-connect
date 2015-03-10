@@ -57,11 +57,11 @@ public class DefaultAuthenticationResponseProvider implements AuthenticationResp
      * @throws IOException
      */
     @Override
-    public AuthenticationResponse buildAuthenticationResponse(final HttpServletRequest req,
+    public AuthenticationResponse buildAuthenticationResponse(final AuthenticationRequest request,
+            final HttpServletRequest req,
             final String subject) throws IOException,
             GeneralSecurityException {
 
-        final AuthenticationRequest request = new AuthenticationRequest(req, keyProvider.getPrivateJwks());
         final AuthenticationResponse response = new AuthenticationResponse();
 
         final UriBuilder issuerUri = UriBuilder.fromUri(create(req.getRequestURL()
@@ -96,22 +96,17 @@ public class DefaultAuthenticationResponseProvider implements AuthenticationResp
     }
 
     /**
-     * Builds a JAX-RS {@link Response} object containing a redirect
-     *
-     * @param responseType
-     * @param subject
-     * @param state
-     * @param redirectUri
-     * @param extraStorageOptions
-     * @return
+     * {@inheritDoc}
      */
     @Override
-    public Response buildResponse(final HttpServletRequest req,
+    public Response buildResponse(final String requestJwt,
+            final HttpServletRequest request,
             final String subject) {
 
         final AuthenticationResponse response;
         try {
-            response = buildAuthenticationResponse(req, subject);
+            final AuthenticationRequest req = new AuthenticationRequest(requestJwt, keyProvider.getPrivateJwks());
+            response = buildAuthenticationResponse(req, request, subject);
         } catch (IOException | GeneralSecurityException e) {
             throw new WebApplicationException(e);
         }
@@ -150,7 +145,8 @@ public class DefaultAuthenticationResponseProvider implements AuthenticationResp
             ServletException {
 
         try {
-            final AuthenticationResponse authResponse = buildAuthenticationResponse(req, subject);
+            final AuthenticationRequest request = new AuthenticationRequest(req, keyProvider.getPrivateJwks());
+            final AuthenticationResponse authResponse = buildAuthenticationResponse(request, req, subject);
             final AuthenticationResponseConverter authenticationResponse = new AuthenticationResponseConverter(authResponse.getRedirectUri(), authResponse);
             if (authResponse.getResponseMode() == ResponseMode.query) {
                 response.sendRedirect(authenticationResponse.toQueryUri()

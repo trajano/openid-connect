@@ -54,7 +54,7 @@ public class AuthenticationRequest implements Serializable {
         private final Map<String, String> requestMap = new HashMap<>();
 
         public AuthenticationRequest build() throws IOException,
-                GeneralSecurityException {
+        GeneralSecurityException {
 
             return new AuthenticationRequest(requestMap);
         }
@@ -77,19 +77,7 @@ public class AuthenticationRequest implements Serializable {
             return this;
         }
 
-        public Builder state(final String s) {
-
-            requestMap.put(OpenIdConnectKey.STATE, s);
-            return this;
-        }
-
-        public Builder scope(String scope) {
-
-            requestMap.put(OpenIdConnectKey.SCOPE, scope);
-            return this;
-        }
-
-        public Builder responseMode(ResponseMode mode) {
+        public Builder responseMode(final ResponseMode mode) {
 
             if (mode != ResponseMode.query) {
                 requestMap.put(OpenIdConnectKey.RESPONSE_MODE, mode.name());
@@ -97,11 +85,11 @@ public class AuthenticationRequest implements Serializable {
             return this;
         }
 
-        public Builder responseType(@NotNull ResponseType code,
-                ResponseType... oth) {
+        public Builder responseType(@NotNull final ResponseType code,
+                final ResponseType... oth) {
 
-            StringBuilder b = new StringBuilder(code.name());
-            for (ResponseType type : oth) {
+            final StringBuilder b = new StringBuilder(code.name());
+            for (final ResponseType type : oth) {
                 b.append(' ');
                 b.append(type.name());
             }
@@ -109,9 +97,21 @@ public class AuthenticationRequest implements Serializable {
             return this;
         }
 
-        public Builder uiLocale(Enumeration<Locale> locales) {
+        public Builder scope(final String scope) {
 
-            StringBuilder b = new StringBuilder(locales.nextElement()
+            requestMap.put(OpenIdConnectKey.SCOPE, scope);
+            return this;
+        }
+
+        public Builder state(final String s) {
+
+            requestMap.put(OpenIdConnectKey.STATE, s);
+            return this;
+        }
+
+        public Builder uiLocale(final Enumeration<Locale> locales) {
+
+            final StringBuilder b = new StringBuilder(locales.nextElement()
                     .toLanguageTag());
 
             while (locales.hasMoreElements()) {
@@ -140,13 +140,33 @@ public class AuthenticationRequest implements Serializable {
         final JsonObject requestObject;
         if (req.getParameter(OpenIdConnectKey.REQUEST) != null && privateJwks != null) {
             final JsonWebToken jwt = new JsonWebToken(req.getParameter(OpenIdConnectKey.REQUEST));
-            JsonWebTokenProcessor p = new JsonWebTokenProcessor(jwt).jwks(privateJwks);
+            final JsonWebTokenProcessor p = new JsonWebTokenProcessor(jwt).jwks(privateJwks);
             requestObject = p.getJsonPayload();
         } else {
             requestObject = null;
         }
         for (final String key : REQUEST_KEYS) {
             processValueFromMapOrObject(requestMap, key, req, requestObject);
+        }
+        return requestMap;
+    }
+
+    private static Map<String, String> buildRequestMap(final String requestJwt,
+            final JsonWebKeySet privateJwks) throws IOException,
+            GeneralSecurityException {
+
+        final Map<String, String> requestMap = new HashMap<>();
+
+        final JsonObject requestObject;
+        if (requestJwt != null && privateJwks != null) {
+            final JsonWebToken jwt = new JsonWebToken(requestJwt);
+            final JsonWebTokenProcessor p = new JsonWebTokenProcessor(jwt).jwks(privateJwks);
+            requestObject = p.getJsonPayload();
+        } else {
+            requestObject = null;
+        }
+        for (final String key : REQUEST_KEYS) {
+            processValueFromMapOrObject(requestMap, key, null, requestObject);
         }
         return requestMap;
     }
@@ -171,7 +191,7 @@ public class AuthenticationRequest implements Serializable {
             final JsonObject requestObject) {
 
         final String paramValue;
-        if (servletRequest.getParameter(key) != null) {
+        if (servletRequest != null && servletRequest.getParameter(key) != null) {
             paramValue = servletRequest.getParameter(key);
         } else {
             paramValue = null;
@@ -232,6 +252,11 @@ public class AuthenticationRequest implements Serializable {
 
     private final URI redirectUri;
 
+    /**
+     * Stringified values for the request.
+     */
+    private final Map<String, String> requestMap;
+
     private final ResponseMode responseMode;
 
     private final Set<ResponseType> responseTypes;
@@ -246,11 +271,6 @@ public class AuthenticationRequest implements Serializable {
 
         this(buildRequestMap(req, privateJwks));
     }
-
-    /**
-     * Stringified values for the request.
-     */
-    private final Map<String, String> requestMap;
 
     private AuthenticationRequest(final Map<String, String> requestMap) throws IOException, GeneralSecurityException {
 
@@ -339,6 +359,28 @@ public class AuthenticationRequest implements Serializable {
         }
 
         validate();
+    }
+
+    /**
+     * Constructs the authentication request using the Request JWT.
+     *
+     * @param requestJwt
+     *            request JWT
+     * @param privateJwks
+     *            JWKS containing private keys if necessary.
+     * @throws GeneralSecurityException
+     * @throws IOException
+     */
+    public AuthenticationRequest(final String requestJwt, final JsonWebKeySet privateJwks) throws IOException, GeneralSecurityException {
+
+        this(buildRequestMap(requestJwt, privateJwks));
+    }
+
+    public void addQueryParams(final UriBuilder b) {
+
+        for (final Entry<String, String> entry : requestMap.entrySet()) {
+            b.queryParam(entry.getKey(), entry.getValue());
+        }
     }
 
     public boolean containsResponseType(final ResponseType responseType) {
@@ -572,13 +614,6 @@ public class AuthenticationRequest implements Serializable {
 
             throw new RedirectedOpenIdProviderException(this, new ErrorResponse(invalid_request, "Invalid response mode for the response type requested."));
 
-        }
-    }
-
-    public void addQueryParams(UriBuilder b) {
-
-        for (Entry<String, String> entry : requestMap.entrySet()) {
-            b.queryParam(entry.getKey(), entry.getValue());
         }
     }
 }

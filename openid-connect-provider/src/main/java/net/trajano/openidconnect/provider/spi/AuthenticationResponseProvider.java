@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.Response;
 
+import net.trajano.openidconnect.auth.AuthenticationRequest;
 import net.trajano.openidconnect.auth.AuthenticationResponse;
 
 /**
@@ -22,16 +23,21 @@ import net.trajano.openidconnect.auth.AuthenticationResponse;
 public interface AuthenticationResponseProvider {
 
     /**
-     * Creates a JAX-RS response.
+     * Creates a JAX-RS response. Only the request method is provided. Utilizing
+     * the FormParam will destroy the getParameter data in the HttpServlet
+     * request.
      * 
+     * @param requestJwt
+     *            request JWT
      * @param request
-     *            authentication request
+     *            HTTP Servlet Request context
      * @param subject
      *            authenticated subject to be stored by the
      *            {@link TokenProvider}
      * @return
      */
-    Response buildResponse(HttpServletRequest req,
+    Response buildResponse(String requestJwt,
+            HttpServletRequest request,
             String subject);
 
     /**
@@ -57,8 +63,10 @@ public interface AuthenticationResponseProvider {
      * Builds the authentication response object if the defined response methods
      * are not sufficient.
      * 
-     * @param request
+     * @param req
      *            authentication request
+     * @param request
+     *            servlet request context
      * @param subject
      *            authenticated subject to be stored by the
      *            {@link TokenProvider}
@@ -66,7 +74,8 @@ public interface AuthenticationResponseProvider {
      * @throws IOException
      * @throws GeneralSecurityException
      */
-    AuthenticationResponse buildAuthenticationResponse(HttpServletRequest req,
+    AuthenticationResponse buildAuthenticationResponse(AuthenticationRequest req,
+            HttpServletRequest request,
             String subject) throws IOException,
             GeneralSecurityException;
 
