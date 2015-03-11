@@ -7,6 +7,7 @@ import java.security.GeneralSecurityException;
 import java.util.Set;
 
 import javax.ejb.EJB;
+import javax.ejb.Stateless;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 
@@ -20,6 +21,7 @@ import net.trajano.openidconnect.token.IdToken;
 import net.trajano.openidconnect.token.IdTokenResponse;
 import net.trajano.openidconnect.token.TokenResponse;
 
+@Stateless
 public class DefaultTokenProvider implements TokenProvider {
 
     @EJB

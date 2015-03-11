@@ -30,7 +30,7 @@ import net.trajano.openidconnect.token.TokenResponse;
 /**
  * Upon successful authentication, implementers are expected to invoke any of
  * the methods below. This class is meant to be injected into a servlet or REST
- * service. ?? should I move this and perhaps key provider into a EJB jar.
+ * service.
  *
  * @author Archimedes Trajano
  */
