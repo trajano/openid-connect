@@ -24,7 +24,6 @@ import net.trajano.openidconnect.provider.internal.CacheConstants;
 import net.trajano.openidconnect.provider.spi.AuthenticationResponseProvider;
 import net.trajano.openidconnect.provider.spi.KeyProvider;
 import net.trajano.openidconnect.provider.spi.TokenProvider;
-import net.trajano.openidconnect.token.IdToken;
 import net.trajano.openidconnect.token.IdTokenResponse;
 import net.trajano.openidconnect.token.TokenResponse;
 
@@ -71,9 +70,7 @@ public class DefaultAuthenticationResponseProvider implements AuthenticationResp
                 .replaceQuery(null)
                 .fragment(null);
 
-        final IdToken idToken = tokenProvider.buildIdToken(subject, issuerUri.build()
-                .toASCIIString(), request);
-        final String code = tokenProvider.store(idToken, request);
+        final String code = tokenProvider.createNewToken(subject, issuerUri.build(), request);
 
         if (request.getState() != null) {
             response.setState(request.getState());

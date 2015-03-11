@@ -1,14 +1,9 @@
 package net.trajano.openidconnect.sample;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.net.URI;
-import java.security.GeneralSecurityException;
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -18,29 +13,23 @@ import javax.ejb.LockType;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriBuilder;
 
 import net.trajano.openidconnect.auth.AuthenticationRequest;
 import net.trajano.openidconnect.core.OpenIdConnectKey;
-import net.trajano.openidconnect.core.Scope;
 import net.trajano.openidconnect.provider.spi.Authenticator;
 import net.trajano.openidconnect.provider.spi.ClientManager;
 import net.trajano.openidconnect.provider.spi.KeyProvider;
-import net.trajano.openidconnect.provider.spi.TokenProvider;
+import net.trajano.openidconnect.provider.spi.TokenStorage;
 import net.trajano.openidconnect.provider.spi.UserinfoProvider;
-import net.trajano.openidconnect.rs.IdTokenProvider;
-import net.trajano.openidconnect.token.IdToken;
 import net.trajano.openidconnect.token.IdTokenResponse;
-import net.trajano.openidconnect.token.TokenResponse;
 import net.trajano.openidconnect.userinfo.Userinfo;
 
 // TODO move to a sample ejb package
 @Singleton
 @Startup
 @Lock(LockType.READ)
-public class AcceptAllClientManager implements ClientManager, Authenticator, UserinfoProvider, TokenProvider {
+public class AcceptAllClientManager implements ClientManager, Authenticator, UserinfoProvider, TokenStorage {
 
     private static final int ONE_HOUR = 120;
 
@@ -72,43 +61,9 @@ public class AcceptAllClientManager implements ClientManager, Authenticator, Use
     }
 
     @Override
-    public IdToken buildIdToken(final String subject,
-            String issuer,
-            final AuthenticationRequest req) {
-
-        final IdToken idToken = new IdToken();
-        idToken.setSub(subject);
-        idToken.setNonce(req.getNonce());
-        idToken.setAuthTime(System.currentTimeMillis() / 1000);
-        idToken.setAud(req.getClientId());
-        idToken.setAzp(req.getClientId());
-        idToken.setIss(issuer);
-        idToken.resetIssueAndExpiration(ONE_HOUR);
-        return idToken;
-    }
-
-    @Override
-    public Collection<IdTokenResponse> getAllTokenResponses() {
-
-        return accessTokenToTokenResponse.values();
-    }
-
-    @Override
     public IdTokenResponse getByAccessToken(final String accessToken) {
 
         return accessTokenToTokenResponse.get(accessToken);
-    }
-
-    @Override
-    @Lock(LockType.WRITE)
-    public IdTokenResponse getByCode(final String code,
-            final boolean deleteAfterRetrieval) {
-
-        final IdTokenResponse tokenResponse = codeToTokenResponse.get(code);
-        if (deleteAfterRetrieval) {
-            codeToTokenResponse.remove(code);
-        }
-        return tokenResponse;
     }
 
     @Override
@@ -144,72 +99,56 @@ public class AcceptAllClientManager implements ClientManager, Authenticator, Use
     }
 
     @Override
-    public IdTokenResponse refreshToken(final String clientId,
-            final String refreshTokenIn,
-            final Set<Scope> scopes,
-            final Integer expiresIn) throws IOException,
-            GeneralSecurityException {
+    public IdTokenResponse getByCode(String code) {
 
-        final IdTokenResponse idTokenResponse = refreshTokenToTokenResponse.remove(refreshTokenIn);
-        if (!clientId.equals(idTokenResponse.getIdToken(keyProvider.getPrivateJwks())
-                .getAud())) {
-            throw new WebApplicationException();
-        }
-        if (scopes != null && !scopes.containsAll(scopes)) {
-            throw new WebApplicationException();
-        }
-        if (scopes != null && scopes.containsAll(scopes)) {
-            idTokenResponse.setScopes(scopes);
-        }
-
-        // remove from map we are getting a new one
-        accessTokenToTokenResponse.remove(idTokenResponse.getAccessToken());
-        String newAccessToken = keyProvider.nextEncodedToken();
-        String newRefreshToken = keyProvider.nextEncodedToken();
-
-        idTokenResponse.setAccessToken(newAccessToken);
-        idTokenResponse.setRefreshToken(newRefreshToken);
-        final IdToken idToken = idTokenResponse.getIdToken(keyProvider.getJwks());
-        if (expiresIn != null)
-            idToken.resetIssueAndExpiration(expiresIn);
-        else {
-            idToken.resetIssueAndExpiration(ONE_HOUR);
-        }
-
-        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        new IdTokenProvider().writeTo(idToken, IdToken.class, IdToken.class, null, MediaType.APPLICATION_JSON_TYPE, null, baos);
-        baos.close();
-
-        idTokenResponse.setEncodedIdToken(keyProvider.sign(baos.toByteArray()));
-
-        accessTokenToTokenResponse.put(newAccessToken, idTokenResponse);
-        refreshTokenToTokenResponse.put(newRefreshToken, idTokenResponse);
-
-        return idTokenResponse;
+        return codeToTokenResponse.get(code);
     }
 
     @Override
-    @Lock(LockType.WRITE)
-    public String store(final IdToken idToken,
-            final AuthenticationRequest req) throws IOException,
-            GeneralSecurityException {
+    public IdTokenResponse removeMappingForCode(String code) {
 
-        final IdTokenResponse response = new IdTokenResponse();
-        response.setAccessToken(keyProvider.nextEncodedToken());
-        response.setRefreshToken(keyProvider.nextEncodedToken());
-        response.setExpiresIn(ONE_HOUR);
-        response.setScopes(req.getScopes());
-        response.setTokenType(TokenResponse.BEARER);
-        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        new IdTokenProvider().writeTo(idToken, IdToken.class, IdToken.class, null, MediaType.APPLICATION_JSON_TYPE, null, baos);
-        baos.close();
-        response.setEncodedIdToken(keyProvider.sign(baos.toByteArray()));
+        return codeToTokenResponse.remove(code);
+    }
 
-        final String code = keyProvider.nextEncodedToken();
-        codeToTokenResponse.put(code, response);
-        accessTokenToTokenResponse.put(response.getAccessToken(), response);
-        refreshTokenToTokenResponse.put(response.getRefreshToken(), response);
+    @Override
+    public IdTokenResponse removeMappingForRefreshToken(String refreshToken) {
 
-        return code;
+        return refreshTokenToTokenResponse.remove(refreshToken);
+
+    }
+
+    @Override
+    public IdTokenResponse removeMappingForAccessToken(String accessToken) {
+
+        return accessTokenToTokenResponse.remove(accessToken);
+    }
+
+    @Override
+    public int getExpiration(int desiredExpiration) {
+
+        return desiredExpiration;
+    }
+
+    @Override
+    public int getDefaultExpiration() {
+
+        return ONE_HOUR;
+    }
+
+    @Override
+    public void store(IdTokenResponse idTokenResponse) {
+
+        accessTokenToTokenResponse.put(idTokenResponse.getAccessToken(), idTokenResponse);
+        refreshTokenToTokenResponse.put(idTokenResponse.getRefreshToken(), idTokenResponse);
+    }
+
+    @Override
+    public void store(IdTokenResponse idTokenResponse,
+            String code) {
+
+        accessTokenToTokenResponse.put(idTokenResponse.getAccessToken(), idTokenResponse);
+        refreshTokenToTokenResponse.put(idTokenResponse.getRefreshToken(), idTokenResponse);
+        codeToTokenResponse.put(code, idTokenResponse);
+
     }
 }

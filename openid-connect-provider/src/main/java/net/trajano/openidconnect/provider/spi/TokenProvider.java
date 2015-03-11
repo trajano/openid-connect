@@ -1,8 +1,8 @@
 package net.trajano.openidconnect.provider.spi;
 
 import java.io.IOException;
+import java.net.URI;
 import java.security.GeneralSecurityException;
-import java.util.Collection;
 import java.util.Set;
 
 import javax.validation.constraints.NotNull;
@@ -20,21 +20,6 @@ import net.trajano.openidconnect.token.IdTokenResponse;
  * @author Archimedes
  */
 public interface TokenProvider {
-
-    /**
-     * Builds an {@link IdToken} for the subject . Extra implementation specific
-     * options to the storage process to change certain aspects of the token can
-     * be provided as well.
-     *
-     * @param subject
-     *            subject
-     * @return authorization code
-     */
-    IdToken buildIdToken(String subject,
-            String issuer,
-            AuthenticationRequest request);
-
-    Collection<IdTokenResponse> getAllTokenResponses();
 
     /**
      * Gets the token data by access token. This may return null if there is no
@@ -79,18 +64,16 @@ public interface TokenProvider {
             GeneralSecurityException;
 
     /**
-     * Stores the ID token and associated scope in some storage and creates the
-     * access_token, authorization code and refresh token linkages.
+     * Builds an {@link IdToken} for the subject . Extra implementation specific
+     * options to the storage process to change certain aspects of the token can
+     * be provided as well.
      *
-     * @param idToken
-     *            idToken
-     * @param req
-     *            Authentication request
-     * @return authorization code to retrieve the token data.
-     * @throws IOException
-     * @throws GeneralSecurityException
+     * @param subject
+     *            subject
+     * @return authorization code
      */
-    String store(IdToken idToken,
-            AuthenticationRequest req) throws IOException,
+    String createNewToken(String subject,
+            URI issuerUri,
+            AuthenticationRequest request) throws IOException,
             GeneralSecurityException;
 }

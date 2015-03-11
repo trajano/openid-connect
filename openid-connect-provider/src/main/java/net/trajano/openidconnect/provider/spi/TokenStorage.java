@@ -1,0 +1,90 @@
+package net.trajano.openidconnect.provider.spi;
+
+import net.trajano.openidconnect.token.IdTokenResponse;
+
+/**
+ * Provides storage for tokens used in the
+ * 
+ * @author Archimedes
+ */
+public interface TokenStorage {
+
+    IdTokenResponse getByAccessToken(String accessToken);
+
+    IdTokenResponse getByCode(String code);
+
+    /**
+     * Removes the mapping to the {@link IdTokenResponse} for a code.
+     * 
+     * @param code
+     * @return the {@link IdTokenResponse} mapping that was removed.
+     */
+    IdTokenResponse removeMappingForCode(String code);
+
+    /**
+     * Removes the mapping to the {@link IdTokenResponse} for a refresh token.
+     * 
+     * @param refreshToken
+     *            refresh token
+     * @return the {@link IdTokenResponse} mapping that was removed.
+     */
+    IdTokenResponse removeMappingForRefreshToken(String refreshToken);
+
+    /**
+     * Removes the mapping to the {@link IdTokenResponse} for an access token.
+     * 
+     * @param accessToken
+     *            access token
+     * @return the {@link IdTokenResponse} mapping that was removed.
+     */
+    IdTokenResponse removeMappingForAccessToken(String accessToken);
+
+    /**
+     * Provides the expiration time for the tokens being provided. A desired
+     * expiration can be provided, but the storage can decide to override it
+     * with a different value.
+     * 
+     * @param desiredExpiration
+     *            desired expiration time.
+     * @return the expiration time of the token in seconds
+     */
+    int getExpiration(int desiredExpiration);
+
+    /**
+     * Provides the default expiration time for the tokens being provided when a
+     * desired expiration is not provided.
+     * 
+     * @return the expiration time of the token in seconds
+     */
+    int getDefaultExpiration();
+
+    /**
+     * Store the token response in the storage. It should use the
+     * {@link IdTokenResponse#getAccessToken()} and
+     * {@link IdTokenResponse#getRefreshToken()} to store the mapping for the
+     * access token and refresh token to the id token respectively.
+     * 
+     * @param idTokenResponse
+     *            token response to store
+     * @param accessToken
+     *            access token
+     * @param refreshToken
+     *            refresh token
+     */
+    void store(IdTokenResponse idTokenResponse);
+
+    /**
+     * Store the token response in the storage and add a code mapping for it. It
+     * should use the {@link IdTokenResponse#getAccessToken()} and
+     * {@link IdTokenResponse#getRefreshToken()} to store the mapping for the
+     * access token and refresh token to the id token respectively.
+     * 
+     * @param idTokenResponse
+     *            token response to store
+     * @param code
+     *            code
+     */
+    void store(IdTokenResponse idTokenResponse,
+            String code);
+
+}
