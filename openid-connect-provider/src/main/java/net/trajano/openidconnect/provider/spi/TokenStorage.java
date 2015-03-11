@@ -59,10 +59,17 @@ public interface TokenStorage {
     int getDefaultExpiration();
 
     /**
-     * Store the token response in the storage. It should use the
-     * {@link IdTokenResponse#getAccessToken()} and
+     * <p>
+     * Store the token response in the storage.
+     * </p>
+     * <p>
+     * It should use the {@link IdTokenResponse#getAccessToken()} and
      * {@link IdTokenResponse#getRefreshToken()} to store the mapping for the
-     * access token and refresh token to the id token respectively.
+     * access token and refresh token to the id token respectively. The
+     * splitting up logic was not done in {@link TokenProvider} to allow
+     * implementations of the {@link TokenStorage} that support composite key
+     * building.
+     * </p>
      * 
      * @param idTokenResponse
      *            token response to store
@@ -74,10 +81,18 @@ public interface TokenStorage {
     void store(IdTokenResponse idTokenResponse);
 
     /**
-     * Store the token response in the storage and add a code mapping for it. It
-     * should use the {@link IdTokenResponse#getAccessToken()} and
+     * <p>
+     * Store the token response in the storage and add a code mapping for it.
+     * </p>
+     * <p>
+     * It should use the {@link IdTokenResponse#getAccessToken()} and
      * {@link IdTokenResponse#getRefreshToken()} to store the mapping for the
-     * access token and refresh token to the id token respectively.
+     * access token and refresh token to the id token respectively. The
+     * splitting up logic was not done in {@link TokenProvider} to allow
+     * implementations of the {@link TokenStorage} that support composite key
+     * building.
+     * </p>
+     * .
      * 
      * @param idTokenResponse
      *            token response to store
