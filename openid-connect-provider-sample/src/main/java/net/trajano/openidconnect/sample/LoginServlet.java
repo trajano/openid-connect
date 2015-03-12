@@ -27,6 +27,7 @@ public class LoginServlet extends HttpServlet {
             IOException {
 
         String subject = req.getParameter("username");
+        req.getSession().setAttribute("sub", subject);
         redirector.doCallback(req, resp, subject);
     }
 

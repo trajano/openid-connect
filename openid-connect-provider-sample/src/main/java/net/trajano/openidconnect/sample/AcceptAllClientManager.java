@@ -47,18 +47,12 @@ public class AcceptAllClientManager implements ClientManager, Authenticator, Use
 
     /**
      * {@inheritDoc}
-     * <p>
-     * Since there is no UI application for the provider aside from the login
-     * screen, this will return <code>false</code> to force the user to enter
-     * their credentials when accessing the provider.</o>
-     *
-     * @return <code>false</code>
      */
     @Override
     public boolean isAuthenticated(final AuthenticationRequest authenticationRequest,
             final HttpServletRequest req) {
 
-        return false;
+        return req.getSession().getAttribute("sub") != null;
     }
 
     @Override

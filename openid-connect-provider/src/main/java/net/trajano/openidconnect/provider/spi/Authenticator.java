@@ -50,11 +50,20 @@ public interface Authenticator {
             UriBuilder contextUri);
 
     /**
+     * <p>
      * Checks if the user is authenticated.
+     * </p>
+     * <p>
+     * If there is no UI application state for the OP aside, this will return
+     * <code>false</code> to force the user to enter their credentials when
+     * accessing the provider.
+     * </p>
      *
+     * @param authenticationRequest
+     *            authentication request
      * @param req
-     * @param resp
-     * @return
+     *            servlet request
+     * @return <code>true</code> if the user is authenticated.
      * @throws IOException
      * @throws ServletException
      */
