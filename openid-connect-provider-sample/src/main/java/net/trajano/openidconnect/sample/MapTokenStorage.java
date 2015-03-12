@@ -8,7 +8,9 @@ import javax.ejb.LockType;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 
+import net.trajano.openidconnect.provider.spi.SubjectAndClientId;
 import net.trajano.openidconnect.provider.spi.TokenStorage;
+import net.trajano.openidconnect.token.IdToken;
 import net.trajano.openidconnect.token.IdTokenResponse;
 
 /**
@@ -29,6 +31,8 @@ public class MapTokenStorage implements TokenStorage {
     public ConcurrentMap<String, IdTokenResponse> codeToTokenResponse = new ConcurrentHashMap<>();
 
     private ConcurrentMap<String, IdTokenResponse> refreshTokenToTokenResponse = new ConcurrentHashMap<>();
+
+    private ConcurrentMap<SubjectAndClientId, IdTokenResponse> subjectAndClientIdToTokenResponse = new ConcurrentHashMap<>();
 
     @Override
     @Lock(LockType.WRITE)
@@ -54,18 +58,20 @@ public class MapTokenStorage implements TokenStorage {
 
     @Lock(LockType.WRITE)
     @Override
-    public void store(final IdTokenResponse idTokenResponse) {
+    public void store(final IdToken idToken, final IdTokenResponse idTokenResponse) {
 
         accessTokenToTokenResponse.put(idTokenResponse.getAccessToken(), idTokenResponse);
         refreshTokenToTokenResponse.put(idTokenResponse.getRefreshToken(), idTokenResponse);
+        subjectAndClientIdToTokenResponse.put(new SubjectAndClientId(idToken.getSub(), idToken.getAzp()), idTokenResponse);
     }
 
     @Lock(LockType.WRITE)
     @Override
-    public void store(final IdTokenResponse idTokenResponse,
+    public void store(final IdToken idToken,
+            final IdTokenResponse idTokenResponse,
             final String code) {
 
-        store(idTokenResponse);
+        store(idToken, idTokenResponse);
         codeToTokenResponse.put(code, idTokenResponse);
 
     }
@@ -92,5 +98,12 @@ public class MapTokenStorage implements TokenStorage {
     public int getExpiration(final int desiredExpiration) {
 
         return desiredExpiration;
+    }
+
+    @Override
+    public IdTokenResponse getBySubjectAndClientId(SubjectAndClientId subjectAndClientId) {
+
+        // TODO Auto-generated method stub
+        return null;
     }
 }

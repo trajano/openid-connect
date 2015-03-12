@@ -16,6 +16,7 @@ import net.trajano.openidconnect.core.Scope;
 import net.trajano.openidconnect.crypto.JsonWebAlgorithm;
 import net.trajano.openidconnect.crypto.JsonWebTokenBuilder;
 import net.trajano.openidconnect.provider.spi.KeyProvider;
+import net.trajano.openidconnect.provider.spi.SubjectAndClientId;
 import net.trajano.openidconnect.provider.spi.TokenProvider;
 import net.trajano.openidconnect.provider.spi.TokenStorage;
 import net.trajano.openidconnect.rs.IdTokenProvider;
@@ -109,7 +110,7 @@ public class DefaultTokenProvider implements TokenProvider {
                 .payload(baos.toByteArray());
         idTokenResponse.setEncodedIdToken(jwtBuilder.toString());
 
-        tokenStorage.store(idTokenResponse);
+        tokenStorage.store(idToken, idTokenResponse);
 
         return idTokenResponse;
     }
@@ -145,9 +146,16 @@ public class DefaultTokenProvider implements TokenProvider {
         response.setEncodedIdToken(jwtBuilder.toString());
 
         final String code = keyProvider.nextEncodedToken();
-        tokenStorage.store(response, code);
+        tokenStorage.store(idToken, response, code);
 
         return code;
+    }
+
+    @Override
+    public IdTokenResponse getBySubjectAndClientId(String subject,
+            String clientId) {
+
+        return tokenStorage.getBySubjectAndClientId(new SubjectAndClientId(subject, clientId));
     }
 
 }

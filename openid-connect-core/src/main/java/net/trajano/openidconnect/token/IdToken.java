@@ -1,5 +1,6 @@
 package net.trajano.openidconnect.token;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -43,7 +44,12 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
-public class IdToken {
+public class IdToken implements Serializable {
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -6920223034971350418L;
 
     /**
      * OPTIONAL. Authentication Context Class Reference. String specifying an
@@ -192,6 +198,16 @@ public class IdToken {
         return exp;
     }
 
+    /**
+     * Returns the timestamp when the token will expire.
+     *
+     * @return
+     */
+    public Date getExpiration() {
+
+        return new Date(exp * 1000L);
+    }
+
     public long getIat() {
 
         return iat;
@@ -202,6 +218,16 @@ public class IdToken {
         return iss;
     }
 
+    /**
+     * Returns the timestamp the token was issued on.
+     *
+     * @return
+     */
+    public Date getIssuedOn() {
+
+        return new Date(iat * 1000L);
+    }
+
     public String getNonce() {
 
         return nonce;
@@ -210,6 +236,29 @@ public class IdToken {
     public String getSub() {
 
         return sub;
+    }
+
+    /**
+     * Checks if the exp value before or after the current time.
+     *
+     * @return true if the current time is after exp.
+     */
+    public boolean isExpired() {
+
+        return System.currentTimeMillis() / 1000 > exp;
+    }
+
+    /**
+     * Sets the Issuing time and the expiration values based on the current time
+     * and expiration specified.
+     *
+     * @param expirationInSeconds
+     */
+
+    public void resetIssueAndExpiration(final int expirationInSeconds) {
+
+        iat = System.currentTimeMillis() / 1000;
+        exp = iat + expirationInSeconds;
     }
 
     public void setAcr(final String acr) {
@@ -242,36 +291,6 @@ public class IdToken {
         this.exp = exp;
     }
 
-    /**
-     * Checks if the exp value before or after the current time.
-     * 
-     * @return true if the current time is after exp.
-     */
-    public boolean isExpired() {
-
-        return System.currentTimeMillis() / 1000 > exp;
-    }
-
-    /**
-     * Returns the timestamp when the token will expire.
-     * 
-     * @return
-     */
-    public Date getExpiration() {
-
-        return new Date(exp * 1000L);
-    }
-
-    /**
-     * Returns the timestamp the token was issued on.
-     * 
-     * @return
-     */
-    public Date getIssuedOn() {
-
-        return new Date(iat * 1000L);
-    }
-
     public void setIat(final long iat) {
 
         this.iat = iat;
@@ -290,17 +309,5 @@ public class IdToken {
     public void setSub(final String sub) {
 
         this.sub = sub;
-    }
-
-    /**
-     * Sets the Issuing time and the expiration values based on the current time
-     * and expiration specified.
-     * 
-     * @param expirationInSeconds
-     */
-
-    public void resetIssueAndExpiration(int expirationInSeconds) {
-        iat = System.currentTimeMillis() / 1000;
-        exp = iat + expirationInSeconds;
     }
 }

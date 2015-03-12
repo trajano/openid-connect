@@ -63,8 +63,8 @@ public interface Authenticator {
             HttpServletRequest req);
 
     /**
-     * Checks if the user is authenticated.
-     * </p>
+     * Checks if the user is authenticated. A user is authenticated if there
+     * exists a token for a subject available at minimum. </p>
      * <p>
      * If there is no UI application state for the OP aside, this will return
      * <code>false</code> to force the user to enter their credentials when

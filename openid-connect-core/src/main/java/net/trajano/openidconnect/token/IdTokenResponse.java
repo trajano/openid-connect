@@ -61,6 +61,10 @@ import net.trajano.openidconnect.rs.IdTokenProvider;
 public class IdTokenResponse extends TokenResponse {
 
     /**
+     * 
+     */
+    private static final long serialVersionUID = -6175007590579157079L;
+    /**
      * Encoded ID Token value associated with the authenticated session.
      */
     @XmlElement(name = "id_token", required = true)

@@ -76,4 +76,7 @@ public interface TokenProvider {
             URI issuerUri,
             AuthenticationRequest request) throws IOException,
             GeneralSecurityException;
+
+    IdTokenResponse getBySubjectAndClientId(String subject,
+            String clientId);
 }
