@@ -76,4 +76,6 @@ public interface TokenProvider {
             URI issuerUri,
             AuthenticationRequest request) throws IOException,
             GeneralSecurityException;
+
+    IdTokenResponse getByConsent(Consent consent);
 }

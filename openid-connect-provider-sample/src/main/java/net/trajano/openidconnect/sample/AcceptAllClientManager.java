@@ -3,6 +3,7 @@ package net.trajano.openidconnect.sample;
 import java.net.URI;
 import java.util.Date;
 
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.UriBuilder;
@@ -11,12 +12,16 @@ import net.trajano.openidconnect.auth.AuthenticationRequest;
 import net.trajano.openidconnect.core.OpenIdConnectKey;
 import net.trajano.openidconnect.provider.spi.Authenticator;
 import net.trajano.openidconnect.provider.spi.ClientManager;
+import net.trajano.openidconnect.provider.spi.TokenProvider;
 import net.trajano.openidconnect.provider.spi.UserinfoProvider;
 import net.trajano.openidconnect.token.IdToken;
 import net.trajano.openidconnect.userinfo.Userinfo;
 
 @Stateless
 public class AcceptAllClientManager implements ClientManager, Authenticator, UserinfoProvider {
+
+    @EJB
+    private TokenProvider tp;
 
     @Override
     public URI authenticate(final AuthenticationRequest authenticationRequest,
@@ -64,10 +69,27 @@ public class AcceptAllClientManager implements ClientManager, Authenticator, Use
     }
 
     @Override
-    public String getSubject(String clientId,
-            HttpServletRequest req) {
+    public String getSubject(HttpServletRequest req) {
 
         return (String) req.getSession()
                 .getAttribute("sub");
     }
+
+    @Override
+    public boolean isImplicitConsent(String clientId) {
+
+        return false;
+    }
+
+    @Override
+    public URI consent(AuthenticationRequest authenticationRequest,
+            String requestJwt,
+            HttpServletRequest req,
+            UriBuilder contextUriBuilder) {
+
+        return contextUriBuilder.path("consent.jsp")
+                .queryParam(OpenIdConnectKey.REQUEST, requestJwt)
+                .build();
+    }
+
 }

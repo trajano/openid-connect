@@ -1,5 +1,6 @@
 package net.trajano.openidconnect.provider.endpoints;
 
+import static net.trajano.openidconnect.core.ErrorCode.consent_required;
 import static net.trajano.openidconnect.core.ErrorCode.invalid_grant;
 import static net.trajano.openidconnect.core.ErrorCode.login_required;
 
@@ -27,7 +28,9 @@ import net.trajano.openidconnect.crypto.JsonWebTokenBuilder;
 import net.trajano.openidconnect.provider.spi.AuthenticationResponseProvider;
 import net.trajano.openidconnect.provider.spi.Authenticator;
 import net.trajano.openidconnect.provider.spi.ClientManager;
+import net.trajano.openidconnect.provider.spi.Consent;
 import net.trajano.openidconnect.provider.spi.KeyProvider;
+import net.trajano.openidconnect.provider.spi.TokenProvider;
 
 /**
  * <p>
@@ -47,14 +50,20 @@ import net.trajano.openidconnect.provider.spi.KeyProvider;
 @Path("auth")
 public class AuthorizationEndpoint {
 
-    private Authenticator authenticator;
+    @EJB
+    private AuthenticationResponseProvider arp;
 
-    private KeyProvider keyProvider;
+    @EJB
+    private TokenProvider tp;
+
+    private Authenticator authenticator;
 
     private ClientManager clientManager;
 
-    @EJB
-    private AuthenticationResponseProvider arp;
+    private KeyProvider keyProvider;
+
+    @Context
+    private javax.ws.rs.ext.Providers providers;
 
     /**
      * <a href=
@@ -88,7 +97,7 @@ public class AuthorizationEndpoint {
      * per Section 13.1. If using the HTTP POST method, the request parameters
      * are serialized using Form Serialization, per Section 13.2.
      * </p>
-     * 
+     *
      * @throws GeneralSecurityException
      * @throws IOException
      */
@@ -103,9 +112,19 @@ public class AuthorizationEndpoint {
             throw new OpenIdConnectException(invalid_grant, "redirect URI is not supported for the client");
         }
 
-        if (!authenticator.isAuthenticated(authenticationRequest, req) && authenticationRequest.getPrompts()
+        final boolean authenticated = authenticator.isAuthenticated(authenticationRequest, req);
+
+        if (!authenticated && authenticationRequest.getPrompts()
                 .contains(Prompt.none)) {
             throw new RedirectedOpenIdProviderException(authenticationRequest, new ErrorResponse(login_required));
+        }
+
+        final Consent consent = new Consent(authenticationRequest.getClientId(), authenticator.getSubject(req), authenticationRequest.getScopes());
+
+        final boolean consented = clientManager.isImplicitConsent(authenticationRequest.getClientId()) || tp.getByConsent(consent) != null;
+        if (!consented && authenticationRequest.getPrompts()
+                .contains(Prompt.none)) {
+            throw new RedirectedOpenIdProviderException(authenticationRequest, new ErrorResponse(consent_required));
         }
 
         String reqJwt = req.getParameter(OpenIdConnectKey.REQUEST);
@@ -115,17 +134,24 @@ public class AuthorizationEndpoint {
             reqJwt = b.toString();
         }
 
-        if (authenticator.isAuthenticated(authenticationRequest, req)) {
-
-            return arp.buildResponse(reqJwt, req, authenticator.getSubject(authenticationRequest.getClientId(), req));
-
-        } else {
+        if (!authenticated) {
 
             final UriBuilder uriBuilder = UriBuilder.fromUri(req.getRequestURL()
                     .toString())
                     .replacePath(req.getContextPath());
             return Response.temporaryRedirect(authenticator.authenticate(authenticationRequest, reqJwt, req, uriBuilder))
                     .build();
+
+        } else if (!consented) {
+            final UriBuilder uriBuilder = UriBuilder.fromUri(req.getRequestURL()
+                    .toString())
+                    .replacePath(req.getContextPath());
+
+            return Response.temporaryRedirect(authenticator.consent(authenticationRequest, reqJwt, req, uriBuilder))
+                    .build();
+        } else {
+
+            return arp.buildResponse(reqJwt, req, authenticator.getSubject(req));
         }
 
     }

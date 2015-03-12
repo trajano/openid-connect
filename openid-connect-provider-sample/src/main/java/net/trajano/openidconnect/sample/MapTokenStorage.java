@@ -8,7 +8,9 @@ import javax.ejb.LockType;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 
+import net.trajano.openidconnect.provider.spi.Consent;
 import net.trajano.openidconnect.provider.spi.TokenStorage;
+import net.trajano.openidconnect.token.IdToken;
 import net.trajano.openidconnect.token.IdTokenResponse;
 
 /**
@@ -29,6 +31,8 @@ public class MapTokenStorage implements TokenStorage {
     public ConcurrentMap<String, IdTokenResponse> codeToTokenResponse = new ConcurrentHashMap<>();
 
     private ConcurrentMap<String, IdTokenResponse> refreshTokenToTokenResponse = new ConcurrentHashMap<>();
+
+    private ConcurrentMap<Consent, IdTokenResponse> consentToTokenResponse = new ConcurrentHashMap<>();
 
     @Override
     @Lock(LockType.WRITE)
@@ -52,20 +56,31 @@ public class MapTokenStorage implements TokenStorage {
 
     }
 
-    @Lock(LockType.WRITE)
     @Override
-    public void store(final IdTokenResponse idTokenResponse) {
+    @Lock(LockType.WRITE)
+    public IdTokenResponse removeMappingForConsent(final Consent consent) {
 
-        accessTokenToTokenResponse.put(idTokenResponse.getAccessToken(), idTokenResponse);
-        refreshTokenToTokenResponse.put(idTokenResponse.getRefreshToken(), idTokenResponse);
+        return consentToTokenResponse.remove(consent);
+
     }
 
     @Lock(LockType.WRITE)
     @Override
-    public void store(final IdTokenResponse idTokenResponse,
+    public void store(final IdToken idToken,
+            final IdTokenResponse idTokenResponse) {
+
+        accessTokenToTokenResponse.put(idTokenResponse.getAccessToken(), idTokenResponse);
+        refreshTokenToTokenResponse.put(idTokenResponse.getRefreshToken(), idTokenResponse);
+        consentToTokenResponse.put(new Consent(idToken, idTokenResponse), idTokenResponse);
+    }
+
+    @Lock(LockType.WRITE)
+    @Override
+    public void store(final IdToken idToken,
+            final IdTokenResponse idTokenResponse,
             final String code) {
 
-        store(idTokenResponse);
+        store(idToken, idTokenResponse);
         codeToTokenResponse.put(code, idTokenResponse);
 
     }
@@ -92,5 +107,11 @@ public class MapTokenStorage implements TokenStorage {
     public int getExpiration(final int desiredExpiration) {
 
         return desiredExpiration;
+    }
+
+    @Override
+    public IdTokenResponse getByConsent(Consent consent) {
+
+        return consentToTokenResponse.get(consent);
     }
 }

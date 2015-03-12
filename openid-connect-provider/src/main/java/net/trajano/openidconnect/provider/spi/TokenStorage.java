@@ -1,5 +1,6 @@
 package net.trajano.openidconnect.provider.spi;
 
+import net.trajano.openidconnect.token.IdToken;
 import net.trajano.openidconnect.token.IdTokenResponse;
 
 /**
@@ -71,14 +72,20 @@ public interface TokenStorage {
      * building.
      * </p>
      * 
+     * <pre>
+     * accessTokenToTokenResponse.put(idTokenResponse.getAccessToken(), idTokenResponse);
+     * refreshTokenToTokenResponse.put(idTokenResponse.getRefreshToken(), idTokenResponse);
+     * Consent consent = new Consent(idToken, idTokenResponse);
+     * subjectAndClientIdToTokenResponse.put(consent, idTokenResponse);
+     * </pre>
+     * 
+     * @param idToken
+     *            id token
      * @param idTokenResponse
      *            token response to store
-     * @param accessToken
-     *            access token
-     * @param refreshToken
-     *            refresh token
      */
-    void store(IdTokenResponse idTokenResponse);
+    void store(IdToken idToken,
+            IdTokenResponse idTokenResponse);
 
     /**
      * <p>
@@ -97,12 +104,19 @@ public interface TokenStorage {
      * by storing the code mapping.
      * </p>
      * 
+     * @param idToken
+     *            id token
      * @param idTokenResponse
      *            token response to store
      * @param code
      *            code
      */
-    void store(IdTokenResponse idTokenResponse,
+    void store(IdToken idToken,
+            IdTokenResponse idTokenResponse,
             String code);
+
+    IdTokenResponse getByConsent(Consent consent);
+
+    IdTokenResponse removeMappingForConsent(Consent consent);
 
 }

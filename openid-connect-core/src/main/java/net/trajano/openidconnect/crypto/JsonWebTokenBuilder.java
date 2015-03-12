@@ -2,11 +2,16 @@ package net.trajano.openidconnect.crypto;
 
 import static net.trajano.openidconnect.crypto.JsonWebToken.ALG_NONE;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.SecureRandom;
 
 import javax.json.JsonObject;
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.ext.MessageBodyWriter;
+import javax.ws.rs.ext.Providers;
 
 import net.trajano.openidconnect.internal.CharSets;
 import net.trajano.openidconnect.internal.JcaJsonWebTokenCrypto;
@@ -48,7 +53,7 @@ public class JsonWebTokenBuilder {
 
     /**
      * Sets the algorithm. This should be done after setting the jwk/jwks.
-     * 
+     *
      * @param alg2
      * @return
      */
@@ -139,7 +144,7 @@ public class JsonWebTokenBuilder {
         final JsonWebKey[] keys = jwks.getSigningKeys();
 
         jwk = keys[random.nextInt(keys.length)];
-        
+
         return this;
     }
 
@@ -157,6 +162,35 @@ public class JsonWebTokenBuilder {
     public JsonWebTokenBuilder payload(final String s) {
 
         return payload(s.getBytes(CharSets.UTF8));
+    }
+
+    private Providers providers;
+
+    public JsonWebTokenBuilder providers(Providers providers) {
+
+        this.providers = providers;
+        return this;
+    }
+
+    /**
+     * Sets the payload to a JSON object that is built using the provided
+     * writer.
+     *
+     * @param object
+     * @param providers
+     *            JAX-RS providers that have been registered.
+     * @return
+     * @throws IOException
+     * @throws WebApplicationException
+     */
+    public <T> JsonWebTokenBuilder payload(final T object,
+            Class<T> type) throws IOException {
+
+        MessageBodyWriter<T> writer = (MessageBodyWriter<T>) providers.getMessageBodyWriter(type, null, null, MediaType.APPLICATION_JSON_TYPE);
+        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        writer.writeTo(object, object.getClass(), null, null, MediaType.APPLICATION_JSON_TYPE, null, baos);
+        baos.close();
+        return payload(baos.toByteArray());
     }
 
     /**

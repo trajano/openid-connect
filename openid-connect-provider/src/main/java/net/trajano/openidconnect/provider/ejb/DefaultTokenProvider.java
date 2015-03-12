@@ -15,6 +15,7 @@ import net.trajano.openidconnect.auth.AuthenticationRequest;
 import net.trajano.openidconnect.core.Scope;
 import net.trajano.openidconnect.crypto.JsonWebAlgorithm;
 import net.trajano.openidconnect.crypto.JsonWebTokenBuilder;
+import net.trajano.openidconnect.provider.spi.Consent;
 import net.trajano.openidconnect.provider.spi.KeyProvider;
 import net.trajano.openidconnect.provider.spi.TokenProvider;
 import net.trajano.openidconnect.provider.spi.TokenStorage;
@@ -109,7 +110,7 @@ public class DefaultTokenProvider implements TokenProvider {
                 .payload(baos.toByteArray());
         idTokenResponse.setEncodedIdToken(jwtBuilder.toString());
 
-        tokenStorage.store(idTokenResponse);
+        tokenStorage.store(idToken, idTokenResponse);
 
         return idTokenResponse;
     }
@@ -145,9 +146,15 @@ public class DefaultTokenProvider implements TokenProvider {
         response.setEncodedIdToken(jwtBuilder.toString());
 
         final String code = keyProvider.nextEncodedToken();
-        tokenStorage.store(response, code);
+        tokenStorage.store(idToken, response, code);
 
         return code;
+    }
+
+    @Override
+    public IdTokenResponse getByConsent(Consent consent) {
+
+        return tokenStorage.getByConsent(consent);
     }
 
 }
