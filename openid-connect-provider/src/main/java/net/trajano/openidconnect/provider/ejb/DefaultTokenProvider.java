@@ -13,6 +13,8 @@ import javax.ws.rs.core.MediaType;
 
 import net.trajano.openidconnect.auth.AuthenticationRequest;
 import net.trajano.openidconnect.core.Scope;
+import net.trajano.openidconnect.crypto.JsonWebAlgorithm;
+import net.trajano.openidconnect.crypto.JsonWebTokenBuilder;
 import net.trajano.openidconnect.provider.spi.KeyProvider;
 import net.trajano.openidconnect.provider.spi.TokenProvider;
 import net.trajano.openidconnect.provider.spi.TokenStorage;
@@ -25,10 +27,28 @@ import net.trajano.openidconnect.token.TokenResponse;
 public class DefaultTokenProvider implements TokenProvider {
 
     @EJB
-    private TokenStorage tokenStorage;
+    KeyProvider keyProvider;
 
     @EJB
-    KeyProvider keyProvider;
+    private TokenStorage tokenStorage;
+
+    @Override
+    public String createNewToken(final String subject,
+            final URI issuer,
+            final AuthenticationRequest req) throws IOException,
+            GeneralSecurityException {
+
+        final IdToken idToken = new IdToken();
+        idToken.setSub(subject);
+        idToken.setNonce(req.getNonce());
+        idToken.setAuthTime(System.currentTimeMillis() / 1000);
+        idToken.setAud(req.getClientId());
+        idToken.setAzp(req.getClientId());
+        idToken.setIss(issuer.toASCIIString());
+        idToken.resetIssueAndExpiration(tokenStorage.getDefaultExpiration());
+
+        return store(idToken, req);
+    }
 
     @Override
     public IdTokenResponse getByAccessToken(final String accessToken) {
@@ -68,16 +88,16 @@ public class DefaultTokenProvider implements TokenProvider {
 
         // remove from map we are getting a new one
         tokenStorage.removeMappingForAccessToken(idTokenResponse.getAccessToken());
-        String newAccessToken = keyProvider.nextEncodedToken();
-        String newRefreshToken = keyProvider.nextEncodedToken();
+        final String newAccessToken = keyProvider.nextEncodedToken();
+        final String newRefreshToken = keyProvider.nextEncodedToken();
 
         idTokenResponse.setAccessToken(newAccessToken);
         idTokenResponse.setRefreshToken(newRefreshToken);
         final IdToken idToken = idTokenResponse.getIdToken(keyProvider.getJwks());
 
-        if (expiresIn != null)
+        if (expiresIn != null) {
             idToken.resetIssueAndExpiration(tokenStorage.getExpiration(expiresIn));
-        else {
+        } else {
             idToken.resetIssueAndExpiration(tokenStorage.getDefaultExpiration());
         }
 
@@ -85,7 +105,9 @@ public class DefaultTokenProvider implements TokenProvider {
         new IdTokenProvider().writeTo(idToken, IdToken.class, IdToken.class, null, MediaType.APPLICATION_JSON_TYPE, null, baos);
         baos.close();
 
-        idTokenResponse.setEncodedIdToken(keyProvider.sign(baos.toByteArray()));
+        final JsonWebTokenBuilder jwtBuilder = new JsonWebTokenBuilder().jwk(keyProvider.getPrivateJwks())
+                .payload(baos.toByteArray());
+        idTokenResponse.setEncodedIdToken(jwtBuilder.toString());
 
         tokenStorage.store(idTokenResponse);
 
@@ -117,30 +139,15 @@ public class DefaultTokenProvider implements TokenProvider {
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
         new IdTokenProvider().writeTo(idToken, IdToken.class, IdToken.class, null, MediaType.APPLICATION_JSON_TYPE, null, baos);
         baos.close();
-        response.setEncodedIdToken(keyProvider.sign(baos.toByteArray()));
+        final JsonWebTokenBuilder jwtBuilder = new JsonWebTokenBuilder().jwk(keyProvider.getPrivateJwks())
+                .alg(JsonWebAlgorithm.RS256)
+                .payload(baos.toByteArray());
+        response.setEncodedIdToken(jwtBuilder.toString());
 
         final String code = keyProvider.nextEncodedToken();
         tokenStorage.store(response, code);
 
         return code;
-    }
-
-    @Override
-    public String createNewToken(String subject,
-            URI issuer,
-            AuthenticationRequest req) throws IOException,
-            GeneralSecurityException {
-
-        final IdToken idToken = new IdToken();
-        idToken.setSub(subject);
-        idToken.setNonce(req.getNonce());
-        idToken.setAuthTime(System.currentTimeMillis() / 1000);
-        idToken.setAud(req.getClientId());
-        idToken.setAzp(req.getClientId());
-        idToken.setIss(issuer.toASCIIString());
-        idToken.resetIssueAndExpiration(tokenStorage.getDefaultExpiration());
-
-        return store(idToken, req);
     }
 
 }

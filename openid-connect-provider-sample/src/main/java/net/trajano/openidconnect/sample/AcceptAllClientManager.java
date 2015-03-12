@@ -67,13 +67,6 @@ public class AcceptAllClientManager implements ClientManager, Authenticator, Use
     }
 
     @Override
-    public String getSubject(final String clientId,
-            final HttpServletRequest req) {
-
-        return null;
-    }
-
-    @Override
     public Userinfo getUserinfo(final IdTokenResponse response) {
 
         final Userinfo userinfo = new Userinfo();

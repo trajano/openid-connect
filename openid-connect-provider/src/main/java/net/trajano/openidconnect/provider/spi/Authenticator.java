@@ -50,19 +50,6 @@ public interface Authenticator {
             UriBuilder contextUri);
 
     /**
-     * Obtains the subject for the current user. Depending on the client ID the
-     * user obtained in the request may not be valid. May return
-     * <code>null</code> if the subject cannot be determined.
-     *
-     * @param clientId
-     *            client ID
-     * @param req
-     * @return
-     */
-    String getSubject(String clientId,
-            HttpServletRequest req);
-
-    /**
      * Checks if the user is authenticated.
      *
      * @param req

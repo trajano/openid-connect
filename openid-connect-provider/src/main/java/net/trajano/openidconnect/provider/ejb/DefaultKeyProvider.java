@@ -4,9 +4,7 @@ import java.security.GeneralSecurityException;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.SecureRandom;
-import java.security.Signature;
 import java.security.interfaces.RSAPrivateCrtKey;
-import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.util.Random;
 
@@ -36,32 +34,17 @@ import net.trajano.openidconnect.provider.spi.KeyProvider;
 @Lock(LockType.READ)
 public class DefaultKeyProvider implements KeyProvider {
 
-    private static class SigningKey {
-
-        /**
-         * Encoded JOSE header.
-         */
-        private String encodedJoseHeader;
-
-        private RSAPrivateKey privateKey;
-
-    }
-
     private static final int NUMBER_OF_SIGNING_KEYS = 3;
 
     private Random random;
 
     private SecretKey secretKey;
 
-    private SigningKey[] signingKeys;
-
     @PostConstruct
     public void generateKeys() {
 
         try {
             random = new SecureRandom();
-
-            signingKeys = new SigningKey[NUMBER_OF_SIGNING_KEYS];
 
             jwks = new JsonWebKeySet();
             privateJwks = new JsonWebKeySet();
@@ -74,11 +57,6 @@ public class DefaultKeyProvider implements KeyProvider {
                 final String keyId = nextEncodedToken();
                 final RSAPrivateCrtKey privateKey = (RSAPrivateCrtKey) keyPair.getPrivate();
                 final RSAPublicKey publicKey = (RSAPublicKey) keyPair.getPublic();
-
-                final SigningKey d = new SigningKey();
-                d.encodedJoseHeader = Encoding.base64EncodeAscii(String.format("{\"alg\":\"%s\",\"kid\":\"%s\"}", "RS256", keyId));
-                d.privateKey = privateKey;
-                signingKeys[i] = d;
 
                 JsonWebKey jwk = new RsaWebKey(keyId, publicKey);
                 jwk.setAlg(JsonWebAlgorithm.RS256);
@@ -106,7 +84,11 @@ public class DefaultKeyProvider implements KeyProvider {
 
     private String secretKeyId;
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
+    @Lock(LockType.READ)
     public JsonWebKeySet getJwks() {
 
         return jwks;
@@ -116,11 +98,9 @@ public class DefaultKeyProvider implements KeyProvider {
 
     private JsonWebKeySet privateJwks;
 
-    public SecretKey getSecretKey() {
-
-        return secretKey;
-    }
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @Lock(LockType.WRITE)
     public String nextEncodedToken() {
@@ -131,32 +111,20 @@ public class DefaultKeyProvider implements KeyProvider {
     }
 
     /**
-     * Signs the content using JWT.
+     * {@inheritDoc}
      */
     @Override
-    @Deprecated
-    public String sign(final byte[] content) throws GeneralSecurityException {
-
-        final SigningKey signingKey = signingKeys[random.nextInt(signingKeys.length)];
-        final StringBuilder b = new StringBuilder(signingKey.encodedJoseHeader).append('.')
-                .append(Encoding.base64urlEncode(content));
-
-        final Signature signature = Signature.getInstance("SHA256withRSA");
-        signature.initSign(signingKey.privateKey);
-        signature.update(b.toString()
-                .getBytes());
-        return b.append('.')
-                .append(Encoding.base64urlEncode(signature.sign()))
-                .toString();
-    }
-
-    @Override
+    @Lock(LockType.READ)
     public JsonWebKeySet getPrivateJwks() {
 
         return privateJwks;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
+    @Lock(LockType.READ)
     public String getSecretKeyId() {
 
         return secretKeyId;

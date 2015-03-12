@@ -1,7 +1,5 @@
 package net.trajano.openidconnect.provider.spi;
 
-import java.security.GeneralSecurityException;
-
 import javax.ejb.Local;
 
 import net.trajano.openidconnect.crypto.JsonWebKeySet;
@@ -34,8 +32,11 @@ public interface KeyProvider {
      */
     String getSecretKeyId();
 
+    /**
+     * Constructs a random token.
+     * 
+     * @return
+     */
     String nextEncodedToken();
-
-    String sign(final byte[] content) throws GeneralSecurityException;
 
 }
