@@ -5,7 +5,6 @@ import java.util.Date;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-import javax.ejb.EJB;
 import javax.ejb.Lock;
 import javax.ejb.LockType;
 import javax.ejb.Singleton;
@@ -17,9 +16,9 @@ import net.trajano.openidconnect.auth.AuthenticationRequest;
 import net.trajano.openidconnect.core.OpenIdConnectKey;
 import net.trajano.openidconnect.provider.spi.Authenticator;
 import net.trajano.openidconnect.provider.spi.ClientManager;
-import net.trajano.openidconnect.provider.spi.KeyProvider;
 import net.trajano.openidconnect.provider.spi.TokenStorage;
 import net.trajano.openidconnect.provider.spi.UserinfoProvider;
+import net.trajano.openidconnect.token.IdToken;
 import net.trajano.openidconnect.token.IdTokenResponse;
 import net.trajano.openidconnect.userinfo.Userinfo;
 
@@ -33,9 +32,6 @@ public class AcceptAllClientManager implements ClientManager, Authenticator, Use
     private ConcurrentMap<String, IdTokenResponse> accessTokenToTokenResponse = new ConcurrentHashMap<>();
 
     public ConcurrentMap<String, IdTokenResponse> codeToTokenResponse = new ConcurrentHashMap<>();
-
-    @EJB
-    private KeyProvider keyProvider;
 
     private ConcurrentMap<String, IdTokenResponse> refreshTokenToTokenResponse = new ConcurrentHashMap<>();
 
@@ -82,11 +78,10 @@ public class AcceptAllClientManager implements ClientManager, Authenticator, Use
     }
 
     @Override
-    public Userinfo getUserinfo(final IdTokenResponse response) {
+    public Userinfo getUserinfo(final IdToken idToken) {
 
         final Userinfo userinfo = new Userinfo();
-        userinfo.setSub(response.getIdToken(keyProvider.getPrivateJwks())
-                .getSub());
+        userinfo.setSub(idToken.getSub());
         userinfo.setUpdatedAt(new Date());
         return userinfo;
     }

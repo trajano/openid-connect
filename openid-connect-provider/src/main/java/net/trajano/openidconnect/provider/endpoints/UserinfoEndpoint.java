@@ -11,8 +11,10 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import net.trajano.openidconnect.provider.internal.AuthorizationUtil;
+import net.trajano.openidconnect.provider.spi.KeyProvider;
 import net.trajano.openidconnect.provider.spi.TokenProvider;
 import net.trajano.openidconnect.provider.spi.UserinfoProvider;
+import net.trajano.openidconnect.token.IdToken;
 
 /**
  * <p>
@@ -48,6 +50,9 @@ public class UserinfoEndpoint {
     @EJB
     private TokenProvider tokenProvider;
 
+    @EJB
+    private KeyProvider keyProvider;
+
     private UserinfoProvider userinfoProvider;
 
     /**
@@ -75,7 +80,9 @@ public class UserinfoEndpoint {
     public Response op(@Context final HttpServletRequest req) {
 
         final String accessToken = AuthorizationUtil.processBearer(req);
-        return Response.ok(userinfoProvider.getUserinfo(tokenProvider.getByAccessToken(accessToken)))
+        IdToken idToken = tokenProvider.getByAccessToken(accessToken)
+                .getIdToken(keyProvider.getPrivateJwks());
+        return Response.ok(userinfoProvider.getUserinfo(idToken))
                 .build();
     }
 
