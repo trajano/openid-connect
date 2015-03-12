@@ -11,7 +11,6 @@ import java.security.interfaces.RSAPublicKey;
 import java.util.Random;
 
 import javax.annotation.PostConstruct;
-import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import javax.ejb.Lock;
@@ -55,29 +54,6 @@ public class DefaultKeyProvider implements KeyProvider {
     private SecretKey secretKey;
 
     private SigningKey[] signingKeys;
-
-    @Override
-    public byte[] decrypt(final byte[] content) throws GeneralSecurityException {
-
-        final Cipher cipher = Cipher.getInstance("AES");
-        cipher.init(Cipher.DECRYPT_MODE, secretKey);
-        return cipher.doFinal(content);
-    }
-
-    @Override
-    public byte[] encrypt(final byte[] content) throws GeneralSecurityException {
-
-        final Cipher cipher = Cipher.getInstance("AES");
-        cipher.init(Cipher.ENCRYPT_MODE, secretKey);
-        return cipher.doFinal(content);
-    }
-
-    @Override
-    public byte[] encrypt(final String content) throws GeneralSecurityException {
-
-        final byte[] contentBytes = content.getBytes();
-        return encrypt(contentBytes);
-    }
 
     @PostConstruct
     public void generateKeys() {
@@ -164,25 +140,6 @@ public class DefaultKeyProvider implements KeyProvider {
         final SigningKey signingKey = signingKeys[random.nextInt(signingKeys.length)];
         final StringBuilder b = new StringBuilder(signingKey.encodedJoseHeader).append('.')
                 .append(Encoding.base64urlEncode(content));
-
-        final Signature signature = Signature.getInstance("SHA256withRSA");
-        signature.initSign(signingKey.privateKey);
-        signature.update(b.toString()
-                .getBytes());
-        return b.append('.')
-                .append(Encoding.base64urlEncode(signature.sign()))
-                .toString();
-    }
-
-    /**
-     * Signs the content using JWT.
-     */
-    @Override
-    public String sign(final String content) throws GeneralSecurityException {
-
-        final SigningKey signingKey = signingKeys[new Random().nextInt() % signingKeys.length];
-        final StringBuilder b = new StringBuilder(signingKey.encodedJoseHeader).append('.')
-                .append(Encoding.base64UrlEncode(content));
 
         final Signature signature = Signature.getInstance("SHA256withRSA");
         signature.initSign(signingKey.privateKey);

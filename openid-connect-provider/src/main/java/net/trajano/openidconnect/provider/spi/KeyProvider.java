@@ -13,12 +13,6 @@ import net.trajano.openidconnect.crypto.JsonWebKeySet;
 @Local
 public interface KeyProvider {
 
-    byte[] decrypt(final byte[] content) throws GeneralSecurityException;
-
-    byte[] encrypt(final byte[] content) throws GeneralSecurityException;
-
-    byte[] encrypt(final String content) throws GeneralSecurityException;
-
     /**
      * JWKS containing only signature validation keys.
      * 
@@ -44,5 +38,4 @@ public interface KeyProvider {
 
     String sign(final byte[] content) throws GeneralSecurityException;
 
-    String sign(final String content) throws GeneralSecurityException;
 }
