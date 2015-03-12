@@ -92,7 +92,10 @@ public interface TokenStorage {
      * implementations of the {@link TokenStorage} that support composite key
      * building.
      * </p>
-     * .
+     * <p>
+     * This would generally call {@link #store(IdTokenResponse)} first followed
+     * by storing the code mapping.
+     * </p>
      * 
      * @param idTokenResponse
      *            token response to store

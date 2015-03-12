@@ -2,8 +2,6 @@ package net.trajano.openidconnect.sample;
 
 import java.net.URI;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -25,7 +23,6 @@ import net.trajano.openidconnect.provider.spi.UserinfoProvider;
 import net.trajano.openidconnect.token.IdTokenResponse;
 import net.trajano.openidconnect.userinfo.Userinfo;
 
-// TODO move to a sample ejb package
 @Singleton
 @Startup
 @Lock(LockType.READ)
@@ -33,9 +30,9 @@ public class AcceptAllClientManager implements ClientManager, Authenticator, Use
 
     private static final int ONE_HOUR = 120;
 
-    private Map<String, IdTokenResponse> accessTokenToTokenResponse = new HashMap<>();
+    private ConcurrentMap<String, IdTokenResponse> accessTokenToTokenResponse = new ConcurrentHashMap<>();
 
-    public Map<String, IdTokenResponse> codeToTokenResponse = new HashMap<>();
+    public ConcurrentMap<String, IdTokenResponse> codeToTokenResponse = new ConcurrentHashMap<>();
 
     @EJB
     private KeyProvider keyProvider;
@@ -44,7 +41,7 @@ public class AcceptAllClientManager implements ClientManager, Authenticator, Use
 
     @Override
     public URI authenticate(final AuthenticationRequest authenticationRequest,
-            String requestJwt,
+            final String requestJwt,
             final HttpServletRequest req,
             final UriBuilder contextUriBuilder) {
 
@@ -67,6 +64,24 @@ public class AcceptAllClientManager implements ClientManager, Authenticator, Use
     }
 
     @Override
+    public IdTokenResponse getByCode(final String code) {
+
+        return codeToTokenResponse.get(code);
+    }
+
+    @Override
+    public int getDefaultExpiration() {
+
+        return ONE_HOUR;
+    }
+
+    @Override
+    public int getExpiration(final int desiredExpiration) {
+
+        return desiredExpiration;
+    }
+
+    @Override
     public Userinfo getUserinfo(final IdTokenResponse response) {
 
         final Userinfo userinfo = new Userinfo();
@@ -76,11 +91,19 @@ public class AcceptAllClientManager implements ClientManager, Authenticator, Use
         return userinfo;
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Since there is no UI application for the provider aside from the login
+     * screen, this will return <code>false</code> to force the user to enter
+     * their credentials when accessing the provider.</o>
+     *
+     * @return <code>false</code>
+     */
     @Override
     public boolean isAuthenticated(final AuthenticationRequest authenticationRequest,
             final HttpServletRequest req) {
 
-        // TODO Auto-generated method stub
         return false;
     }
 
@@ -92,55 +115,41 @@ public class AcceptAllClientManager implements ClientManager, Authenticator, Use
     }
 
     @Override
-    public IdTokenResponse getByCode(String code) {
-
-        return codeToTokenResponse.get(code);
-    }
-
-    @Override
-    public IdTokenResponse removeMappingForCode(String code) {
-
-        return codeToTokenResponse.remove(code);
-    }
-
-    @Override
-    public IdTokenResponse removeMappingForRefreshToken(String refreshToken) {
-
-        return refreshTokenToTokenResponse.remove(refreshToken);
-
-    }
-
-    @Override
-    public IdTokenResponse removeMappingForAccessToken(String accessToken) {
+    @Lock(LockType.WRITE)
+    public IdTokenResponse removeMappingForAccessToken(final String accessToken) {
 
         return accessTokenToTokenResponse.remove(accessToken);
     }
 
     @Override
-    public int getExpiration(int desiredExpiration) {
+    @Lock(LockType.WRITE)
+    public IdTokenResponse removeMappingForCode(final String code) {
 
-        return desiredExpiration;
+        return codeToTokenResponse.remove(code);
     }
 
     @Override
-    public int getDefaultExpiration() {
+    @Lock(LockType.WRITE)
+    public IdTokenResponse removeMappingForRefreshToken(final String refreshToken) {
 
-        return ONE_HOUR;
+        return refreshTokenToTokenResponse.remove(refreshToken);
+
     }
 
+    @Lock(LockType.WRITE)
     @Override
-    public void store(IdTokenResponse idTokenResponse) {
+    public void store(final IdTokenResponse idTokenResponse) {
 
         accessTokenToTokenResponse.put(idTokenResponse.getAccessToken(), idTokenResponse);
         refreshTokenToTokenResponse.put(idTokenResponse.getRefreshToken(), idTokenResponse);
     }
 
+    @Lock(LockType.WRITE)
     @Override
-    public void store(IdTokenResponse idTokenResponse,
-            String code) {
+    public void store(final IdTokenResponse idTokenResponse,
+            final String code) {
 
-        accessTokenToTokenResponse.put(idTokenResponse.getAccessToken(), idTokenResponse);
-        refreshTokenToTokenResponse.put(idTokenResponse.getRefreshToken(), idTokenResponse);
+        store(idTokenResponse);
         codeToTokenResponse.put(code, idTokenResponse);
 
     }
