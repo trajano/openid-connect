@@ -52,7 +52,8 @@ public class AcceptAllClientManager implements ClientManager, Authenticator, Use
     public boolean isAuthenticated(final AuthenticationRequest authenticationRequest,
             final HttpServletRequest req) {
 
-        return req.getSession().getAttribute("sub") != null;
+        return req.getSession()
+                .getAttribute("sub") != null;
     }
 
     @Override
@@ -60,5 +61,13 @@ public class AcceptAllClientManager implements ClientManager, Authenticator, Use
             final URI redirectUri) {
 
         return true;
+    }
+
+    @Override
+    public String getSubject(String clientId,
+            HttpServletRequest req) {
+
+        return (String) req.getSession()
+                .getAttribute("sub");
     }
 }

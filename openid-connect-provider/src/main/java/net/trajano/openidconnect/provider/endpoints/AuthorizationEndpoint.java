@@ -12,11 +12,9 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
-import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriBuilder;
 
 import net.trajano.openidconnect.auth.AuthenticationRequest;
@@ -26,6 +24,7 @@ import net.trajano.openidconnect.core.OpenIdConnectException;
 import net.trajano.openidconnect.core.OpenIdConnectKey;
 import net.trajano.openidconnect.core.RedirectedOpenIdProviderException;
 import net.trajano.openidconnect.crypto.JsonWebTokenBuilder;
+import net.trajano.openidconnect.provider.spi.AuthenticationResponseProvider;
 import net.trajano.openidconnect.provider.spi.Authenticator;
 import net.trajano.openidconnect.provider.spi.ClientManager;
 import net.trajano.openidconnect.provider.spi.KeyProvider;
@@ -53,6 +52,9 @@ public class AuthorizationEndpoint {
     private KeyProvider keyProvider;
 
     private ClientManager clientManager;
+
+    @EJB
+    private AuthenticationResponseProvider arp;
 
     /**
      * <a href=
@@ -106,14 +108,18 @@ public class AuthorizationEndpoint {
             throw new RedirectedOpenIdProviderException(authenticationRequest, new ErrorResponse(login_required));
         }
 
-        if (!authenticator.isAuthenticated(authenticationRequest, req)) {
+        String reqJwt = req.getParameter(OpenIdConnectKey.REQUEST);
+        if (reqJwt == null) {
+            final JsonWebTokenBuilder b = new JsonWebTokenBuilder().payload(authenticationRequest.toJsonObject())
+                    .compress(true);
+            reqJwt = b.toString();
+        }
 
-            String reqJwt = req.getParameter(OpenIdConnectKey.REQUEST);
-            if (reqJwt == null) {
-                final JsonWebTokenBuilder b = new JsonWebTokenBuilder().payload(authenticationRequest.toJsonObject())
-                        .compress(true);
-                reqJwt = b.toString();
-            }
+        if (authenticator.isAuthenticated(authenticationRequest, req)) {
+
+            return arp.buildResponse(reqJwt, req, authenticator.getSubject(authenticationRequest.getClientId(), req));
+
+        } else {
 
             final UriBuilder uriBuilder = UriBuilder.fromUri(req.getRequestURL()
                     .toString())
@@ -121,8 +127,6 @@ public class AuthorizationEndpoint {
             return Response.temporaryRedirect(authenticator.authenticate(authenticationRequest, reqJwt, req, uriBuilder))
                     .build();
         }
-
-        throw new WebApplicationException(Status.BAD_REQUEST);
 
     }
 

@@ -15,10 +15,14 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class JsonWebKeySet {
 
     private final Map<String, JsonWebKey> keys = new HashMap<>();
+    private final Map<String, JsonWebKey> signingKeys = new HashMap<>();
 
     public void add(final JsonWebKey jwk) {
 
         keys.put(jwk.getKid(), jwk);
+        if (jwk.getKty() == KeyType.RSA || jwk.getKty() == KeyType.EC) {
+            signingKeys.put(jwk.getKid(), jwk);
+        }
     }
 
     @XmlElement(name = "keys", required = true)
@@ -27,6 +31,14 @@ public class JsonWebKeySet {
         return keys.values()
                 .toArray(new JsonWebKey[0]);
     }
+    
+
+    public JsonWebKey[] getSigningKeys() {
+
+        return signingKeys.values()
+                .toArray(new JsonWebKey[0]);
+    }
+
 
     public Key getKey(String kid) throws GeneralSecurityException {
 

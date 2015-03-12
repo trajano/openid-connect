@@ -100,9 +100,25 @@ public class DefaultAuthenticationResponseProvider implements AuthenticationResp
             final HttpServletRequest request,
             final String subject) {
 
-        final AuthenticationResponse response;
         try {
             final AuthenticationRequest req = new AuthenticationRequest(requestJwt, keyProvider.getPrivateJwks());
+            return buildResponse(req, request, subject);
+        } catch (IOException | GeneralSecurityException e) {
+            throw new WebApplicationException(e);
+        }
+
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Response buildResponse(final AuthenticationRequest req,
+            final HttpServletRequest request,
+            final String subject) {
+
+        final AuthenticationResponse response;
+        try {
             response = buildAuthenticationResponse(req, request, subject);
         } catch (IOException | GeneralSecurityException e) {
             throw new WebApplicationException(e);

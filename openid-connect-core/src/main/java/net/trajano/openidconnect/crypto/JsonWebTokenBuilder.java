@@ -136,9 +136,10 @@ public class JsonWebTokenBuilder {
      */
     public JsonWebTokenBuilder jwk(final JsonWebKeySet jwks) {
 
-        final JsonWebKey[] keys = jwks.getKeys();
+        final JsonWebKey[] keys = jwks.getSigningKeys();
 
         jwk = keys[random.nextInt(keys.length)];
+        
         return this;
     }
 

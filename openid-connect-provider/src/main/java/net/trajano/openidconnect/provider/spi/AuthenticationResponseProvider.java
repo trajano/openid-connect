@@ -23,9 +23,8 @@ import net.trajano.openidconnect.auth.AuthenticationResponse;
 public interface AuthenticationResponseProvider {
 
     /**
-     * Creates a JAX-RS response. Only the request method is provided. Utilizing
-     * the FormParam will destroy the getParameter data in the HttpServlet
-     * request.
+     * Creates a JAX-RS response. The JWT is passed as Utilizing the FormParam
+     * will destroy the getParameter data in the HttpServlet request.
      * 
      * @param requestJwt
      *            request JWT
@@ -37,6 +36,24 @@ public interface AuthenticationResponseProvider {
      * @return
      */
     Response buildResponse(String requestJwt,
+            HttpServletRequest request,
+            String subject);
+
+    /**
+     * Creates a JAX-RS response. Only the request method is provided. Utilizing
+     * the FormParam will destroy the getParameter data in the HttpServlet
+     * request.
+     * 
+     * @param authReq
+     *            authentication request
+     * @param request
+     *            HTTP Servlet Request context
+     * @param subject
+     *            authenticated subject to be stored by the
+     *            {@link TokenProvider}
+     * @return
+     */
+    Response buildResponse(AuthenticationRequest authReq,
             HttpServletRequest request,
             String subject);
 
