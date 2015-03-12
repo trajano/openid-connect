@@ -40,6 +40,26 @@ public interface AuthenticationResponseProvider {
             String subject);
 
     /**
+     * Creates a JAX-RS response. The JWT is passed as Utilizing the FormParam
+     * will destroy the getParameter data in the HttpServlet request.
+     * 
+     * @param requestJwt
+     *            request JWT
+     * @param request
+     *            HTTP Servlet Request context
+     * @param subject
+     *            authenticated subject to be stored by the
+     *            {@link TokenProvider}
+     * @param consent
+     *            consent flag
+     * @return
+     */
+    Response buildResponse(String requestJwt,
+            HttpServletRequest request,
+            String subject,
+            boolean consent);
+
+    /**
      * Creates a JAX-RS response. Only the request method is provided. Utilizing
      * the FormParam will destroy the getParameter data in the HttpServlet
      * request.
@@ -60,7 +80,7 @@ public interface AuthenticationResponseProvider {
     /**
      * Calls for the authentication callback. Perform a redirect with the
      * authorization response data.
-     *
+     * 
      * @param response
      *            servlet response
      * @param request
@@ -95,5 +115,16 @@ public interface AuthenticationResponseProvider {
             HttpServletRequest request,
             String subject) throws IOException,
             GeneralSecurityException;
+
+    void doCallback(HttpServletRequest req,
+            HttpServletResponse resp,
+            String subject,
+            boolean b) throws IOException,
+            ServletException;
+
+    Response buildResponse(AuthenticationRequest req,
+            HttpServletRequest request,
+            String subject,
+            boolean consent);
 
 }

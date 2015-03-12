@@ -57,13 +57,8 @@ public class AcceptAllClientManager implements ClientManager, Authenticator, Use
     public boolean isAuthenticated(final AuthenticationRequest authenticationRequest,
             final HttpServletRequest req) {
 
-        final String subject = (String) req.getSession()
-                .getAttribute("sub");
-        if (subject != null) {
-            return tp.getBySubjectAndClientId(subject, authenticationRequest.getClientId()) != null;
-        } else {
-            return false;
-        }
+        return req.getSession()
+                .getAttribute("sub") != null;
     }
 
     @Override
@@ -74,10 +69,27 @@ public class AcceptAllClientManager implements ClientManager, Authenticator, Use
     }
 
     @Override
-    public String getSubject(String clientId,
-            HttpServletRequest req) {
+    public String getSubject(HttpServletRequest req) {
 
         return (String) req.getSession()
                 .getAttribute("sub");
     }
+
+    @Override
+    public boolean isImplicitConsent(String clientId) {
+
+        return false;
+    }
+
+    @Override
+    public URI consent(AuthenticationRequest authenticationRequest,
+            String requestJwt,
+            HttpServletRequest req,
+            UriBuilder contextUriBuilder) {
+
+        return contextUriBuilder.path("consent.jsp")
+                .queryParam(OpenIdConnectKey.REQUEST, requestJwt)
+                .build();
+    }
+
 }

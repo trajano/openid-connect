@@ -8,7 +8,7 @@ import javax.ejb.LockType;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 
-import net.trajano.openidconnect.provider.spi.SubjectAndClientId;
+import net.trajano.openidconnect.provider.spi.Consent;
 import net.trajano.openidconnect.provider.spi.TokenStorage;
 import net.trajano.openidconnect.token.IdToken;
 import net.trajano.openidconnect.token.IdTokenResponse;
@@ -32,7 +32,7 @@ public class MapTokenStorage implements TokenStorage {
 
     private ConcurrentMap<String, IdTokenResponse> refreshTokenToTokenResponse = new ConcurrentHashMap<>();
 
-    private ConcurrentMap<SubjectAndClientId, IdTokenResponse> subjectAndClientIdToTokenResponse = new ConcurrentHashMap<>();
+    private ConcurrentMap<Consent, IdTokenResponse> consentToTokenResponse = new ConcurrentHashMap<>();
 
     @Override
     @Lock(LockType.WRITE)
@@ -56,13 +56,22 @@ public class MapTokenStorage implements TokenStorage {
 
     }
 
+    @Override
+    @Lock(LockType.WRITE)
+    public IdTokenResponse removeMappingForConsent(final Consent consent) {
+
+        return consentToTokenResponse.remove(consent);
+
+    }
+
     @Lock(LockType.WRITE)
     @Override
-    public void store(final IdToken idToken, final IdTokenResponse idTokenResponse) {
+    public void store(final IdToken idToken,
+            final IdTokenResponse idTokenResponse) {
 
         accessTokenToTokenResponse.put(idTokenResponse.getAccessToken(), idTokenResponse);
         refreshTokenToTokenResponse.put(idTokenResponse.getRefreshToken(), idTokenResponse);
-        subjectAndClientIdToTokenResponse.put(new SubjectAndClientId(idToken.getSub(), idToken.getAzp()), idTokenResponse);
+        consentToTokenResponse.put(new Consent(idToken, idTokenResponse), idTokenResponse);
     }
 
     @Lock(LockType.WRITE)
@@ -101,9 +110,8 @@ public class MapTokenStorage implements TokenStorage {
     }
 
     @Override
-    public IdTokenResponse getBySubjectAndClientId(SubjectAndClientId subjectAndClientId) {
+    public IdTokenResponse getByConsent(Consent consent) {
 
-        // TODO Auto-generated method stub
-        return null;
+        return consentToTokenResponse.get(consent);
     }
 }

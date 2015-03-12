@@ -77,6 +77,5 @@ public interface TokenProvider {
             AuthenticationRequest request) throws IOException,
             GeneralSecurityException;
 
-    IdTokenResponse getBySubjectAndClientId(String subject,
-            String clientId);
+    IdTokenResponse getByConsent(Consent consent);
 }

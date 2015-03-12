@@ -50,21 +50,17 @@ public interface Authenticator {
             UriBuilder contextUri);
 
     /**
-     * Obtains the subject for the current user. Depending on the client ID the
-     * user obtained in the request may not be valid. May return
-     * <code>null</code> if the subject cannot be determined.
+     * Obtains the subject for the current user as authenticated by the OP. May
+     * return <code>null</code> if the subject cannot be determined.
      *
-     * @param clientId
-     *            client ID
      * @param req
+     *            servlet request
      * @return
      */
-    String getSubject(String clientId,
-            HttpServletRequest req);
+    String getSubject(HttpServletRequest req);
 
     /**
-     * Checks if the user is authenticated. A user is authenticated if there
-     * exists a token for a subject available at minimum. </p>
+     * Checks if the user is authenticated.</p>
      * <p>
      * If there is no UI application state for the OP aside, this will return
      * <code>false</code> to force the user to enter their credentials when
@@ -81,5 +77,10 @@ public interface Authenticator {
      */
     boolean isAuthenticated(AuthenticationRequest authenticationRequest,
             HttpServletRequest req);
+
+    URI consent(AuthenticationRequest authenticationRequest,
+            String requestJwt,
+            HttpServletRequest req,
+            UriBuilder contextUriBuilder);
 
 }

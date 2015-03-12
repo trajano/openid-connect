@@ -72,6 +72,13 @@ public interface TokenStorage {
      * building.
      * </p>
      * 
+     * <pre>
+     * accessTokenToTokenResponse.put(idTokenResponse.getAccessToken(), idTokenResponse);
+     * refreshTokenToTokenResponse.put(idTokenResponse.getRefreshToken(), idTokenResponse);
+     * Consent consent = new Consent(idToken, idTokenResponse);
+     * subjectAndClientIdToTokenResponse.put(consent, idTokenResponse);
+     * </pre>
+     * 
      * @param idToken
      *            id token
      * @param idTokenResponse
@@ -108,6 +115,8 @@ public interface TokenStorage {
             IdTokenResponse idTokenResponse,
             String code);
 
-    IdTokenResponse getBySubjectAndClientId(SubjectAndClientId subjectAndClientId);
+    IdTokenResponse getByConsent(Consent consent);
+
+    IdTokenResponse removeMappingForConsent(Consent consent);
 
 }

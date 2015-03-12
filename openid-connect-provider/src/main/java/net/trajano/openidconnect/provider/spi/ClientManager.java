@@ -28,4 +28,12 @@ public interface ClientManager {
      */
     boolean isRedirectUriValidForClient(String clientId,
             URI redirectUri);
+
+    /**
+     * Checks if the client ID specified has implicit consent.
+     * 
+     * @param clientId
+     * @return
+     */
+    boolean isImplicitConsent(String clientId);
 }

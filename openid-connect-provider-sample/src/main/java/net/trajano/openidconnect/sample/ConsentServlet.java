@@ -13,9 +13,9 @@ import javax.servlet.http.HttpServletResponse;
 import net.trajano.openidconnect.provider.spi.AuthenticationResponseProvider;
 import net.trajano.openidconnect.provider.spi.Authenticator;
 
-@WebServlet(urlPatterns = "/doLogin")
+@WebServlet(urlPatterns = "/doConsent")
 @Stateless
-public class LoginServlet extends HttpServlet {
+public class ConsentServlet extends HttpServlet {
 
     /**
      * 
@@ -30,11 +30,10 @@ public class LoginServlet extends HttpServlet {
             HttpServletResponse resp) throws ServletException,
             IOException {
 
-        String subject = req.getParameter("username");
-        req.getSession()
-                .setAttribute("sub", subject);
+        String subject = (String) req.getSession()
+                .getAttribute("sub");
 
-        redirector.doCallback(req, resp, subject);
+        redirector.doCallback(req, resp, subject, true);
     }
 
     @EJB

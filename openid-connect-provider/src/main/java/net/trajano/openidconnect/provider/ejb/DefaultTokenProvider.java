@@ -15,8 +15,8 @@ import net.trajano.openidconnect.auth.AuthenticationRequest;
 import net.trajano.openidconnect.core.Scope;
 import net.trajano.openidconnect.crypto.JsonWebAlgorithm;
 import net.trajano.openidconnect.crypto.JsonWebTokenBuilder;
+import net.trajano.openidconnect.provider.spi.Consent;
 import net.trajano.openidconnect.provider.spi.KeyProvider;
-import net.trajano.openidconnect.provider.spi.SubjectAndClientId;
 import net.trajano.openidconnect.provider.spi.TokenProvider;
 import net.trajano.openidconnect.provider.spi.TokenStorage;
 import net.trajano.openidconnect.rs.IdTokenProvider;
@@ -152,10 +152,9 @@ public class DefaultTokenProvider implements TokenProvider {
     }
 
     @Override
-    public IdTokenResponse getBySubjectAndClientId(String subject,
-            String clientId) {
+    public IdTokenResponse getByConsent(Consent consent) {
 
-        return tokenStorage.getBySubjectAndClientId(new SubjectAndClientId(subject, clientId));
+        return tokenStorage.getByConsent(consent);
     }
 
 }
