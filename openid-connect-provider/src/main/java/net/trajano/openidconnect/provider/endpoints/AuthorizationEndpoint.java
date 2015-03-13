@@ -17,6 +17,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
+import javax.ws.rs.core.UriInfo;
 
 import net.trajano.openidconnect.auth.AuthenticationRequest;
 import net.trajano.openidconnect.auth.Prompt;
@@ -53,9 +54,6 @@ public class AuthorizationEndpoint {
     @EJB
     private AuthenticationResponseProvider arp;
 
-    @EJB
-    private TokenProvider tp;
-
     private Authenticator authenticator;
 
     private ClientManager clientManager;
@@ -64,6 +62,12 @@ public class AuthorizationEndpoint {
 
     @Context
     private javax.ws.rs.ext.Providers providers;
+
+    @EJB
+    private TokenProvider tp;
+
+    @Context
+    private UriInfo uriInfo;
 
     /**
      * <a href=
@@ -78,7 +82,7 @@ public class AuthorizationEndpoint {
      */
     @GET
     public Response getOp(@Context final HttpServletRequest req) throws IOException,
-            GeneralSecurityException {
+    GeneralSecurityException {
 
         return op(req);
     }
@@ -104,7 +108,7 @@ public class AuthorizationEndpoint {
     @POST
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     public Response op(@Context final HttpServletRequest req) throws IOException,
-            GeneralSecurityException {
+    GeneralSecurityException {
 
         final AuthenticationRequest authenticationRequest = new AuthenticationRequest(req, keyProvider.getPrivateJwks());
 
@@ -134,20 +138,16 @@ public class AuthorizationEndpoint {
             reqJwt = b.toString();
         }
 
+        final UriBuilder contextUriBuilder = uriInfo.getBaseUriBuilder()
+                .replacePath(req.getContextPath());
         if (!authenticated) {
 
-            final UriBuilder uriBuilder = UriBuilder.fromUri(req.getRequestURL()
-                    .toString())
-                    .replacePath(req.getContextPath());
-            return Response.temporaryRedirect(authenticator.authenticate(authenticationRequest, reqJwt, req, uriBuilder))
+            return Response.temporaryRedirect(authenticator.authenticate(authenticationRequest, reqJwt, req, contextUriBuilder))
                     .build();
 
         } else if (!consented) {
-            final UriBuilder uriBuilder = UriBuilder.fromUri(req.getRequestURL()
-                    .toString())
-                    .replacePath(req.getContextPath());
 
-            return Response.temporaryRedirect(authenticator.consent(authenticationRequest, reqJwt, req, uriBuilder))
+            return Response.temporaryRedirect(authenticator.consent(authenticationRequest, reqJwt, req, contextUriBuilder))
                     .build();
         } else {
 

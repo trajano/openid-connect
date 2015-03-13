@@ -16,11 +16,13 @@ import javax.json.JsonWriter;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.ext.MessageBodyReader;
 import javax.ws.rs.ext.MessageBodyWriter;
 import javax.ws.rs.ext.Provider;
+import javax.ws.rs.ext.Providers;
 
 import net.trajano.openidconnect.crypto.EcWebKey;
 import net.trajano.openidconnect.crypto.JsonWebKey;
@@ -35,7 +37,8 @@ import net.trajano.openidconnect.crypto.RsaWebKey;
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class JsonWebKeySetProvider implements MessageBodyReader<JsonWebKeySet>, MessageBodyWriter<JsonWebKeySet> {
-
+@Context
+Providers providers;
     @Override
     public long getSize(final JsonWebKeySet jwks,
             final Class<?> type,
@@ -72,7 +75,7 @@ public class JsonWebKeySetProvider implements MessageBodyReader<JsonWebKeySet>, 
             final MultivaluedMap<String, String> httpHeaders,
             final InputStream inputStream) throws IOException,
             WebApplicationException {
-
+System.out.println("READ " + providers);
         final JsonArray keysArray = Json.createReader(inputStream)
                 .readObject()
                 .getJsonArray("keys");
@@ -131,7 +134,7 @@ public class JsonWebKeySetProvider implements MessageBodyReader<JsonWebKeySet>, 
             final MultivaluedMap<String, Object> httpHeaders,
             final OutputStream os) throws IOException,
             WebApplicationException {
-
+        System.out.println("WRITE " + providers);
         JsonArrayBuilder keysArray = Json.createArrayBuilder();
         for (JsonWebKey key : jwks.getKeys()) {
             JsonObjectBuilder keyBuilder = Json.createObjectBuilder();
