@@ -340,9 +340,13 @@ public class JsonWebAlgorithm {
         return INSTANCE.jwaJcaMacMap.get(enc);
     }
 
-    public static int getKeySize(String enc) {
+    public static int getKeySize(String enc) throws GeneralSecurityException {
 
-        return INSTANCE.jwaKeySizeMap.get(enc);
+        if (INSTANCE.jwaKeySizeMap.containsKey(enc)) {
+            return INSTANCE.jwaKeySizeMap.get(enc);
+        } else {
+            throw new GeneralSecurityException("enc algorithm " + enc + " does not have a defined keysize or is not supported.");
+        }
     }
 
     public static boolean isGcm(String enc) {
