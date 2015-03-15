@@ -47,7 +47,7 @@ public interface Authenticator {
     URI authenticate(AuthenticationRequest authenticationRequest,
             String requestJwt,
             HttpServletRequest req,
-            UriBuilder contextUri);
+            UriBuilder contextUriBuilder);
 
     /**
      * Obtains the subject for the current user as authenticated by the OP. May

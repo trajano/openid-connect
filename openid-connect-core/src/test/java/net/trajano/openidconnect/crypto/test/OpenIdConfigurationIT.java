@@ -8,6 +8,7 @@ import javax.ws.rs.core.MediaType;
 
 import net.trajano.openidconnect.core.OpenIdProviderConfiguration;
 import net.trajano.openidconnect.crypto.JsonWebKeySet;
+import net.trajano.openidconnect.rs.JsonWebKeyProvider;
 import net.trajano.openidconnect.rs.JsonWebKeySetProvider;
 
 import org.junit.Test;
@@ -41,6 +42,7 @@ public class OpenIdConfigurationIT {
     private void test(final String issuer) {
 
         final Client client = ClientBuilder.newBuilder()
+                .register(JsonWebKeyProvider.class)
                 .register(JsonWebKeySetProvider.class)
                 .build();
         final OpenIdProviderConfiguration opconfig = client.target(issuer + "/.well-known/openid-configuration")
