@@ -54,7 +54,7 @@ public class AuthenticationRequest implements Serializable {
         private final Map<String, String> requestMap = new HashMap<>();
 
         public AuthenticationRequest build() throws IOException,
-        GeneralSecurityException {
+                GeneralSecurityException {
 
             return new AuthenticationRequest(requestMap);
         }
@@ -111,15 +111,17 @@ public class AuthenticationRequest implements Serializable {
 
         public Builder uiLocale(final Enumeration<Locale> locales) {
 
-            final StringBuilder b = new StringBuilder(locales.nextElement()
-                    .toLanguageTag());
-
-            while (locales.hasMoreElements()) {
-                b.append(' ');
-                b.append(locales.nextElement()
+            if (locales != null) {
+                final StringBuilder b = new StringBuilder(locales.nextElement()
                         .toLanguageTag());
+
+                while (locales.hasMoreElements()) {
+                    b.append(' ');
+                    b.append(locales.nextElement()
+                            .toLanguageTag());
+                }
+                requestMap.put(OpenIdConnectKey.UI_LOCALES, b.toString());
             }
-            requestMap.put(OpenIdConnectKey.UI_LOCALES, b.toString());
             return this;
         }
     }
