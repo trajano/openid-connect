@@ -37,8 +37,18 @@ import net.trajano.openidconnect.crypto.RsaWebKey;
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class JsonWebKeySetProvider implements MessageBodyReader<JsonWebKeySet>, MessageBodyWriter<JsonWebKeySet> {
-@Context
-Providers providers;
+
+    private Providers providers;
+
+    @Context
+    public void setProviders(Providers providers) {
+
+        this.providers = providers;
+    }
+
+    @Context
+    private JsonWebKeyProvider p2;
+
     @Override
     public long getSize(final JsonWebKeySet jwks,
             final Class<?> type,
@@ -75,7 +85,9 @@ Providers providers;
             final MultivaluedMap<String, String> httpHeaders,
             final InputStream inputStream) throws IOException,
             WebApplicationException {
-System.out.println("READ " + providers);
+
+        System.out.println("READ " + providers);
+        System.out.println("READ " + providers.getMessageBodyReader(JsonWebKey.class, genericType, annotations, mediaType));
         final JsonArray keysArray = Json.createReader(inputStream)
                 .readObject()
                 .getJsonArray("keys");
@@ -134,6 +146,7 @@ System.out.println("READ " + providers);
             final MultivaluedMap<String, Object> httpHeaders,
             final OutputStream os) throws IOException,
             WebApplicationException {
+
         System.out.println("WRITE " + providers);
         JsonArrayBuilder keysArray = Json.createArrayBuilder();
         for (JsonWebKey key : jwks.getKeys()) {
