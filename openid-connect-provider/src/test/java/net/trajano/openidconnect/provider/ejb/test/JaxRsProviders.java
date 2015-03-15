@@ -61,13 +61,13 @@ public class JaxRsProviders implements Providers {
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T> MessageBodyWriter<T> getMessageBodyWriter(final Class<T> arg0,
-            final Type arg1,
-            final Annotation[] arg2,
-            final MediaType arg3) {
+    public <T> MessageBodyWriter<T> getMessageBodyWriter(final Class<T> type,
+            final Type genericType,
+            final Annotation[] annotations,
+            final MediaType mediaType) {
 
         for (final MessageBodyWriter<?> provider : messageBodyWriters) {
-            if (provider.isWriteable(arg0, arg1, arg2, arg3)) {
+            if (provider.isWriteable(type, genericType, annotations, mediaType)) {
                 return (MessageBodyWriter<T>) provider;
             }
         }

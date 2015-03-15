@@ -1,5 +1,6 @@
 package net.trajano.openidconnect.rs;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -24,13 +25,9 @@ import javax.ws.rs.ext.MessageBodyWriter;
 import javax.ws.rs.ext.Provider;
 import javax.ws.rs.ext.Providers;
 
-import net.trajano.openidconnect.crypto.EcWebKey;
 import net.trajano.openidconnect.crypto.JsonWebKey;
 import net.trajano.openidconnect.crypto.JsonWebKeySet;
-import net.trajano.openidconnect.crypto.KeyType;
-import net.trajano.openidconnect.crypto.KeyUse;
-import net.trajano.openidconnect.crypto.OctWebKey;
-import net.trajano.openidconnect.crypto.RsaWebKey;
+import net.trajano.openidconnect.internal.CharSets;
 
 // TODO should we have the reader in jaspic and the writer in the rest api?
 @Provider
@@ -86,52 +83,18 @@ public class JsonWebKeySetProvider implements MessageBodyReader<JsonWebKeySet>, 
             final InputStream inputStream) throws IOException,
             WebApplicationException {
 
-        System.out.println("READ " + providers);
-        System.out.println("READ " + providers.getMessageBodyReader(JsonWebKey.class, genericType, annotations, mediaType));
         final JsonArray keysArray = Json.createReader(inputStream)
                 .readObject()
                 .getJsonArray("keys");
 
         final JsonWebKeySet keySet = new JsonWebKeySet();
+        MessageBodyReader<JsonWebKey> reader = providers.getMessageBodyReader(JsonWebKey.class, null, annotations, mediaType);
+
         for (final JsonValue key : keysArray) {
-            final JsonObject keyObject = (JsonObject) key;
-            final String kid = keyObject.containsKey("kid") ? keyObject.getString("kid") : null;
-            final KeyType kty = KeyType.valueOf(keyObject.getString("kty"));
-            final String alg = keyObject.containsKey("alg") ? keyObject.getString("alg") : null;
-            final KeyUse use = KeyUse.valueOf(keyObject.getString("use"));
-            if (kty == KeyType.RSA) {
-                final RsaWebKey rsaWebKey = new RsaWebKey();
-                rsaWebKey.setKty(kty);
-                rsaWebKey.setKid(kid);
-                rsaWebKey.setAlg(alg);
-                rsaWebKey.setUse(use);
-                if (use == KeyUse.enc) {
-                    rsaWebKey.setD(keyObject.getString("d"));
-                    rsaWebKey.setP(keyObject.getString("p"));
-                }
-                rsaWebKey.setN(keyObject.getString("n"));
-                rsaWebKey.setE(keyObject.getString("e"));
-                keySet.add(rsaWebKey);
-            } else if (kty == KeyType.EC) {
-                final EcWebKey ecWebKey = new EcWebKey();
-                ecWebKey.setKty(kty);
-                ecWebKey.setKid(kid);
-                ecWebKey.setAlg(alg);
-                ecWebKey.setUse(use);
-
-                keySet.add(ecWebKey);
-                // keyMap.put(kid, buildEcKey(keyObject));
-            } else if (kty == KeyType.oct) {
-                final OctWebKey octWebKey = new OctWebKey();
-                octWebKey.setKty(kty);
-                octWebKey.setKid(kid);
-                octWebKey.setAlg(alg);
-                octWebKey.setUse(use);
-                keySet.add(octWebKey);
-
-            } else {
-                throw new IOException("kty of " + kty + " is not supported");
-            }
+            InputStream keyStream = new ByteArrayInputStream(key.toString()
+                    .getBytes(CharSets.UTF8));
+            JsonWebKey jsonWebKey = reader.readFrom(JsonWebKey.class, null, annotations, mediaType, null, keyStream);
+            keySet.add(jsonWebKey);
         }
 
         return keySet;
