@@ -6,25 +6,15 @@ import java.security.PublicKey;
 
 import javax.json.JsonObjectBuilder;
 import javax.validation.constraints.NotNull;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlSeeAlso;
 
-@XmlAccessorType(XmlAccessType.FIELD)
-@XmlSeeAlso({ RsaWebKey.class, EcWebKey.class, OctWebKey.class })
 public abstract class JsonWebKey {
 
-    @XmlElement
     private String alg;
 
-    @XmlElement(name = "kid")
     private String kid;
 
-    @XmlElement
     private KeyType kty;
 
-    @XmlElement
     private KeyUse use;
 
     public String getAlg() {
