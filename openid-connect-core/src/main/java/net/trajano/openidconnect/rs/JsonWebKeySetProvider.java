@@ -1,6 +1,7 @@
 package net.trajano.openidconnect.rs;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -11,7 +12,6 @@ import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
-import javax.json.JsonObjectBuilder;
 import javax.json.JsonValue;
 import javax.json.JsonWriter;
 import javax.ws.rs.Consumes;
@@ -35,16 +35,10 @@ import net.trajano.openidconnect.internal.CharSets;
 @Consumes(MediaType.APPLICATION_JSON)
 public class JsonWebKeySetProvider implements MessageBodyReader<JsonWebKeySet>, MessageBodyWriter<JsonWebKeySet> {
 
-    private Providers providers;
-
-    @Context
-    public void setProviders(Providers providers) {
-
-        this.providers = providers;
-    }
-
     @Context
     private JsonWebKeyProvider p2;
+
+    private Providers providers;
 
     @Override
     public long getSize(final JsonWebKeySet jwks,
@@ -88,16 +82,22 @@ public class JsonWebKeySetProvider implements MessageBodyReader<JsonWebKeySet>, 
                 .getJsonArray("keys");
 
         final JsonWebKeySet keySet = new JsonWebKeySet();
-        MessageBodyReader<JsonWebKey> reader = providers.getMessageBodyReader(JsonWebKey.class, null, annotations, mediaType);
+        final MessageBodyReader<JsonWebKey> reader = providers.getMessageBodyReader(JsonWebKey.class, null, annotations, mediaType);
 
         for (final JsonValue key : keysArray) {
-            InputStream keyStream = new ByteArrayInputStream(key.toString()
+            final InputStream keyStream = new ByteArrayInputStream(key.toString()
                     .getBytes(CharSets.UTF8));
-            JsonWebKey jsonWebKey = reader.readFrom(JsonWebKey.class, null, annotations, mediaType, null, keyStream);
+            final JsonWebKey jsonWebKey = reader.readFrom(JsonWebKey.class, null, annotations, mediaType, null, keyStream);
             keySet.add(jsonWebKey);
         }
 
         return keySet;
+    }
+
+    @Context
+    public void setProviders(final Providers providers) {
+
+        this.providers = providers;
     }
 
     @Override
@@ -110,17 +110,19 @@ public class JsonWebKeySetProvider implements MessageBodyReader<JsonWebKeySet>, 
             final OutputStream os) throws IOException,
             WebApplicationException {
 
-        System.out.println("WRITE " + providers);
-        JsonArrayBuilder keysArray = Json.createArrayBuilder();
-        for (JsonWebKey key : jwks.getKeys()) {
-            JsonObjectBuilder keyBuilder = Json.createObjectBuilder();
-            key.buildJsonObject(keyBuilder);
-            keysArray.add(keyBuilder);
+        final MessageBodyWriter<JsonWebKey> writer = providers.getMessageBodyWriter(JsonWebKey.class, null, annotations, mediaType);
+        final JsonArrayBuilder keysArray = Json.createArrayBuilder();
+        for (final JsonWebKey key : jwks.getKeys()) {
+            final ByteArrayOutputStream keyStream = new ByteArrayOutputStream();
+            writer.writeTo(key, JsonWebKey.class, null, annotations, mediaType, null, keyStream);
+            keyStream.close();
+            keysArray.add(Json.createReader(new ByteArrayInputStream(keyStream.toByteArray()))
+                    .readObject());
         }
-        JsonObject jwksObject = Json.createObjectBuilder()
+        final JsonObject jwksObject = Json.createObjectBuilder()
                 .add("keys", keysArray)
                 .build();
-        JsonWriter jsonWriter = Json.createWriter(os);
+        final JsonWriter jsonWriter = Json.createWriter(os);
         jsonWriter.write(jwksObject);
     }
 }
