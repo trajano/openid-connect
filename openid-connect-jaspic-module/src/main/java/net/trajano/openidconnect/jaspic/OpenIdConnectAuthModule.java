@@ -68,6 +68,7 @@ import net.trajano.openidconnect.jaspic.internal.CipherUtil;
 import net.trajano.openidconnect.jaspic.internal.NullHostnameVerifier;
 import net.trajano.openidconnect.jaspic.internal.NullX509TrustManager;
 import net.trajano.openidconnect.jaspic.internal.TokenCookie;
+import net.trajano.openidconnect.rs.JsonWebKeyProvider;
 import net.trajano.openidconnect.rs.JsonWebKeySetProvider;
 import net.trajano.openidconnect.token.GrantType;
 import net.trajano.openidconnect.token.IdTokenResponse;
@@ -756,7 +757,7 @@ public class OpenIdConnectAuthModule implements ServerAuthModule, ServerAuthCont
                 } else {
                     restClient = ClientBuilder.newClient();
                 }
-                restClient.register(JsonWebKeySetProvider.class);
+                restClient.register(JsonWebKeySetProvider.class).register(JsonWebKeyProvider.class);
 
             }
         } catch (final Exception e) {

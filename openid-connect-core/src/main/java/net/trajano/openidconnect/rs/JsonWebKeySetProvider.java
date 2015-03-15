@@ -35,9 +35,6 @@ import net.trajano.openidconnect.internal.CharSets;
 @Consumes(MediaType.APPLICATION_JSON)
 public class JsonWebKeySetProvider implements MessageBodyReader<JsonWebKeySet>, MessageBodyWriter<JsonWebKeySet> {
 
-    @Context
-    private JsonWebKeyProvider p2;
-
     private Providers providers;
 
     @Override
@@ -82,8 +79,8 @@ public class JsonWebKeySetProvider implements MessageBodyReader<JsonWebKeySet>, 
                 .getJsonArray("keys");
 
         final JsonWebKeySet keySet = new JsonWebKeySet();
-        final MessageBodyReader<JsonWebKey> reader = providers.getMessageBodyReader(JsonWebKey.class, null, annotations, mediaType);
-
+        final MessageBodyReader<JsonWebKey> reader = providers.getMessageBodyReader(JsonWebKey.class, JsonWebKey.class, annotations, mediaType);
+        System.out.println(reader.getClass());
         for (final JsonValue key : keysArray) {
             final InputStream keyStream = new ByteArrayInputStream(key.toString()
                     .getBytes(CharSets.UTF8));
@@ -110,7 +107,7 @@ public class JsonWebKeySetProvider implements MessageBodyReader<JsonWebKeySet>, 
             final OutputStream os) throws IOException,
             WebApplicationException {
 
-        final MessageBodyWriter<JsonWebKey> writer = providers.getMessageBodyWriter(JsonWebKey.class, null, annotations, mediaType);
+        final MessageBodyWriter<JsonWebKey> writer = providers.getMessageBodyWriter(JsonWebKey.class, JsonWebKey.class, annotations, mediaType);
         final JsonArrayBuilder keysArray = Json.createArrayBuilder();
         for (final JsonWebKey key : jwks.getKeys()) {
             final ByteArrayOutputStream keyStream = new ByteArrayOutputStream();
