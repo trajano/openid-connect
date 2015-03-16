@@ -35,8 +35,16 @@ public class TokenCookie {
 
     /**
      * ID Token.
+     * 
+     * @deprecated eventually get rid of this and use the JWT instead.
      */
+    @Deprecated
     private final JsonObject idToken;
+
+    /**
+     * Original JWT for the ID token that was sent over.
+     */
+    private final String idTokenJwt;
 
     /**
      * Refresh Token.
@@ -54,9 +62,9 @@ public class TokenCookie {
      * @param idToken
      *            ID token
      */
-    public TokenCookie(final JsonObject idToken) {
+    public TokenCookie(final JsonObject idToken, String idTokenJwt) {
 
-        this("", "", idToken, null);
+        this("", "", idToken, idTokenJwt, null);
     }
 
     /**
@@ -77,6 +85,7 @@ public class TokenCookie {
                     .readObject();
             accessToken = ((JsonString) tokens.get(ACCESS_TOKEN_KEY)).getString();
             refreshToken = ((JsonString) tokens.get(REFRESH_TOKEN_KEY)).getString();
+            idTokenJwt = ((JsonString) tokens.get("id_token_hint")).getString();
             idToken = Json.createReader(CipherUtil.buildDecryptStream(new ByteArrayInputStream(Encoding.base64urlDecode(cookieValues[1])), secret))
                     .readObject();
             if (cookieValues.length == 2) {
@@ -98,11 +107,12 @@ public class TokenCookie {
      * @param userInfo
      *            user info
      */
-    public TokenCookie(final String accessToken, final String refreshToken, final JsonObject idToken, final JsonObject userInfo) {
+    public TokenCookie(final String accessToken, final String refreshToken, final JsonObject idToken, final String idTokenJwt, final JsonObject userInfo) {
 
         this.accessToken = accessToken;
         this.refreshToken = refreshToken != null ? refreshToken : "";
         this.idToken = idToken;
+        this.idTokenJwt = idTokenJwt;
         this.userInfo = userInfo;
     }
 
@@ -179,6 +189,7 @@ public class TokenCookie {
         final JsonObject tokens = Json.createObjectBuilder()
                 .add(ACCESS_TOKEN_KEY, accessToken)
                 .add(REFRESH_TOKEN_KEY, refreshToken)
+                .add("id_token_hint", idTokenJwt)
                 .build();
 
         final StringBuilder b = new StringBuilder(encode(tokens, secret));
@@ -189,5 +200,10 @@ public class TokenCookie {
             b.append(encode(userInfo, secret));
         }
         return b.toString();
+    }
+
+    public String getIdTokenJwt() {
+
+        return idTokenJwt;
     }
 }

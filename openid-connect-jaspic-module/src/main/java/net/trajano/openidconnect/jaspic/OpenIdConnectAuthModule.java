@@ -243,6 +243,8 @@ public class OpenIdConnectAuthModule implements ServerAuthModule, ServerAuthCont
      */
     private String redirectionEndpointUri;
 
+    private String logoutRedirectionEndpointUri;
+
     /**
      * Response mode used by the module.
      */
@@ -665,13 +667,13 @@ public class OpenIdConnectAuthModule implements ServerAuthModule, ServerAuthCont
                     .header("Authorization", token.getTokenType() + " " + token.getAccessToken())
                     .get();
             if (userInfoResponse.getStatus() == 200) {
-                tokenCookie = new TokenCookie(token.getAccessToken(), token.getRefreshToken(), claimsSet, userInfoResponse.readEntity(JsonObject.class));
+                tokenCookie = new TokenCookie(token.getAccessToken(), token.getRefreshToken(), claimsSet, token.getEncodedIdToken(), userInfoResponse.readEntity(JsonObject.class));
             } else {
                 LOG.log(Level.WARNING, "unableToGetProfile");
-                tokenCookie = new TokenCookie(claimsSet);
+                tokenCookie = new TokenCookie(claimsSet, token.getEncodedIdToken());
             }
         } else {
-            tokenCookie = new TokenCookie(claimsSet);
+            tokenCookie = new TokenCookie(claimsSet, token.getEncodedIdToken());
         }
 
         final String requestCookieContext;
@@ -732,6 +734,7 @@ public class OpenIdConnectAuthModule implements ServerAuthModule, ServerAuthCont
             clientId = getRequiredOption(CLIENT_ID);
             cookieContext = moduleOptions.get(COOKIE_CONTEXT_KEY);
             redirectionEndpointUri = getRequiredOption(REDIRECTION_ENDPOINT_URI_KEY);
+            logoutRedirectionEndpointUri = getRequiredOption("logout_redirection_endpoint");
             tokenUri = moduleOptions.get(TOKEN_URI_KEY);
             userInfoUri = moduleOptions.get(USERINFO_URI_KEY);
             logoutUri = moduleOptions.get(LOGOUT_URI_KEY);
@@ -757,7 +760,8 @@ public class OpenIdConnectAuthModule implements ServerAuthModule, ServerAuthCont
                 } else {
                     restClient = ClientBuilder.newClient();
                 }
-                restClient.register(JsonWebKeySetProvider.class).register(JsonWebKeyProvider.class);
+                restClient.register(JsonWebKeySetProvider.class)
+                        .register(JsonWebKeyProvider.class);
 
             }
         } catch (final Exception e) {
@@ -818,7 +822,6 @@ public class OpenIdConnectAuthModule implements ServerAuthModule, ServerAuthCont
             if (idToken != null) {
                 tokenCookie = new TokenCookie(idToken, secret);
                 if (tokenCookie.isExpired() && tokenCookie.getRefreshToken() != null) {
-                    System.out.println("REFRESH with " + tokenCookie.getRefreshToken());
                     final OpenIdProviderConfiguration oidProviderConfig = getOpenIDProviderConfig(req, restClient, moduleOptions);
                     final IdTokenResponse token = getTokenViaRefresh(req, tokenCookie.getRefreshToken(), oidProviderConfig);
                     final net.trajano.openidconnect.crypto.JsonWebKeySet webKeys = getWebKeys(oidProviderConfig);
@@ -842,13 +845,13 @@ public class OpenIdConnectAuthModule implements ServerAuthModule, ServerAuthCont
                                 .header("Authorization", token.getTokenType() + " " + token.getAccessToken())
                                 .get();
                         if (userInfoResponse.getStatus() == 200) {
-                            tokenCookie = new TokenCookie(token.getAccessToken(), token.getRefreshToken(), claimsSet, userInfoResponse.readEntity(JsonObject.class));
+                            tokenCookie = new TokenCookie(token.getAccessToken(), token.getRefreshToken(), claimsSet, token.getEncodedIdToken(), userInfoResponse.readEntity(JsonObject.class));
                         } else {
                             LOG.log(Level.WARNING, "unableToGetProfile");
-                            tokenCookie = new TokenCookie(claimsSet);
+                            tokenCookie = new TokenCookie(claimsSet, token.getEncodedIdToken());
                         }
                     } else {
-                        tokenCookie = new TokenCookie(claimsSet);
+                        tokenCookie = new TokenCookie(claimsSet, token.getEncodedIdToken());
                     }
 
                     final String requestCookieContext;
@@ -917,14 +920,7 @@ public class OpenIdConnectAuthModule implements ServerAuthModule, ServerAuthCont
         try {
             final OpenIdProviderConfiguration oidProviderConfig = getOpenIDProviderConfig(req, restClient, moduleOptions);
 
-            final StringBuilder stateBuilder = new StringBuilder(req.getRequestURI()
-                    .substring(req.getContextPath()
-                            .length()));
-            if (req.getQueryString() != null) {
-                stateBuilder.append('?');
-                stateBuilder.append(req.getQueryString());
-            }
-            final String state = Encoding.base64UrlEncode(stateBuilder.toString());
+            final String state = getState(req);
 
             final String requestCookieContext;
             if (isNullOrEmpty(cookieContext)) {
@@ -988,6 +984,19 @@ public class OpenIdConnectAuthModule implements ServerAuthModule, ServerAuthCont
                     .getName(), "redirectToAuthorizationEndpoint", e);
             throw new AuthException(MessageFormat.format(R.getString("sendRedirectException"), authorizationEndpointUri, e.getMessage()));
         }
+    }
+
+    private String getState(final HttpServletRequest req) {
+
+        final StringBuilder stateBuilder = new StringBuilder(req.getRequestURI()
+                .substring(req.getContextPath()
+                        .length()));
+        if (req.getQueryString() != null) {
+            stateBuilder.append('?');
+            stateBuilder.append(req.getQueryString());
+        }
+        final String state = Encoding.base64UrlEncode(stateBuilder.toString());
+        return state;
     }
 
     /**
@@ -1092,12 +1101,7 @@ public class OpenIdConnectAuthModule implements ServerAuthModule, ServerAuthCont
 
             if (tokenCookie != null && req.isSecure() && isGetRequest(req) && req.getRequestURI()
                     .equals(logoutUri)) {
-                deleteAuthCookies(resp);
-                if (logoutGotoUri == null) {
-                    resp.sendRedirect(req.getServletContext() + "/");
-                } else {
-                    resp.sendRedirect(logoutGotoUri);
-                }
+                doLogout(req, resp);
                 return AuthStatus.SEND_SUCCESS;
             }
 
@@ -1120,6 +1124,10 @@ public class OpenIdConnectAuthModule implements ServerAuthModule, ServerAuthCont
 
             if (req.isSecure() && isCallback(req)) {
                 return handleCallback(req, resp, clientSubject);
+            }
+
+            if (req.isSecure() && isLogoutCallback(req)) {
+                return handleLogoutCallback(req, resp, clientSubject);
             }
 
             if (!mandatory || tokenCookie != null && !tokenCookie.isExpired()) {
@@ -1160,5 +1168,48 @@ public class OpenIdConnectAuthModule implements ServerAuthModule, ServerAuthCont
                     .getName(), "validateRequest", e);
             return redirectToAuthorizationEndpoint(req, resp, e.getMessage());
         }
+    }
+
+    private AuthStatus handleLogoutCallback(HttpServletRequest req,
+            HttpServletResponse resp,
+            Subject clientSubject) throws IOException {
+
+        final String stateEncoded = req.getParameter("state");
+        final String redirectUri = new String(Encoding.base64urlDecode(stateEncoded));
+        resp.sendRedirect(resp.encodeRedirectURL(req.getContextPath() + redirectUri));
+        return AuthStatus.SEND_SUCCESS;
+    }
+
+    private boolean isLogoutCallback(HttpServletRequest req) {
+
+        return moduleOptions.get("logout_redirection_endpoint")
+                .equals(req.getRequestURI()) && !isNullOrEmpty(req.getParameter(STATE));
+    }
+
+    private void doLogout(HttpServletRequest req,
+            HttpServletResponse resp) throws IOException,
+            GeneralSecurityException {
+
+        deleteAuthCookies(resp);
+        final OpenIdProviderConfiguration oidProviderConfig = getOpenIDProviderConfig(req, restClient, moduleOptions);
+        final String state = getState(req);
+        final URI redirectUri = URI.create(req.getRequestURL()
+                .toString())
+                .resolve(moduleOptions.get("logout_redirection_endpoint"));
+
+        final String idToken = getIdToken(req);
+        final TokenCookie tokenCookie = new TokenCookie(idToken, secret);
+        if (logoutGotoUri == null && oidProviderConfig.getEndSessionEndpoint() != null) {
+            UriBuilder b = UriBuilder.fromUri(oidProviderConfig.getEndSessionEndpoint())
+                    .queryParam("post_logout_redirect_uri", redirectUri)
+                    .queryParam("id_token_hint", tokenCookie.getIdTokenJwt())
+                    .queryParam("state", state);
+            resp.sendRedirect(req.getServletContext() + "/");
+        } else if (logoutGotoUri == null && oidProviderConfig.getEndSessionEndpoint() == null) {
+            resp.sendRedirect(req.getServletContext() + "/");
+        } else {
+            resp.sendRedirect(logoutGotoUri);
+        }
+
     }
 }

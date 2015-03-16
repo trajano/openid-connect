@@ -73,6 +73,7 @@ public class Initializer implements ServletContextListener {
         options.put("cookie_context", rootPath);
         options.put("scope", scope);
         options.put("redirection_endpoint", contextPath + "/cb");
+        options.put("logout_redirection_endpoint", contextPath + "/cblogout");
         options.put("token_uri", contextPath + "/token");
         options.put("userinfo_uri", contextPath + "/userinfo");
         options.put(OpenIdConnectAuthModule.LOGOUT_GOTO_URI_KEY, rootPath);
