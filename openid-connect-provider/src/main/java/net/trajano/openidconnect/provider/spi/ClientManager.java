@@ -36,4 +36,7 @@ public interface ClientManager {
      * @return
      */
     boolean isImplicitConsent(String clientId);
+
+    boolean isPostLogoutRedirectUriValidForClient(String azp,
+            URI postLogoutRedirectUri);
 }

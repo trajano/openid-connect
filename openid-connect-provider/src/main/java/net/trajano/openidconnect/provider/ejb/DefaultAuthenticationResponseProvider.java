@@ -181,7 +181,7 @@ public class DefaultAuthenticationResponseProvider implements AuthenticationResp
             final String subject) throws IOException,
             ServletException {
 
-        doCallback(req, response, subject, false);
+        doConsentCallback(req, response, subject, false);
 
     }
 
@@ -240,7 +240,7 @@ public class DefaultAuthenticationResponseProvider implements AuthenticationResp
     }
 
     @Override
-    public void doCallback(HttpServletRequest req,
+    public void doConsentCallback(HttpServletRequest req,
             HttpServletResponse response,
             String subject,
             boolean consent) throws IOException,

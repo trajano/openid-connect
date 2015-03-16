@@ -82,7 +82,7 @@ public class AuthorizationEndpoint {
      */
     @GET
     public Response getOp(@Context final HttpServletRequest req) throws IOException,
-    GeneralSecurityException {
+            GeneralSecurityException {
 
         return op(req);
     }
@@ -108,7 +108,7 @@ public class AuthorizationEndpoint {
     @POST
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     public Response op(@Context final HttpServletRequest req) throws IOException,
-    GeneralSecurityException {
+            GeneralSecurityException {
 
         final AuthenticationRequest authenticationRequest = new AuthenticationRequest(req, keyProvider.getPrivateJwks());
 
@@ -116,14 +116,14 @@ public class AuthorizationEndpoint {
             throw new OpenIdConnectException(invalid_grant, "redirect URI is not supported for the client");
         }
 
-        final boolean authenticated = authenticator.isAuthenticated(authenticationRequest, req);
+        final boolean authenticated = authenticator.isAuthenticated(req);
 
         if (!authenticated && authenticationRequest.getPrompts()
                 .contains(Prompt.none)) {
             throw new RedirectedOpenIdProviderException(authenticationRequest, new ErrorResponse(login_required));
         }
 
-        final Consent consent = new Consent(authenticationRequest.getClientId(), authenticator.getSubject(req), authenticationRequest.getScopes());
+        final Consent consent = new Consent(authenticator.getSubject(req), authenticationRequest.getClientId(), authenticationRequest.getScopes());
 
         final boolean consented = clientManager.isImplicitConsent(authenticationRequest.getClientId()) || tp.getByConsent(consent) != null;
         if (!consented && authenticationRequest.getPrompts()

@@ -34,6 +34,12 @@ public class Consent implements Serializable {
         this(idToken.getSub(), idToken.getAzp(), idTokenResponse.getScopes());
     }
 
+    @Override
+    public String toString() {
+
+        return "Consent [clientId=" + clientId + ", scopes=" + scopes + ", subject=" + subject + "]";
+    }
+
     public Consent(final String subject, final String clientId, final Set<Scope> scopes) {
 
         this.subject = subject;

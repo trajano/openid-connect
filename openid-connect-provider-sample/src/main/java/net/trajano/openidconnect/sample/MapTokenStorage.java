@@ -71,6 +71,7 @@ public class MapTokenStorage implements TokenStorage {
 
         accessTokenToTokenResponse.put(idTokenResponse.getAccessToken(), idTokenResponse);
         refreshTokenToTokenResponse.put(idTokenResponse.getRefreshToken(), idTokenResponse);
+        System.out.println("storing consent for " + new Consent(idToken, idTokenResponse));
         consentToTokenResponse.put(new Consent(idToken, idTokenResponse), idTokenResponse);
     }
 
@@ -111,6 +112,8 @@ public class MapTokenStorage implements TokenStorage {
 
     @Override
     public IdTokenResponse getByConsent(Consent consent) {
+        
+        System.out.println(consentToTokenResponse.keySet());
 
         return consentToTokenResponse.get(consent);
     }

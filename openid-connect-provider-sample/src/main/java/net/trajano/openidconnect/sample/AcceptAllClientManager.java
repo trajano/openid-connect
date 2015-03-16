@@ -54,8 +54,7 @@ public class AcceptAllClientManager implements ClientManager, Authenticator, Use
      * {@inheritDoc}
      */
     @Override
-    public boolean isAuthenticated(final AuthenticationRequest authenticationRequest,
-            final HttpServletRequest req) {
+    public boolean isAuthenticated(final HttpServletRequest req) {
 
         return req.getSession()
                 .getAttribute("sub") != null;
@@ -87,9 +86,34 @@ public class AcceptAllClientManager implements ClientManager, Authenticator, Use
             HttpServletRequest req,
             UriBuilder contextUriBuilder) {
 
-        return contextUriBuilder.path("consent.jsp")
+        return contextUriBuilder.path("doConsent")
                 .queryParam(OpenIdConnectKey.REQUEST, requestJwt)
                 .build();
+    }
+
+    @Override
+    public boolean isPostLogoutRedirectUriValidForClient(String azp,
+            URI postLogoutRedirectUri) {
+
+        return true;
+    }
+
+    @Override
+    public URI logout(String nonce,
+            IdToken idToken,
+            String state,
+            URI postLogoutRedirectUri,
+            HttpServletRequest req,
+            UriBuilder contextUriBuilder) {
+
+        return contextUriBuilder.path("logout.jsp")
+                .queryParam("nonce", nonce)
+                .build();
+    }
+
+    @Override
+    public void endSession(HttpServletRequest req) {
+
     }
 
 }

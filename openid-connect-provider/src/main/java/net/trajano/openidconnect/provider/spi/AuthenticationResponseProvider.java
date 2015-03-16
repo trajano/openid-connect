@@ -116,7 +116,7 @@ public interface AuthenticationResponseProvider {
             String subject) throws IOException,
             GeneralSecurityException;
 
-    void doCallback(HttpServletRequest req,
+    void doConsentCallback(HttpServletRequest req,
             HttpServletResponse resp,
             String subject,
             boolean b) throws IOException,
