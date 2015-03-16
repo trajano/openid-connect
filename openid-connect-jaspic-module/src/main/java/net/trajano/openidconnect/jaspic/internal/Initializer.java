@@ -76,7 +76,8 @@ public class Initializer implements ServletContextListener {
         options.put("logout_redirection_endpoint", contextPath + "/cblogout");
         options.put("token_uri", contextPath + "/token");
         options.put("userinfo_uri", contextPath + "/userinfo");
-        options.put(OpenIdConnectAuthModule.LOGOUT_GOTO_URI_KEY, rootPath);
+        // TODO make this dependent on openid configuration
+//        options.put(OpenIdConnectAuthModule.LOGOUT_GOTO_URI_KEY, rootPath);
         options.put(OpenIdConnectAuthModule.LOGOUT_URI_KEY, contextPath + "/logout");
 
         registrationID = AuthConfigFactory.getFactory()

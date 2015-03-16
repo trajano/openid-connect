@@ -82,8 +82,11 @@ public class WellKnownOpenIdConfiguration {
         tokenMapping = applicationPath + "/token";
         userinfoMapping = applicationPath + "/profile";
         revocationMapping = applicationPath + "/revocation";
+        endSessionMapping = applicationPath + "/end";
 
     }
+
+    private String endSessionMapping;
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
@@ -106,6 +109,8 @@ public class WellKnownOpenIdConfiguration {
                 .build());
         openIdConfiguration.setTokenEndpoint(baseUri.replacePath(request.getContextPath() + tokenMapping)
                 .build());
+        openIdConfiguration.setEndSessionEndpoint(baseUri.replacePath(request.getContextPath() + endSessionMapping)
+                .build());
         openIdConfiguration.setUserinfoEndpoint(baseUri.replacePath(request.getContextPath() + userinfoMapping)
                 .build());
         openIdConfiguration.setScopesSupported(Scope.openid, Scope.email, Scope.profile);
@@ -113,7 +118,7 @@ public class WellKnownOpenIdConfiguration {
         openIdConfiguration.setRequestParameterSupported(true);
         openIdConfiguration.setGrantTypesSupported(GrantType.authorization_code, GrantType.implicit);
         openIdConfiguration.setRequestUriParameterSupported(false);
-        openIdConfiguration.setTokenEndpointAuthMethodsSupported(TokenEndPointAuthMethod.client_secret_basic, TokenEndPointAuthMethod.client_secret_post);        
+        openIdConfiguration.setTokenEndpointAuthMethodsSupported(TokenEndPointAuthMethod.client_secret_basic, TokenEndPointAuthMethod.client_secret_post);
         openIdConfiguration.setIdTokenSigningAlgValuesSupported(JsonWebAlgorithm.getSigAlgorithms());
         openIdConfiguration.setRequestObjectEncryptionAlgValuesSupported(JsonWebAlgorithm.getKexAlgorithms());
         openIdConfiguration.setRequestObjectEncryptionEncValuesSupported(JsonWebAlgorithm.getEncAlgorithms());

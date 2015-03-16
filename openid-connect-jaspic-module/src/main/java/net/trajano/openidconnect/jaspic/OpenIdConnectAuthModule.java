@@ -995,8 +995,7 @@ public class OpenIdConnectAuthModule implements ServerAuthModule, ServerAuthCont
             stateBuilder.append('?');
             stateBuilder.append(req.getQueryString());
         }
-        final String state = Encoding.base64UrlEncode(stateBuilder.toString());
-        return state;
+        return Encoding.base64UrlEncode(stateBuilder.toString());
     }
 
     /**
@@ -1192,7 +1191,24 @@ public class OpenIdConnectAuthModule implements ServerAuthModule, ServerAuthCont
 
         deleteAuthCookies(resp);
         final OpenIdProviderConfiguration oidProviderConfig = getOpenIDProviderConfig(req, restClient, moduleOptions);
-        final String state = getState(req);
+
+        String contextPath = UriBuilder.fromUri(req.getRequestURL()
+                .toString())
+                .replacePath(req.getContextPath())
+                .build()
+                .toASCIIString();
+        if (!req.getHeader("Referer")
+                .startsWith(contextPath)) {
+            throw new AuthException();
+        }
+        final StringBuilder stateBuilder = new StringBuilder(req.getHeader("Referer")
+                .substring(contextPath.length()));
+        if (req.getQueryString() != null) {
+            stateBuilder.append('?');
+            stateBuilder.append(req.getQueryString());
+        }
+
+        final String state = Encoding.base64UrlEncode(stateBuilder.toString());
         final URI redirectUri = URI.create(req.getRequestURL()
                 .toString())
                 .resolve(moduleOptions.get("logout_redirection_endpoint"));
@@ -1204,7 +1220,8 @@ public class OpenIdConnectAuthModule implements ServerAuthModule, ServerAuthCont
                     .queryParam("post_logout_redirect_uri", redirectUri)
                     .queryParam("id_token_hint", tokenCookie.getIdTokenJwt())
                     .queryParam("state", state);
-            resp.sendRedirect(req.getServletContext() + "/");
+            resp.sendRedirect(b.build()
+                    .toASCIIString());
         } else if (logoutGotoUri == null && oidProviderConfig.getEndSessionEndpoint() == null) {
             resp.sendRedirect(req.getServletContext() + "/");
         } else {
