@@ -1211,7 +1211,7 @@ public class OpenIdConnectAuthModule implements ServerAuthModule, ServerAuthCont
         final String state = Encoding.base64UrlEncode(stateBuilder.toString());
         final URI redirectUri = URI.create(req.getRequestURL()
                 .toString())
-                .resolve(moduleOptions.get("logout_redirection_endpoint"));
+                .resolve(logoutRedirectionEndpointUri);
 
         final String idToken = getIdToken(req);
         final TokenCookie tokenCookie = new TokenCookie(idToken, secret);
