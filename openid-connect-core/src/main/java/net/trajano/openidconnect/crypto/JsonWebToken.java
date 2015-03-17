@@ -119,7 +119,7 @@ public class JsonWebToken {
         final String[] tokens = jwt.split("\\.");
 
         joseHeaderEncoded = tokens[0];
-        final JoseHeader joseHeader = new JoseHeader(Encoding.base64DecodeToString(joseHeaderEncoded));
+        final JoseHeader joseHeader = new JoseHeader(Encoding.base64urlDecodeToString(joseHeaderEncoded));
 
         alg = joseHeader.getAlg();
         enc = joseHeader.getEnc();
@@ -157,7 +157,7 @@ public class JsonWebToken {
      */
     public JoseHeader getJoseHeader() {
 
-        return new JoseHeader(Encoding.base64DecodeToString(joseHeaderEncoded));
+        return new JoseHeader(Encoding.base64urlDecodeToString(joseHeaderEncoded));
     }
 
     /**

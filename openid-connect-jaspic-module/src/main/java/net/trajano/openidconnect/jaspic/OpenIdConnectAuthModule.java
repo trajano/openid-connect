@@ -1121,23 +1121,10 @@ public class OpenIdConnectAuthModule implements ServerAuthModule, ServerAuthCont
                 return status;
             }
 
-            if (!mandatory && !req.isSecure()) {
-                // successful if the module is not mandatory and the channel is
-                // not secure.
-                return AuthStatus.SUCCESS;
-            }
 
-
-            if (req.isSecure() && isLogoutCallback(req)) {
-                return handleLogoutCallback(req, resp, clientSubject);
-            }
 
             if (req.isSecure() && isCallback(req)) {
                 return handleCallback(req, resp, clientSubject);
-            }
-
-            if (!mandatory || tokenCookie != null && !tokenCookie.isExpired()) {
-                return AuthStatus.SUCCESS;
             }
 
             if (mandatory && tokenCookie != null && tokenCookie.isExpired()) {

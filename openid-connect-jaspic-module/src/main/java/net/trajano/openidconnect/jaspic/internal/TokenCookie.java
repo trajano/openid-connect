@@ -10,6 +10,7 @@ import javax.json.JsonObject;
 import javax.json.JsonString;
 
 import net.trajano.openidconnect.crypto.Encoding;
+import net.trajano.openidconnect.crypto.JsonWebTokenProcessor;
 
 /**
  * Manages the token cookie.
@@ -35,10 +36,7 @@ public class TokenCookie {
 
     /**
      * ID Token.
-     * 
-     * @deprecated eventually get rid of this and use the JWT instead.
      */
-    @Deprecated
     private final JsonObject idToken;
 
     /**
@@ -86,12 +84,11 @@ public class TokenCookie {
             accessToken = ((JsonString) tokens.get(ACCESS_TOKEN_KEY)).getString();
             refreshToken = ((JsonString) tokens.get(REFRESH_TOKEN_KEY)).getString();
             idTokenJwt = ((JsonString) tokens.get("id_token_hint")).getString();
-            idToken = Json.createReader(CipherUtil.buildDecryptStream(new ByteArrayInputStream(Encoding.base64urlDecode(cookieValues[1])), secret))
-                    .readObject();
-            if (cookieValues.length == 2) {
+            idToken = new JsonWebTokenProcessor(idTokenJwt).signatureCheck(false).getJsonPayload();
+            if (cookieValues.length == 1) {
                 userInfo = null;
             } else {
-                userInfo = Json.createReader(CipherUtil.buildDecryptStream(new ByteArrayInputStream(Encoding.base64urlDecode(cookieValues[2])), secret))
+                userInfo = Json.createReader(CipherUtil.buildDecryptStream(new ByteArrayInputStream(Encoding.base64urlDecode(cookieValues[1])), secret))
                         .readObject();
             }
         } catch (final IOException e) {
@@ -193,8 +190,6 @@ public class TokenCookie {
                 .build();
 
         final StringBuilder b = new StringBuilder(encode(tokens, secret));
-        b.append('.');
-        b.append(encode(idToken, secret));
         if (userInfo != null) {
             b.append('.');
             b.append(encode(userInfo, secret));

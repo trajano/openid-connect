@@ -39,7 +39,7 @@ public final class AuthorizationUtil {
     public static ClientCredentials processBasicOrQuery(final HttpServletRequest req) {
 
         if (req.getHeader("Authorization") != null) {
-            final String basicCredentials = Encoding.base64DecodeToString(getValue(req, BASIC_AUTHORIZATION));
+            final String basicCredentials = Encoding.base64urlDecodeToString(getValue(req, BASIC_AUTHORIZATION));
             final String[] credentials = basicCredentials.split(":");
             if (credentials.length != 2) {
                 throw new InvalidClientException(BASIC_AUTHORIZATION);

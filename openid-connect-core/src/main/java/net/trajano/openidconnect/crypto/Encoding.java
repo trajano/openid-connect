@@ -31,7 +31,7 @@ public final class Encoding {
         DECODE_MAP['/'] = 63;
     }
 
-    public static String base64DecodeToString(final String encoded) {
+    public static String base64urlDecodeToString(final String encoded) {
 
         return new String(base64urlDecode(encoded), UTF8);
     }
