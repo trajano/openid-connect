@@ -8,7 +8,6 @@ import static net.trajano.openidconnect.core.OpenIdConnectKey.REDIRECT_URI;
 import static net.trajano.openidconnect.core.OpenIdConnectKey.RESPONSE_MODE;
 import static net.trajano.openidconnect.core.OpenIdConnectKey.SCOPE;
 import static net.trajano.openidconnect.core.OpenIdConnectKey.STATE;
-import static net.trajano.openidconnect.jaspic.internal.Utils.isGetRequest;
 import static net.trajano.openidconnect.jaspic.internal.Utils.isHeadRequest;
 import static net.trajano.openidconnect.jaspic.internal.Utils.isNullOrEmpty;
 import static net.trajano.openidconnect.jaspic.internal.Utils.isRetrievalRequest;
@@ -223,6 +222,8 @@ public class OpenIdConnectAuthModule implements ServerAuthModule, ServerAuthCont
 
     private String logoutGotoUri;
 
+    private String logoutRedirectionEndpointUri;
+
     private String logoutUri;
 
     /**
@@ -245,8 +246,6 @@ public class OpenIdConnectAuthModule implements ServerAuthModule, ServerAuthCont
      * option. This must start with a forward slash. This value is optional.
      */
     private String redirectionEndpointUri;
-
-    private String logoutRedirectionEndpointUri;
 
     /**
      * Response mode used by the module.
@@ -313,7 +312,8 @@ public class OpenIdConnectAuthModule implements ServerAuthModule, ServerAuthCont
     @Override
     public void cleanSubject(final MessageInfo messageInfo,
             final Subject subject) throws AuthException {
-//subject.getPrincipals().
+
+        // subject.getPrincipals().
         // Does nothing.
     }
 
@@ -479,6 +479,18 @@ public class OpenIdConnectAuthModule implements ServerAuthModule, ServerAuthCont
     protected Client getRestClient() {
 
         return restClient;
+    }
+
+    private String getState(final HttpServletRequest req) {
+
+        final StringBuilder stateBuilder = new StringBuilder(req.getRequestURI()
+                .substring(req.getContextPath()
+                        .length()));
+        if (req.getQueryString() != null) {
+            stateBuilder.append('?');
+            stateBuilder.append(req.getQueryString());
+        }
+        return Encoding.base64UrlEncode(stateBuilder.toString());
     }
 
     /**
@@ -713,6 +725,16 @@ public class OpenIdConnectAuthModule implements ServerAuthModule, ServerAuthCont
         return AuthStatus.SEND_SUCCESS;
     }
 
+    private AuthStatus handleLogoutCallback(final HttpServletRequest req,
+            final HttpServletResponse resp,
+            final Subject clientSubject) throws IOException {
+
+        final String stateEncoded = req.getParameter("state");
+        final String redirectUri = new String(Encoding.base64urlDecode(stateEncoded));
+        resp.sendRedirect(resp.encodeRedirectURL(req.getContextPath() + redirectUri));
+        return AuthStatus.SEND_SUCCESS;
+    }
+
     /**
      * {@inheritDoc}
      *
@@ -775,11 +797,11 @@ public class OpenIdConnectAuthModule implements ServerAuthModule, ServerAuthCont
     }
 
     /**
-     * Checks to see whether the {@link ServerAuthModule} is called by the
-     * resource owner. This is indicated by the presence of a <code>code</code>
-     * and a <code>state</code> on the URL. The resource owner would be a web
-     * browser that got a redirect or automatic form post sent by the Open ID
-     * Connect provider.
+     * Checks to see whether redirection end point callback the
+     * {@link ServerAuthModule} is called by the user agent. This is indicated
+     * by the presence of a <code>code</code> and a <code>state</code> on the
+     * URL. The user agent would be a web browser that got a redirect or
+     * automatic form post sent by the OP.
      *
      * @param req
      *            HTTP servlet request
@@ -789,6 +811,23 @@ public class OpenIdConnectAuthModule implements ServerAuthModule, ServerAuthCont
 
         return moduleOptions.get(REDIRECTION_ENDPOINT_URI_KEY)
                 .equals(req.getRequestURI()) && !isNullOrEmpty(req.getParameter(CODE)) && !isNullOrEmpty(req.getParameter(STATE));
+    }
+
+    /**
+     * Checks to see whether post logout redirection end point callback the
+     * {@link ServerAuthModule} is called by the user agent. This is indicated
+     * by the presence of a <code>state</code> on the URL. The user agent would
+     * be a web browser that got a redirect or automatic form post sent by the
+     * OP.
+     *
+     * @param req
+     *            HTTP servlet request
+     * @return the module is called by the resource owner.
+     */
+    private boolean isLogoutCallback(final HttpServletRequest req) {
+
+        return moduleOptions.get("logout_redirection_endpoint")
+                .equals(req.getRequestURI()) && !isNullOrEmpty(req.getParameter(STATE));
     }
 
     /**
@@ -817,7 +856,7 @@ public class OpenIdConnectAuthModule implements ServerAuthModule, ServerAuthCont
      */
     private TokenCookie processTokenCookie(final Subject subject,
             final HttpServletRequest req,
-            HttpServletResponse resp) {
+            final HttpServletResponse resp) {
 
         try {
             final String idToken = getIdToken(req);
@@ -989,18 +1028,6 @@ public class OpenIdConnectAuthModule implements ServerAuthModule, ServerAuthCont
         }
     }
 
-    private String getState(final HttpServletRequest req) {
-
-        final StringBuilder stateBuilder = new StringBuilder(req.getRequestURI()
-                .substring(req.getContextPath()
-                        .length()));
-        if (req.getQueryString() != null) {
-            stateBuilder.append('?');
-            stateBuilder.append(req.getQueryString());
-        }
-        return Encoding.base64UrlEncode(stateBuilder.toString());
-    }
-
     /**
      * Return {@link AuthStatus#SEND_SUCCESS}.
      *
@@ -1085,19 +1112,13 @@ public class OpenIdConnectAuthModule implements ServerAuthModule, ServerAuthCont
         try {
             final TokenCookie tokenCookie = processTokenCookie(clientSubject, req, resp);
 
-            ValidateContext context = new ValidateContext(restClient, clientSubject, mandatory, moduleOptions, req, resp, tokenCookie, cookieContext);
+            final ValidateContext context = new ValidateContext(restClient, clientSubject, mandatory, moduleOptions, req, resp, tokenCookie, cookieContext);
 
-            ValidateRequestProcessor requestProcessor = ValidateRequestProcessors.getInstance();
+            final ValidateRequestProcessor requestProcessor = ValidateRequestProcessors.getInstance();
 
-            AuthStatus status = (requestProcessor.validateRequest(context));
+            final AuthStatus status = requestProcessor.validateRequest(context);
             if (status != null) {
                 return status;
-            }
-
-            if (req.isSecure() && isGetRequest(req) && req.getRequestURI()
-                    .equals(logoutUri)) {
-                doLogout(req, resp);
-                return AuthStatus.SEND_SUCCESS;
             }
 
             if (!mandatory && !req.isSecure()) {
@@ -1106,16 +1127,6 @@ public class OpenIdConnectAuthModule implements ServerAuthModule, ServerAuthCont
                 return AuthStatus.SUCCESS;
             }
 
-            if (!req.isSecure() && mandatory) {
-                // Fail authorization 3.1.2.1
-                resp.sendError(HttpURLConnection.HTTP_FORBIDDEN, R.getString("SSLReq"));
-                return AuthStatus.SEND_FAILURE;
-            }
-
-            if (!req.isSecure() && isCallback(req)) {
-                resp.sendError(HttpURLConnection.HTTP_FORBIDDEN, R.getString("SSLReq"));
-                return AuthStatus.SEND_FAILURE;
-            }
 
             if (req.isSecure() && isLogoutCallback(req)) {
                 return handleLogoutCallback(req, resp, clientSubject);
@@ -1163,66 +1174,5 @@ public class OpenIdConnectAuthModule implements ServerAuthModule, ServerAuthCont
                     .getName(), "validateRequest", e);
             return redirectToAuthorizationEndpoint(req, resp, e.getMessage());
         }
-    }
-
-    private AuthStatus handleLogoutCallback(HttpServletRequest req,
-            HttpServletResponse resp,
-            Subject clientSubject) throws IOException {
-
-        final String stateEncoded = req.getParameter("state");
-        final String redirectUri = new String(Encoding.base64urlDecode(stateEncoded));
-        resp.sendRedirect(resp.encodeRedirectURL(req.getContextPath() + redirectUri));
-        return AuthStatus.SEND_SUCCESS;
-    }
-
-    private boolean isLogoutCallback(HttpServletRequest req) {
-
-        return moduleOptions.get("logout_redirection_endpoint")
-                .equals(req.getRequestURI()) && !isNullOrEmpty(req.getParameter(STATE));
-    }
-
-    private void doLogout(HttpServletRequest req,
-            HttpServletResponse resp) throws IOException,
-            GeneralSecurityException {
-
-        deleteAuthCookies(resp);
-        final OpenIdProviderConfiguration oidProviderConfig = getOpenIDProviderConfig(req, restClient, moduleOptions);
-
-        String contextPath = UriBuilder.fromUri(req.getRequestURL()
-                .toString())
-                .replacePath(req.getContextPath())
-                .build()
-                .toASCIIString();
-        if (!req.getHeader("Referer")
-                .startsWith(contextPath)) {
-            throw new AuthException();
-        }
-        final StringBuilder stateBuilder = new StringBuilder(req.getHeader("Referer")
-                .substring(contextPath.length()));
-        if (req.getQueryString() != null) {
-            stateBuilder.append('?');
-            stateBuilder.append(req.getQueryString());
-        }
-
-        final String state = Encoding.base64UrlEncode(stateBuilder.toString());
-        final URI redirectUri = URI.create(req.getRequestURL()
-                .toString())
-                .resolve(logoutRedirectionEndpointUri);
-
-        final String idToken = getIdToken(req);
-        final TokenCookie tokenCookie = new TokenCookie(idToken, secret);
-        if (logoutGotoUri == null && oidProviderConfig.getEndSessionEndpoint() != null) {
-            UriBuilder b = UriBuilder.fromUri(oidProviderConfig.getEndSessionEndpoint())
-                    .queryParam("post_logout_redirect_uri", redirectUri)
-                    .queryParam("id_token_hint", tokenCookie.getIdTokenJwt())
-                    .queryParam("state", state);
-            resp.sendRedirect(b.build()
-                    .toASCIIString());
-        } else if (logoutGotoUri == null && oidProviderConfig.getEndSessionEndpoint() == null) {
-            resp.sendRedirect(req.getServletContext() + "/");
-        } else {
-            resp.sendRedirect(logoutGotoUri);
-        }
-
     }
 }

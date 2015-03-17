@@ -2,14 +2,13 @@ package net.trajano.openidconnect.jaspic.internal;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
-import java.util.LinkedList;
-import java.util.List;
 
 import javax.security.auth.message.AuthStatus;
 
 import net.trajano.openidconnect.jaspic.internal.processors.IdTokenRequestProcessor;
 import net.trajano.openidconnect.jaspic.internal.processors.LogoutGotoRequestProcessor;
 import net.trajano.openidconnect.jaspic.internal.processors.LogoutRequestProcessor;
+import net.trajano.openidconnect.jaspic.internal.processors.SecurityAssertionFailureRequestProcessor;
 import net.trajano.openidconnect.jaspic.internal.processors.UserInfoRequestProcessor;
 
 public class ValidateRequestProcessors implements ValidateRequestProcessor {
@@ -18,10 +17,6 @@ public class ValidateRequestProcessors implements ValidateRequestProcessor {
 
     static {
         INSTANCE = new ValidateRequestProcessors();
-        INSTANCE.add(new IdTokenRequestProcessor());
-        INSTANCE.add(new UserInfoRequestProcessor());
-        INSTANCE.add(new LogoutRequestProcessor());
-        INSTANCE.add(new LogoutGotoRequestProcessor());
     }
 
     public static ValidateRequestProcessor getInstance() {
@@ -29,13 +24,17 @@ public class ValidateRequestProcessors implements ValidateRequestProcessor {
         return INSTANCE;
     }
 
-    private final List<ValidateRequestProcessor> processors = new LinkedList<>();
+    private final ValidateRequestProcessor[] processors = {
 
-    private ValidateRequestProcessors add(final ValidateRequestProcessor processor) {
+    new IdTokenRequestProcessor(),
 
-        processors.add(processor);
-        return this;
-    }
+    new UserInfoRequestProcessor(),
+
+    new LogoutRequestProcessor(),
+
+    new LogoutGotoRequestProcessor(),
+
+    new SecurityAssertionFailureRequestProcessor() };
 
     @Override
     public boolean canValidateRequest(final ValidateContext context) {
@@ -53,7 +52,6 @@ public class ValidateRequestProcessors implements ValidateRequestProcessor {
             GeneralSecurityException {
 
         for (final ValidateRequestProcessor processor : processors) {
-            System.out.println("trying " + processor);
             if (processor.canValidateRequest(context)) {
                 return processor.validateRequest(context);
             }
