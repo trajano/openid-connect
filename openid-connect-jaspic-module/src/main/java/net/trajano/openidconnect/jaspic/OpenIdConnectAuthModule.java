@@ -313,7 +313,7 @@ public class OpenIdConnectAuthModule implements ServerAuthModule, ServerAuthCont
     @Override
     public void cleanSubject(final MessageInfo messageInfo,
             final Subject subject) throws AuthException {
-
+//subject.getPrincipals().
         // Does nothing.
     }
 
@@ -1085,7 +1085,7 @@ public class OpenIdConnectAuthModule implements ServerAuthModule, ServerAuthCont
         try {
             final TokenCookie tokenCookie = processTokenCookie(clientSubject, req, resp);
 
-            ValidateContext context = new ValidateContext(restClient, clientSubject, mandatory, moduleOptions, req, resp, tokenCookie);
+            ValidateContext context = new ValidateContext(restClient, clientSubject, mandatory, moduleOptions, req, resp, tokenCookie, cookieContext);
 
             ValidateRequestProcessor requestProcessor = ValidateRequestProcessors.getInstance();
 

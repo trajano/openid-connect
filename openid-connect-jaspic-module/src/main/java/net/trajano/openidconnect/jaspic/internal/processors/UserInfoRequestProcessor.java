@@ -1,4 +1,4 @@
-package net.trajano.openidconnect.jaspic.internal;
+package net.trajano.openidconnect.jaspic.internal.processors;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
@@ -6,6 +6,8 @@ import java.security.GeneralSecurityException;
 import javax.security.auth.message.AuthStatus;
 
 import net.trajano.openidconnect.jaspic.OpenIdConnectAuthModule;
+import net.trajano.openidconnect.jaspic.internal.ValidateContext;
+import net.trajano.openidconnect.jaspic.internal.ValidateRequestProcessor;
 
 public class UserInfoRequestProcessor implements ValidateRequestProcessor {
 

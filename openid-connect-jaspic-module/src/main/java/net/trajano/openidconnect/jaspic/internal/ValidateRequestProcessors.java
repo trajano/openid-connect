@@ -7,6 +7,11 @@ import java.util.List;
 
 import javax.security.auth.message.AuthStatus;
 
+import net.trajano.openidconnect.jaspic.internal.processors.IdTokenRequestProcessor;
+import net.trajano.openidconnect.jaspic.internal.processors.LogoutGotoRequestProcessor;
+import net.trajano.openidconnect.jaspic.internal.processors.LogoutRequestProcessor;
+import net.trajano.openidconnect.jaspic.internal.processors.UserInfoRequestProcessor;
+
 public class ValidateRequestProcessors implements ValidateRequestProcessor {
 
     private static final ValidateRequestProcessors INSTANCE;
@@ -15,6 +20,8 @@ public class ValidateRequestProcessors implements ValidateRequestProcessor {
         INSTANCE = new ValidateRequestProcessors();
         INSTANCE.add(new IdTokenRequestProcessor());
         INSTANCE.add(new UserInfoRequestProcessor());
+        INSTANCE.add(new LogoutRequestProcessor());
+        INSTANCE.add(new LogoutGotoRequestProcessor());
     }
 
     public static ValidateRequestProcessor getInstance() {

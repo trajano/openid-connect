@@ -1,16 +1,21 @@
 package net.trajano.openidconnect.jaspic.internal;
 
 import java.io.IOException;
+import java.net.URI;
 import java.security.GeneralSecurityException;
 import java.util.Map;
 
 import javax.json.JsonObject;
 import javax.security.auth.Subject;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.client.Client;
+import javax.ws.rs.core.MediaType;
 
+import net.trajano.openidconnect.core.OpenIdProviderConfiguration;
 import net.trajano.openidconnect.crypto.JsonWebTokenProcessor;
+import net.trajano.openidconnect.jaspic.OpenIdConnectAuthModule;
 
 public class ValidateContext {
 
@@ -28,7 +33,9 @@ public class ValidateContext {
 
     private final TokenCookie tokenCookie;
 
-    public ValidateContext(final Client client, final Subject clientSubject, final boolean mandatory, final Map<String, String> options, final HttpServletRequest req, final HttpServletResponse resp, final TokenCookie tokenCookie) {
+    private final String cookieContext;
+
+    public ValidateContext(final Client client, final Subject clientSubject, final boolean mandatory, final Map<String, String> options, final HttpServletRequest req, final HttpServletResponse resp, final TokenCookie tokenCookie, String cookieContext) {
 
         this.client = client;
         this.clientSubject = clientSubject;
@@ -37,6 +44,7 @@ public class ValidateContext {
         this.req = req;
         this.resp = resp;
         this.tokenCookie = tokenCookie;
+        this.cookieContext = cookieContext;
     }
 
     public Client getClient() {
@@ -130,4 +138,53 @@ public class ValidateContext {
 
     }
 
+    private static final String[] AUTH_COOKIE_NAMES = { OpenIdConnectAuthModule.NET_TRAJANO_AUTH_ID, OpenIdConnectAuthModule.NET_TRAJANO_AUTH_AGE, OpenIdConnectAuthModule.NET_TRAJANO_AUTH_NONCE };
+
+    /**
+     * Deletes the authentication cookies.
+     */
+    public void deleteAuthCookies() {
+
+        for (final String cookieName : AUTH_COOKIE_NAMES) {
+            final Cookie deleteCookie = new Cookie(cookieName, "");
+            deleteCookie.setMaxAge(0);
+            deleteCookie.setPath(cookieContext);
+            resp.addCookie(deleteCookie);
+        }
+
+    }
+
+    public OpenIdProviderConfiguration getOpenIDProviderConfig() {
+
+        final String issuerUri = options.get(OpenIdConnectAuthModule.ISSUER_URI_KEY);
+        if (issuerUri == null) {
+            // LOG.log(Level.SEVERE, "missingOption", ISSUER_URI_KEY);
+            // throw new
+            // AuthException(MessageFormat.format(R.getString("missingOption"),
+            // ISSUER_URI_KEY));
+        }
+        return client.target(URI.create(issuerUri)
+                .resolve("/.well-known/openid-configuration"))
+                .request(MediaType.APPLICATION_JSON_TYPE)
+                .get(OpenIdProviderConfiguration.class);
+
+    }
+
+    public URI getUri(String key) {
+
+        return URI.create(req.getRequestURL()
+                .toString())
+                .resolve(options.get(key));
+
+    }
+
+    public boolean hasOption(String key) {
+
+        return options.get(key) != null;
+    }
+
+    public String getOption(String key) {
+
+        return options.get(key);
+    }
 }
