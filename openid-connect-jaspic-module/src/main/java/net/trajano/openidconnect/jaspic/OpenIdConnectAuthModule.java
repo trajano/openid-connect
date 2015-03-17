@@ -68,6 +68,9 @@ import net.trajano.openidconnect.jaspic.internal.CipherUtil;
 import net.trajano.openidconnect.jaspic.internal.NullHostnameVerifier;
 import net.trajano.openidconnect.jaspic.internal.NullX509TrustManager;
 import net.trajano.openidconnect.jaspic.internal.TokenCookie;
+import net.trajano.openidconnect.jaspic.internal.ValidateContext;
+import net.trajano.openidconnect.jaspic.internal.ValidateRequestProcessor;
+import net.trajano.openidconnect.jaspic.internal.ValidateRequestProcessors;
 import net.trajano.openidconnect.rs.JsonWebKeyProvider;
 import net.trajano.openidconnect.rs.JsonWebKeySetProvider;
 import net.trajano.openidconnect.token.GrantType;
@@ -1082,23 +1085,16 @@ public class OpenIdConnectAuthModule implements ServerAuthModule, ServerAuthCont
         try {
             final TokenCookie tokenCookie = processTokenCookie(clientSubject, req, resp);
 
-            if (tokenCookie != null && req.isSecure() && isGetRequest(req) && req.getRequestURI()
-                    .equals(tokenUri)) {
-                resp.setContentType(MediaType.APPLICATION_JSON);
-                resp.getWriter()
-                        .print(tokenCookie.getIdToken());
-                return AuthStatus.SEND_SUCCESS;
+            ValidateContext context = new ValidateContext(restClient, clientSubject, mandatory, moduleOptions, req, resp, tokenCookie);
+
+            ValidateRequestProcessor requestProcessor = ValidateRequestProcessors.getInstance();
+
+            AuthStatus status = (requestProcessor.validateRequest(context));
+            if (status != null) {
+                return status;
             }
 
-            if (tokenCookie != null && req.isSecure() && isGetRequest(req) && req.getRequestURI()
-                    .equals(userInfoUri)) {
-                resp.setContentType(MediaType.APPLICATION_JSON);
-                resp.getWriter()
-                        .print(tokenCookie.getUserInfo());
-                return AuthStatus.SEND_SUCCESS;
-            }
-
-            if (tokenCookie != null && req.isSecure() && isGetRequest(req) && req.getRequestURI()
+            if (req.isSecure() && isGetRequest(req) && req.getRequestURI()
                     .equals(logoutUri)) {
                 doLogout(req, resp);
                 return AuthStatus.SEND_SUCCESS;
@@ -1121,12 +1117,12 @@ public class OpenIdConnectAuthModule implements ServerAuthModule, ServerAuthCont
                 return AuthStatus.SEND_FAILURE;
             }
 
-            if (req.isSecure() && isCallback(req)) {
-                return handleCallback(req, resp, clientSubject);
-            }
-
             if (req.isSecure() && isLogoutCallback(req)) {
                 return handleLogoutCallback(req, resp, clientSubject);
+            }
+
+            if (req.isSecure() && isCallback(req)) {
+                return handleCallback(req, resp, clientSubject);
             }
 
             if (!mandatory || tokenCookie != null && !tokenCookie.isExpired()) {

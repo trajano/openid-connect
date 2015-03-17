@@ -20,7 +20,9 @@ public final class Utils {
      * @param req
      *            request
      * @return <code>true</code> if the request uses the GET method.
+     * @deprecated use {@link ValidateContext#isGetRequest()}
      */
+    @Deprecated
     public static boolean isGetRequest(final HttpServletRequest req) {
 
         return "GET".equals(req.getMethod());

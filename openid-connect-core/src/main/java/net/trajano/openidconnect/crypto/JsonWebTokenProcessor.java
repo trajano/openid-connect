@@ -29,6 +29,11 @@ public class JsonWebTokenProcessor {
 
     private String kid = null;
 
+    /**
+     * Flag to indicate that signature check is required.
+     */
+    private boolean signatureCheck = true;
+
     public JsonWebTokenProcessor(final JsonWebToken jsonWebToken) {
 
         this.jsonWebToken = jsonWebToken;
@@ -57,7 +62,7 @@ public class JsonWebTokenProcessor {
      * @throws GeneralSecurityException
      */
     public JsonObject getJsonPayload() throws IOException,
-    GeneralSecurityException {
+            GeneralSecurityException {
 
         final JsonReader r = Json.createReader(new ByteArrayInputStream(getPayload()));
         return r.readObject();
@@ -65,7 +70,7 @@ public class JsonWebTokenProcessor {
     }
 
     public byte[] getPayload() throws IOException,
-    GeneralSecurityException {
+            GeneralSecurityException {
 
         byte[] payload;
         if (JsonWebToken.ALG_NONE.equals(alg)) {
@@ -75,11 +80,16 @@ public class JsonWebTokenProcessor {
                 throw new GeneralSecurityException("invalid number of payloads in JWT for JWE");
             }
             payload = crypto.getJWEPayload(jsonWebToken, jwk);
-        } else if (enc == null && alg != null) {
+        } else if (enc == null && alg != null && signatureCheck) {
             if (jsonWebToken.getNumberOfPayloads() != 2) {
                 throw new GeneralSecurityException("invalid number of payloads in JWT for JWS");
             }
             payload = crypto.getJWSPayload(jsonWebToken, jwk, alg);
+        } else if (enc == null && alg != null && !signatureCheck) {
+            if (jsonWebToken.getNumberOfPayloads() != 2) {
+                throw new GeneralSecurityException("invalid number of payloads in JWT for JWS");
+            }
+            payload = jsonWebToken.getPayload(0);
         } else {
             throw new GeneralSecurityException("invalid JOSE header");
         }
@@ -108,6 +118,19 @@ public class JsonWebTokenProcessor {
         } else if (jwks.getKeys().length == 1) {
             jwk = jwks.getKeys()[0];
         }
+        return this;
+
+    }
+
+    /**
+     * Enable or disable signature checks. Signature checks are enabled by
+     * default. Signature checks can be disabled for scenarios where the
+     * signature had already been validated previously in the process and the
+     * JWT was stored as is rather than having the extracted payload kept.
+     */
+    public JsonWebTokenProcessor signatureCheck(boolean b) {
+
+        signatureCheck = b;
         return this;
 
     }
