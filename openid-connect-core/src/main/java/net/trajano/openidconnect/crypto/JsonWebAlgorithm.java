@@ -29,11 +29,6 @@ import net.trajano.openidconnect.internal.Log;
 public class JsonWebAlgorithm {
 
     /**
-     * Logger
-     */
-    public static Log LOG = Log.getInstance();
-
-    /**
      * Instance.
      */
     private static JsonWebAlgorithm INSTANCE = new JsonWebAlgorithm();
@@ -124,7 +119,7 @@ public class JsonWebAlgorithm {
             jwaEcMap.put(jwa, crv.toECParameterSpec());
             sigs.add(jwa);
         } catch (GeneralSecurityException e) {
-            LOG.fine("algNotSupportedForSig", new Object[] { jwa });
+            Log.fine("algNotSupportedForSig", jwa);
         }
     }
 
@@ -143,7 +138,7 @@ public class JsonWebAlgorithm {
             jwaJcaMap.put(jwa, jca);
             sigs.add(jwa);
         } catch (GeneralSecurityException e) {
-            LOG.fine("algNotSupportedForSig", new Object[] { jwa });
+            Log.fine("algNotSupportedForSig", jwa);
         }
     }
 
@@ -163,7 +158,7 @@ public class JsonWebAlgorithm {
             sigs.add(jwa);
             macs.add(jwa);
         } catch (GeneralSecurityException e) {
-            LOG.fine("algNotSupportedForSig", new Object[] { jwa });
+            Log.fine("algNotSupportedForSig", jwa);
         }
     }
 
@@ -182,7 +177,7 @@ public class JsonWebAlgorithm {
             jwaJcaMap.put(jwa, jca);
             kexs.add(jwa);
         } catch (GeneralSecurityException e) {
-            LOG.fine("algNotSupportedForKex", new Object[] { jwa });
+            Log.fine("algNotSupportedForKex", jwa);
         }
     }
 
@@ -215,7 +210,7 @@ public class JsonWebAlgorithm {
             jwaIvLenMap.put(jwa, ivLen);
             encs.add(jwa);
         } catch (GeneralSecurityException e) {
-            LOG.fine("algNotSupportedForEnc", new Object[] { jwa });
+            Log.fine("algNotSupportedForEnc", jwa);
         }
     }
 

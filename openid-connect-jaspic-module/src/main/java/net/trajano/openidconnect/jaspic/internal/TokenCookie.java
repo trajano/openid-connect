@@ -179,10 +179,8 @@ public class TokenCookie {
      * @return cookie value
      * @throws GeneralSecurityException
      */
-    public String toCookieValue(final String clientId,
-            final String clientSecret) throws GeneralSecurityException {
+    public String toCookieValue(final SecretKey secret) throws GeneralSecurityException {
 
-        final SecretKey secret = CipherUtil.buildSecretKey(clientId, clientSecret);
         final JsonObject tokens = Json.createObjectBuilder()
                 .add(ACCESS_TOKEN_KEY, accessToken)
                 .add(REFRESH_TOKEN_KEY, refreshToken)

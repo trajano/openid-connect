@@ -1,5 +1,6 @@
 package net.trajano.openidconnect.internal;
 
+import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -8,29 +9,35 @@ import java.util.logging.Logger;
  *
  * @author Archimedes
  */
-public class Log extends Logger {
+public class Log {
 
-    private static Log LOG = new Log();
+    private static final Logger LOG;
 
     /**
      * Messages resource path.
      */
     private static final String MESSAGES = "META-INF/Messages";
 
-    public static Log getInstance() {
+    private static final ResourceBundle R = ResourceBundle.getBundle(MESSAGES);
+
+    static {
+        LOG = Logger.getLogger("net.trajano.oidc.core", MESSAGES);
+    }
+
+    public static void fine(final String key,
+            final Object... params) {
+
+        LOG.log(Level.FINE, key, params);
+    }
+
+    public static Logger getInstance() {
 
         return LOG;
     }
 
-    private Log() {
+    public static String r(final String key) {
 
-        super("net.trajano.oidc.jaspic", MESSAGES);
-    }
-
-    public void fine(final String key,
-            final Object... params) {
-
-        log(Level.FINE, key, params);
+        return R.getString(key);
     }
 
 }

@@ -1,5 +1,6 @@
 package net.trajano.openidconnect.jaspic.internal;
 
+import java.text.MessageFormat;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -9,36 +10,51 @@ import java.util.logging.Logger;
  *
  * @author Archimedes
  */
-public class Log extends Logger {
+public class Log {
 
-    private static final Log LOG = new Log();
+    private static final Logger LOG;
 
     /**
      * Messages resource path.
      */
-    private static final String MESSAGES = "META-INF/Messages";
+    private static final String MESSAGES = "META-INF/JaspicMessages";
 
     private static final ResourceBundle R = ResourceBundle.getBundle(MESSAGES);
 
-    public static Log getInstance() {
+    static {
+        LOG = Logger.getLogger("net.trajano.oidc.jaspic", MESSAGES);
+    }
+
+    public static void fine(final String key,
+            final Object... params) {
+
+        LOG.log(Level.FINE, key, params);
+    }
+
+    public static Logger getInstance() {
 
         return LOG;
     }
 
-    public static String r(String key) {
+    public static boolean isFinestLoggable() {
 
-        return R.getString(key);
+        return LOG.isLoggable(Level.FINEST);
     }
 
-    private Log() {
+    public static String r(final String key,
+            Object... params) {
 
-        super("net.trajano.oidc.jaspic", MESSAGES);
+        if (params.length == 0)
+
+            return R.getString(key);
+        else
+            return MessageFormat.format(R.getString(key), params);
     }
 
-    public void fine(final String key,
+    public static void severe(final String key,
             final Object... params) {
 
-        log(Level.FINE, key, params);
+        LOG.log(Level.SEVERE, key, params);
     }
 
 }

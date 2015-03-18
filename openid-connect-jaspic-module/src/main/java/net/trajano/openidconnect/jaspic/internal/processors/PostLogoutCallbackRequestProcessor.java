@@ -9,11 +9,10 @@ import java.security.GeneralSecurityException;
 import javax.security.auth.message.AuthStatus;
 import javax.security.auth.message.module.ServerAuthModule;
 
-import net.trajano.openidconnect.crypto.Encoding;
 import net.trajano.openidconnect.jaspic.internal.ValidateContext;
 import net.trajano.openidconnect.jaspic.internal.ValidateRequestProcessor;
 
-public class PostLogoutRequestProcessor implements ValidateRequestProcessor {
+public class PostLogoutCallbackRequestProcessor implements ValidateRequestProcessor {
 
     /**
      * Checks to see whether post logout redirection end point callback the
@@ -37,13 +36,7 @@ public class PostLogoutRequestProcessor implements ValidateRequestProcessor {
     public AuthStatus validateRequest(final ValidateContext context) throws IOException,
             GeneralSecurityException {
 
-        final String stateEncoded = context.getReq()
-                .getParameter("state");
-        final String redirectUri = Encoding.base64urlDecodeToString(stateEncoded);
-        context.getResp()
-                .sendRedirect(context.getResp()
-                        .encodeRedirectURL(context.getReq()
-                                .getContextPath() + redirectUri));
+        context.redirectToState();
         return AuthStatus.SEND_SUCCESS;
     }
 

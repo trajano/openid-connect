@@ -8,7 +8,7 @@ import javax.security.auth.message.AuthStatus;
 import net.trajano.openidconnect.jaspic.internal.processors.IdTokenRequestProcessor;
 import net.trajano.openidconnect.jaspic.internal.processors.LogoutGotoRequestProcessor;
 import net.trajano.openidconnect.jaspic.internal.processors.LogoutRequestProcessor;
-import net.trajano.openidconnect.jaspic.internal.processors.PostLogoutRequestProcessor;
+import net.trajano.openidconnect.jaspic.internal.processors.PostLogoutCallbackRequestProcessor;
 import net.trajano.openidconnect.jaspic.internal.processors.SecurityAssertionFailureRequestProcessor;
 import net.trajano.openidconnect.jaspic.internal.processors.SecurityAssertionPassedRequestProcessor;
 import net.trajano.openidconnect.jaspic.internal.processors.UserInfoRequestProcessor;
@@ -38,7 +38,7 @@ public class ValidateRequestProcessors implements ValidateRequestProcessor {
 
     new SecurityAssertionFailureRequestProcessor(),
 
-    new PostLogoutRequestProcessor(),
+    new PostLogoutCallbackRequestProcessor(),
 
     new SecurityAssertionPassedRequestProcessor() };
 
