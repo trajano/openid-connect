@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.security.GeneralSecurityException;
 
 import javax.security.auth.message.AuthStatus;
+import javax.ws.rs.core.MediaType;
 
 import net.trajano.openidconnect.jaspic.OpenIdConnectAuthModule;
 import net.trajano.openidconnect.jaspic.internal.ValidateContext;
@@ -25,6 +26,7 @@ public class UserInfoRequestProcessor implements ValidateRequestProcessor {
     public AuthStatus validateRequest(final ValidateContext context) throws IOException,
             GeneralSecurityException {
 
+        context.setContentType(MediaType.APPLICATION_JSON);
         context.getResp()
                 .getWriter()
                 .print(context.getTokenCookie()

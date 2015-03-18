@@ -295,7 +295,7 @@ public class OpenIdConnectAuthModule implements ServerAuthModule, ServerAuthCont
 
     private void deleteAuthCookies(final HttpServletResponse resp) {
 
-        for (final String cookieName : new String[] { NET_TRAJANO_AUTH_ID, NET_TRAJANO_AUTH_AGE, NET_TRAJANO_AUTH_NONCE }) {
+        for (final String cookieName : new String[] { NET_TRAJANO_AUTH_ID, NET_TRAJANO_AUTH_AGE  }) {
             final Cookie deleteCookie = new Cookie(cookieName, "");
             deleteCookie.setMaxAge(0);
             deleteCookie.setPath(cookieContext);
@@ -776,8 +776,7 @@ public class OpenIdConnectAuthModule implements ServerAuthModule, ServerAuthCont
             final HttpServletResponse resp,
             final String reason) throws AuthException {
 
-        Log.getInstance()
-                .log(Level.FINE, "redirecting", new Object[] { reason });
+        Log.fine("redirecting", reason);
         URI authorizationEndpointUri = null;
         try {
             final OpenIdProviderConfiguration oidProviderConfig = getOpenIDProviderConfig(req, restClient, moduleOptions);

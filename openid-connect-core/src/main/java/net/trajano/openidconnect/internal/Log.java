@@ -1,5 +1,6 @@
 package net.trajano.openidconnect.internal;
 
+import java.text.MessageFormat;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -21,13 +22,13 @@ public class Log {
     private static final ResourceBundle R = ResourceBundle.getBundle(MESSAGES);
 
     static {
-        LOG = Logger.getLogger("net.trajano.oidc.core", MESSAGES);
+        LOG = Logger.getLogger("net.trajano.oidc.core");
     }
 
     public static void fine(final String key,
             final Object... params) {
 
-        LOG.log(Level.FINE, key, params);
+        LOG.log(Level.FINE, MessageFormat.format(R.getString(key), params));
     }
 
     public static Logger getInstance() {

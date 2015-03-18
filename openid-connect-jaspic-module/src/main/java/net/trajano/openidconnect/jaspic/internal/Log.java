@@ -22,13 +22,13 @@ public class Log {
     private static final ResourceBundle R = ResourceBundle.getBundle(MESSAGES);
 
     static {
-        LOG = Logger.getLogger("net.trajano.oidc.jaspic", MESSAGES);
+        LOG = Logger.getLogger("net.trajano.oidc.jaspic");
     }
 
     public static void fine(final String key,
             final Object... params) {
 
-        LOG.log(Level.FINE, key, params);
+        LOG.log(Level.FINE, r(key, params));
     }
 
     public static Logger getInstance() {
@@ -42,19 +42,25 @@ public class Log {
     }
 
     public static String r(final String key,
-            Object... params) {
+            final Object... params) {
 
-        if (params.length == 0)
-
-            return R.getString(key);
-        else
-            return MessageFormat.format(R.getString(key), params);
+        final String format;
+        if (R.containsKey(key)) {
+            format = R.getString(key);
+        } else {
+            format = key;
+        }
+        if (params.length == 0) {
+            return format;
+        } else {
+            return MessageFormat.format(format, params);
+        }
     }
 
     public static void severe(final String key,
             final Object... params) {
 
-        LOG.log(Level.SEVERE, key, params);
+        LOG.log(Level.SEVERE, r(key, params));
     }
 
 }

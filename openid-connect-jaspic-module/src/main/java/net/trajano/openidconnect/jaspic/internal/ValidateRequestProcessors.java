@@ -5,6 +5,7 @@ import java.security.GeneralSecurityException;
 
 import javax.security.auth.message.AuthStatus;
 
+import net.trajano.openidconnect.jaspic.internal.processors.CallbackRequestProcessor;
 import net.trajano.openidconnect.jaspic.internal.processors.IdTokenRequestProcessor;
 import net.trajano.openidconnect.jaspic.internal.processors.LogoutGotoRequestProcessor;
 import net.trajano.openidconnect.jaspic.internal.processors.LogoutRequestProcessor;
@@ -40,7 +41,9 @@ public class ValidateRequestProcessors implements ValidateRequestProcessor {
 
     new PostLogoutCallbackRequestProcessor(),
 
-    new SecurityAssertionPassedRequestProcessor() };
+    new SecurityAssertionPassedRequestProcessor(),
+
+    new CallbackRequestProcessor() };
 
     @Override
     public boolean canValidateRequest(final ValidateContext context) {
@@ -59,6 +62,7 @@ public class ValidateRequestProcessors implements ValidateRequestProcessor {
 
         for (final ValidateRequestProcessor processor : processors) {
             if (processor.canValidateRequest(context)) {
+                System.out.println("Using " + processor + " to validate request");
                 return processor.validateRequest(context);
             }
         }
