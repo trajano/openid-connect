@@ -81,10 +81,6 @@ public class JsonWebTokenBuilder {
             return new JsonWebToken(header, payloads);
         }
 
-        if (ALG_NONE.equals(alg) && jwk != null) {
-            throw new IOException("JWK must not be defined for any alg that is none");
-        }
-
         if (jwk == null) {
             throw new IOException("JWK must be defined for any alg that is not none");
         }

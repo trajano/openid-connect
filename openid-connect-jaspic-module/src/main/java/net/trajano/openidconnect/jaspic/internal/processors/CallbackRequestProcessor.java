@@ -198,7 +198,14 @@ public class CallbackRequestProcessor implements ValidateRequestProcessor {
         final JsonObject claimsSet = new JsonWebTokenProcessor(token.getEncodedIdToken()).jwks(webKeys)
                 .getJsonPayload();
 
-        final String nonce = new String(CipherUtil.decrypt(Encoding.base64urlDecode(context.getCookie(OpenIdConnectAuthModule.NET_TRAJANO_AUTH_NONCE)), context.getSecret()), "US-ASCII");
+        final String nonceCookie = context.getCookie(OpenIdConnectAuthModule.NET_TRAJANO_AUTH_NONCE);
+        final String nonce;
+        if (nonceCookie != null) {
+            nonce = new String(CipherUtil.decrypt(Encoding.base64urlDecode(nonceCookie), context.getSecret()), "US-ASCII");
+        } else {
+            nonce = null;
+        }
+
         validateIdToken(context.getOption(CLIENT_ID), claimsSet, nonce);
 
         context.deleteCookie(OpenIdConnectAuthModule.NET_TRAJANO_AUTH_NONCE);
