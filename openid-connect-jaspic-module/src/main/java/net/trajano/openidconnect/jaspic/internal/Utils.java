@@ -1,9 +1,12 @@
 package net.trajano.openidconnect.jaspic.internal;
 
 import java.security.GeneralSecurityException;
+import java.security.MessageDigest;
 
 import javax.json.JsonObject;
 import javax.servlet.http.HttpServletRequest;
+
+import net.trajano.openidconnect.crypto.Encoding;
 
 /**
  * Utility methods. Normally these would be in a separate JAR file like
@@ -96,8 +99,12 @@ public final class Utils {
             }
         }
         if (idTokenJson.containsKey("at_hash")) {
-            System.out.println("at_hash=" + idTokenJson.getString("at_hash"));
-            System.out.println("access_token=" + accessToken);
+            final MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            final byte[] digestedBytes = digest.digest(accessToken.getBytes());
+            if (!Encoding.base64urlEncode(digestedBytes, 0, 128 / 8)
+                    .equals(idTokenJson.getString("at_hash"))) {
+                throw new GeneralSecurityException("access token hash mismatch");
+            }
         }
     }
 

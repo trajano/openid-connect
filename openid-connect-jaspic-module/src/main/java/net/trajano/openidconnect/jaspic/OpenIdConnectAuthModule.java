@@ -15,9 +15,13 @@ import static net.trajano.openidconnect.jaspic.internal.Utils.validateIdToken;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URI;
+import java.nio.file.attribute.GroupPrincipal;
+import java.nio.file.attribute.UserPrincipal;
 import java.security.GeneralSecurityException;
+import java.security.Principal;
 import java.security.SecureRandom;
 import java.text.MessageFormat;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Random;
 import java.util.logging.Level;
@@ -278,7 +282,7 @@ public class OpenIdConnectAuthModule implements ServerAuthModule, ServerAuthCont
     }
 
     /**
-     * Does nothing.
+     * Cleans off the user principal and group principal from the subject.
      *
      * @param messageInfo
      *            message info
@@ -289,13 +293,22 @@ public class OpenIdConnectAuthModule implements ServerAuthModule, ServerAuthCont
     public void cleanSubject(final MessageInfo messageInfo,
             final Subject subject) throws AuthException {
 
-        // subject.getPrincipals().
-        // Does nothing.
+        final Iterator<Principal> i = subject.getPrincipals()
+                .iterator();
+        while (i.hasNext()) {
+            Principal principal = i.next();
+            if (principal instanceof UserPrincipal) {
+                i.remove();
+            }
+            if (principal instanceof GroupPrincipal) {
+                i.remove();
+            }
+        }
     }
 
     private void deleteAuthCookies(final HttpServletResponse resp) {
 
-        for (final String cookieName : new String[] { NET_TRAJANO_AUTH_ID, NET_TRAJANO_AUTH_AGE  }) {
+        for (final String cookieName : new String[] { NET_TRAJANO_AUTH_ID, NET_TRAJANO_AUTH_AGE }) {
             final Cookie deleteCookie = new Cookie(cookieName, "");
             deleteCookie.setMaxAge(0);
             deleteCookie.setPath(cookieContext);

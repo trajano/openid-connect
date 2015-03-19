@@ -80,10 +80,43 @@ public class Initializer implements ServletContextListener {
         // options.put(OpenIdConnectAuthModule.LOGOUT_GOTO_URI_KEY, rootPath);
         options.put(OpenIdConnectAuthModule.LOGOUT_URI_KEY, contextPath + "/logout");
 
-        // FIXME the appContext may be application server specific
         registrationID = AuthConfigFactory.getFactory()
-                .registerConfigProvider(new OpenIdConnectModuleConfigProvider(options, null), "HttpServlet", sce.getServletContext()
-                        .getVirtualServerName() + " " + contextPath, null);
+                .registerConfigProvider(new OpenIdConnectModuleConfigProvider(options, null), "HttpServlet", getAppContext(sce), null);
 
+    }
+
+    /**
+     * <p>
+     * The application context identifier (that is, the appContext parameter
+     * value) us ed to select the AuthConfigProvider and ServerAuthConfig
+     * objects for a specific application shall be the String value constructed
+     * by concatenating the host name, a blank separator character, and the
+     * decoded context path corresponding to the web module.
+     * </p>
+     * 
+     * <pre>
+     * AppContextID ::= hostname blank context-path
+     * For example: "java-server /petstore"
+     * </pre>
+     * <p>
+     * This profile uses the term host name to refer to the name of a logical
+     * host that processes Servlet requests. Servlet requests may be directed to
+     * a logical host using various physical or virtual host names or addresses,
+     * and a message processing runtime may be composed of multiple logical
+     * hosts . Systems or administrators that register AuthConfigProvider object
+     * s with specific application context identifiers must have an ability to
+     * determine the host name for which they wish to perform the registration.
+     * </p>
+     *
+     * @see <a
+     *      href="http://download.oracle.com/otn-pub/jcp/jaspic-1.0-fr-oth-JSpec/jaspic-1_0-fr-spec.pdf">JASPIC
+     *      Spec section 3.2</a>
+     * @return
+     */
+    private String getAppContext(final ServletContextEvent sce) {
+
+        return sce.getServletContext()
+                .getVirtualServerName() + " " + sce.getServletContext()
+                .getContextPath();
     }
 }
