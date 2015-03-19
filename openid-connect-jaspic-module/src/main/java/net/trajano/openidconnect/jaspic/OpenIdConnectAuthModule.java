@@ -728,7 +728,7 @@ public class OpenIdConnectAuthModule implements ServerAuthModule, ServerAuthCont
                     resp.addCookie(idTokenCookie);
 
                 }
-                validateIdToken(clientId, tokenCookie.getIdToken(), null);
+                validateIdToken(clientId, tokenCookie.getIdToken(), null, tokenCookie.getAccessToken());
                 updateSubjectPrincipal(subject, tokenCookie.getIdToken());
 
                 req.setAttribute(ACCESS_TOKEN_KEY, tokenCookie.getAccessToken());

@@ -77,11 +77,13 @@ public class Initializer implements ServletContextListener {
         options.put("token_uri", contextPath + "/token");
         options.put("userinfo_uri", contextPath + "/userinfo");
         // TODO make this dependent on openid configuration
-//        options.put(OpenIdConnectAuthModule.LOGOUT_GOTO_URI_KEY, rootPath);
+        // options.put(OpenIdConnectAuthModule.LOGOUT_GOTO_URI_KEY, rootPath);
         options.put(OpenIdConnectAuthModule.LOGOUT_URI_KEY, contextPath + "/logout");
 
+        // FIXME the appContext may be application server specific
         registrationID = AuthConfigFactory.getFactory()
-                .registerConfigProvider(new OpenIdConnectModuleConfigProvider(options, null), "HttpServlet", null, null);
+                .registerConfigProvider(new OpenIdConnectModuleConfigProvider(options, null), "HttpServlet", sce.getServletContext()
+                        .getVirtualServerName() + " " + contextPath, null);
 
     }
 }

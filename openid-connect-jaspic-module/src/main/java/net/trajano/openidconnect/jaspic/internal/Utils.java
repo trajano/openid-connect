@@ -76,7 +76,8 @@ public final class Utils {
      */
     public static void validateIdToken(final String clientId,
             final JsonObject idTokenJson,
-            final String nonce) throws GeneralSecurityException {
+            final String nonce,
+            String accessToken) throws GeneralSecurityException {
 
         // TODO handle multiple audiences
         if (!clientId.equals(idTokenJson.getString("aud"))) {
@@ -93,6 +94,10 @@ public final class Utils {
             if (delta >= 0) {
                 throw new GeneralSecurityException("expired " + delta + "ms ago");
             }
+        }
+        if (idTokenJson.containsKey("at_hash")) {
+            System.out.println("at_hash=" + idTokenJson.getString("at_hash"));
+            System.out.println("access_token=" + accessToken);
         }
     }
 

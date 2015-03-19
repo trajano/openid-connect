@@ -81,7 +81,7 @@ public class CallbackRequestProcessor implements ValidateRequestProcessor {
      *            OpenID provider config
      * @return token response
      */
-    protected IdTokenResponse getToken(final String grantKey,
+    private IdTokenResponse getToken(final String grantKey,
             final String grant,
             final GrantType grantType,
             final ValidateContext context) throws IOException {
@@ -206,7 +206,7 @@ public class CallbackRequestProcessor implements ValidateRequestProcessor {
             nonce = null;
         }
 
-        validateIdToken(context.getOption(CLIENT_ID), claimsSet, nonce);
+        validateIdToken(context.getOption(CLIENT_ID), claimsSet, nonce, token.getAccessToken());
 
         context.deleteCookie(OpenIdConnectAuthModule.NET_TRAJANO_AUTH_NONCE);
 

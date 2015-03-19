@@ -4,6 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.URI;
 import java.security.GeneralSecurityException;
+import java.security.MessageDigest;
 import java.util.Set;
 
 import javax.ejb.EJB;
@@ -13,8 +14,10 @@ import javax.ws.rs.core.MediaType;
 
 import net.trajano.openidconnect.auth.AuthenticationRequest;
 import net.trajano.openidconnect.core.Scope;
+import net.trajano.openidconnect.crypto.Encoding;
 import net.trajano.openidconnect.crypto.JsonWebAlgorithm;
 import net.trajano.openidconnect.crypto.JsonWebTokenBuilder;
+import net.trajano.openidconnect.internal.CharSets;
 import net.trajano.openidconnect.provider.spi.Consent;
 import net.trajano.openidconnect.provider.spi.KeyProvider;
 import net.trajano.openidconnect.provider.spi.TokenProvider;
@@ -28,10 +31,26 @@ import net.trajano.openidconnect.token.TokenResponse;
 public class DefaultTokenProvider implements TokenProvider {
 
     @EJB
-    KeyProvider keyProvider;
+    private KeyProvider keyProvider;
 
     @EJB
     private TokenStorage tokenStorage;
+
+    /**
+     * Calculates the hash for the token. Primarily for at_hash value.
+     *
+     * @param token
+     * @return
+     * @throws GeneralSecurityException
+     */
+    private String computeHash(final String token) throws GeneralSecurityException {
+
+        // TODO this should be based on something.
+        final MessageDigest digest = MessageDigest.getInstance("SHA-256");
+        final byte[] digestedBytes = digest.digest(token.getBytes(CharSets.US_ASCII));
+
+        return Encoding.base64urlEncode(digestedBytes, 0, 128 / 8);
+    }
 
     @Override
     public String createNewToken(final String subject,
@@ -46,7 +65,6 @@ public class DefaultTokenProvider implements TokenProvider {
         idToken.setAud(req.getClientId());
         idToken.setAzp(req.getClientId());
         idToken.setIss(issuer.toASCIIString());
-        idToken.resetIssueAndExpiration(tokenStorage.getDefaultExpiration());
 
         return store(idToken, req);
     }
@@ -66,6 +84,12 @@ public class DefaultTokenProvider implements TokenProvider {
             tokenStorage.removeMappingForCode(code);
         }
         return tokenResponse;
+    }
+
+    @Override
+    public IdTokenResponse getByConsent(final Consent consent) {
+
+        return tokenStorage.getByConsent(consent);
     }
 
     @Override
@@ -102,6 +126,8 @@ public class DefaultTokenProvider implements TokenProvider {
             idToken.resetIssueAndExpiration(tokenStorage.getDefaultExpiration());
         }
 
+        idToken.setAtHash(computeHash(newAccessToken));
+
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
         new IdTokenProvider().writeTo(idToken, IdToken.class, IdToken.class, null, MediaType.APPLICATION_JSON_TYPE, null, baos);
         baos.close();
@@ -132,11 +158,16 @@ public class DefaultTokenProvider implements TokenProvider {
             GeneralSecurityException {
 
         final IdTokenResponse response = new IdTokenResponse();
-        response.setAccessToken(keyProvider.nextEncodedToken());
+        final String newAccessToken = keyProvider.nextEncodedToken();
+        response.setAccessToken(newAccessToken);
         response.setRefreshToken(keyProvider.nextEncodedToken());
         response.setExpiresIn(tokenStorage.getDefaultExpiration());
         response.setScopes(req.getScopes());
         response.setTokenType(TokenResponse.BEARER);
+
+        idToken.setAtHash(computeHash(newAccessToken));
+        idToken.resetIssueAndExpiration(tokenStorage.getDefaultExpiration());
+
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
         new IdTokenProvider().writeTo(idToken, IdToken.class, IdToken.class, null, MediaType.APPLICATION_JSON_TYPE, null, baos);
         baos.close();
@@ -149,12 +180,6 @@ public class DefaultTokenProvider implements TokenProvider {
         tokenStorage.store(idToken, response, code);
 
         return code;
-    }
-
-    @Override
-    public IdTokenResponse getByConsent(Consent consent) {
-
-        return tokenStorage.getByConsent(consent);
     }
 
 }

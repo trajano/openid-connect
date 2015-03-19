@@ -47,7 +47,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class IdToken implements Serializable {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -6920223034971350418L;
 
@@ -80,6 +80,9 @@ public class IdToken implements Serializable {
      * case sensitive strings.
      */
     private String[] amr;
+
+    @XmlElement(name = "at_hash")
+    private String atHash;
 
     /**
      * REQUIRED. Audience(s) that this ID Token is intended for. It MUST contain
@@ -178,6 +181,11 @@ public class IdToken implements Serializable {
         return amr;
     }
 
+    public String getAtHash() {
+
+        return atHash;
+    }
+
     public String getAud() {
 
         return aud;
@@ -269,6 +277,11 @@ public class IdToken implements Serializable {
     public void setAmr(final String[] amr) {
 
         this.amr = amr;
+    }
+
+    public void setAtHash(final String atHash) {
+
+        this.atHash = atHash;
     }
 
     public void setAud(final String aud) {

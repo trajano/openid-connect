@@ -59,6 +59,7 @@ public class OpenIdConnectModuleConfigProvider implements AuthConfigProvider {
             final String appContext,
             final CallbackHandler handler) throws AuthException {
 
+        System.out.println("getClient" + appContext);
         return null;
     }
 
@@ -67,6 +68,7 @@ public class OpenIdConnectModuleConfigProvider implements AuthConfigProvider {
             final String appContext,
             final CallbackHandler handler) throws AuthException {
 
+        System.out.println("getServer:" + appContext);
         return new OpenIdConnectModuleConfig(options, layer, appContext, handler);
     }
 
