@@ -4,17 +4,22 @@ import java.io.IOException;
 import java.net.URI;
 import java.security.GeneralSecurityException;
 
-import javax.security.auth.message.AuthException;
 import javax.security.auth.message.AuthStatus;
 import javax.ws.rs.core.UriBuilder;
 
 import net.trajano.openidconnect.core.OpenIdProviderConfiguration;
 import net.trajano.openidconnect.crypto.Encoding;
 import net.trajano.openidconnect.jaspic.OpenIdConnectAuthModule;
+import net.trajano.openidconnect.jaspic.internal.Log;
 import net.trajano.openidconnect.jaspic.internal.ValidateContext;
 import net.trajano.openidconnect.jaspic.internal.ValidateRequestProcessor;
 
 public class LogoutRequestProcessor implements ValidateRequestProcessor {
+
+    /**
+     * Encoded value for the context root state.
+     */
+    private static final String CONTEXT_ROOT_STATE = Encoding.base64UrlEncode("/");
 
     /**
      * This only supports the scenario when logout goto uri is not available.
@@ -47,18 +52,22 @@ public class LogoutRequestProcessor implements ValidateRequestProcessor {
                 .toASCIIString();
         final String referrer = context.getReq()
                 .getHeader("Referer");
-        if (!referrer.startsWith(contextPath)) {
-            throw new AuthException();
-        }
-        final StringBuilder stateBuilder = new StringBuilder(referrer.substring(contextPath.length()));
-        if (context.getReq()
-                .getQueryString() != null) {
-            stateBuilder.append('?');
-            stateBuilder.append(context.getReq()
-                    .getQueryString());
+        final String state;
+        if (referrer.startsWith(contextPath)) {
+
+            final StringBuilder stateBuilder = new StringBuilder(referrer.substring(contextPath.length()));
+            if (context.getReq()
+                    .getQueryString() != null) {
+                stateBuilder.append('?');
+                stateBuilder.append(context.getReq()
+                        .getQueryString());
+            }
+            state = Encoding.base64UrlEncode(stateBuilder.toString());
+        } else {
+            Log.fine("Referrer " + referrer + "does not start with context path " + contextPath + " using root context");
+            state = CONTEXT_ROOT_STATE;
         }
 
-        final String state = Encoding.base64UrlEncode(stateBuilder.toString());
         final URI redirectUri = context.getUri("logout_redirection_endpoint");
 
         if (oidProviderConfig.getEndSessionEndpoint() != null) {

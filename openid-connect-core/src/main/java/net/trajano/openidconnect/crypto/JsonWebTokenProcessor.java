@@ -84,6 +84,9 @@ public class JsonWebTokenProcessor {
             if (jsonWebToken.getNumberOfPayloads() != 2) {
                 throw new GeneralSecurityException("invalid number of payloads in JWT for JWS");
             }
+            if (jwk == null) {
+                throw new GeneralSecurityException("No JWK available to validate signature");
+            }
             payload = crypto.getJWSPayload(jsonWebToken, jwk, alg);
         } else if (enc == null && alg != null && !signatureCheck) {
             if (jsonWebToken.getNumberOfPayloads() != 2) {

@@ -35,6 +35,8 @@ public class ValidateContext {
 
     private final String cookieContext;
 
+    private CallbackHandler handler;
+
     private final boolean mandatory;
 
     private OpenIdProviderConfiguration oidConfig;
@@ -45,11 +47,11 @@ public class ValidateContext {
 
     private final HttpServletResponse resp;
 
+    private SecretKey secret;
+
     private final TokenCookie tokenCookie;
 
-    private CallbackHandler handler;
-
-    public ValidateContext(final Client client, final Subject clientSubject, final boolean mandatory, final Map<String, String> options, final HttpServletRequest req, final HttpServletResponse resp, final TokenCookie tokenCookie, final String cookieContext, CallbackHandler handler) {
+    public ValidateContext(final Client client, final Subject clientSubject, final boolean mandatory, final Map<String, String> options, final HttpServletRequest req, final HttpServletResponse resp, final TokenCookie tokenCookie, final String cookieContext, final CallbackHandler handler) {
 
         this.client = client;
         this.clientSubject = clientSubject;
@@ -82,6 +84,14 @@ public class ValidateContext {
 
     }
 
+    public void deleteCookie(final String cookieName) {
+
+        final Cookie deleteNonceCookie = new Cookie(cookieName, "");
+        deleteNonceCookie.setMaxAge(0);
+        deleteNonceCookie.setPath(cookieContext);
+        resp.addCookie(deleteNonceCookie);
+    }
+
     public Client getClient() {
 
         return client;
@@ -92,6 +102,26 @@ public class ValidateContext {
         return clientSubject;
     }
 
+    public String getCookie(final String cookieName) {
+
+        final Cookie[] cookies = req.getCookies();
+        if (cookies == null) {
+            return null;
+        }
+
+        for (final Cookie cookie : cookies) {
+            if (cookieName.equals(cookie.getName())) {
+                return cookie.getValue();
+            }
+        }
+        return null;
+    }
+
+    public CallbackHandler getHandler() {
+
+        return handler;
+    }
+
     /**
      * Gets the id_token from the cookie. It will perform the JWT processing
      * needed.
@@ -100,20 +130,10 @@ public class ValidateContext {
      * @throws IOException
      */
     public JsonObject getIdToken() throws IOException,
-            GeneralSecurityException {
+    GeneralSecurityException {
 
         return new JsonWebTokenProcessor(tokenCookie.getIdTokenJwt()).signatureCheck(false)
                 .getJsonPayload();
-    }
-
-    private SecretKey secret;
-
-    public synchronized SecretKey getSecret() throws GeneralSecurityException {
-
-        if (secret == null) {
-            secret = CipherUtil.buildSecretKey(options.get(OpenIdConnectKey.CLIENT_ID), options.get(OpenIdConnectKey.CLIENT_SECRET));
-        }
-        return secret;
     }
 
     public synchronized OpenIdProviderConfiguration getOpenIDProviderConfig() {
@@ -154,6 +174,14 @@ public class ValidateContext {
     public HttpServletResponse getResp() {
 
         return resp;
+    }
+
+    public synchronized SecretKey getSecret() throws GeneralSecurityException {
+
+        if (secret == null) {
+            secret = CipherUtil.buildSecretKey(options.get(OpenIdConnectKey.CLIENT_ID), options.get(OpenIdConnectKey.CLIENT_SECRET));
+        }
+        return secret;
     }
 
     public TokenCookie getTokenCookie() {
@@ -215,58 +243,28 @@ public class ValidateContext {
         return req.isSecure();
     }
 
-    public void setContentType(final String contentType) {
-
-        resp.setContentType(contentType);
-
-    }
-
-    public WebTarget target(final URI uri) {
-
-        return client.target(uri);
-    }
-
-    public void deleteCookie(String cookieName) {
-
-        final Cookie deleteNonceCookie = new Cookie(cookieName, "");
-        deleteNonceCookie.setMaxAge(0);
-        deleteNonceCookie.setPath(cookieContext);
-        resp.addCookie(deleteNonceCookie);
-    }
-
-    public String getCookie(String cookieName) {
-
-        final Cookie[] cookies = req.getCookies();
-        if (cookies == null) {
-            return null;
-        }
-
-        for (final Cookie cookie : cookies) {
-            if (cookieName.equals(cookie.getName())) {
-                return cookie.getValue();
-            }
-        }
-        return null;
-    }
-
     /**
-     * Saves the ID Token cookie.
-     * 
-     * @param tokenCookie
-     * @throws GeneralSecurityException
+     * Redirects to the last state. However, if state is equivalent to the
+     * logout URI it will redirect to the root.
+     *
+     * @throws IOException
      */
-    public void saveIdTokenCookie(TokenCookie tokenCookie) throws GeneralSecurityException {
+    public void redirectToState() throws IOException {
 
-        final Cookie idTokenCookie = new Cookie(OpenIdConnectAuthModule.NET_TRAJANO_AUTH_ID, tokenCookie.toCookieValue(getSecret()));
-        idTokenCookie.setMaxAge(-1);
-        idTokenCookie.setSecure(true);
-        idTokenCookie.setHttpOnly(true);
-        idTokenCookie.setPath(cookieContext);
-        resp.addCookie(idTokenCookie);
+        final String stateEncoded = req.getParameter(OpenIdConnectKey.STATE);
+        final String contextRedirectUri = Encoding.base64urlDecodeToString(stateEncoded);
+        final String targetUri = req.getContextPath() + contextRedirectUri;
+        if (targetUri.equals(options.get(OpenIdConnectAuthModule.LOGOUT_URI_KEY))) {
+            Log.fine("state was the Logout URI, redirecting to context root");
+            resp.sendRedirect(resp.encodeRedirectURL(req.getContextPath()));
+        } else {
+            resp.sendRedirect(resp.encodeRedirectURL(targetUri));
+        }
+
     }
 
     public void saveAgeCookie() throws GeneralSecurityException,
-            IOException {
+    IOException {
 
         final Cookie ageCookie = new Cookie(OpenIdConnectAuthModule.NET_TRAJANO_AUTH_AGE, Encoding.base64urlEncode(CipherUtil.encrypt(req.getRemoteAddr()
                 .getBytes(CharSets.US_ASCII), secret)));
@@ -283,16 +281,30 @@ public class ValidateContext {
 
     }
 
-    public void redirectToState() throws IOException {
+    /**
+     * Saves the ID Token cookie.
+     *
+     * @param tokenCookie
+     * @throws GeneralSecurityException
+     */
+    public void saveIdTokenCookie(final TokenCookie tokenCookie) throws GeneralSecurityException {
 
-        final String stateEncoded = req.getParameter(OpenIdConnectKey.STATE);
-        final String redirectUri = new String(Encoding.base64urlDecode(stateEncoded));
-        resp.sendRedirect(resp.encodeRedirectURL(req.getContextPath() + redirectUri));
+        final Cookie idTokenCookie = new Cookie(OpenIdConnectAuthModule.NET_TRAJANO_AUTH_ID, tokenCookie.toCookieValue(getSecret()));
+        idTokenCookie.setMaxAge(-1);
+        idTokenCookie.setSecure(true);
+        idTokenCookie.setHttpOnly(true);
+        idTokenCookie.setPath(cookieContext);
+        resp.addCookie(idTokenCookie);
+    }
+
+    public void setContentType(final String contentType) {
+
+        resp.setContentType(contentType);
 
     }
 
-    public CallbackHandler getHandler() {
+    public WebTarget target(final URI uri) {
 
-        return handler;
+        return client.target(uri);
     }
 }

@@ -54,9 +54,9 @@ public class ConsentServlet extends HttpServlet {
             HttpServletResponse resp) throws ServletException,
             IOException {
 
-        String subject = (String) req.getSession()
+        String subject = (String) req.getSession(false)
                 .getAttribute("sub");
-
+        
         redirector.doConsentCallback(req, resp, subject, true);
     }
 
