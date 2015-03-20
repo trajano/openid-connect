@@ -7,6 +7,7 @@
         <version>1.0.0-SNAPSHOT</version>
     </parent>
     <artifactId>openid-connect-jaspic-module</artifactId>
+    <packaging>bundle</packaging>
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
@@ -25,5 +26,12 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-    <build/>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
 </project>
