@@ -23,15 +23,103 @@ import net.trajano.openidconnect.internal.Log;
  * </p>
  * See Appendix A & B of
  * http://self-issued.info/docs/draft-ietf-jose-json-web-algorithms-00.html.
- * 
+ *
  * @author Archimedes
  */
 public class JsonWebAlgorithm {
+
+    public static final String A128CBC = "A128CBC";
+
+    /**
+     * Advanced Encryption Standard (AES) using 256 bit keys in Cipher Block
+     * Chaining mode.
+     */
+    public static final String A256CBC = "A256CBC";
+
+    public static final String A256GCM = "A256GCM";
 
     /**
      * Instance.
      */
     private static JsonWebAlgorithm INSTANCE = new JsonWebAlgorithm();
+
+    public static final String RS256 = "RS256";
+
+    /**
+     * RSA using Optimal Asymmetric Encryption Padding (OAEP).
+     */
+    public static final String RSA_OAEP = "RSA-OAEP";
+
+    public static final String RSA1_5 = "RSA1_5";
+
+    public static String[] getEncAlgorithms() {
+
+        return INSTANCE.encs.toArray(new String[0]);
+    }
+
+    public static String getFirstMatchingEncAlgorithm(final List<String> encryptionEncValuesSupported) {
+
+        for (final String enc : INSTANCE.encs) {
+            if (encryptionEncValuesSupported.contains(enc)) {
+                return enc;
+            }
+        }
+        return null;
+    }
+
+    public static String getFirstMatchingKexAlgorithm(final List<String> encryptionAlgValuesSupported) {
+
+        for (final String kex : INSTANCE.kexs) {
+            if (encryptionAlgValuesSupported.contains(kex)) {
+                return kex;
+            }
+        }
+        return null;
+    }
+
+    public static int getIvLen(final String enc) {
+
+        return INSTANCE.jwaIvLenMap.get(enc);
+    }
+
+    public static String[] getKexAlgorithms() {
+
+        return INSTANCE.kexs.toArray(new String[0]);
+    }
+
+    public static int getKeySize(final String enc) throws GeneralSecurityException {
+
+        if (INSTANCE.jwaKeySizeMap.containsKey(enc)) {
+            return INSTANCE.jwaKeySizeMap.get(enc);
+        } else {
+            throw new GeneralSecurityException("enc algorithm " + enc + " does not have a defined keysize or is not supported.");
+        }
+    }
+
+    public static String getMacAlg(final String enc) {
+
+        return INSTANCE.jwaJcaMacMap.get(enc);
+    }
+
+    public static String[] getSigAlgorithms() {
+
+        return INSTANCE.sigs.toArray(new String[0]);
+    }
+
+    public static boolean isGcm(final String enc) {
+
+        return "A256GCM".equals(enc) || "A128GCM".equals(enc);
+    }
+
+    public static boolean isMac(final String alg) {
+
+        return INSTANCE.macs.contains(alg);
+    }
+
+    public static String toJca(final String jwa) {
+
+        return INSTANCE.jwaJcaMap.get(jwa);
+    }
 
     /**
      * Encryption algorithms list. The data is in order of preference with the
@@ -40,31 +128,9 @@ public class JsonWebAlgorithm {
     private final List<String> encs = new LinkedList<>();
 
     /**
-     * Key Exchange algorithms list. The data is in order of preference with the
-     * strongest being the first entry.
-     */
-    private final List<String> kexs = new LinkedList<>();
-
-    /**
-     * Signature algorithms list. The data is in order of preference with the
-     * strongest being the first entry.
-     */
-    private final List<String> sigs = new LinkedList<>();
-
-    /**
-     * A map of JWA names to JCA names.
-     */
-    private final Map<String, String> jwaJcaMap = new HashMap<>();
-
-    /**
      * A map of EC JWA names to EC Curves.
      */
     private final Map<String, ECParameterSpec> jwaEcMap = new HashMap<>();
-
-    /**
-     * A map of AES JWA names to key sizes.
-     */
-    private final Map<String, Integer> jwaKeySizeMap = new HashMap<>();
 
     /**
      * A map of AES JWA names to initialVector sizes.
@@ -77,142 +143,31 @@ public class JsonWebAlgorithm {
     private final Map<String, String> jwaJcaMacMap = new HashMap<>();
 
     /**
+     * A map of JWA names to JCA names.
+     */
+    private final Map<String, String> jwaJcaMap = new HashMap<>();
+
+    /**
+     * A map of AES JWA names to key sizes.
+     */
+    private final Map<String, Integer> jwaKeySizeMap = new HashMap<>();
+
+    /**
+     * Key Exchange algorithms list. The data is in order of preference with the
+     * strongest being the first entry.
+     */
+    private final List<String> kexs = new LinkedList<>();
+
+    /**
      * Set of mac algorithms registered.
      */
     private final Set<String> macs = new HashSet<>();
 
     /**
-     * RSA using Optimal Asymmetric Encryption Padding (OAEP).
+     * Signature algorithms list. The data is in order of preference with the
+     * strongest being the first entry.
      */
-    public static final String RSA_OAEP = "RSA-OAEP";
-
-    /**
-     * Advanced Encryption Standard (AES) using 256 bit keys in Cipher Block
-     * Chaining mode.
-     */
-    public static final String A256CBC = "A256CBC";
-
-    public static final String A256GCM = "A256GCM";
-
-    public static final String RSA1_5 = "RSA1_5";
-
-    public static final String RS256 = "RS256";
-
-    public static final String A128CBC = "A128CBC";
-
-    /**
-     * Adds to the jwaToJca map if the algorithm is available for the bit length
-     * specified
-     * 
-     * @param jwa
-     * @param jca
-     * @param crv
-     *            curve name
-     */
-    private void putEcIfAvailable(String jwa,
-            String jca,
-            NamedEllipticCurve crv) {
-
-        try {
-            Signature.getInstance(jca);
-            jwaJcaMap.put(jwa, jca);
-            jwaEcMap.put(jwa, crv.toECParameterSpec());
-            sigs.add(jwa);
-        } catch (GeneralSecurityException e) {
-            Log.fine("algNotSupportedForSig", jwa);
-        }
-    }
-
-    /**
-     * Adds to the jwaToJca map if the algorithm is available for the bit length
-     * specified
-     * 
-     * @param jwa
-     * @param jca
-     */
-    private void putRsaIfAvailable(String jwa,
-            String jca) {
-
-        try {
-            Signature.getInstance(jca);
-            jwaJcaMap.put(jwa, jca);
-            sigs.add(jwa);
-        } catch (GeneralSecurityException e) {
-            Log.fine("algNotSupportedForSig", jwa);
-        }
-    }
-
-    /**
-     * Adds to the jwaToJca map if the algorithm is available for the bit length
-     * specified
-     * 
-     * @param jwa
-     * @param jca
-     */
-    private void putMacIfAvailable(String jwa,
-            String jca) {
-
-        try {
-            Mac.getInstance(jca);
-            jwaJcaMap.put(jwa, jca);
-            sigs.add(jwa);
-            macs.add(jwa);
-        } catch (GeneralSecurityException e) {
-            Log.fine("algNotSupportedForSig", jwa);
-        }
-    }
-
-    /**
-     * Adds to the jwaToJca map if the algorithm is available for the bit length
-     * specified
-     * 
-     * @param jwa
-     * @param jca
-     */
-    private void putKexIfAvailable(String jwa,
-            String jca) {
-
-        try {
-            Cipher.getInstance(jca);
-            jwaJcaMap.put(jwa, jca);
-            kexs.add(jwa);
-        } catch (GeneralSecurityException e) {
-            Log.fine("algNotSupportedForKex", jwa);
-        }
-    }
-
-    /**
-     * Adds to the jwaToJca map if the algorithm is available for the bit length
-     * specified
-     * 
-     * @param jwa
-     * @param jca
-     * @param jcaMac
-     *            JCA Mac algorithm, may be null.
-     */
-    private void putEncIfAvailable(String jwa,
-            String jca,
-            String jcaMac,
-            int keySize,
-            int ivLen) {
-
-        try {
-            KeyGenerator gen = KeyGenerator.getInstance("AES");
-            gen.init(keySize);
-            Cipher.getInstance(jca)
-                    .init(Cipher.ENCRYPT_MODE, gen.generateKey());
-            if (jcaMac != null) {
-                Mac.getInstance(jcaMac);
-                jwaJcaMacMap.put(jwa, jcaMac);
-            }
-            jwaJcaMap.put(jwa, jca);
-            jwaKeySizeMap.put(jwa, keySize);
-            jwaIvLenMap.put(jwa, ivLen);
-            encs.add(jwa);
-        } catch (GeneralSecurityException e) {
-            Log.fine("algNotSupportedForEnc", jwa);
-        }
-    }
+    private final List<String> sigs = new LinkedList<>();
 
     private JsonWebAlgorithm() {
 
@@ -320,53 +275,118 @@ public class JsonWebAlgorithm {
 
     }
 
-    public static String toJca(String jwa) {
+    /**
+     * Adds to the jwaToJca map if the algorithm is available for the bit length
+     * specified
+     *
+     * @param jwa
+     * @param jca
+     * @param crv
+     *            curve name
+     */
+    private void putEcIfAvailable(final String jwa,
+            final String jca,
+            final NamedEllipticCurve crv) {
 
-        return INSTANCE.jwaJcaMap.get(jwa);
-    }
-
-    public static int getIvLen(String enc) {
-
-        return INSTANCE.jwaIvLenMap.get(enc);
-    }
-
-    public static String getMacAlg(String enc) {
-
-        return INSTANCE.jwaJcaMacMap.get(enc);
-    }
-
-    public static int getKeySize(String enc) throws GeneralSecurityException {
-
-        if (INSTANCE.jwaKeySizeMap.containsKey(enc)) {
-            return INSTANCE.jwaKeySizeMap.get(enc);
-        } else {
-            throw new GeneralSecurityException("enc algorithm " + enc + " does not have a defined keysize or is not supported.");
+        try {
+            Signature.getInstance(jca);
+            jwaJcaMap.put(jwa, jca);
+            jwaEcMap.put(jwa, crv.toECParameterSpec());
+            sigs.add(jwa);
+        } catch (final GeneralSecurityException e) {
+            Log.fine("algNotSupportedForSig", jwa);
         }
     }
 
-    public static boolean isGcm(String enc) {
+    /**
+     * Adds to the jwaToJca map if the algorithm is available for the bit length
+     * specified
+     *
+     * @param jwa
+     * @param jca
+     * @param jcaMac
+     *            JCA Mac algorithm, may be null.
+     */
+    private void putEncIfAvailable(final String jwa,
+            final String jca,
+            final String jcaMac,
+            final int keySize,
+            final int ivLen) {
 
-        return "A256GCM".equals(enc) || "A128GCM".equals(enc);
+        try {
+            final KeyGenerator gen = KeyGenerator.getInstance("AES");
+            gen.init(keySize);
+            Cipher.getInstance(jca)
+            .init(Cipher.ENCRYPT_MODE, gen.generateKey());
+            if (jcaMac != null) {
+                Mac.getInstance(jcaMac);
+                jwaJcaMacMap.put(jwa, jcaMac);
+            }
+            jwaJcaMap.put(jwa, jca);
+            jwaKeySizeMap.put(jwa, keySize);
+            jwaIvLenMap.put(jwa, ivLen);
+            encs.add(jwa);
+        } catch (final GeneralSecurityException e) {
+            Log.fine("algNotSupportedForEnc", jwa);
+        }
     }
 
-    public static String[] getEncAlgorithms() {
+    /**
+     * Adds to the jwaToJca map if the algorithm is available for the bit length
+     * specified
+     *
+     * @param jwa
+     * @param jca
+     */
+    private void putKexIfAvailable(final String jwa,
+            final String jca) {
 
-        return INSTANCE.encs.toArray(new String[0]);
+        try {
+            Cipher.getInstance(jca);
+            jwaJcaMap.put(jwa, jca);
+            kexs.add(jwa);
+        } catch (final GeneralSecurityException e) {
+            Log.fine("algNotSupportedForKex", jwa);
+        }
     }
 
-    public static String[] getSigAlgorithms() {
+    /**
+     * Adds to the jwaToJca map if the algorithm is available for the bit length
+     * specified
+     *
+     * @param jwa
+     * @param jca
+     */
+    private void putMacIfAvailable(final String jwa,
+            final String jca) {
 
-        return INSTANCE.sigs.toArray(new String[0]);
+        try {
+            Mac.getInstance(jca);
+            jwaJcaMap.put(jwa, jca);
+            sigs.add(jwa);
+            macs.add(jwa);
+        } catch (final GeneralSecurityException e) {
+            Log.fine("algNotSupportedForSig", jwa);
+        }
     }
 
-    public static String[] getKexAlgorithms() {
+    /**
+     * Adds to the jwaToJca map if the algorithm is available for the bit length
+     * specified
+     *
+     * @param jwa
+     * @param jca
+     */
+    private void putRsaIfAvailable(final String jwa,
+            final String jca) {
 
-        return INSTANCE.kexs.toArray(new String[0]);
-    }
-
-    public static boolean isMac(String alg) {
-
-        return INSTANCE.macs.contains(alg);
+        try {
+            Signature.getInstance(jca);
+            jwaJcaMap.put(jwa, jca);
+            sigs.add(jwa);
+        } catch (final GeneralSecurityException e) {
+            Log.fine("algNotSupportedForSig", jwa);
+        }
     }
 
 }

@@ -63,6 +63,7 @@ import net.trajano.openidconnect.auth.ResponseType;
 import net.trajano.openidconnect.core.OpenIdConnectKey;
 import net.trajano.openidconnect.core.OpenIdProviderConfiguration;
 import net.trajano.openidconnect.crypto.Encoding;
+import net.trajano.openidconnect.crypto.JsonWebAlgorithm;
 import net.trajano.openidconnect.crypto.JsonWebTokenBuilder;
 import net.trajano.openidconnect.crypto.JsonWebTokenProcessor;
 import net.trajano.openidconnect.jaspic.internal.CipherUtil;
@@ -297,7 +298,7 @@ public class OpenIdConnectAuthModule implements ServerAuthModule, ServerAuthCont
         final Iterator<Principal> i = subject.getPrincipals()
                 .iterator();
         while (i.hasNext()) {
-            Principal principal = i.next();
+            final Principal principal = i.next();
             if (principal instanceof UserPrincipal) {
                 i.remove();
             }
@@ -829,11 +830,18 @@ public class OpenIdConnectAuthModule implements ServerAuthModule, ServerAuthCont
             final UriBuilder b = UriBuilder.fromUri(oidProviderConfig.getAuthorizationEndpoint());
             if (oidProviderConfig.isRequestParameterSupported()) {
 
-                // TODO compare with own list.
-                final JsonWebTokenBuilder jwtBuilder = new JsonWebTokenBuilder().alg(oidProviderConfig.getRequestObjectEncryptionAlgValuesSupported()
-                        .get(0))
-                        .enc(oidProviderConfig.getRequestObjectEncryptionEncValuesSupported()
-                                .get(0))
+                final String kex = JsonWebAlgorithm.getFirstMatchingKexAlgorithm(oidProviderConfig.getRequestObjectEncryptionAlgValuesSupported());
+                final String enc = JsonWebAlgorithm.getFirstMatchingEncAlgorithm(oidProviderConfig.getRequestObjectEncryptionEncValuesSupported());
+
+                if (kex == null) {
+                    throw new AuthException("no matching kex with provider");
+                }
+                if (enc == null) {
+                    throw new AuthException("no matching env with provider");
+                }
+
+                final JsonWebTokenBuilder jwtBuilder = new JsonWebTokenBuilder().alg(kex)
+                        .enc(enc)
                         .compress(true)
                         .jwk(getWebKeys(oidProviderConfig))
                         .payload(ab.toJsonObject());
