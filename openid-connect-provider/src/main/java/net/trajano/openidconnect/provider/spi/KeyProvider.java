@@ -33,9 +33,10 @@ public interface KeyProvider {
     String getSecretKeyId();
 
     /**
-     * Constructs a random token.
+     * Constructs a random token. The tokens are not required to be
+     * cryptograhically secure.
      * 
-     * @return
+     * @return random token string.
      */
     String nextEncodedToken();
 

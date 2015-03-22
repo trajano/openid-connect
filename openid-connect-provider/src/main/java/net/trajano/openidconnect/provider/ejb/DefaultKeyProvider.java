@@ -3,10 +3,10 @@ package net.trajano.openidconnect.provider.ejb;
 import java.security.GeneralSecurityException;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
-import java.security.SecureRandom;
 import java.security.interfaces.RSAPrivateCrtKey;
 import java.security.interfaces.RSAPublicKey;
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 import javax.annotation.PostConstruct;
 import javax.crypto.KeyGenerator;
@@ -36,6 +36,10 @@ public class DefaultKeyProvider implements KeyProvider {
 
     private static final int NUMBER_OF_SIGNING_KEYS = 3;
 
+    /**
+     * This random number generator is not required to be cryptographically
+     * secure.
+     */
     private Random random;
 
     private SecretKey secretKey;
@@ -44,7 +48,7 @@ public class DefaultKeyProvider implements KeyProvider {
     public void generateKeys() {
 
         try {
-            random = new SecureRandom();
+            random = ThreadLocalRandom.current();
 
             jwks = new JsonWebKeySet();
             privateJwks = new JsonWebKeySet();

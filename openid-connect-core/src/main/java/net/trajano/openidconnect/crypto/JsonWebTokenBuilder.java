@@ -5,7 +5,8 @@ import static net.trajano.openidconnect.crypto.JsonWebToken.ALG_NONE;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
-import java.security.SecureRandom;
+import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 import javax.json.JsonObject;
 import javax.ws.rs.WebApplicationException;
@@ -44,7 +45,11 @@ public class JsonWebTokenBuilder {
      */
     private JsonWebKey jwk;
 
-    private final SecureRandom random = new SecureRandom();
+    /**
+     * No need for a cryptographically secure random for choosing a random JWK
+     * from a JWKS.
+     */
+    private final Random random = ThreadLocalRandom.current();
 
     /**
      * The actual payload.

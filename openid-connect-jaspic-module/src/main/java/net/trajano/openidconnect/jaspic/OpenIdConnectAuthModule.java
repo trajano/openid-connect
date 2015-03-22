@@ -217,7 +217,8 @@ public class OpenIdConnectAuthModule implements ServerAuthModule, ServerAuthCont
     private Map<String, String> moduleOptions;
 
     /**
-     * Randomizer.
+     * Randomizer used for nonce generation. It does not need to be
+     * cryptographically secure.
      */
     private final Random random = new SecureRandom();
 

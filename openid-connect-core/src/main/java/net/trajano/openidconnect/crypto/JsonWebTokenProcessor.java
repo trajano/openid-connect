@@ -126,6 +126,19 @@ public class JsonWebTokenProcessor {
     }
 
     /**
+     * Checks if the JWK is already set for the processor. The value is not set
+     * if the {@link #jwk(JsonWebKey)} is not called or the
+     * {@link #jwks(JsonWebKeySet)} is not called or does not contain the key
+     * specified by the {@link #kid}.
+     * 
+     * @return jwk is set.
+     */
+    public boolean isJwkAvailable() {
+
+        return jwk != null;
+    }
+
+    /**
      * Enable or disable signature checks. Signature checks are enabled by
      * default. Signature checks can be disabled for scenarios where the
      * signature had already been validated previously in the process and the
