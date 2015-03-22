@@ -11,6 +11,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import net.trajano.openidconnect.core.ErrorCode;
+import net.trajano.openidconnect.core.OpenIdConnectException;
 import net.trajano.openidconnect.crypto.JsonWebKeySet;
 import net.trajano.openidconnect.crypto.JsonWebTokenProcessor;
 import net.trajano.openidconnect.rs.IdTokenProvider;
@@ -64,6 +66,7 @@ public class IdTokenResponse extends TokenResponse {
      * 
      */
     private static final long serialVersionUID = -6175007590579157079L;
+
     /**
      * Encoded ID Token value associated with the authenticated session.
      */
@@ -88,6 +91,9 @@ public class IdTokenResponse extends TokenResponse {
 
         try {
             final JsonWebTokenProcessor p = new JsonWebTokenProcessor(encodedIdToken).jwks(jwks);
+            if (!p.isJwkAvailable()) {
+                throw new OpenIdConnectException(ErrorCode.invalid_request, "no jwk available for kid");
+            }
             return new IdTokenProvider().readFrom(IdToken.class, null, null, MediaType.APPLICATION_JSON_TYPE, null, new ByteArrayInputStream(p.getPayload()));
         } catch (IOException | GeneralSecurityException e) {
             throw new WebApplicationException(e);

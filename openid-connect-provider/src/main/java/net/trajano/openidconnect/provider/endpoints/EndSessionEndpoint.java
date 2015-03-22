@@ -75,7 +75,7 @@ public class EndSessionEndpoint {
     @POST
     @Path("confirm")
     public Response confirm(@NotNull @FormParam("nonce") final String nonce,
-            @NotNull @FormParam("logout") boolean logout,
+            @NotNull @FormParam("logout") final boolean logout,
             @Context final HttpServletRequest req) throws IOException,
             GeneralSecurityException {
 
@@ -126,8 +126,13 @@ public class EndSessionEndpoint {
     }
 
     /**
+     * <p>
      * This endpoint will store the needed logout information in the HTTP
      * session when available.
+     * </p>
+     * <p>
+     * The <code>id_token_hint</code> is required by this implementation.
+     * </p>
      *
      * @param postLogoutRedirectUri
      *            OPTIONAL. URL to which the RP is requesting that the
@@ -162,8 +167,11 @@ public class EndSessionEndpoint {
             @Context final HttpServletRequest req) throws IOException,
             GeneralSecurityException {
 
-        final byte[] idTokenBytes = new JsonWebTokenProcessor(idTokenHint).jwks(keyProvider.getPrivateJwks())
-                .getPayload();
+        final JsonWebTokenProcessor idTokenProcessor = new JsonWebTokenProcessor(idTokenHint).jwks(keyProvider.getPrivateJwks());
+        if (!idTokenProcessor.isJwkAvailable()) {
+            throw new OpenIdConnectException(ErrorCode.invalid_request, "no jwk available for kid");
+        }
+        final byte[] idTokenBytes = idTokenProcessor.getPayload();
         final MessageBodyReader<IdToken> idTokenReader = providers.getMessageBodyReader(IdToken.class, IdToken.class, new Annotation[0], MediaType.APPLICATION_JSON_TYPE);
         final IdToken idToken = idTokenReader.readFrom(IdToken.class, IdToken.class, new Annotation[0], MediaType.APPLICATION_JSON_TYPE, null, new ByteArrayInputStream(idTokenBytes));
 
