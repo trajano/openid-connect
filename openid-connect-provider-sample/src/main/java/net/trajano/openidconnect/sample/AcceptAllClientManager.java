@@ -46,6 +46,8 @@ public class AcceptAllClientManager implements ClientManager, Authenticator, Use
 
         final Userinfo userinfo = new Userinfo();
         userinfo.setSub(idToken.getSub());
+        userinfo.setEmail(Encoding.base64urlDecodeToString(idToken.getSub()));
+        userinfo.setEmailVerified(true);
         userinfo.setUpdatedAt(new Date());
         return userinfo;
     }
