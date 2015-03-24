@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import net.trajano.openidconnect.provider.spi.AuthenticationResponseProvider;
 import net.trajano.openidconnect.provider.spi.Authenticator;
+import net.trajano.openidconnect.crypto.Encoding;
 
 // TODO get rid of this use the same strat as /logout
 @WebServlet(urlPatterns = "/doLogin")
@@ -31,7 +32,7 @@ public class LoginServlet extends HttpServlet {
             HttpServletResponse resp) throws ServletException,
             IOException {
 
-        String subject = req.getParameter("username");
+        String subject = Encoding.base64urlEncode(req.getParameter("username"));
         req.getSession()
                 .setAttribute("sub", subject);
 
