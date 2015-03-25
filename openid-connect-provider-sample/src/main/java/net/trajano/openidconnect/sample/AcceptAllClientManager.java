@@ -10,6 +10,7 @@ import javax.ws.rs.core.UriBuilder;
 
 import net.trajano.openidconnect.auth.AuthenticationRequest;
 import net.trajano.openidconnect.core.OpenIdConnectKey;
+import net.trajano.openidconnect.crypto.Encoding;
 import net.trajano.openidconnect.provider.spi.Authenticator;
 import net.trajano.openidconnect.provider.spi.ClientManager;
 import net.trajano.openidconnect.provider.spi.TokenProvider;
@@ -46,6 +47,8 @@ public class AcceptAllClientManager implements ClientManager, Authenticator, Use
 
         final Userinfo userinfo = new Userinfo();
         userinfo.setSub(idToken.getSub());
+        userinfo.setEmail(Encoding.base64urlDecodeToString(idToken.getSub()));
+        userinfo.setEmailVerified(true);
         userinfo.setUpdatedAt(new Date());
         return userinfo;
     }

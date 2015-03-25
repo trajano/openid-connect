@@ -457,7 +457,7 @@ public class OpenIdConnectAuthModule implements ServerAuthModule, ServerAuthCont
             stateBuilder.append('?');
             stateBuilder.append(req.getQueryString());
         }
-        return Encoding.base64UrlEncode(stateBuilder.toString());
+        return Encoding.base64urlEncode(stateBuilder.toString());
     }
 
     /**

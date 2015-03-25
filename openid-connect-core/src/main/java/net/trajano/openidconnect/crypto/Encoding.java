@@ -254,7 +254,7 @@ public final class Encoding {
      *            string to encode
      * @return Base64 string
      */
-    public static String base64UrlEncode(final String s) {
+    public static String base64urlEncode(final String s) {
 
         return base64urlEncode(s.getBytes(UTF8));
     }
