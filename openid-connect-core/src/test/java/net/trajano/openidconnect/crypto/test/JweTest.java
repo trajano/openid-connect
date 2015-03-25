@@ -180,7 +180,7 @@ public class JweTest {
     @Test
     public void testKeyEncodings() {
 
-        assertEquals("eyJhbGciOiJSU0EtT0FFUCIsImVuYyI6IkEyNTZHQ00ifQ", Encoding.base64UrlEncode(joseHeader));
+        assertEquals("eyJhbGciOiJSU0EtT0FFUCIsImVuYyI6IkEyNTZHQ00ifQ", Encoding.base64urlEncode(joseHeader));
         assertEquals("48V1_ALb6US04U3b", Encoding.base64urlEncode(iv));
 
     }

@@ -10,6 +10,7 @@ import javax.ws.rs.core.UriBuilder;
 
 import net.trajano.openidconnect.auth.AuthenticationRequest;
 import net.trajano.openidconnect.core.OpenIdConnectKey;
+import net.trajano.openidconnect.crypto.Encoding;
 import net.trajano.openidconnect.provider.spi.Authenticator;
 import net.trajano.openidconnect.provider.spi.ClientManager;
 import net.trajano.openidconnect.provider.spi.TokenProvider;

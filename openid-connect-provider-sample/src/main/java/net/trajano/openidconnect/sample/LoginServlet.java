@@ -10,9 +10,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import net.trajano.openidconnect.crypto.Encoding;
 import net.trajano.openidconnect.provider.spi.AuthenticationResponseProvider;
 import net.trajano.openidconnect.provider.spi.Authenticator;
-import net.trajano.openidconnect.crypto.Encoding;
 
 // TODO get rid of this use the same strat as /logout
 @WebServlet(urlPatterns = "/doLogin")

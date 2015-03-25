@@ -19,7 +19,7 @@ public class LogoutRequestProcessor implements ValidateRequestProcessor {
     /**
      * Encoded value for the context root state.
      */
-    private static final String CONTEXT_ROOT_STATE = Encoding.base64UrlEncode("/");
+    private static final String CONTEXT_ROOT_STATE = Encoding.base64urlEncode("/");
 
     /**
      * This only supports the scenario when logout goto uri is not available.
@@ -62,7 +62,7 @@ public class LogoutRequestProcessor implements ValidateRequestProcessor {
                 stateBuilder.append(context.getReq()
                         .getQueryString());
             }
-            state = Encoding.base64UrlEncode(stateBuilder.toString());
+            state = Encoding.base64urlEncode(stateBuilder.toString());
         } else {
             Log.fine("Referrer " + referrer + "does not start with context path " + contextPath + " using root context");
             state = CONTEXT_ROOT_STATE;
