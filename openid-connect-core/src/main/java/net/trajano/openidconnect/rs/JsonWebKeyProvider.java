@@ -136,7 +136,8 @@ public class JsonWebKeyProvider implements MessageBodyReader<JsonWebKey>, Messag
         JsonObjectBuilder keyBuilder = Json.createObjectBuilder();
         jwks.buildJsonObject(keyBuilder);
 
-        JsonWriter jsonWriter = Json.createWriter(os);
-        jsonWriter.write(keyBuilder.build());
+        JsonWriter w = Json.createWriter(os);
+        w.write(keyBuilder.build());
+        w.close();
     }
 }
