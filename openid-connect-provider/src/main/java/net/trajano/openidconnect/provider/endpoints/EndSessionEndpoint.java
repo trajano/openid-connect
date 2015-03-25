@@ -80,7 +80,7 @@ public class EndSessionEndpoint {
             GeneralSecurityException {
 
         final HttpSession session = req.getSession(false);
-        if (!session.getAttribute("nonce")
+        if (session == null || !session.getAttribute("nonce")
                 .equals(nonce)) {
             throw new OpenIdConnectException(ErrorCode.access_denied);
         }
