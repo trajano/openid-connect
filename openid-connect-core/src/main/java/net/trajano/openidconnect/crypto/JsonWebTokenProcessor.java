@@ -126,16 +126,18 @@ public class JsonWebTokenProcessor {
     }
 
     /**
-     * Checks if the JWK is already set for the processor. The value is not set
+     * <p>Checks if the JWK is already set for the processor. The value is not set
      * if the {@link #jwk(JsonWebKey)} is not called or the
      * {@link #jwks(JsonWebKeySet)} is not called or does not contain the key
-     * specified by the {@link #kid}.
+     * specified by the {@link #kid}.</p>
+     * <p>If the algorithm is none then it will also return <code>true</code> as
+     * a JWK is not needed.</p>
      * 
      * @return jwk is set.
      */
     public boolean isJwkAvailable() {
 
-        return jwk != null;
+        return jwk != null || JsonWebToken.ALG_NONE.equals(alg);
     }
 
     /**
