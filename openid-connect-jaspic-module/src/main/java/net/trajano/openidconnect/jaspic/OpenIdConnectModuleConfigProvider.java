@@ -58,17 +58,16 @@ public class OpenIdConnectModuleConfigProvider implements AuthConfigProvider {
     public ClientAuthConfig getClientAuthConfig(final String layer,
             final String appContext,
             final CallbackHandler handler) throws AuthException {
-
-        System.out.println("getClient" + appContext);
         return null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ServerAuthConfig getServerAuthConfig(final String layer,
             final String appContext,
             final CallbackHandler handler) throws AuthException {
-
-        System.out.println("getServer:" + appContext);
         return new OpenIdConnectModuleConfig(options, layer, appContext, handler);
     }
 
@@ -77,7 +76,6 @@ public class OpenIdConnectModuleConfigProvider implements AuthConfigProvider {
      */
     @Override
     public void refresh() {
-
         // does nothing
     }
 
