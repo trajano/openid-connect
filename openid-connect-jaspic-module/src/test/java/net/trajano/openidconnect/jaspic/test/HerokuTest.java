@@ -167,6 +167,7 @@ public class HerokuTest {
             options.put("client_id", clientId);
             options.put("client_secret", clientSecret);
             options.put("issuer_uri", "https://connect-op.herokuapp.com");
+            options.put("scope", "openid");
             options.put(OpenIdConnectAuthModule.COOKIE_CONTEXT_KEY, "/");
             options.put(OpenIdConnectAuthModule.REDIRECTION_ENDPOINT_URI_KEY, "/app/oauth2");
 
@@ -223,6 +224,7 @@ public class HerokuTest {
             options.put("client_id", clientId);
             options.put("client_secret", clientSecret);
             options.put("issuer_uri", "https://connect-op.herokuapp.com");
+            options.put("scope", "openid");
             options.put(OpenIdConnectAuthModule.COOKIE_CONTEXT_KEY, "/");
             options.put(OpenIdConnectAuthModule.REDIRECTION_ENDPOINT_URI_KEY, "/app/oauth2");
 
