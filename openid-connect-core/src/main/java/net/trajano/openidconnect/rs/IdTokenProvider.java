@@ -16,7 +16,6 @@ import javax.json.JsonValue;
 import javax.json.JsonWriter;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.Produces;
-import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.ext.MessageBodyReader;
@@ -64,8 +63,7 @@ public class IdTokenProvider implements MessageBodyReader<IdToken>, MessageBodyW
             final Annotation[] arg2,
             final MediaType mediaType,
             final MultivaluedMap<String, String> arg4,
-            final InputStream is) throws IOException,
-            WebApplicationException {
+            final InputStream is) throws IOException {
 
         final JsonObject obj = Json.createReader(is)
                 .readObject();
@@ -109,8 +107,7 @@ public class IdTokenProvider implements MessageBodyReader<IdToken>, MessageBodyW
             final Annotation[] arg3,
             final MediaType mediaType,
             final MultivaluedMap<String, Object> arg5,
-            final OutputStream os) throws IOException,
-            WebApplicationException {
+            final OutputStream os) throws IOException {
 
         final JsonObjectBuilder b = Json.createObjectBuilder();
         if (idToken.getAcr() != null) {

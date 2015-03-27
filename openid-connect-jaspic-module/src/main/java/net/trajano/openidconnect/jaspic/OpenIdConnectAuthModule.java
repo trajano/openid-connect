@@ -2,7 +2,6 @@ package net.trajano.openidconnect.jaspic;
 
 import static net.trajano.openidconnect.core.OpenIdConnectKey.CLIENT_ID;
 import static net.trajano.openidconnect.core.OpenIdConnectKey.CLIENT_SECRET;
-import static net.trajano.openidconnect.core.OpenIdConnectKey.CODE;
 import static net.trajano.openidconnect.core.OpenIdConnectKey.GRANT_TYPE;
 import static net.trajano.openidconnect.core.OpenIdConnectKey.REDIRECT_URI;
 import static net.trajano.openidconnect.core.OpenIdConnectKey.RESPONSE_MODE;
@@ -308,6 +307,11 @@ public class OpenIdConnectAuthModule implements ServerAuthModule, ServerAuthCont
         }
     }
 
+    /**
+     * Removes authentication cookies.
+     * 
+     * @param resp
+     */
     private void deleteAuthCookies(final HttpServletResponse resp) {
 
         for (final String cookieName : new String[] { NET_TRAJANO_AUTH_ID, NET_TRAJANO_AUTH_AGE }) {
@@ -316,26 +320,6 @@ public class OpenIdConnectAuthModule implements ServerAuthModule, ServerAuthCont
             deleteCookie.setPath(cookieContext);
             resp.addCookie(deleteCookie);
         }
-    }
-
-    /**
-     * Client ID.
-     *
-     * @return the client ID.
-     */
-    protected String getClientId() {
-
-        return clientId;
-    }
-
-    /**
-     * Client Secret.
-     *
-     * @return the client secret.
-     */
-    protected String getClientSecret() {
-
-        return clientSecret;
     }
 
     /**
@@ -439,15 +423,11 @@ public class OpenIdConnectAuthModule implements ServerAuthModule, ServerAuthCont
     }
 
     /**
-     * REST client.
-     *
-     * @return REST client
+     * Calculate the value for state based on the current request.
+     * 
+     * @param req
+     * @return
      */
-    protected Client getRestClient() {
-
-        return restClient;
-    }
-
     private String getState(final HttpServletRequest req) {
 
         final StringBuilder stateBuilder = new StringBuilder(req.getRequestURI()
@@ -478,50 +458,6 @@ public class OpenIdConnectAuthModule implements ServerAuthModule, ServerAuthCont
     public Class[] getSupportedMessageTypes() {
 
         return new Class<?>[] { HttpServletRequest.class, HttpServletResponse.class };
-    }
-
-    /**
-     * Sends a request to the token endpoint to get the token for the code.
-     *
-     * @param req
-     *            servlet request
-     * @param oidProviderConfig
-     *            OpenID provider config
-     * @return token response
-     */
-    protected IdTokenResponse getToken(final HttpServletRequest req,
-            final OpenIdProviderConfiguration oidProviderConfig) throws IOException {
-
-        final MultivaluedMap<String, String> requestData = new MultivaluedHashMap<>();
-        requestData.putSingle(CODE, req.getParameter("code"));
-        requestData.putSingle(GRANT_TYPE, "authorization_code");
-        requestData.putSingle(REDIRECT_URI, getRedirectionEndpointUri(req).toASCIIString());
-
-        try {
-            final String authorization = "Basic " + Encoding.base64Encode(clientId + ":" + clientSecret);
-            final IdTokenResponse authorizationTokenResponse = restClient.target(oidProviderConfig.getTokenEndpoint())
-                    .request(MediaType.APPLICATION_JSON_TYPE)
-                    .header("Authorization", authorization)
-                    .post(Entity.form(requestData), IdTokenResponse.class);
-            if (Log.isFinestLoggable()) {
-                Log.getInstance()
-                        .finest("authorization token response =  " + authorizationTokenResponse);
-            }
-            return authorizationTokenResponse;
-        } catch (final BadRequestException e) {
-            // workaround for google that does not support BASIC authentication
-            // on their endpoint.
-            requestData.putSingle(CLIENT_ID, clientId);
-            requestData.putSingle(CLIENT_SECRET, clientSecret);
-            final IdTokenResponse authorizationTokenResponse = restClient.target(oidProviderConfig.getTokenEndpoint())
-                    .request(MediaType.APPLICATION_JSON_TYPE)
-                    .post(Entity.form(requestData), IdTokenResponse.class);
-            if (Log.isFinestLoggable()) {
-                Log.getInstance()
-                        .finest("authorization token response =  " + authorizationTokenResponse);
-            }
-            return authorizationTokenResponse;
-        }
     }
 
     /**
