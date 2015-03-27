@@ -937,7 +937,16 @@ public class OpenIdConnectAuthModule implements ServerAuthModule, ServerAuthCont
                     .throwing(this.getClass()
                             .getName(), "validateRequest", e);
             return AuthStatus.FAILURE;
-        } catch (final Exception e) {
+        } catch (final IOException e) {
+            // Any problems with the data should be caught and force redirect to
+            // authorization endpoint.
+            Log.getInstance()
+                    .log(Level.FINE, "validationException", e.getMessage());
+            Log.getInstance()
+                    .throwing(this.getClass()
+                            .getName(), "validateRequest", e);
+            return AuthStatus.FAILURE;
+        } catch (final GeneralSecurityException e) {
             // Any problems with the data should be caught and force redirect to
             // authorization endpoint.
             Log.getInstance()
