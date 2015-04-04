@@ -4,15 +4,18 @@
     <parent>
         <groupId>net.trajano.openidconnect</groupId>
         <artifactId>openid-connect</artifactId>
-        <version>1.0.0-SNAPSHOT</version>
+        <version>1.0.1</version>
     </parent>
     <artifactId>openid-connect-provider</artifactId>
-    <properties/>
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>openid-connect-core</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.eclipse.persistence</groupId>
+            <artifactId>org.eclipse.persistence.moxy</artifactId>
+            <version>2.6.0</version>
+        </dependency>
     </dependencies>
-    <build/>
 </project>
