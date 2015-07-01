@@ -34,22 +34,29 @@ import net.trajano.openidconnect.provider.spi.KeyProvider;
 @Lock(LockType.READ)
 public class DefaultKeyProvider implements KeyProvider {
 
+    /**
+     * Number of signing keys to generate.
+     */
     private static final int NUMBER_OF_SIGNING_KEYS = 3;
+
+    private JsonWebKeySet jwks;
+
+    private JsonWebKeySet privateJwks;
 
     /**
      * This random number generator is not required to be cryptographically
      * secure.
      */
-    private Random random;
+    private Random rng = ThreadLocalRandom.current();
 
     private SecretKey secretKey;
+
+    private String secretKeyId;
 
     @PostConstruct
     public void generateKeys() {
 
         try {
-            random = ThreadLocalRandom.current();
-
             jwks = new JsonWebKeySet();
             privateJwks = new JsonWebKeySet();
 
@@ -62,12 +69,12 @@ public class DefaultKeyProvider implements KeyProvider {
                 final RSAPrivateCrtKey privateKey = (RSAPrivateCrtKey) keyPair.getPrivate();
                 final RSAPublicKey publicKey = (RSAPublicKey) keyPair.getPublic();
 
-                JsonWebKey jwk = new RsaWebKey(keyId, publicKey);
+                final JsonWebKey jwk = new RsaWebKey(keyId, publicKey);
                 jwk.setAlg(JsonWebAlgorithm.RS256);
 
                 jwks.add(jwk);
 
-                JsonWebKey privateJwk = new RsaWebKey(keyId, privateKey);
+                final JsonWebKey privateJwk = new RsaWebKey(keyId, privateKey);
                 privateJwk.setAlg(JsonWebAlgorithm.RS256);
                 privateJwks.add(privateJwk);
 
@@ -76,7 +83,7 @@ public class DefaultKeyProvider implements KeyProvider {
             final KeyGenerator keyGenerator = KeyGenerator.getInstance("AES");
             keyGenerator.init(128);
             secretKey = keyGenerator.generateKey();
-            OctWebKey secretJwk = new OctWebKey(secretKey, JsonWebAlgorithm.A256CBC);
+            final OctWebKey secretJwk = new OctWebKey(secretKey, JsonWebAlgorithm.A256CBC);
             secretKeyId = nextEncodedToken();
             secretJwk.setKid(secretKeyId);
             privateJwks.add(secretJwk);
@@ -86,8 +93,6 @@ public class DefaultKeyProvider implements KeyProvider {
         }
     }
 
-    private String secretKeyId;
-
     /**
      * {@inheritDoc}
      */
@@ -96,22 +101,6 @@ public class DefaultKeyProvider implements KeyProvider {
     public JsonWebKeySet getJwks() {
 
         return jwks;
-    }
-
-    private JsonWebKeySet jwks;
-
-    private JsonWebKeySet privateJwks;
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    @Lock(LockType.WRITE)
-    public String nextEncodedToken() {
-
-        final byte[] randomTokenBytes = new byte[16];
-        random.nextBytes(randomTokenBytes);
-        return Encoding.base64urlEncode(randomTokenBytes);
     }
 
     /**
@@ -133,4 +122,17 @@ public class DefaultKeyProvider implements KeyProvider {
 
         return secretKeyId;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @Lock(LockType.WRITE)
+    public String nextEncodedToken() {
+
+        final byte[] randomTokenBytes = new byte[16];
+        rng.nextBytes(randomTokenBytes);
+        return Encoding.base64urlEncode(randomTokenBytes);
+    }
+
 }

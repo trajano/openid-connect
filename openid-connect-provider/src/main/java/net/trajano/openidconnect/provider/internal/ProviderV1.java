@@ -6,6 +6,8 @@ import java.util.Set;
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
 
+import org.eclipse.persistence.jaxb.rs.MOXyJsonProvider;
+
 import net.trajano.openidconnect.provider.endpoints.AuthorizationEndpoint;
 import net.trajano.openidconnect.provider.endpoints.EndSessionEndpoint;
 import net.trajano.openidconnect.provider.endpoints.Jwks;
@@ -22,6 +24,7 @@ public class ProviderV1 extends Application {
     public Set<Class<?>> getClasses() {
 
         final Set<Class<?>> classes = new HashSet<>();
+        classes.add(MOXyJsonProvider.class);
         classes.add(AuthorizationEndpoint.class);
         classes.add(EndSessionEndpoint.class);
         classes.add(IdTokenProvider.class);

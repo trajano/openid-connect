@@ -1,5 +1,7 @@
 package net.trajano.openidconnect.provider.spi;
 
+import javax.json.JsonObject;
+
 import net.trajano.openidconnect.token.IdToken;
 import net.trajano.openidconnect.token.IdTokenResponse;
 
@@ -12,6 +14,14 @@ public interface TokenStorage {
 
     IdTokenResponse getByAccessToken(String accessToken);
 
+    JsonObject getClaimsByAccessToken(String accessToken);
+
+    /**
+     * Gets the response by code.
+     * 
+     * @param code
+     * @return
+     */
     IdTokenResponse getByCode(String code);
 
     /**
@@ -83,9 +93,12 @@ public interface TokenStorage {
      *            id token
      * @param idTokenResponse
      *            token response to store
+     * @param claims
+     *            claims requested
      */
     void store(IdToken idToken,
-            IdTokenResponse idTokenResponse);
+            IdTokenResponse idTokenResponse,
+            JsonObject claims);
 
     /**
      * <p>
@@ -110,13 +123,20 @@ public interface TokenStorage {
      *            token response to store
      * @param code
      *            code
+     * @param claims
+     *            claims requested
      */
     void store(IdToken idToken,
             IdTokenResponse idTokenResponse,
-            String code);
+            String code,
+            JsonObject claims);
 
     IdTokenResponse getByConsent(Consent consent);
 
     IdTokenResponse removeMappingForConsent(Consent consent);
+
+    void markCodeAsUsed(String code);
+
+    boolean isCodeUsed(String code);
 
 }

@@ -18,9 +18,11 @@ import javax.ws.rs.core.UriBuilder;
 import net.trajano.openidconnect.auth.ResponseMode;
 import net.trajano.openidconnect.core.OpenIdProviderConfiguration;
 import net.trajano.openidconnect.core.Scope;
+import net.trajano.openidconnect.core.SubjectIdentifierType;
 import net.trajano.openidconnect.core.TokenEndPointAuthMethod;
 import net.trajano.openidconnect.crypto.JsonWebAlgorithm;
 import net.trajano.openidconnect.provider.spi.KeyProvider;
+import net.trajano.openidconnect.provider.spi.UserinfoProvider;
 import net.trajano.openidconnect.token.GrantType;
 
 @Path("openid-configuration")
@@ -88,6 +90,8 @@ public class WellKnownOpenIdConfiguration {
 
     private String endSessionMapping;
 
+    private UserinfoProvider userinfoProvider;
+
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response op(@Context final HttpServletRequest request) {
@@ -113,11 +117,26 @@ public class WellKnownOpenIdConfiguration {
                 .build());
         openIdConfiguration.setUserinfoEndpoint(baseUri.replacePath(request.getContextPath() + userinfoMapping)
                 .build());
-        openIdConfiguration.setScopesSupported(Scope.openid, Scope.email, Scope.profile);
+
+        final Scope[] scopesSupported = userinfoProvider.scopesSupported();
+        final Scope[] scopes = new Scope[scopesSupported.length + 1];
+        System.arraycopy(scopesSupported, 0, scopes, 1, scopesSupported.length);
+        scopes[0] = Scope.openid;
+        openIdConfiguration.setScopesSupported(scopes);
+
+        final String[] claimsSupported = userinfoProvider.claimsSupported();
+        final String[] claims = new String[claimsSupported.length + 3];
+        claims[0] = "sub";
+        claims[1] = "iss";
+        claims[2] = "auth_time";
+        System.arraycopy(claimsSupported, 0, claims, 3, claimsSupported.length);
+        openIdConfiguration.setClaimsSupported(claims);
+
         openIdConfiguration.setResponseTypesSupported(CODE, ID_TOKEN, ID_TOKEN_TOKEN, CODE_ID_TOKEN, CODE_TOKEN, CODE_ID_TOKEN_TOKEN);
         openIdConfiguration.setRequestParameterSupported(true);
         openIdConfiguration.setGrantTypesSupported(GrantType.authorization_code, GrantType.implicit);
         openIdConfiguration.setRequestUriParameterSupported(false);
+        openIdConfiguration.setSubjectTypesSupported(SubjectIdentifierType.PUBLIC);
         openIdConfiguration.setTokenEndpointAuthMethodsSupported(TokenEndPointAuthMethod.client_secret_basic, TokenEndPointAuthMethod.client_secret_post);
         openIdConfiguration.setIdTokenSigningAlgValuesSupported(JsonWebAlgorithm.getSigAlgorithms());
         openIdConfiguration.setRequestObjectEncryptionAlgValuesSupported(JsonWebAlgorithm.getKexAlgorithms());
@@ -139,6 +158,12 @@ public class WellKnownOpenIdConfiguration {
     public void setKeyProvider(final KeyProvider keyProvider) {
 
         this.keyProvider = keyProvider;
+    }
+
+    @EJB
+    public void setUserinfoProvider(final UserinfoProvider userinfoProvider) {
+
+        this.userinfoProvider = userinfoProvider;
     }
 
 }

@@ -24,11 +24,11 @@ public class Initializer implements ServletContextListener {
 
     /**
      * asadmin set-web-env-entry
-     * --name=net.trajano.openidconnect.jaspic/client_id --value=asmin
+     * --name=net.trajano.openidconnect.jaspic/client_id --value=admin
      * --type=java.lang.String
      * openid-connect-sample/openid-connect-jaspic-sample-1.0.0-SNAPSHOT.war
      */
-    @Resource(name = "net.trajano.openidconnect.jaspic/client_id", description = "Client ID")
+    @Resource(lookup = "java:global/net.trajano.openidconnect.jaspic/client_id", description = "Client ID")
     private String clientId;
 
     @Resource(name = "net.trajano.openidconnect.jaspic/client_secret", description = "Client Secret")
@@ -108,15 +108,16 @@ public class Initializer implements ServletContextListener {
      * determine the host name for which they wish to perform the registration.
      * </p>
      *
-     * @see <a
-     *      href="http://download.oracle.com/otn-pub/jcp/jaspic-1.0-fr-oth-JSpec/jaspic-1_0-fr-spec.pdf">JASPIC
-     *      Spec section 3.2</a>
+     * @see <a href=
+     *      "http://download.oracle.com/otn-pub/jcp/jaspic-1.0-fr-oth-JSpec/jaspic-1_0-fr-spec.pdf">
+     *      JASPIC Spec section 3.2</a>
      * @return
      */
     private String getAppContext(final ServletContextEvent sce) {
 
         return sce.getServletContext()
-                .getVirtualServerName() + " " + sce.getServletContext()
-                .getContextPath();
+                .getVirtualServerName() + " "
+                + sce.getServletContext()
+                        .getContextPath();
     }
 }

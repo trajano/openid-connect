@@ -10,6 +10,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import net.trajano.openidconnect.core.ErrorCode;
 import net.trajano.openidconnect.core.OpenIdConnectException;
@@ -61,6 +62,26 @@ import net.trajano.openidconnect.rs.IdTokenProvider;
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 public class IdTokenResponse extends TokenResponse {
+
+    /**
+     * Flag to indicate that the token was retrieved using a used up
+     * authentication code.
+     */
+
+    @XmlTransient
+    private boolean usedUpAuthenticationCode;
+
+    
+    public boolean isUsedUpAuthenticationCode() {
+    
+        return usedUpAuthenticationCode;
+    }
+
+    
+    public void setUsedUpAuthenticationCode(boolean usedUpAuthenticationCode) {
+    
+        this.usedUpAuthenticationCode = usedUpAuthenticationCode;
+    }
 
     /**
      * 

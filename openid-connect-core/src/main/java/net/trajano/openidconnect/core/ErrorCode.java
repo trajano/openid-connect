@@ -11,16 +11,16 @@ public enum ErrorCode {
      *
      * @see http://tools.ietf.org/html/rfc6749#section-4.1.2.1
      */
-    access_denied
+    access_denied,
 
-    , /**
-     * The End-User is REQUIRED to select a session at the Authorization
-     * Server. The End-User MAY be authenticated at the Authorization Server
-     * with different associated accounts, but the End-User did not select a
-     * session. This error MAY be returned when the prompt parameter value in
-     * the Authentication Request is none, but the Authentication Request cannot
-     * be completed without displaying a user interface to prompt for a session
-     * to use.
+    /**
+     * The End-User is REQUIRED to select a session at the Authorization Server.
+     * The End-User MAY be authenticated at the Authorization Server with
+     * different associated accounts, but the End-User did not select a session.
+     * This error MAY be returned when the prompt parameter value in the
+     * Authentication Request is none, but the Authentication Request cannot be
+     * completed without displaying a user interface to prompt for a session to
+     * use.
      */
     account_selection_required,
 
@@ -42,8 +42,7 @@ public enum ErrorCode {
     interaction_required,
 
     /**
-     *
-     Client authentication failed (e.g., unknown client, no client
+     * Client authentication failed (e.g., unknown client, no client
      * authentication included, or unsupported authentication method). The
      * authorization server MAY return an HTTP 401 (Unauthorized) status code to
      * indicate which HTTP authentication schemes are supported. If the client
@@ -72,16 +71,14 @@ public enum ErrorCode {
     /**
      * The request parameter contains an invalid Request Object.
      */
-    invalid_request_object,
-    /**
-     * The request_uri in the Authorization Request returns an error or contains
-     * invalid data.
-     */
-    invalid_request_uri,
-    /**
-     * The requested scope is invalid, unknown, malformed, or exceeds the scope
-     * granted by the resource owner.
-     */
+    invalid_request_object, /**
+                             * The request_uri in the Authorization Request
+                             * returns an error or contains invalid data.
+                             */
+    invalid_request_uri, /**
+                          * The requested scope is invalid, unknown, malformed,
+                          * or exceeds the scope granted by the resource owner.
+                          */
     invalid_scope,
     /**
      * The Authorization Server requires End-User authentication. This error MAY
@@ -89,11 +86,10 @@ public enum ErrorCode {
      * is none, but the Authentication Request cannot be completed without
      * displaying a user interface for End-User authentication.
      */
-    login_required,
-    /**
-     * The OP does not support use of the registration parameter defined in
-     * Section 7.2.1.
-     */
+    login_required, /**
+                     * The OP does not support use of the registration parameter
+                     * defined in Section 7.2.1.
+                     */
     registration_not_supported,
 
     /**

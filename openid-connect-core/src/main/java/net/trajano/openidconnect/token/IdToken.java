@@ -8,6 +8,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import net.trajano.openidconnect.userinfo.Userinfo;
+
 /**
  * <p>
  * ID Token. The primary extension that OpenID Connect makes to OAuth 2.0 to
@@ -38,13 +40,18 @@ import javax.xml.bind.annotation.XmlRootElement;
  * Parameter fields. Instead, references to keys used are communicated in
  * advance using Discovery and Registration parameters, per Section 10.
  * </p>
- *
+ * <p>
+ * This extends {@link Userinfo} as per
+ * http://openid.net/specs/openid-connect-core-1_0.html#StandardClaims which
+ * indicates that the claims can be stored in the token as well.
+ * </p>
+ * 
  * @author Archimedes Token
  * @see http://openid.net/specs/openid-connect-core-1_0.html#IDToken
  */
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
-public class IdToken implements Serializable {
+public class IdToken extends Userinfo implements Serializable {
 
     /**
      *

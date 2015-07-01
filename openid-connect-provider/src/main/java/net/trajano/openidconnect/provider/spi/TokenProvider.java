@@ -5,6 +5,7 @@ import java.net.URI;
 import java.security.GeneralSecurityException;
 import java.util.Set;
 
+import javax.json.JsonObject;
 import javax.validation.constraints.NotNull;
 
 import net.trajano.openidconnect.auth.AuthenticationRequest;
@@ -61,7 +62,7 @@ public interface TokenProvider {
             @NotNull String refreshToken,
             Set<Scope> scopes,
             Integer expiresIn) throws IOException,
-            GeneralSecurityException;
+                    GeneralSecurityException;
 
     /**
      * Builds an {@link IdToken} for the subject . Extra implementation specific
@@ -75,7 +76,9 @@ public interface TokenProvider {
     String createNewToken(String subject,
             URI issuerUri,
             AuthenticationRequest request) throws IOException,
-            GeneralSecurityException;
+                    GeneralSecurityException;
 
     IdTokenResponse getByConsent(Consent consent);
+
+    JsonObject getClaimsByAccessToken(String accessToken);
 }

@@ -267,8 +267,8 @@ public class OpenIdProviderConfiguration {
     @XmlElement(name = "service_documentation")
     private URI serviceDocumentation;
 
-    @XmlElement(name = "subject_types_supported")
-    private Set<String> subjectTypesSupported;
+    @XmlElement(name = "subject_types_supported", required = true)
+    private Set<SubjectIdentifierType> subjectTypesSupported;
 
     /**
      * URL of the OP's OAuth 2.0 Token Endpoint [OpenID.Core]. This is REQUIRED
@@ -417,7 +417,7 @@ public class OpenIdProviderConfiguration {
         return serviceDocumentation;
     }
 
-    public Set<String> getSubjectTypesSupported() {
+    public Set<SubjectIdentifierType> getSubjectTypesSupported() {
 
         return subjectTypesSupported;
     }
@@ -502,9 +502,9 @@ public class OpenIdProviderConfiguration {
         this.claimsParameterSupported = claimsParameterSupported;
     }
 
-    public void setClaimsSupported(final Set<String> claimsSupported) {
+    public void setClaimsSupported(final String... claimsSupported) {
 
-        this.claimsSupported = claimsSupported;
+        this.claimsSupported = new HashSet<>(Arrays.asList(claimsSupported));
     }
 
     public void setClaimTypesSupported(final Set<String> claimTypesSupported) {
@@ -613,9 +613,9 @@ public class OpenIdProviderConfiguration {
         this.serviceDocumentation = serviceDocumentation;
     }
 
-    public void setSubjectTypesSupported(final Set<String> subjectTypesSupported) {
+    public void setSubjectTypesSupported(SubjectIdentifierType... subjectTypesSupported) {
 
-        this.subjectTypesSupported = subjectTypesSupported;
+        this.subjectTypesSupported = new HashSet<>(Arrays.asList(subjectTypesSupported));
     }
 
     public void setTokenEndpoint(final URI tokenEndpoint) {

@@ -196,7 +196,7 @@ public class Userinfo {
      * the date/time.
      */
     @XmlElement(name = "updated_at")
-    private long updatedAt;
+    private Long updatedAt;
 
     /**
      * URL of the End-User's Web page or blog. This Web page SHOULD contain
@@ -328,7 +328,7 @@ public class Userinfo {
         this.email = email;
     }
 
-    public void setEmailVerified(final boolean emailVerified) {
+    public void setEmailVerified(final Boolean emailVerified) {
 
         this.emailVerified = emailVerified;
     }
@@ -373,7 +373,7 @@ public class Userinfo {
         this.phoneNumber = phoneNumber;
     }
 
-    public void setPhoneNumberVerified(final boolean phoneNumberVerified) {
+    public void setPhoneNumberVerified(final Boolean phoneNumberVerified) {
 
         this.phoneNumberVerified = phoneNumberVerified;
     }
@@ -405,7 +405,11 @@ public class Userinfo {
 
     public void setUpdatedAt(final Date updatedAt) {
 
-        this.updatedAt = updatedAt.getTime() / 1000;
+        if (updatedAt != null) {
+            this.updatedAt = updatedAt.getTime() / 1000;
+        } else {
+            this.updatedAt = null;
+        }
     }
 
     public void setWebsite(final String website) {

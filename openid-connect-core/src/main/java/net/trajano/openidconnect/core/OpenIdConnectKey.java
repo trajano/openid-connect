@@ -25,6 +25,7 @@ public final class OpenIdConnectKey {
     public static final String CLIENT_ID = "client_id";
 
     public static final String CLIENT_SECRET = "client_secret";
+    public static final String CLAIMS = "claims";
 
     public static final String CODE = "code";
 

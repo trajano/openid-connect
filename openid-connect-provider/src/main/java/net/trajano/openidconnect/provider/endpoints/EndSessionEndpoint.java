@@ -77,7 +77,7 @@ public class EndSessionEndpoint {
     public Response confirm(@NotNull @FormParam("nonce") final String nonce,
             @NotNull @FormParam("logout") final boolean logout,
             @Context final HttpServletRequest req) throws IOException,
-            GeneralSecurityException {
+                    GeneralSecurityException {
 
         final HttpSession session = req.getSession(false);
         if (session == null || !session.getAttribute("nonce")
@@ -120,7 +120,7 @@ public class EndSessionEndpoint {
             @QueryParam(OpenIdConnectKey.ID_TOKEN_HINT) final String idTokenHint,
             @QueryParam(OpenIdConnectKey.STATE) final String state,
             @Context final HttpServletRequest req) throws IOException,
-            GeneralSecurityException {
+                    GeneralSecurityException {
 
         return op(postLogoutRedirectUri, idTokenHint, state, req);
     }
@@ -165,17 +165,19 @@ public class EndSessionEndpoint {
             @FormParam(OpenIdConnectKey.ID_TOKEN_HINT) final String idTokenHint,
             @FormParam(OpenIdConnectKey.STATE) final String state,
             @Context final HttpServletRequest req) throws IOException,
-            GeneralSecurityException {
+                    GeneralSecurityException {
 
-        final JsonWebTokenProcessor idTokenProcessor = new JsonWebTokenProcessor(idTokenHint).jwks(keyProvider.getPrivateJwks());
-        if (!idTokenProcessor.isJwkAvailable()) {
-            throw new OpenIdConnectException(ErrorCode.invalid_request, "no jwk available for kid");
+        IdToken idToken = null;
+        if (idTokenHint != null) {
+            final JsonWebTokenProcessor idTokenProcessor = new JsonWebTokenProcessor(idTokenHint).jwks(keyProvider.getPrivateJwks());
+            if (!idTokenProcessor.isJwkAvailable()) {
+                throw new OpenIdConnectException(ErrorCode.invalid_request, "no jwk available for kid");
+            }
+            final byte[] idTokenBytes = idTokenProcessor.getPayload();
+            final MessageBodyReader<IdToken> idTokenReader = providers.getMessageBodyReader(IdToken.class, IdToken.class, new Annotation[0], MediaType.APPLICATION_JSON_TYPE);
+            idToken = idTokenReader.readFrom(IdToken.class, IdToken.class, new Annotation[0], MediaType.APPLICATION_JSON_TYPE, null, new ByteArrayInputStream(idTokenBytes));
         }
-        final byte[] idTokenBytes = idTokenProcessor.getPayload();
-        final MessageBodyReader<IdToken> idTokenReader = providers.getMessageBodyReader(IdToken.class, IdToken.class, new Annotation[0], MediaType.APPLICATION_JSON_TYPE);
-        final IdToken idToken = idTokenReader.readFrom(IdToken.class, IdToken.class, new Annotation[0], MediaType.APPLICATION_JSON_TYPE, null, new ByteArrayInputStream(idTokenBytes));
-
-        if (postLogoutRedirectUri != null && !clientManager.isPostLogoutRedirectUriValidForClient(idToken.getAzp(), postLogoutRedirectUri)) {
+        if (postLogoutRedirectUri != null && idToken != null && !clientManager.isPostLogoutRedirectUriValidForClient(idToken.getAzp(), postLogoutRedirectUri)) {
             throw new OpenIdConnectException(ErrorCode.invalid_request);
         }
 
@@ -190,7 +192,9 @@ public class EndSessionEndpoint {
                     .replacePath(req.getContextPath());
 
             session.setAttribute("post_logout_redirect_uri", postLogoutRedirectUri);
-            session.setAttribute("id_token", idToken);
+            if (idToken != null) {
+                session.setAttribute("id_token", idToken);
+            }
             session.setAttribute("state", state);
             final String nonce = keyProvider.nextEncodedToken();
             session.setAttribute("nonce", nonce);

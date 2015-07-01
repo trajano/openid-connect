@@ -44,6 +44,9 @@ public class Jwks {
      * per Section 13.1. If using the HTTP POST method, the request parameters
      * are serialized using Form Serialization, per Section 13.2.
      * </p>
+     * <p>
+     * Only 3 keys are provided at a time
+     * </p>
      */
     @GET
     @Produces(MediaType.APPLICATION_JSON)

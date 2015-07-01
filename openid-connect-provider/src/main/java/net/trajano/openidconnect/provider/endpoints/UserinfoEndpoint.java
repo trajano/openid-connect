@@ -1,6 +1,7 @@
 package net.trajano.openidconnect.provider.endpoints;
 
 import javax.ejb.EJB;
+import javax.json.JsonObject;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -10,11 +11,15 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import net.trajano.openidconnect.core.ErrorCode;
+import net.trajano.openidconnect.core.ErrorResponse;
 import net.trajano.openidconnect.provider.internal.AuthorizationUtil;
 import net.trajano.openidconnect.provider.spi.KeyProvider;
 import net.trajano.openidconnect.provider.spi.TokenProvider;
 import net.trajano.openidconnect.provider.spi.UserinfoProvider;
 import net.trajano.openidconnect.token.IdToken;
+import net.trajano.openidconnect.token.IdTokenResponse;
+import net.trajano.openidconnect.userinfo.Userinfo;
 
 /**
  * <p>
@@ -80,10 +85,85 @@ public class UserinfoEndpoint {
     public Response op(@Context final HttpServletRequest req) {
 
         final String accessToken = AuthorizationUtil.processBearer(req);
-        IdToken idToken = tokenProvider.getByAccessToken(accessToken)
-                .getIdToken(keyProvider.getPrivateJwks());
-        return Response.ok(userinfoProvider.getUserinfo(idToken))
+        IdTokenResponse byAccessToken = tokenProvider.getByAccessToken(accessToken);
+        if (byAccessToken == null) {
+            return Response.status(400)
+                    .entity(new ErrorResponse(ErrorCode.access_denied, "unable to retrieve id token"))
+                    .build();
+        }
+        IdToken idToken = byAccessToken.getIdToken(keyProvider.getPrivateJwks());
+        JsonObject claims = tokenProvider.getClaimsByAccessToken(accessToken);
+
+        Userinfo userinfo = userinfoProvider.getUserinfo(idToken);
+
+        if (claims != null && claims.containsKey("userinfo")) {
+            filterUserInfo(userinfo, claims.getJsonObject("userinfo"));
+        }
+
+        return Response.ok(userinfo)
                 .build();
+    }
+
+    private void filterUserInfo(Userinfo userinfo,
+            JsonObject userinfoClaims) {
+
+        if (!userinfoClaims.containsKey("updated_at")) {
+            userinfo.setUpdatedAt(null);
+        }
+        if (!userinfoClaims.containsKey("email")) {
+            userinfo.setEmail(null);
+        }
+        if (!userinfoClaims.containsKey("email_verified")) {
+            userinfo.setEmailVerified(null);
+        }
+        if (!userinfoClaims.containsKey("name")) {
+            userinfo.setName(null);
+        }
+        if (!userinfoClaims.containsKey("given_name")) {
+            userinfo.setGivenName(null);
+        }
+        if (!userinfoClaims.containsKey("family_name")) {
+            userinfo.setFamilyName(null);
+        }
+        if (!userinfoClaims.containsKey("middle_name")) {
+            userinfo.setMiddleName(null);
+        }
+        if (!userinfoClaims.containsKey("nickname")) {
+            userinfo.setNickname(null);
+        }
+        if (!userinfoClaims.containsKey("website")) {
+            userinfo.setWebsite(null);
+        }
+        if (!userinfoClaims.containsKey("picture")) {
+            userinfo.setPicture(null);
+        }
+        if (!userinfoClaims.containsKey("gender")) {
+            userinfo.setGender(null);
+        }
+        if (!userinfoClaims.containsKey("address")) {
+            userinfo.setAddress(null);
+        }
+        if (!userinfoClaims.containsKey("profile")) {
+            userinfo.setProfile(null);
+        }
+        if (!userinfoClaims.containsKey("birthdate")) {
+            userinfo.setBirthdate(null);
+        }
+        if (!userinfoClaims.containsKey("zoneinfo")) {
+            userinfo.setZoneinfo(null);
+        }
+        if (!userinfoClaims.containsKey("locale")) {
+            userinfo.setLocale(null);
+        }
+        if (!userinfoClaims.containsKey("preferred_username")) {
+            userinfo.setPreferredUsername(null);
+        }
+        if (!userinfoClaims.containsKey("phone_number")) {
+            userinfo.setPhoneNumber(null);
+        }
+        if (!userinfoClaims.containsKey("phone_number_verified")) {
+            userinfo.setPhoneNumberVerified(null);
+        }
     }
 
     @EJB

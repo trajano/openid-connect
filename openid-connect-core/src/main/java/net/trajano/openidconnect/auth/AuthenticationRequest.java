@@ -4,6 +4,7 @@ import static net.trajano.openidconnect.core.ErrorCode.invalid_request;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.io.StringReader;
 import java.net.URI;
 import java.security.GeneralSecurityException;
 import java.util.Collections;
@@ -126,7 +127,7 @@ public class AuthenticationRequest implements Serializable {
         }
     }
 
-    private static final String[] REQUEST_KEYS = { OpenIdConnectKey.ACR_VALUES, OpenIdConnectKey.CLIENT_ID, OpenIdConnectKey.DISPLAY, OpenIdConnectKey.ID_TOKEN_HINT, OpenIdConnectKey.LOGIN_HINT, OpenIdConnectKey.MAX_AGE, OpenIdConnectKey.NONCE, OpenIdConnectKey.PROMPT, OpenIdConnectKey.REDIRECT_URI, OpenIdConnectKey.RESPONSE_MODE, OpenIdConnectKey.RESPONSE_TYPE, OpenIdConnectKey.SCOPE, OpenIdConnectKey.STATE, OpenIdConnectKey.UI_LOCALES };
+    private static final String[] REQUEST_KEYS = { OpenIdConnectKey.ACR_VALUES, OpenIdConnectKey.CLIENT_ID, OpenIdConnectKey.CLAIMS, OpenIdConnectKey.DISPLAY, OpenIdConnectKey.ID_TOKEN_HINT, OpenIdConnectKey.LOGIN_HINT, OpenIdConnectKey.MAX_AGE, OpenIdConnectKey.NONCE, OpenIdConnectKey.PROMPT, OpenIdConnectKey.REDIRECT_URI, OpenIdConnectKey.RESPONSE_MODE, OpenIdConnectKey.RESPONSE_TYPE, OpenIdConnectKey.SCOPE, OpenIdConnectKey.STATE, OpenIdConnectKey.UI_LOCALES };
 
     /**
      *
@@ -135,7 +136,7 @@ public class AuthenticationRequest implements Serializable {
 
     private static Map<String, String> buildRequestMap(final HttpServletRequest req,
             final JsonWebKeySet privateJwks) throws IOException,
-            GeneralSecurityException {
+                    GeneralSecurityException {
 
         final Map<String, String> requestMap = new HashMap<>();
 
@@ -158,7 +159,7 @@ public class AuthenticationRequest implements Serializable {
 
     private static Map<String, String> buildRequestMap(final String requestJwt,
             final JsonWebKeySet privateJwks) throws IOException,
-            GeneralSecurityException {
+                    GeneralSecurityException {
 
         final Map<String, String> requestMap = new HashMap<>();
 
@@ -213,6 +214,9 @@ public class AuthenticationRequest implements Serializable {
             requestObjectValue = requestObject.getJsonNumber(key)
                     .bigIntegerValueExact()
                     .toString();
+        } else if (requestObject.get(key)
+                .getValueType() == ValueType.OBJECT) {
+            requestObjectValue = requestObject.getJsonObject(key).toString();
         } else {
             requestObjectValue = null;
         }
@@ -233,6 +237,11 @@ public class AuthenticationRequest implements Serializable {
     }
 
     private final List<String> acrValues;
+
+    /**
+     * Claims.
+     */
+    private final JsonObject claims;
 
     private final String clientId;
 
@@ -289,6 +298,13 @@ public class AuthenticationRequest implements Serializable {
             clientId = requestMap.get(OpenIdConnectKey.CLIENT_ID);
         } else {
             clientId = null;
+        }
+        if (requestMap.containsKey(OpenIdConnectKey.CLAIMS)) {
+            claims = Json.createReader(new StringReader(requestMap.get(OpenIdConnectKey.CLAIMS)))
+                    .readObject();
+        } else {
+            claims = Json.createObjectBuilder()
+                    .build();
         }
         if (requestMap.containsKey(OpenIdConnectKey.DISPLAY)) {
             display = Util.valueOf(Display.class, requestMap.get(OpenIdConnectKey.DISPLAY));
@@ -396,6 +412,11 @@ public class AuthenticationRequest implements Serializable {
     public List<String> getAcrValues() {
 
         return acrValues;
+    }
+
+    public JsonObject getClaims() {
+
+        return claims;
     }
 
     public String getClientId() {
@@ -562,6 +583,9 @@ public class AuthenticationRequest implements Serializable {
         if (maxAge != null) {
             b.add(OpenIdConnectKey.MAX_AGE, maxAge);
         }
+        if (claims != null) {
+            b.add(OpenIdConnectKey.CLAIMS, claims);
+        }
         if (nonce != null) {
             b.add(OpenIdConnectKey.NONCE, nonce);
         }
@@ -606,6 +630,12 @@ public class AuthenticationRequest implements Serializable {
         if (prompts.contains(Prompt.none) && prompts.size() != 1) {
 
             throw new RedirectedOpenIdProviderException(this, new ErrorResponse(invalid_request, "Cannot have 'none' with any other value for 'prompt'"));
+
+        }
+
+        if (responseTypes.isEmpty()) {
+
+            throw new RedirectedOpenIdProviderException(this, new ErrorResponse(invalid_request, "the request must contain the 'response_type'"));
 
         }
 

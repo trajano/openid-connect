@@ -52,12 +52,17 @@ public final class AuthorizationUtil {
         }
     }
 
+    /**
+     * Checks for the <code>Authorization</code> header first.  If it does not find it, it will try to get it from the body.
+     * @param req
+     * @return
+     */
     public static String processBearer(final HttpServletRequest req) {
 
         if (req.getHeader("Authorization") != null) {
             return getValue(req, BEARER_AUTHORIZATION);
         } else {
-            throw new InvalidClientException(BEARER_AUTHORIZATION);
+            return req.getParameter("access_token");
         }
     }
 

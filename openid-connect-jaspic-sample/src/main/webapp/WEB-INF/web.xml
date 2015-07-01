@@ -5,18 +5,22 @@
 	<distributable />
 	<env-entry>
 		<env-entry-name>net.trajano.openidconnect.jaspic/client_id</env-entry-name>
+		<env-entry-type>java.lang.String</env-entry-type>
 		<env-entry-value>sample_client_id</env-entry-value>
 	</env-entry>
 	<env-entry>
 		<env-entry-name>net.trajano.openidconnect.jaspic/client_secret</env-entry-name>
+		<env-entry-type>java.lang.String</env-entry-type>
 		<env-entry-value>sample_client_secret</env-entry-value>
 	</env-entry>
 	<env-entry>
 		<env-entry-name>net.trajano.openidconnect.jaspic/disable_certificate_checks</env-entry-name>
+		<env-entry-type>java.lang.String</env-entry-type>
 		<env-entry-value>true</env-entry-value>
 	</env-entry>
 	<env-entry>
 		<env-entry-name>net.trajano.openidconnect.jaspic/issuer_uri</env-entry-name>
+		<env-entry-type>java.lang.String</env-entry-type>
 		<env-entry-value>https://localhost:8181</env-entry-value>
 	</env-entry>
 	<session-config>

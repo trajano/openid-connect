@@ -18,8 +18,10 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import net.trajano.openidconnect.core.ErrorCode;
+import net.trajano.openidconnect.core.ErrorResponse;
 import net.trajano.openidconnect.core.OpenIdConnectException;
 import net.trajano.openidconnect.provider.internal.AuthorizationUtil;
 import net.trajano.openidconnect.provider.internal.ClientCredentials;
@@ -48,7 +50,8 @@ public class TokenEndpoint {
             @QueryParam("code") final String code,
             @QueryParam("refresh_token") final String refreshToken,
             @QueryParam("redirect_uri") final URI redirectUri,
-            @Context final HttpServletRequest req) throws IOException, GeneralSecurityException {
+            @Context final HttpServletRequest req) throws IOException,
+                    GeneralSecurityException {
 
         return op(grantType, code, refreshToken, redirectUri, req);
     }
@@ -60,12 +63,17 @@ public class TokenEndpoint {
             @FormParam("refresh_token") final String refreshToken,
             @FormParam("redirect_uri") final URI redirectUri,
             @Context final HttpServletRequest req) throws IOException,
-            GeneralSecurityException {
+                    GeneralSecurityException {
 
         final ClientCredentials cred = AuthorizationUtil.processBasicOrQuery(req);
 
         if (grantType == GrantType.authorization_code) {
             final IdTokenResponse responseToken = tp.getByCode(code, true);
+            if (responseToken == null) {
+                return Response.ok(new ErrorResponse(ErrorCode.access_denied, "unable to obtain response token"))
+                        .status(Status.BAD_REQUEST)
+                        .build();
+            }
             if (!responseToken.getIdToken(kp.getJwks())
                     .getAud()
                     .equals(cred.getClientId())) {

@@ -1,5 +1,8 @@
 package net.trajano.openidconnect.sample;
 
+import java.io.StringReader;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -7,6 +10,8 @@ import javax.ejb.Lock;
 import javax.ejb.LockType;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
+import javax.json.Json;
+import javax.json.JsonObject;
 
 import net.trajano.openidconnect.provider.spi.Consent;
 import net.trajano.openidconnect.provider.spi.TokenStorage;
@@ -26,6 +31,8 @@ public class MapTokenStorage implements TokenStorage {
 
     private static final int ONE_HOUR = 120;
 
+    private Set<String> usedCodes = new HashSet<>();
+
     private ConcurrentMap<String, IdTokenResponse> accessTokenToTokenResponse = new ConcurrentHashMap<>();
 
     private ConcurrentMap<String, IdTokenResponse> codeToTokenResponse = new ConcurrentHashMap<>();
@@ -34,10 +41,13 @@ public class MapTokenStorage implements TokenStorage {
 
     private ConcurrentMap<Consent, IdTokenResponse> consentToTokenResponse = new ConcurrentHashMap<>();
 
+    private ConcurrentMap<String, String> accessTokenToClaims = new ConcurrentHashMap<>();
+
     @Override
     @Lock(LockType.WRITE)
     public IdTokenResponse removeMappingForAccessToken(final String accessToken) {
 
+        accessTokenToClaims.remove(accessToken);
         return accessTokenToTokenResponse.remove(accessToken);
     }
 
@@ -67,9 +77,11 @@ public class MapTokenStorage implements TokenStorage {
     @Lock(LockType.WRITE)
     @Override
     public void store(final IdToken idToken,
-            final IdTokenResponse idTokenResponse) {
+            final IdTokenResponse idTokenResponse,
+            JsonObject claims) {
 
         accessTokenToTokenResponse.put(idTokenResponse.getAccessToken(), idTokenResponse);
+        accessTokenToClaims.put(idTokenResponse.getAccessToken(), claims.toString());
         refreshTokenToTokenResponse.put(idTokenResponse.getRefreshToken(), idTokenResponse);
         consentToTokenResponse.put(new Consent(idToken, idTokenResponse), idTokenResponse);
     }
@@ -78,9 +90,11 @@ public class MapTokenStorage implements TokenStorage {
     @Override
     public void store(final IdToken idToken,
             final IdTokenResponse idTokenResponse,
-            final String code) {
+            final String code,
+            final JsonObject claims) {
 
-        store(idToken, idTokenResponse);
+        // TODO create a proper class for claims rather than using a JsonObject.
+        store(idToken, idTokenResponse, claims);
         codeToTokenResponse.put(code, idTokenResponse);
 
     }
@@ -89,6 +103,18 @@ public class MapTokenStorage implements TokenStorage {
     public IdTokenResponse getByAccessToken(final String accessToken) {
 
         return accessTokenToTokenResponse.get(accessToken);
+    }
+
+    @Override
+    public void markCodeAsUsed(String code) {
+
+        usedCodes.add(code);
+    }
+
+    @Override
+    public boolean isCodeUsed(String code) {
+
+        return usedCodes.contains(code);
     }
 
     @Override
@@ -111,7 +137,14 @@ public class MapTokenStorage implements TokenStorage {
 
     @Override
     public IdTokenResponse getByConsent(Consent consent) {
-        
+
         return consentToTokenResponse.get(consent);
+    }
+
+    @Override
+    public JsonObject getClaimsByAccessToken(String accessToken) {
+
+        return Json.createReader(new StringReader(accessTokenToClaims.get(accessToken)))
+                .readObject();
     }
 }

@@ -3,7 +3,6 @@ package net.trajano.openidconnect.sample;
 import java.io.IOException;
 
 import javax.ejb.EJB;
-import javax.ejb.Stateless;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -16,7 +15,6 @@ import net.trajano.openidconnect.provider.spi.Authenticator;
 
 // TODO get rid of this use the same strat as /logout
 @WebServlet(urlPatterns = "/doLogin")
-@Stateless
 public class LoginServlet extends HttpServlet {
 
     /**
