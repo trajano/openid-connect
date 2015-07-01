@@ -80,7 +80,6 @@ public class JsonWebKeySetProvider implements MessageBodyReader<JsonWebKeySet>, 
 
         final JsonWebKeySet keySet = new JsonWebKeySet();
         final MessageBodyReader<JsonWebKey> reader = providers.getMessageBodyReader(JsonWebKey.class, JsonWebKey.class, annotations, mediaType);
-        System.out.println(reader.getClass());
         for (final JsonValue key : keysArray) {
             final InputStream keyStream = new ByteArrayInputStream(key.toString()
                     .getBytes(CharSets.UTF8));

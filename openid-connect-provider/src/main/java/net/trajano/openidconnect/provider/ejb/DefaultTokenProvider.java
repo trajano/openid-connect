@@ -210,7 +210,6 @@ public class DefaultTokenProvider implements TokenProvider {
         response.setEncodedIdToken(jwtBuilder.toString());
 
         final String code = keyProvider.nextEncodedToken();
-        System.out.println("Store " + req.getClaims());
         tokenStorage.store(idToken, response, code, req.getClaims());
 
         return code;

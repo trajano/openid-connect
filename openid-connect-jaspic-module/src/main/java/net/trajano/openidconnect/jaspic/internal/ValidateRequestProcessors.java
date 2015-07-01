@@ -62,7 +62,6 @@ public class ValidateRequestProcessors implements ValidateRequestProcessor {
 
         for (final ValidateRequestProcessor processor : processors) {
             if (processor.canValidateRequest(context)) {
-                System.out.println("Using " + processor + " to validate request");
                 return processor.validateRequest(context);
             }
         }
