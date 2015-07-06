@@ -216,16 +216,17 @@ public class AuthenticationRequest implements Serializable {
                     .toString();
         } else if (requestObject.get(key)
                 .getValueType() == ValueType.OBJECT) {
-            requestObjectValue = requestObject.getJsonObject(key).toString();
+            requestObjectValue = requestObject.getJsonObject(key)
+                    .toString();
         } else {
             requestObjectValue = null;
         }
 
-        if (OpenIdConnectKey.CLIENT_ID.equals(key) && paramValue != null & requestObjectValue != null && !paramValue.equals(requestObjectValue)) {
+        if (OpenIdConnectKey.CLIENT_ID.equals(key) && paramValue != null && requestObjectValue != null && !paramValue.equals(requestObjectValue)) {
             throw new BadRequestException("client_id does not match.");
         }
 
-        if (OpenIdConnectKey.REDIRECT_URI.equals(key) && paramValue != null & requestObjectValue != null && !paramValue.equals(requestObjectValue)) {
+        if (OpenIdConnectKey.REDIRECT_URI.equals(key) && paramValue != null && requestObjectValue != null && !paramValue.equals(requestObjectValue)) {
             throw new BadRequestException("redirect_uri does not match.");
         }
 
