@@ -16,5 +16,14 @@
             <artifactId>openid-connect-jaspic-module</artifactId>
         </dependency>
     </dependencies>
-    <build/>
+    <reporting>
+        <plugins>
+            <plugin>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+        </plugins>
+    </reporting>
 </project>

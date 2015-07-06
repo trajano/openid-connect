@@ -1,7 +1,4 @@
 /**
- * 
- */
-/**
- * @author Archimedes
+ * Placeholder.
  */
 package net.trajano.openidconnect.sample;

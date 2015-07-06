@@ -14,5 +14,5 @@
             <artifactId>openid-connect-provider</artifactId>
         </dependency>
     </dependencies>
-    <build/>
+    <build />
 </project>
