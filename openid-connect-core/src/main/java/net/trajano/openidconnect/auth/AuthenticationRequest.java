@@ -3,7 +3,6 @@ package net.trajano.openidconnect.auth;
 import static net.trajano.openidconnect.core.ErrorCode.invalid_request;
 
 import java.io.IOException;
-import java.io.Serializable;
 import java.io.StringReader;
 import java.net.URI;
 import java.security.GeneralSecurityException;
@@ -38,12 +37,12 @@ import net.trajano.openidconnect.internal.Util;
 
 /**
  * Wraps an HttpServletRequest to provide a cleaner API to the request
- * parameters. This is {@link Serializable} in order to allow implementations to
- * use Object Input/Output streams to build the data as needed.
+ * parameters. This is not serializable as the serialized version will already
+ * be in JWT.
  *
  * @author Archimedes
  */
-public class AuthenticationRequest implements Serializable {
+public class AuthenticationRequest {
 
     /**
      * Builder for the Authentication request
@@ -127,12 +126,10 @@ public class AuthenticationRequest implements Serializable {
         }
     }
 
-    private static final String[] REQUEST_KEYS = { OpenIdConnectKey.ACR_VALUES, OpenIdConnectKey.CLIENT_ID, OpenIdConnectKey.CLAIMS, OpenIdConnectKey.DISPLAY, OpenIdConnectKey.ID_TOKEN_HINT, OpenIdConnectKey.LOGIN_HINT, OpenIdConnectKey.MAX_AGE, OpenIdConnectKey.NONCE, OpenIdConnectKey.PROMPT, OpenIdConnectKey.REDIRECT_URI, OpenIdConnectKey.RESPONSE_MODE, OpenIdConnectKey.RESPONSE_TYPE, OpenIdConnectKey.SCOPE, OpenIdConnectKey.STATE, OpenIdConnectKey.UI_LOCALES };
-
     /**
-     *
+     * Keys for objects that go to the request object when serialized to a JWT.
      */
-    private static final long serialVersionUID = 6520962711562750670L;
+    private static final String[] REQUEST_KEYS = { OpenIdConnectKey.ACR_VALUES, OpenIdConnectKey.CLIENT_ID, OpenIdConnectKey.CLAIMS, OpenIdConnectKey.DISPLAY, OpenIdConnectKey.ID_TOKEN_HINT, OpenIdConnectKey.LOGIN_HINT, OpenIdConnectKey.MAX_AGE, OpenIdConnectKey.NONCE, OpenIdConnectKey.PROMPT, OpenIdConnectKey.REDIRECT_URI, OpenIdConnectKey.RESPONSE_MODE, OpenIdConnectKey.RESPONSE_TYPE, OpenIdConnectKey.SCOPE, OpenIdConnectKey.STATE, OpenIdConnectKey.UI_LOCALES };
 
     private static Map<String, String> buildRequestMap(final HttpServletRequest req,
             final JsonWebKeySet privateJwks) throws IOException,
