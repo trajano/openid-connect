@@ -38,11 +38,9 @@ public final class CipherUtil {
      *            secret for the cipher
      * @return the stream
      * @throws GeneralSecurityException
-     * @throws IOException
      */
     public static InputStream buildDecryptStream(final InputStream inputStream,
-            final SecretKey secret) throws GeneralSecurityException,
-                    IOException {
+            final SecretKey secret) throws GeneralSecurityException {
 
         final Cipher cipher = Cipher.getInstance(CIPHER_ALGORITHM);
         cipher.init(Cipher.DECRYPT_MODE, secret);
@@ -58,11 +56,9 @@ public final class CipherUtil {
      *            secret for the cipher
      * @return the stream
      * @throws GeneralSecurityException
-     * @throws IOException
      */
     public static OutputStream buildEncryptStream(final OutputStream outputStream,
-            final SecretKey secret) throws GeneralSecurityException,
-                    IOException {
+            final SecretKey secret) throws GeneralSecurityException {
 
         final Cipher cipher = Cipher.getInstance(CIPHER_ALGORITHM);
         cipher.init(Cipher.ENCRYPT_MODE, secret);
