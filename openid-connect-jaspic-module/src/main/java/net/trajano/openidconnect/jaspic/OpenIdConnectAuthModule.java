@@ -82,8 +82,8 @@ import net.trajano.openidconnect.token.IdTokenResponse;
  * OpenID Connect Server Auth Module. This uses OpenID Connect Discovery to
  * configure the OAuth 2.0 Login.
  * <p>
- * OAuth 2.0 server authentication module. This is an implementation of the <a
- * href="http://tools.ietf.org/html/rfc6749">OAuth 2.0 authentication
+ * OAuth 2.0 server authentication module. This is an implementation of the
+ * <a href="http://tools.ietf.org/html/rfc6749">OAuth 2.0 authentication
  * framework</a>. This assumes no HttpSessions which makes it useful for RESTful
  * applications and uses the OAuth token to manage the authentication state. The
  * e-mail addresses are not requested.
@@ -309,14 +309,16 @@ public class OpenIdConnectAuthModule implements ServerAuthModule, ServerAuthCont
 
     /**
      * Removes authentication cookies.
-     * 
+     *
      * @param resp
+     *            HTTP servlet response
      */
     private void deleteAuthCookies(final HttpServletResponse resp) {
 
         for (final String cookieName : new String[] { NET_TRAJANO_AUTH_ID, NET_TRAJANO_AUTH_AGE }) {
             final Cookie deleteCookie = new Cookie(cookieName, "");
             deleteCookie.setMaxAge(0);
+            deleteCookie.setSecure(true);
             deleteCookie.setPath(cookieContext);
             resp.addCookie(deleteCookie);
         }
@@ -424,7 +426,7 @@ public class OpenIdConnectAuthModule implements ServerAuthModule, ServerAuthCont
 
     /**
      * Calculate the value for state based on the current request.
-     * 
+     *
      * @param req
      * @return
      */
