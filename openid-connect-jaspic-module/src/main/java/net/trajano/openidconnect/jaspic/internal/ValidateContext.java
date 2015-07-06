@@ -35,7 +35,7 @@ public class ValidateContext {
 
     private final String cookieContext;
 
-    private CallbackHandler handler;
+    private final CallbackHandler handler;
 
     private final boolean mandatory;
 
@@ -78,6 +78,7 @@ public class ValidateContext {
         for (final String cookieName : AUTH_COOKIE_NAMES) {
             final Cookie deleteCookie = new Cookie(cookieName, "");
             deleteCookie.setMaxAge(0);
+            deleteCookie.setSecure(true);
             deleteCookie.setPath(cookieContext);
             resp.addCookie(deleteCookie);
         }
@@ -88,6 +89,7 @@ public class ValidateContext {
 
         final Cookie deleteNonceCookie = new Cookie(cookieName, "");
         deleteNonceCookie.setMaxAge(0);
+        deleteNonceCookie.setSecure(true);
         deleteNonceCookie.setPath(cookieContext);
         resp.addCookie(deleteNonceCookie);
     }
@@ -130,7 +132,7 @@ public class ValidateContext {
      * @throws IOException
      */
     public JsonObject getIdToken() throws IOException,
-    GeneralSecurityException {
+            GeneralSecurityException {
 
         return new JsonWebTokenProcessor(tokenCookie.getIdTokenJwt()).signatureCheck(false)
                 .getJsonPayload();
@@ -264,7 +266,7 @@ public class ValidateContext {
     }
 
     public void saveAgeCookie() throws GeneralSecurityException,
-    IOException {
+            IOException {
 
         final Cookie ageCookie = new Cookie(OpenIdConnectAuthModule.NET_TRAJANO_AUTH_AGE, Encoding.base64urlEncode(CipherUtil.encrypt(req.getRemoteAddr()
                 .getBytes(CharSets.US_ASCII), secret)));
