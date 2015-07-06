@@ -23,6 +23,7 @@ import javax.crypto.spec.SecretKeySpec;
  * Utility class to decrypt and encrypt data. It is a compressing stream.
  */
 public final class CipherUtil {
+
     /**
      * Cipher algorithm to use. "AES"
      */
@@ -39,7 +40,10 @@ public final class CipherUtil {
      * @throws GeneralSecurityException
      * @throws IOException
      */
-    public static InputStream buildDecryptStream(final InputStream inputStream, final SecretKey secret) throws GeneralSecurityException, IOException {
+    public static InputStream buildDecryptStream(final InputStream inputStream,
+            final SecretKey secret) throws GeneralSecurityException,
+                    IOException {
+
         final Cipher cipher = Cipher.getInstance(CIPHER_ALGORITHM);
         cipher.init(Cipher.DECRYPT_MODE, secret);
         return new InflaterInputStream(new CipherInputStream(inputStream, cipher), new Inflater(false));
@@ -56,7 +60,10 @@ public final class CipherUtil {
      * @throws GeneralSecurityException
      * @throws IOException
      */
-    public static OutputStream buildEncryptStream(final OutputStream outputStream, final SecretKey secret) throws GeneralSecurityException, IOException {
+    public static OutputStream buildEncryptStream(final OutputStream outputStream,
+            final SecretKey secret) throws GeneralSecurityException,
+                    IOException {
+
         final Cipher cipher = Cipher.getInstance(CIPHER_ALGORITHM);
         cipher.init(Cipher.ENCRYPT_MODE, secret);
         return new DeflaterOutputStream(new CipherOutputStream(outputStream, cipher), new Deflater(9, false));
@@ -73,7 +80,9 @@ public final class CipherUtil {
      * @throws GeneralSecurityException
      *             crypto API problem
      */
-    public static SecretKey buildSecretKey(final String clientId, final String clientSecret) throws GeneralSecurityException {
+    public static SecretKey buildSecretKey(final String clientId,
+            final String clientSecret) throws GeneralSecurityException {
+
         final PBEKeySpec pbeSpec = new PBEKeySpec(clientSecret.toCharArray(), clientId.getBytes(), 42, 128);
 
         final SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
@@ -90,22 +99,25 @@ public final class CipherUtil {
      *            secret for the cipher
      * @return clear text
      * @throws GeneralSecurityException
-     * @throws IOException
      */
-    public static byte[] decrypt(final byte[] cipherText, final SecretKey secret) throws GeneralSecurityException, IOException {
-        final ByteArrayInputStream is = new ByteArrayInputStream(cipherText);
-        final InputStream zis = CipherUtil.buildDecryptStream(is, secret);
+    public static byte[] decrypt(final byte[] cipherText,
+            final SecretKey secret) throws GeneralSecurityException {
 
-        final ByteArrayOutputStream baos = new ByteArrayOutputStream(2000);
+        try {
+            final ByteArrayOutputStream baos = new ByteArrayOutputStream(2000);
+            try (final InputStream zis = CipherUtil.buildDecryptStream(new ByteArrayInputStream(cipherText), secret)) {
 
-        int ch = zis.read();
-        while (ch != -1) {
-            baos.write(ch);
-            ch = zis.read();
+                int ch = zis.read();
+                while (ch != -1) {
+                    baos.write(ch);
+                    ch = zis.read();
+                }
+            }
+            baos.close();
+            return baos.toByteArray();
+        } catch (final IOException e) {
+            throw new GeneralSecurityException(e);
         }
-        zis.close();
-        baos.close();
-        return baos.toByteArray();
     }
 
     /**
@@ -117,14 +129,21 @@ public final class CipherUtil {
      *            secret for the cipher
      * @return cipher text
      * @throws GeneralSecurityException
-     * @throws IOException
      */
-    public static byte[] encrypt(final byte[] clearText, final SecretKey secret) throws GeneralSecurityException, IOException {
-        final ByteArrayOutputStream baos = new ByteArrayOutputStream(2000);
-        final OutputStream zos = CipherUtil.buildEncryptStream(baos, secret);
-        zos.write(clearText);
-        zos.close();
-        return baos.toByteArray();
+    public static byte[] encrypt(final byte[] clearText,
+            final SecretKey secret) throws GeneralSecurityException {
+
+        try {
+            final ByteArrayOutputStream baos = new ByteArrayOutputStream(2000);
+            try (final OutputStream zos = CipherUtil.buildEncryptStream(baos, secret)) {
+                zos.write(clearText);
+                zos.close();
+            }
+            baos.close();
+            return baos.toByteArray();
+        } catch (final IOException e) {
+            throw new GeneralSecurityException(e);
+        }
     }
 
     /**
