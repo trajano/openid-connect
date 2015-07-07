@@ -46,7 +46,7 @@ import net.trajano.openidconnect.provider.spi.TokenProvider;
  * 16.17 for more information on using TLS.
  * </p>
  *
- * @author Archimedes
+ * @author Archimedes Trajano
  */
 @Path("auth")
 public class AuthorizationEndpoint {
@@ -74,15 +74,15 @@ public class AuthorizationEndpoint {
      * "https://localhost:8181/V1/auth?client_id=angelstone-client-id&scope=openid&state=170894&redirect_uri=https://www.getpostman.com/oauth2/callback&response_type=code"
      * >a</a>
      *
-     * @param scope
      * @param req
-     * @return
+     *            servlet request
+     * @return JAX-RS Response
      * @throws GeneralSecurityException
      * @throws IOException
      */
     @GET
     public Response getOp(@Context final HttpServletRequest req) throws IOException,
-            GeneralSecurityException {
+        GeneralSecurityException {
 
         return op(req);
     }
@@ -101,14 +101,15 @@ public class AuthorizationEndpoint {
      * per Section 13.1. If using the HTTP POST method, the request parameters
      * are serialized using Form Serialization, per Section 13.2.
      * </p>
-     *
+     * 
+     * @return JAX-RS Response
      * @throws GeneralSecurityException
      * @throws IOException
      */
     @POST
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     public Response op(@Context final HttpServletRequest req) throws IOException,
-            GeneralSecurityException {
+        GeneralSecurityException {
 
         final AuthenticationRequest authenticationRequest = new AuthenticationRequest(req, keyProvider.getPrivateJwks());
 
@@ -119,7 +120,7 @@ public class AuthorizationEndpoint {
         final boolean authenticated = authenticator.isAuthenticated(req);
 
         if (!authenticated && authenticationRequest.getPrompts()
-                .contains(Prompt.none)) {
+            .contains(Prompt.none)) {
             throw new RedirectedOpenIdProviderException(authenticationRequest, new ErrorResponse(login_required));
         }
 
@@ -127,28 +128,28 @@ public class AuthorizationEndpoint {
 
         final boolean consented = clientManager.isImplicitConsent(authenticationRequest.getClientId()) || tp.getByConsent(consent) != null;
         if (!consented && authenticationRequest.getPrompts()
-                .contains(Prompt.none)) {
+            .contains(Prompt.none)) {
             throw new RedirectedOpenIdProviderException(authenticationRequest, new ErrorResponse(consent_required));
         }
 
         String reqJwt = req.getParameter(OpenIdConnectKey.REQUEST);
         if (reqJwt == null) {
             final JsonWebTokenBuilder b = new JsonWebTokenBuilder().payload(authenticationRequest.toJsonObject())
-                    .compress(true);
+                .compress(true);
             reqJwt = b.toString();
         }
 
         final UriBuilder contextUriBuilder = uriInfo.getBaseUriBuilder()
-                .replacePath(req.getContextPath());
+            .replacePath(req.getContextPath());
         if (!authenticated) {
 
             return Response.temporaryRedirect(authenticator.authenticate(authenticationRequest, reqJwt, req, contextUriBuilder))
-                    .build();
+                .build();
 
         } else if (!consented) {
 
             return Response.temporaryRedirect(authenticator.consent(authenticationRequest, reqJwt, req, contextUriBuilder))
-                    .build();
+                .build();
         } else {
 
             return arp.buildResponse(reqJwt, req, authenticator.getSubject(req));
