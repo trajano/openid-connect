@@ -411,7 +411,7 @@ public class JoseHeader {
     /**
      * Gets the encoded version of the JOSE header.
      * 
-     * @return
+     * @return bytes
      */
     public byte[] getEncoded() {
 

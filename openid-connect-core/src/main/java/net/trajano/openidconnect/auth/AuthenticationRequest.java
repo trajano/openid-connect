@@ -54,7 +54,7 @@ public class AuthenticationRequest {
         private final Map<String, String> requestMap = new HashMap<>();
 
         public AuthenticationRequest build() throws IOException,
-                GeneralSecurityException {
+            GeneralSecurityException {
 
             return new AuthenticationRequest(requestMap);
         }
@@ -86,7 +86,7 @@ public class AuthenticationRequest {
         }
 
         public Builder responseType(@NotNull final ResponseType code,
-                final ResponseType... oth) {
+            final ResponseType... oth) {
 
             final StringBuilder b = new StringBuilder(code.name());
             for (final ResponseType type : oth) {
@@ -113,12 +113,12 @@ public class AuthenticationRequest {
 
             if (locales != null) {
                 final StringBuilder b = new StringBuilder(locales.nextElement()
-                        .toLanguageTag());
+                    .toLanguageTag());
 
                 while (locales.hasMoreElements()) {
                     b.append(' ');
                     b.append(locales.nextElement()
-                            .toLanguageTag());
+                        .toLanguageTag());
                 }
                 requestMap.put(OpenIdConnectKey.UI_LOCALES, b.toString());
             }
@@ -129,11 +129,26 @@ public class AuthenticationRequest {
     /**
      * Keys for objects that go to the request object when serialized to a JWT.
      */
-    private static final String[] REQUEST_KEYS = { OpenIdConnectKey.ACR_VALUES, OpenIdConnectKey.CLIENT_ID, OpenIdConnectKey.CLAIMS, OpenIdConnectKey.DISPLAY, OpenIdConnectKey.ID_TOKEN_HINT, OpenIdConnectKey.LOGIN_HINT, OpenIdConnectKey.MAX_AGE, OpenIdConnectKey.NONCE, OpenIdConnectKey.PROMPT, OpenIdConnectKey.REDIRECT_URI, OpenIdConnectKey.RESPONSE_MODE, OpenIdConnectKey.RESPONSE_TYPE, OpenIdConnectKey.SCOPE, OpenIdConnectKey.STATE, OpenIdConnectKey.UI_LOCALES };
+    private static final String[] REQUEST_KEYS = {
+        OpenIdConnectKey.ACR_VALUES,
+        OpenIdConnectKey.CLIENT_ID,
+        OpenIdConnectKey.CLAIMS,
+        OpenIdConnectKey.DISPLAY,
+        OpenIdConnectKey.ID_TOKEN_HINT,
+        OpenIdConnectKey.LOGIN_HINT,
+        OpenIdConnectKey.MAX_AGE,
+        OpenIdConnectKey.NONCE,
+        OpenIdConnectKey.PROMPT,
+        OpenIdConnectKey.REDIRECT_URI,
+        OpenIdConnectKey.RESPONSE_MODE,
+        OpenIdConnectKey.RESPONSE_TYPE,
+        OpenIdConnectKey.SCOPE,
+        OpenIdConnectKey.STATE,
+        OpenIdConnectKey.UI_LOCALES };
 
     private static Map<String, String> buildRequestMap(final HttpServletRequest req,
-            final JsonWebKeySet privateJwks) throws IOException,
-                    GeneralSecurityException {
+        final JsonWebKeySet privateJwks) throws IOException,
+            GeneralSecurityException {
 
         final Map<String, String> requestMap = new HashMap<>();
 
@@ -155,8 +170,8 @@ public class AuthenticationRequest {
     }
 
     private static Map<String, String> buildRequestMap(final String requestJwt,
-            final JsonWebKeySet privateJwks) throws IOException,
-                    GeneralSecurityException {
+        final JsonWebKeySet privateJwks) throws IOException,
+            GeneralSecurityException {
 
         final Map<String, String> requestMap = new HashMap<>();
 
@@ -189,9 +204,9 @@ public class AuthenticationRequest {
      * @param requestObject
      */
     private static void processValueFromMapOrObject(final Map<String, String> reqMap,
-            final String key,
-            final HttpServletRequest servletRequest,
-            final JsonObject requestObject) {
+        final String key,
+        final HttpServletRequest servletRequest,
+        final JsonObject requestObject) {
 
         final String paramValue;
         if (servletRequest != null && servletRequest.getParameter(key) != null) {
@@ -204,17 +219,17 @@ public class AuthenticationRequest {
         if (requestObject == null || !requestObject.containsKey(key)) {
             requestObjectValue = null;
         } else if (requestObject.get(key)
-                .getValueType() == ValueType.STRING) {
+            .getValueType() == ValueType.STRING) {
             requestObjectValue = requestObject.getString(key);
         } else if (requestObject.get(key)
-                .getValueType() == ValueType.NUMBER) {
+            .getValueType() == ValueType.NUMBER) {
             requestObjectValue = requestObject.getJsonNumber(key)
-                    .bigIntegerValueExact()
-                    .toString();
+                .bigIntegerValueExact()
+                .toString();
         } else if (requestObject.get(key)
-                .getValueType() == ValueType.OBJECT) {
+            .getValueType() == ValueType.OBJECT) {
             requestObjectValue = requestObject.getJsonObject(key)
-                    .toString();
+                .toString();
         } else {
             requestObjectValue = null;
         }
@@ -299,10 +314,10 @@ public class AuthenticationRequest {
         }
         if (requestMap.containsKey(OpenIdConnectKey.CLAIMS)) {
             claims = Json.createReader(new StringReader(requestMap.get(OpenIdConnectKey.CLAIMS)))
-                    .readObject();
+                .readObject();
         } else {
             claims = Json.createObjectBuilder()
-                    .build();
+                .build();
         }
         if (requestMap.containsKey(OpenIdConnectKey.DISPLAY)) {
             display = Util.valueOf(Display.class, requestMap.get(OpenIdConnectKey.DISPLAY));
@@ -428,7 +443,7 @@ public class AuthenticationRequest {
      * specification, the default Response Mode for the OAuth 2.0 token Response
      * Type is the fragment encoding.
      *
-     * @return
+     * @return default respopnse mode.
      */
     private ResponseMode getDefaultResponseMode() {
 
@@ -500,7 +515,7 @@ public class AuthenticationRequest {
     /**
      * Gets a string representation of the scope set.
      *
-     * @return
+     * @return string representation of the scope set.
      */
     public String getScope() {
 
@@ -530,9 +545,11 @@ public class AuthenticationRequest {
     }
 
     /**
-     * If the response types contains code and only code.
+     * Checks if the <em>Authorization Code</em> flow is used. This is
+     * <code>true</code> if the response types contains code and only code.
      *
-     * @return
+     * @return <code>true</code> if the response types contains code and only
+     *         code
      */
     public boolean isAuthorizationCodeFlow() {
 
@@ -549,15 +566,15 @@ public class AuthenticationRequest {
     }
 
     /**
-     * All but the code Response Type value, which is defined by OAuth 2.0
+     * Checks if we are using the <em>implicit</em> flow. All but the
+     * <code>code</code> Response Type value, which is defined by OAuth 2.0
      * [RFC6749], are defined in the OAuth 2.0 Multiple Response Type Encoding
      * Practices [OAuth.Responses] specification. NOTE: While OAuth 2.0 also
      * defines the token Response Type value for the Implicit Flow, OpenID
      * Connect does not use this Response Type, since no ID Token would be
      * returned.
-     *
-     * @see http://openid.net/specs/openid-connect-core-1_0.html#Authentication
-     * @return
+     * 
+     * @return the response types does not contain <code>code</code>
      */
     public boolean isImplicitFlow() {
 

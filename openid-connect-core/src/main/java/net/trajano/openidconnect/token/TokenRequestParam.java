@@ -2,16 +2,17 @@ package net.trajano.openidconnect.token;
 
 /**
  * <p>
- * Access Token Request.
+ * <a href="http://tools.ietf.org/html/rfc6749#section-4.1.3">Access Token
+ * Request</a>.
  * </p>
  * <p>
  * The client makes a request to the token endpoint by sending the following
  * parameters using the "application/x-www-form-urlencoded" format per Appendix
- * B with a character encoding of UTF-8 in the HTTP request entity-body
+ * B with a character encoding of UTF-8 in the HTTP request entity-body. This is
+ * used in
+ * <a href="http://openid.net/specs/openid-connect-core-1_0.html#TokenRequest">
+ * OpenID Token Requests</a>.
  * </p>
- *
- * @see http://openid.net/specs/openid-connect-core-1_0.html#TokenRequest
- * @see http://tools.ietf.org/html/rfc6749#section-4.1.3
  */
 public final class TokenRequestParam {
 

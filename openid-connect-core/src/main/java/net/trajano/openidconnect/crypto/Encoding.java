@@ -105,8 +105,8 @@ public final class Encoding {
     /**
      * Encodes bytes into a base64 string as UTF8
      *
-     * @param bytes
-     *            bytes to encode
+     * @param s
+     *            string to encode.
      * @return Base64 string
      */
     public static String base64Encode(final String s) {

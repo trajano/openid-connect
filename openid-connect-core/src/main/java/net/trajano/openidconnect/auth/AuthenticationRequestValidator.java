@@ -2,7 +2,10 @@ package net.trajano.openidconnect.auth;
 
 /**
  * <p>
- * The Authorization Server MUST validate the request received as follows:
+ * <a href=
+ * "http://openid.net/specs/openid-connect-core-1_0.html#AuthRequestValidation">
+ * Authorization request validation/a>. The Authorization Server MUST validate
+ * the request received as follows:
  * </p>
  * <ul>
  * <li>The Authorization Server MUST validate all the OAuth 2.0 parameters
@@ -31,8 +34,6 @@ package net.trajano.openidconnect.auth;
  * response, per Section 3.1.2.6.
  * </p>
  *
- * @see http
- *      ://openid.net/specs/openid-connect-core-1_0.html#AuthRequestValidation
  * @author Archimedes
  */
 public class AuthenticationRequestValidator {

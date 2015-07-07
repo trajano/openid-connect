@@ -11,7 +11,7 @@ import javax.ws.rs.core.Response.Status;
  * Open ID Connect Exception. This wraps an error response based on the data
  * provided
  *
- * @author Archimedes
+ * @author Archimedes Trajano
  */
 public class OpenIdConnectException extends BadRequestException {
 

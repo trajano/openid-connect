@@ -2,6 +2,10 @@ package net.trajano.openidconnect.token;
 
 /**
  * <p>
+ * <a href=
+ * "http://openid.net/specs/openid-connect-core-1_0.html#IDTokenValidation">ID
+ * Token validation</a>.
+ * <p>
  * Clients MUST validate the ID Token in the Token Response in the following
  * manner:
  * </p>
@@ -31,14 +35,16 @@ package net.trajano.openidconnect.token;
  * JWS [JWS] using the algorithm specified in the JWT alg Header Parameter. The
  * Client MUST use the keys provided by the Issuer.</li>
  * <li>The alg value SHOULD be the default of RS256 or the algorithm sent by the
- * Client in the id_token_signed_response_alg parameter during Registration.</li>
+ * Client in the id_token_signed_response_alg parameter during Registration.
+ * </li>
  * <li>If the JWT alg Header Parameter uses a MAC based algorithm such as HS256,
  * HS384, or HS512, the octets of the UTF-8 representation of the client_secret
  * corresponding to the client_id contained in the aud (audience) Claim are used
  * as the key to validate the signature. For MAC based algorithms, the behavior
  * is unspecified if the aud is multi-valued or if an azp value is present that
  * is different than the aud value.</li>
- * <li>The current time MUST be before the time represented by the exp Claim.</li>
+ * <li>The current time MUST be before the time represented by the exp Claim.
+ * </li>
  * <li>The iat Claim can be used to reject tokens that were issued too far away
  * from the current time, limiting the amount of time that nonces need to be
  * stored to prevent attacks. The acceptable range is Client specific.</li>
@@ -55,8 +61,7 @@ package net.trajano.openidconnect.token;
  * auth_time Claim value and request re-authentication if it determines too much
  * time has elapsed since the last End-User authentication.</li>
  * </ol>
- *
- * @see http://openid.net/specs/openid-connect-core-1_0.html#IDTokenValidation
+ * 
  * @author Archimedes
  */
 public class IdTokenValidator {

@@ -60,7 +60,7 @@ public abstract class JsonWebKey {
     /**
      * Converts the JSON Web key to the JCA key.
      * 
-     * @return
+     * @return JCA key.
      */
     public abstract Key toJcaKey() throws GeneralSecurityException;
 
@@ -68,7 +68,7 @@ public abstract class JsonWebKey {
      * Converts the JSON Web key to the JCA Public key. This may be overriden by
      * keys that can derive their own public key from their private key.
      * 
-     * @return
+     * @return JCA public key.
      */
     public PublicKey toJcaPublicKey() throws GeneralSecurityException {
 
@@ -78,7 +78,7 @@ public abstract class JsonWebKey {
     /**
      * Builds the JSON object.
      * 
-     * @param keyBuilder
+     * @param keyBuilder builder
      */
     public void buildJsonObject(@NotNull final JsonObjectBuilder keyBuilder) {
 
@@ -92,7 +92,7 @@ public abstract class JsonWebKey {
     /**
      * adds additional data to the json object.
      * 
-     * @param keyBuilder
+     * @param keyBuilder builder
      */
     protected abstract void addToJsonObject(JsonObjectBuilder keyBuilder);
 }

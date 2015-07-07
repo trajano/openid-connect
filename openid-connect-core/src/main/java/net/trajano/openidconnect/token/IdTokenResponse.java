@@ -20,7 +20,8 @@ import net.trajano.openidconnect.rs.IdTokenProvider;
 
 /**
  * <p>
- * Access Token Response.
+ * <a href="http://openid.net/specs/openid-connect-core-1_0.html#TokenResponse">
+ * Access Token Response</a>.
  * </p>
  * <p>
  * After receiving and validating a valid and authorized Token Request from the
@@ -55,9 +56,7 @@ import net.trajano.openidconnect.rs.IdTokenProvider;
  * </tr>
  * </table>
  *
- * @see http://openid.net/specs/openid-connect-core-1_0.html#TokenResponse
- * @see http://tools.ietf.org/html/rfc6749#section-4.2.2
- * @author Archimedes
+ * @author Archimedes Trajano
  */
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -71,15 +70,13 @@ public class IdTokenResponse extends TokenResponse {
     @XmlTransient
     private boolean usedUpAuthenticationCode;
 
-    
     public boolean isUsedUpAuthenticationCode() {
-    
+
         return usedUpAuthenticationCode;
     }
 
-    
     public void setUsedUpAuthenticationCode(boolean usedUpAuthenticationCode) {
-    
+
         this.usedUpAuthenticationCode = usedUpAuthenticationCode;
     }
 
@@ -91,7 +88,8 @@ public class IdTokenResponse extends TokenResponse {
     /**
      * Encoded ID Token value associated with the authenticated session.
      */
-    @XmlElement(name = "id_token", required = true)
+    @XmlElement(name = "id_token",
+        required = true)
     private String encodedIdToken;
 
     public String getEncodedIdToken() {
@@ -102,11 +100,9 @@ public class IdTokenResponse extends TokenResponse {
     /**
      * Gets the ID Token with signature validation.
      *
-     * @param keyMap
-     *            key map
-     * @return
-     * @throws IOException
-     * @throws GeneralSecurityException
+     * @param jwks
+     *            JSON web key set
+     * @return ID token
      */
     public IdToken getIdToken(final JsonWebKeySet jwks) {
 
@@ -116,7 +112,8 @@ public class IdTokenResponse extends TokenResponse {
                 throw new OpenIdConnectException(ErrorCode.invalid_request, "no jwk available for kid");
             }
             return new IdTokenProvider().readFrom(IdToken.class, null, null, MediaType.APPLICATION_JSON_TYPE, null, new ByteArrayInputStream(p.getPayload()));
-        } catch (IOException | GeneralSecurityException e) {
+        } catch (IOException
+                 | GeneralSecurityException e) {
             throw new WebApplicationException(e);
         }
 

@@ -12,7 +12,8 @@ import net.trajano.openidconnect.userinfo.Userinfo;
 
 /**
  * <p>
- * ID Token. The primary extension that OpenID Connect makes to OAuth 2.0 to
+ * <a href="http://openid.net/specs/openid-connect-core-1_0.html#IDToken">ID
+ * Token</a>. The primary extension that OpenID Connect makes to OAuth 2.0 to
  * enable End-Users to be Authenticated is the ID Token data structure. The ID
  * Token is a security token that contains Claims about the Authentication of an
  * End-User by an Authorization Server when using a Client, and potentially
@@ -47,7 +48,6 @@ import net.trajano.openidconnect.userinfo.Userinfo;
  * </p>
  * 
  * @author Archimedes Token
- * @see http://openid.net/specs/openid-connect-core-1_0.html#IDToken
  */
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -216,7 +216,7 @@ public class IdToken extends Userinfo implements Serializable {
     /**
      * Returns the timestamp when the token will expire.
      *
-     * @return
+     * @return expiration timestamp.
      */
     public Date getExpiration() {
 
@@ -236,7 +236,7 @@ public class IdToken extends Userinfo implements Serializable {
     /**
      * Returns the timestamp the token was issued on.
      *
-     * @return
+     * @return issued timestamp.
      */
     public Date getIssuedOn() {
 

@@ -163,7 +163,7 @@ public class JsonWebToken {
     /**
      * Gets the encoded JOSE Header as it was provided.
      *
-     * @return
+     * @return encoded JOSE header.
      */
     public String getJoseHeaderEncoded() {
 

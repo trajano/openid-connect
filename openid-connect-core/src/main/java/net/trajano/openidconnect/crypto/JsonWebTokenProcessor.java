@@ -57,20 +57,17 @@ public class JsonWebTokenProcessor {
     /**
      * Gets the payload JSON object.
      *
-     * @return
-     * @throws IOException
+     * @return payload a a JSON object.
      * @throws GeneralSecurityException
      */
-    public JsonObject getJsonPayload() throws IOException,
-            GeneralSecurityException {
+    public JsonObject getJsonPayload() throws GeneralSecurityException {
 
         final JsonReader r = Json.createReader(new ByteArrayInputStream(getPayload()));
         return r.readObject();
 
     }
 
-    public byte[] getPayload() throws IOException,
-            GeneralSecurityException {
+    public byte[] getPayload() throws GeneralSecurityException {
 
         byte[] payload;
         if (JsonWebToken.ALG_NONE.equals(alg)) {
@@ -97,7 +94,11 @@ public class JsonWebTokenProcessor {
             throw new GeneralSecurityException("invalid JOSE header");
         }
         if ("DEF".equals(jsonWebToken.getZip())) {
-            return crypto.inflate(payload);
+            try {
+                return crypto.inflate(payload);
+            } catch (IOException e) {
+                throw new GeneralSecurityException(e);
+            }
         } else {
             return payload;
         }
@@ -126,12 +127,16 @@ public class JsonWebTokenProcessor {
     }
 
     /**
-     * <p>Checks if the JWK is already set for the processor. The value is not set
+     * <p>
+     * Checks if the JWK is already set for the processor. The value is not set
      * if the {@link #jwk(JsonWebKey)} is not called or the
      * {@link #jwks(JsonWebKeySet)} is not called or does not contain the key
-     * specified by the {@link #kid}.</p>
-     * <p>If the algorithm is none then it will also return <code>true</code> as
-     * a JWK is not needed.</p>
+     * specified by the {@link #kid}.
+     * </p>
+     * <p>
+     * If the algorithm is none then it will also return <code>true</code> as a
+     * JWK is not needed.
+     * </p>
      * 
      * @return jwk is set.
      */

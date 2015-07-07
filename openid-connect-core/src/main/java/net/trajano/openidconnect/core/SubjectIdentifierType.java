@@ -27,5 +27,5 @@ public enum SubjectIdentifierType {
      * This provides a different sub value to each Client, so as not to enable
      * Clients to correlate the End-User's activities without permission.
      */
-    @XmlEnumValue("pairwise") pairwise
+    @XmlEnumValue("pairwise") PAIRWISE
 }

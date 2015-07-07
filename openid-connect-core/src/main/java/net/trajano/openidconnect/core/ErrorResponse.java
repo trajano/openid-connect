@@ -8,13 +8,14 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- * Error response. This holds the data that gets sent either as a JSON object or
- * query parameters depending on the exception. The authorization server
- * responds with an HTTP 400 (Bad Request) status code (unless specified
- * otherwise). This can be sent
+ * <a href="http://tools.ietf.org/html/rfc6749#section-5.2">Error response</a>.
+ * This holds the data that gets sent either as a JSON object or query
+ * parameters depending on the exception. The authorization server responds with
+ * an HTTP 400 (Bad Request) status code (unless specified otherwise). This can
+ * be sent for a <a href=
+ * "http://openid.net/specs/openid-connect-core-1_0.html#TokenErrorResponse">
+ * Token Error Response</a>.
  *
- * @see http://openid.net/specs/openid-connect-core-1_0.html#TokenErrorResponse
- * @see http://tools.ietf.org/html/rfc6749#section-5.2
  * @author Archimedes Trajano
  */
 @XmlRootElement

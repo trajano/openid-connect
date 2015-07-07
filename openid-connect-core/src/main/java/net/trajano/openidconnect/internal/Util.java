@@ -51,11 +51,11 @@ public class Util {
                     continue;
                 }
                 if (field.getType()
-                        .isEnum()) {
+                    .isEnum()) {
                     final String enumValue = ((Enum<?>) value).name();
                     final XmlEnumValue xmlEnumValue = ((Enum<?>) value).getDeclaringClass()
-                            .getField(enumValue)
-                            .getAnnotation(XmlEnumValue.class);
+                        .getField(enumValue)
+                        .getAnnotation(XmlEnumValue.class);
                     if (xmlEnumValue != null && xmlEnumValue.value() != null) {
                         b.add(name, xmlEnumValue.value());
                     } else {
@@ -71,7 +71,9 @@ public class Util {
                 }
             }
             return b.build();
-        } catch (IllegalAccessException | SecurityException | NoSuchFieldException e1) {
+        } catch (IllegalAccessException
+                 | SecurityException
+                 | NoSuchFieldException e1) {
             throw new RuntimeException(e1);
         }
     }
@@ -89,15 +91,17 @@ public class Util {
 
     /**
      * Checks if the parameter being passed in is not null or empty. If it is
-     * not null or empty it will return the value of the paramter otherwise it
+     * not null or empty it will return the value of the parameter otherwise it
      * will return null. This will not return an empty string.
      *
      * @param req
+     *            request
      * @param param
-     * @return
+     *            parameter name
+     * @return the parameter value (may be <code>null</code>).
      */
     public static final String getParameter(final HttpServletRequest req,
-            final String param) {
+        final String param) {
 
         final String parameter = req.getParameter(param);
         if (Util.isNotNullOrEmpty(parameter)) {
@@ -115,8 +119,8 @@ public class Util {
      * @param enumClass
      */
     public static <E extends Enum<E>> E getParameter(final HttpServletRequest req,
-            final String param,
-            final Class<E> enumClass) {
+        final String param,
+        final Class<E> enumClass) {
 
         final String enumParam = getParameter(req, param);
         if (enumParam != null) {
@@ -133,8 +137,8 @@ public class Util {
      * @param enumClass
      */
     public static <E extends Enum<E>> Set<E> getParameterSet(final HttpServletRequest req,
-            final String param,
-            final Class<E> enumClass) {
+        final String param,
+        final Class<E> enumClass) {
 
         final Set<E> ret = new HashSet<>();
         final String enumParams = getParameter(req, param);
@@ -149,7 +153,7 @@ public class Util {
     public static final boolean isNotNullOrEmpty(final String s) {
 
         return s != null && !s.trim()
-                .isEmpty();
+            .isEmpty();
     }
 
     public static String join(final Iterable<String> values) {
@@ -174,14 +178,14 @@ public class Util {
      * @param json
      */
     public static <T> void populateWithJson(final T obj,
-            final JsonObject json) {
+        final JsonObject json) {
 
         final Collection<Class<?>> SUPPORTED_CLASSES = Arrays.<Class<?>> asList(Enum.class, String.class, Integer.class, URI.class, Boolean.class, BigInteger.class, Long.class);
         final Class<?> objClass = obj.getClass();
         final Map<String, Field> fieldMap = new HashMap<>();
         for (final Field field : objClass.getDeclaredFields()) {
             if (!field.getType()
-                    .isEnum() && !SUPPORTED_CLASSES.contains(field.getType())) {
+                .isEnum() && !SUPPORTED_CLASSES.contains(field.getType())) {
                 continue;
             }
             final XmlElement xmlElement = field.getAnnotation(XmlElement.class);
@@ -194,10 +198,10 @@ public class Util {
         try {
             for (final Entry<String, JsonValue> entry : json.entrySet()) {
                 if (entry.getValue()
-                        .getValueType() == ValueType.OBJECT) {
+                    .getValueType() == ValueType.OBJECT) {
                     continue;
                 } else if (entry.getValue()
-                        .getValueType() == ValueType.NULL) {
+                    .getValueType() == ValueType.NULL) {
                     continue;
                 }
                 final Field field = fieldMap.get(entry.getKey());
@@ -206,10 +210,10 @@ public class Util {
                     if (field.getType() == URI.class) {
                         field.set(obj, URI.create(((JsonString) entry.getValue()).getString()));
                     } else if (field.getType() == Boolean.class && entry.getValue()
-                            .getValueType() == ValueType.TRUE) {
+                        .getValueType() == ValueType.TRUE) {
                         field.set(obj, true);
                     } else if (field.getType() == Boolean.class && entry.getValue()
-                            .getValueType() == ValueType.FALSE) {
+                        .getValueType() == ValueType.FALSE) {
                         field.set(obj, false);
                     } else if (field.getType() == String.class) {
                         field.set(obj, ((JsonString) entry.getValue()).getString());
@@ -220,7 +224,7 @@ public class Util {
                     } else if (field.getType() == Long.class) {
                         field.set(obj, ((JsonNumber) entry.getValue()).longValueExact());
                     } else if (field.getType()
-                            .isEnum()) {
+                        .isEnum()) {
                         field.set(obj, valueOf((Class<? extends Enum>) field.getType(), ((JsonString) entry.getValue()).getString()));
                     }
                 }
@@ -231,7 +235,7 @@ public class Util {
     }
 
     public static <E extends Enum<E>> List<E> splitToList(final Class<E> enumType,
-            final String names) {
+        final String names) {
 
         final List<E> ret = new LinkedList<>();
         for (final String name : splitToList(names)) {
@@ -259,7 +263,7 @@ public class Util {
     }
 
     public static <E extends Enum<E>> Set<E> splitToSet(final Class<E> enumType,
-            final String names) {
+        final String names) {
 
         final Set<E> ret = new HashSet<>();
         for (final String name : splitToList(names)) {
@@ -287,13 +291,14 @@ public class Util {
         final Class<E> enumType = value.getDeclaringClass();
         try {
             final XmlEnumValue xmlEnumValue = enumType.getField(value.name())
-                    .getAnnotation(XmlEnumValue.class);
+                .getAnnotation(XmlEnumValue.class);
             if (xmlEnumValue != null && xmlEnumValue.value() != null) {
                 return xmlEnumValue.value();
             } else {
                 return value.name();
             }
-        } catch (NoSuchFieldException | SecurityException e1) {
+        } catch (NoSuchFieldException
+                 | SecurityException e1) {
             throw new RuntimeException(e1);
         }
 
@@ -309,7 +314,7 @@ public class Util {
     }
 
     public static <E extends Enum<E>> E valueOf(final Class<E> enumType,
-            final String name) {
+        final String name) {
 
         if (!isNotNullOrEmpty(name)) {
             return null;
@@ -318,7 +323,7 @@ public class Util {
             for (final E e : enumType.getEnumConstants()) {
                 String ename = e.name();
                 final XmlEnumValue xmlEnumValue = enumType.getField(ename)
-                        .getAnnotation(XmlEnumValue.class);
+                    .getAnnotation(XmlEnumValue.class);
                 if (xmlEnumValue != null && xmlEnumValue.value() != null) {
                     ename = xmlEnumValue.value();
                 }
@@ -326,7 +331,8 @@ public class Util {
                     return e;
                 }
             }
-        } catch (NoSuchFieldException | SecurityException e1) {
+        } catch (NoSuchFieldException
+                 | SecurityException e1) {
             throw new RuntimeException(e1);
         }
         throw new IllegalArgumentException("unable to find the value " + name + " in enum " + enumType);

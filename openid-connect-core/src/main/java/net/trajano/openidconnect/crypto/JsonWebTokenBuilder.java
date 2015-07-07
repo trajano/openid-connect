@@ -60,7 +60,8 @@ public class JsonWebTokenBuilder {
      * Sets the algorithm. This should be done after setting the jwk/jwks.
      *
      * @param alg2
-     * @return
+     *            algorithm name
+     * @return <code>this</code>
      */
     public JsonWebTokenBuilder alg(final String alg2) {
 
@@ -69,7 +70,7 @@ public class JsonWebTokenBuilder {
     }
 
     public JsonWebToken build() throws IOException,
-            GeneralSecurityException {
+        GeneralSecurityException {
 
         final JoseHeader header = new JoseHeader();
         header.setAlg(alg);
@@ -111,6 +112,13 @@ public class JsonWebTokenBuilder {
         return this;
     }
 
+    /**
+     * Sets the encoding algorithm.
+     * 
+     * @param enc2
+     *            algorithm.
+     * @return <code>this</code>
+     */
     public JsonWebTokenBuilder enc(final String enc2) {
 
         enc = enc2;
@@ -122,7 +130,8 @@ public class JsonWebTokenBuilder {
      * in the key.
      *
      * @param jwk
-     * @return
+     *            JSON web key.
+     * @return <code>this</code>
      */
     public JsonWebTokenBuilder jwk(final JsonWebKey jwk) {
 
@@ -138,7 +147,7 @@ public class JsonWebTokenBuilder {
      *
      * @param jwks
      *            JWK set
-     * @return
+     * @return <code>this</code>
      */
     public JsonWebTokenBuilder jwk(final JsonWebKeySet jwks) {
 
@@ -178,14 +187,15 @@ public class JsonWebTokenBuilder {
      * writer.
      *
      * @param object
-     * @param providers
-     *            JAX-RS providers that have been registered.
-     * @return
+     *            object to encode
+     * @param type
+     *            target type
+     * @return <code>this</code>
      * @throws IOException
      * @throws WebApplicationException
      */
     public <T> JsonWebTokenBuilder payload(final T object,
-            Class<T> type) throws IOException {
+        Class<T> type) throws IOException {
 
         MessageBodyWriter<T> writer = (MessageBodyWriter<T>) providers.getMessageBodyWriter(type, null, null, MediaType.APPLICATION_JSON_TYPE);
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -202,7 +212,8 @@ public class JsonWebTokenBuilder {
 
         try {
             return build().toString();
-        } catch (IOException | GeneralSecurityException e) {
+        } catch (IOException
+                 | GeneralSecurityException e) {
             throw new RuntimeException(e);
         }
     }
