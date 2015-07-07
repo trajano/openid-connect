@@ -1,4 +1,4 @@
-package net.trajano.openidconnect.sample;
+package net.trajano.openidconnect.provider.sample;
 
 import java.net.URI;
 import java.util.Date;

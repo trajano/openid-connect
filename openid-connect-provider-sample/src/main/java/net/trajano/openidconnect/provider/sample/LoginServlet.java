@@ -1,4 +1,4 @@
-package net.trajano.openidconnect.sample;
+package net.trajano.openidconnect.provider.sample;
 
 import java.io.IOException;
 
