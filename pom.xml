@@ -37,6 +37,7 @@
         <jackson.version>2.5.4</jackson.version>
         <jdk.version>1.7</jdk.version>
         <surefire.version>2.18.1</surefire.version>
+        <maven.javadoc.failOnError>false</maven.javadoc.failOnError>
     </properties>
     <dependencyManagement>
         <dependencies>
@@ -149,6 +150,9 @@
                             </goals>
                         </execution>
                     </executions>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-javadoc-plugin</artifactId>
                 </plugin>
                 <plugin>
                     <artifactId>maven-jxr-plugin</artifactId>
