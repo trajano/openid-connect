@@ -36,8 +36,8 @@
     <properties>
         <jackson.version>2.5.4</jackson.version>
         <jdk.version>1.7</jdk.version>
-        <surefire.version>2.18.1</surefire.version>
         <maven.javadoc.failOnError>false</maven.javadoc.failOnError>
+        <surefire.version>2.18.1</surefire.version>
     </properties>
     <dependencyManagement>
         <dependencies>
@@ -226,6 +226,19 @@
         <plugins>
             <plugin>
                 <artifactId>maven-javadoc-plugin</artifactId>
+                <reportSets>
+                    <reportSet>
+                        <id>default</id>
+                        <configuration>
+                            <notimestamp>true</notimestamp>
+                            <quiet>true</quiet>
+                        </configuration>
+                        <reports>
+                            <report>javadoc</report>
+                            <report>test-javadoc</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
             </plugin>
             <plugin>
                 <artifactId>maven-checkstyle-plugin</artifactId>
