@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>FormPostBuilder.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">openid-connect-provider</a> &gt; <a href="index.source.html" class="el_package">net.trajano.openidconnect.provider.internal</a> &gt; <span class="el_source">FormPostBuilder.java</span></div><h1>FormPostBuilder.java</h1><pre class="source lang-java linenums">package net.trajano.openidconnect.provider.internal;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Scanner;
+
+public class FormPostBuilder {
+
+    private static final String TEMPLATE;
+
+    private static final String INPUT_HIDDEN_FORMAT = &quot;&lt;input type='hidden' name='%1s' value='%2s' /&gt;&quot;;
+    static {
+        try {
+<span class="fc" id="L17">            InputStream templateStream = Thread.currentThread()</span>
+                    .getContextClassLoader()
+                    .getResourceAsStream(&quot;META-INF/form_post.html&quot;);
+<span class="fc" id="L20">            Scanner scanner = new Scanner(templateStream);</span>
+<span class="fc" id="L21">            TEMPLATE = scanner.useDelimiter(&quot;\\A&quot;)</span>
+                    .next();
+<span class="fc" id="L23">            scanner.close();</span>
+<span class="fc" id="L24">            templateStream.close();</span>
+<span class="nc" id="L25">        } catch (IOException e) {</span>
+<span class="nc" id="L26">            throw new RuntimeException(e);</span>
+<span class="fc" id="L27">        }</span>
+<span class="fc" id="L28">    }</span>
+
+<span class="fc" id="L30">    public FormPostBuilder(URI redirectUri) {</span>
+
+<span class="fc" id="L32">        this.redirectUri = redirectUri;</span>
+<span class="fc" id="L33">    }</span>
+
+    private final URI redirectUri;
+
+<span class="fc" id="L37">    private final Map&lt;String, String&gt; inputMap = new HashMap&lt;&gt;();</span>
+
+    public String buildFormPost() {
+
+<span class="fc" id="L41">        StringBuilder inputs = new StringBuilder();</span>
+<span class="fc bfc" id="L42" title="All 2 branches covered.">        for (Map.Entry&lt;String, String&gt; entry : inputMap.entrySet()) {</span>
+<span class="fc" id="L43">            inputs.append(String.format(INPUT_HIDDEN_FORMAT, entry.getKey(), entry.getValue()));</span>
+<span class="fc" id="L44">        }</span>
+<span class="fc" id="L45">        return String.format(TEMPLATE, redirectUri, inputs);</span>
+    }
+
+    public void put(String name,
+            String value) {
+
+<span class="fc" id="L51">            inputMap.put(name, value);</span>
+<span class="fc" id="L52">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span></div></body></html>

@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="utf-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>AuthorizationEndpoint.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">openid-connect-provider</a> &gt; <a href="index.source.html" class="el_package">net.trajano.openidconnect.provider.endpoints</a> &gt; <span class="el_source">AuthorizationEndpoint.java</span></div><h1>AuthorizationEndpoint.java</h1><pre class="source lang-java linenums">package net.trajano.openidconnect.provider.endpoints;
+
+import static net.trajano.openidconnect.core.ErrorCode.consent_required;
+import static net.trajano.openidconnect.core.ErrorCode.invalid_grant;
+import static net.trajano.openidconnect.core.ErrorCode.login_required;
+
+import java.io.IOException;
+import java.security.GeneralSecurityException;
+
+import javax.ejb.EJB;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriBuilder;
+import javax.ws.rs.core.UriInfo;
+
+import net.trajano.openidconnect.auth.AuthenticationRequest;
+import net.trajano.openidconnect.auth.Prompt;
+import net.trajano.openidconnect.core.ErrorResponse;
+import net.trajano.openidconnect.core.OpenIdConnectException;
+import net.trajano.openidconnect.core.OpenIdConnectKey;
+import net.trajano.openidconnect.core.RedirectedOpenIdProviderException;
+import net.trajano.openidconnect.crypto.JsonWebTokenBuilder;
+import net.trajano.openidconnect.provider.spi.AuthenticationResponseProvider;
+import net.trajano.openidconnect.provider.spi.Authenticator;
+import net.trajano.openidconnect.provider.spi.ClientManager;
+import net.trajano.openidconnect.provider.spi.Consent;
+import net.trajano.openidconnect.provider.spi.KeyProvider;
+import net.trajano.openidconnect.provider.spi.TokenProvider;
+
+/**
+ * &lt;p&gt;
+ * The Authorization Endpoint performs Authentication of the End-User. This is
+ * done by sending the User Agent to the Authorization Server's Authorization
+ * Endpoint for Authentication and Authorization, using request parameters
+ * defined by OAuth 2.0 and additional parameters and parameter values defined
+ * by OpenID Connect.
+ * &lt;/p&gt;
+ * &lt;p&gt;
+ * Communication with the Authorization Endpoint MUST utilize TLS. See Section
+ * 16.17 for more information on using TLS.
+ * &lt;/p&gt;
+ *
+ * @author Archimedes Trajano
+ */
+@Path(&quot;auth&quot;)
+<span class="nc" id="L52">public class AuthorizationEndpoint {</span>
+
+    @EJB
+    private AuthenticationResponseProvider arp;
+
+    private Authenticator authenticator;
+
+    private ClientManager clientManager;
+
+    private KeyProvider keyProvider;
+
+    @Context
+    private javax.ws.rs.ext.Providers providers;
+
+    @EJB
+    private TokenProvider tp;
+
+    @Context
+    private UriInfo uriInfo;
+
+    /**
+     * &lt;a href=
+     * &quot;https://localhost:8181/V1/auth?client_id=angelstone-client-id&amp;scope=openid&amp;state=170894&amp;redirect_uri=https://www.getpostman.com/oauth2/callback&amp;response_type=code&quot;
+     * &gt;a&lt;/a&gt;
+     *
+     * @param req
+     *            servlet request
+     * @return JAX-RS Response
+     * @throws GeneralSecurityException
+     * @throws IOException
+     */
+    @GET
+    public Response getOp(@Context final HttpServletRequest req) throws IOException,
+        GeneralSecurityException {
+
+<span class="nc" id="L87">        return op(req);</span>
+    }
+
+    /**
+     * &lt;p&gt;
+     * An Authentication Request is an OAuth 2.0 Authorization Request that
+     * requests that the End-User be authenticated by the Authorization Server.
+     * &lt;/p&gt;
+     * &lt;p&gt;
+     * Authorization Servers MUST support the use of the HTTP GET and POST
+     * methods defined in RFC 2616 [RFC2616] at the Authorization Endpoint.
+     * Clients MAY use the HTTP GET or POST methods to send the Authorization
+     * Request to the Authorization Server. If using the HTTP GET method, the
+     * request parameters are serialized using URI Query String Serialization,
+     * per Section 13.1. If using the HTTP POST method, the request parameters
+     * are serialized using Form Serialization, per Section 13.2.
+     * &lt;/p&gt;
+     * 
+     * @return JAX-RS Response
+     * @throws GeneralSecurityException
+     * @throws IOException
+     */
+    @POST
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+    public Response op(@Context final HttpServletRequest req) throws IOException,
+        GeneralSecurityException {
+
+<span class="nc" id="L114">        final AuthenticationRequest authenticationRequest = new AuthenticationRequest(req, keyProvider.getPrivateJwks());</span>
+
+<span class="nc bnc" id="L116" title="All 2 branches missed.">        if (!clientManager.isRedirectUriValidForClient(authenticationRequest.getClientId(), authenticationRequest.getRedirectUri())) {</span>
+<span class="nc" id="L117">            throw new OpenIdConnectException(invalid_grant, &quot;redirect URI is not supported for the client&quot;);</span>
+        }
+
+<span class="nc" id="L120">        final boolean authenticated = authenticator.isAuthenticated(req);</span>
+
+<span class="nc bnc" id="L122" title="All 4 branches missed.">        if (!authenticated &amp;&amp; authenticationRequest.getPrompts()</span>
+            .contains(Prompt.none)) {
+<span class="nc" id="L124">            throw new RedirectedOpenIdProviderException(authenticationRequest, new ErrorResponse(login_required));</span>
+        }
+
+<span class="nc" id="L127">        final Consent consent = new Consent(authenticator.getSubject(req), authenticationRequest.getClientId(), authenticationRequest.getScopes());</span>
+
+<span class="nc bnc" id="L129" title="All 4 branches missed.">        final boolean consented = clientManager.isImplicitConsent(authenticationRequest.getClientId()) || tp.getByConsent(consent) != null;</span>
+<span class="nc bnc" id="L130" title="All 4 branches missed.">        if (!consented &amp;&amp; authenticationRequest.getPrompts()</span>
+            .contains(Prompt.none)) {
+<span class="nc" id="L132">            throw new RedirectedOpenIdProviderException(authenticationRequest, new ErrorResponse(consent_required));</span>
+        }
+
+<span class="nc" id="L135">        String reqJwt = req.getParameter(OpenIdConnectKey.REQUEST);</span>
+<span class="nc bnc" id="L136" title="All 2 branches missed.">        if (reqJwt == null) {</span>
+<span class="nc" id="L137">            final JsonWebTokenBuilder b = new JsonWebTokenBuilder().payload(authenticationRequest.toJsonObject())</span>
+                .compress(true);
+<span class="nc" id="L139">            reqJwt = b.toString();</span>
+        }
+
+<span class="nc" id="L142">        final UriBuilder contextUriBuilder = uriInfo.getBaseUriBuilder()</span>
+            .replacePath(req.getContextPath());
+<span class="nc bnc" id="L144" title="All 2 branches missed.">        if (!authenticated) {</span>
+
+<span class="nc" id="L146">            return Response.temporaryRedirect(authenticator.authenticate(authenticationRequest, reqJwt, req, contextUriBuilder))</span>
+                .build();
+
+<span class="nc bnc" id="L149" title="All 2 branches missed.">        } else if (!consented) {</span>
+
+<span class="nc" id="L151">            return Response.temporaryRedirect(authenticator.consent(authenticationRequest, reqJwt, req, contextUriBuilder))</span>
+                .build();
+        } else {
+
+<span class="nc" id="L155">            return arp.buildResponse(reqJwt, req, authenticator.getSubject(req));</span>
+        }
+
+    }
+
+    @EJB
+    public void setAuthenticator(final Authenticator authenticator) {
+
+<span class="nc" id="L163">        this.authenticator = authenticator;</span>
+<span class="nc" id="L164">    }</span>
+
+    @EJB
+    public void setClientManager(final ClientManager clientManager) {
+
+<span class="nc" id="L169">        this.clientManager = clientManager;</span>
+<span class="nc" id="L170">    }</span>
+
+    @EJB
+    public void setKeyProvider(final KeyProvider keyProvider) {
+
+<span class="nc" id="L175">        this.keyProvider = keyProvider;</span>
+<span class="nc" id="L176">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span></div></body></html>

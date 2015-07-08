@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>UserinfoEndpoint.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">openid-connect-provider</a> &gt; <a href="index.source.html" class="el_package">net.trajano.openidconnect.provider.endpoints</a> &gt; <span class="el_source">UserinfoEndpoint.java</span></div><h1>UserinfoEndpoint.java</h1><pre class="source lang-java linenums">package net.trajano.openidconnect.provider.endpoints;
+
+import javax.ejb.EJB;
+import javax.json.JsonObject;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+
+import net.trajano.openidconnect.core.ErrorCode;
+import net.trajano.openidconnect.core.ErrorResponse;
+import net.trajano.openidconnect.provider.internal.AuthorizationUtil;
+import net.trajano.openidconnect.provider.spi.KeyProvider;
+import net.trajano.openidconnect.provider.spi.TokenProvider;
+import net.trajano.openidconnect.provider.spi.UserinfoProvider;
+import net.trajano.openidconnect.token.IdToken;
+import net.trajano.openidconnect.token.IdTokenResponse;
+import net.trajano.openidconnect.userinfo.Userinfo;
+
+/**
+ * &lt;p&gt;
+ * The UserInfo Endpoint is an OAuth 2.0 Protected Resource that returns Claims
+ * about the authenticated End-User. To obtain the requested Claims about the
+ * End-User, the Client makes a request to the UserInfo Endpoint using an Access
+ * Token obtained through OpenID Connect Authentication. These Claims are
+ * normally represented by a JSON object that contains a collection of name and
+ * value pairs for the Claims.
+ * &lt;/p&gt;
+ * &lt;p&gt;
+ * Communication with the UserInfo Endpoint MUST utilize TLS. See Section 16.17
+ * for more information on using TLS.
+ * &lt;/p&gt;
+ * &lt;p&gt;
+ * The UserInfo Endpoint MUST support the use of the HTTP GET and HTTP POST
+ * methods defined in RFC 2616 [RFC2616].
+ * &lt;/p&gt;
+ * &lt;p&gt;
+ * The UserInfo Endpoint MUST accept Access Tokens as OAuth 2.0 Bearer Token
+ * Usage [RFC6750].
+ * &lt;/p&gt;
+ * &lt;p&gt;
+ * The UserInfo Endpoint SHOULD support the use of Cross Origin Resource Sharing
+ * (CORS) [CORS] and or other methods as appropriate to enable Java Script
+ * Clients to access the endpoint.
+ * &lt;/p&gt;
+ */
+@Path(&quot;profile&quot;)
+@Produces(MediaType.APPLICATION_JSON)
+<span class="nc" id="L53">public class UserinfoEndpoint {</span>
+
+    @EJB
+    private TokenProvider tokenProvider;
+
+    @EJB
+    private KeyProvider keyProvider;
+
+    private UserinfoProvider userinfoProvider;
+
+    /**
+     * &lt;p&gt;
+     * The Client sends the UserInfo Request using either HTTP GET or HTTP POST.
+     * The Access Token obtained from an OpenID Connect Authentication Request
+     * MUST be sent as a Bearer Token, per Section 2 of OAuth 2.0 Bearer Token
+     * Usage [RFC6750].
+     * &lt;/p&gt;
+     * &lt;p&gt;
+     * It is RECOMMENDED that the request use the HTTP GET method and the Access
+     * Token be sent using the Authorization header field.
+     * &lt;/p&gt;
+     *
+     * @param req
+     * @return
+     */
+    @GET
+    public Response getOp(@Context final HttpServletRequest req) {
+
+<span class="nc" id="L81">        return op(req);</span>
+    }
+
+    @POST
+    public Response op(@Context final HttpServletRequest req) {
+
+<span class="nc" id="L87">        final String accessToken = AuthorizationUtil.processBearer(req);</span>
+<span class="nc" id="L88">        IdTokenResponse byAccessToken = tokenProvider.getByAccessToken(accessToken);</span>
+<span class="nc bnc" id="L89" title="All 2 branches missed.">        if (byAccessToken == null) {</span>
+<span class="nc" id="L90">            return Response.status(400)</span>
+                    .entity(new ErrorResponse(ErrorCode.access_denied, &quot;unable to retrieve id token&quot;))
+                    .build();
+        }
+<span class="nc" id="L94">        IdToken idToken = byAccessToken.getIdToken(keyProvider.getPrivateJwks());</span>
+<span class="nc" id="L95">        JsonObject claims = tokenProvider.getClaimsByAccessToken(accessToken);</span>
+
+<span class="nc" id="L97">        Userinfo userinfo = userinfoProvider.getUserinfo(idToken);</span>
+
+<span class="nc bnc" id="L99" title="All 4 branches missed.">        if (claims != null &amp;&amp; claims.containsKey(&quot;userinfo&quot;)) {</span>
+<span class="nc" id="L100">            filterUserInfo(userinfo, claims.getJsonObject(&quot;userinfo&quot;));</span>
+        }
+
+<span class="nc" id="L103">        return Response.ok(userinfo)</span>
+                .build();
+    }
+
+    private void filterUserInfo(Userinfo userinfo,
+            JsonObject userinfoClaims) {
+
+<span class="nc bnc" id="L110" title="All 2 branches missed.">        if (!userinfoClaims.containsKey(&quot;updated_at&quot;)) {</span>
+<span class="nc" id="L111">            userinfo.setUpdatedAt(null);</span>
+        }
+<span class="nc bnc" id="L113" title="All 2 branches missed.">        if (!userinfoClaims.containsKey(&quot;email&quot;)) {</span>
+<span class="nc" id="L114">            userinfo.setEmail(null);</span>
+        }
+<span class="nc bnc" id="L116" title="All 2 branches missed.">        if (!userinfoClaims.containsKey(&quot;email_verified&quot;)) {</span>
+<span class="nc" id="L117">            userinfo.setEmailVerified(null);</span>
+        }
+<span class="nc bnc" id="L119" title="All 2 branches missed.">        if (!userinfoClaims.containsKey(&quot;name&quot;)) {</span>
+<span class="nc" id="L120">            userinfo.setName(null);</span>
+        }
+<span class="nc bnc" id="L122" title="All 2 branches missed.">        if (!userinfoClaims.containsKey(&quot;given_name&quot;)) {</span>
+<span class="nc" id="L123">            userinfo.setGivenName(null);</span>
+        }
+<span class="nc bnc" id="L125" title="All 2 branches missed.">        if (!userinfoClaims.containsKey(&quot;family_name&quot;)) {</span>
+<span class="nc" id="L126">            userinfo.setFamilyName(null);</span>
+        }
+<span class="nc bnc" id="L128" title="All 2 branches missed.">        if (!userinfoClaims.containsKey(&quot;middle_name&quot;)) {</span>
+<span class="nc" id="L129">            userinfo.setMiddleName(null);</span>
+        }
+<span class="nc bnc" id="L131" title="All 2 branches missed.">        if (!userinfoClaims.containsKey(&quot;nickname&quot;)) {</span>
+<span class="nc" id="L132">            userinfo.setNickname(null);</span>
+        }
+<span class="nc bnc" id="L134" title="All 2 branches missed.">        if (!userinfoClaims.containsKey(&quot;website&quot;)) {</span>
+<span class="nc" id="L135">            userinfo.setWebsite(null);</span>
+        }
+<span class="nc bnc" id="L137" title="All 2 branches missed.">        if (!userinfoClaims.containsKey(&quot;picture&quot;)) {</span>
+<span class="nc" id="L138">            userinfo.setPicture(null);</span>
+        }
+<span class="nc bnc" id="L140" title="All 2 branches missed.">        if (!userinfoClaims.containsKey(&quot;gender&quot;)) {</span>
+<span class="nc" id="L141">            userinfo.setGender(null);</span>
+        }
+<span class="nc bnc" id="L143" title="All 2 branches missed.">        if (!userinfoClaims.containsKey(&quot;address&quot;)) {</span>
+<span class="nc" id="L144">            userinfo.setAddress(null);</span>
+        }
+<span class="nc bnc" id="L146" title="All 2 branches missed.">        if (!userinfoClaims.containsKey(&quot;profile&quot;)) {</span>
+<span class="nc" id="L147">            userinfo.setProfile(null);</span>
+        }
+<span class="nc bnc" id="L149" title="All 2 branches missed.">        if (!userinfoClaims.containsKey(&quot;birthdate&quot;)) {</span>
+<span class="nc" id="L150">            userinfo.setBirthdate(null);</span>
+        }
+<span class="nc bnc" id="L152" title="All 2 branches missed.">        if (!userinfoClaims.containsKey(&quot;zoneinfo&quot;)) {</span>
+<span class="nc" id="L153">            userinfo.setZoneinfo(null);</span>
+        }
+<span class="nc bnc" id="L155" title="All 2 branches missed.">        if (!userinfoClaims.containsKey(&quot;locale&quot;)) {</span>
+<span class="nc" id="L156">            userinfo.setLocale(null);</span>
+        }
+<span class="nc bnc" id="L158" title="All 2 branches missed.">        if (!userinfoClaims.containsKey(&quot;preferred_username&quot;)) {</span>
+<span class="nc" id="L159">            userinfo.setPreferredUsername(null);</span>
+        }
+<span class="nc bnc" id="L161" title="All 2 branches missed.">        if (!userinfoClaims.containsKey(&quot;phone_number&quot;)) {</span>
+<span class="nc" id="L162">            userinfo.setPhoneNumber(null);</span>
+        }
+<span class="nc bnc" id="L164" title="All 2 branches missed.">        if (!userinfoClaims.containsKey(&quot;phone_number_verified&quot;)) {</span>
+<span class="nc" id="L165">            userinfo.setPhoneNumberVerified(null);</span>
+        }
+<span class="nc" id="L167">    }</span>
+
+    @EJB
+    public void setUserinfoProvider(final UserinfoProvider userinfoProvider) {
+
+<span class="nc" id="L172">        this.userinfoProvider = userinfoProvider;</span>
+<span class="nc" id="L173">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span></div></body></html>

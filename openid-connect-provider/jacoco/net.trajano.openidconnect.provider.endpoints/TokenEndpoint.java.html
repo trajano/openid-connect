@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>TokenEndpoint.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">openid-connect-provider</a> &gt; <a href="index.source.html" class="el_package">net.trajano.openidconnect.provider.endpoints</a> &gt; <span class="el_source">TokenEndpoint.java</span></div><h1>TokenEndpoint.java</h1><pre class="source lang-java linenums">package net.trajano.openidconnect.provider.endpoints;
+
+import java.io.IOException;
+import java.net.URI;
+import java.security.GeneralSecurityException;
+
+import javax.ejb.EJB;
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.constraints.NotNull;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.FormParam;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
+
+import net.trajano.openidconnect.core.ErrorCode;
+import net.trajano.openidconnect.core.ErrorResponse;
+import net.trajano.openidconnect.core.OpenIdConnectException;
+import net.trajano.openidconnect.provider.internal.AuthorizationUtil;
+import net.trajano.openidconnect.provider.internal.ClientCredentials;
+import net.trajano.openidconnect.provider.spi.ClientManager;
+import net.trajano.openidconnect.provider.spi.KeyProvider;
+import net.trajano.openidconnect.provider.spi.TokenProvider;
+import net.trajano.openidconnect.token.GrantType;
+import net.trajano.openidconnect.token.IdTokenResponse;
+import net.trajano.openidconnect.token.TokenResponse;
+
+@Path(&quot;token&quot;)
+@Produces(MediaType.APPLICATION_JSON)
+<span class="nc" id="L37">public class TokenEndpoint {</span>
+
+    @EJB
+    private ClientManager cm;
+
+    @EJB
+    private KeyProvider kp;
+
+    @EJB
+    private TokenProvider tp;
+
+    @GET
+    public Response getOp(@QueryParam(&quot;grant_type&quot;) @NotNull final GrantType grantType,
+            @QueryParam(&quot;code&quot;) final String code,
+            @QueryParam(&quot;refresh_token&quot;) final String refreshToken,
+            @QueryParam(&quot;redirect_uri&quot;) final URI redirectUri,
+            @Context final HttpServletRequest req) throws IOException,
+                    GeneralSecurityException {
+
+<span class="nc" id="L56">        return op(grantType, code, refreshToken, redirectUri, req);</span>
+    }
+
+    @POST
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+    public Response op(@FormParam(&quot;grant_type&quot;) @NotNull final GrantType grantType,
+            @FormParam(&quot;code&quot;) final String code,
+            @FormParam(&quot;refresh_token&quot;) final String refreshToken,
+            @FormParam(&quot;redirect_uri&quot;) final URI redirectUri,
+            @Context final HttpServletRequest req) throws IOException,
+                    GeneralSecurityException {
+
+<span class="nc" id="L68">        final ClientCredentials cred = AuthorizationUtil.processBasicOrQuery(req);</span>
+
+<span class="nc bnc" id="L70" title="All 2 branches missed.">        if (grantType == GrantType.authorization_code) {</span>
+<span class="nc" id="L71">            final IdTokenResponse responseToken = tp.getByCode(code, true);</span>
+<span class="nc bnc" id="L72" title="All 2 branches missed.">            if (responseToken == null) {</span>
+<span class="nc" id="L73">                return Response.ok(new ErrorResponse(ErrorCode.access_denied, &quot;unable to obtain response token&quot;))</span>
+                        .status(Status.BAD_REQUEST)
+                        .build();
+            }
+<span class="nc bnc" id="L77" title="All 2 branches missed.">            if (!responseToken.getIdToken(kp.getJwks())</span>
+                    .getAud()
+                    .equals(cred.getClientId())) {
+<span class="nc" id="L80">                throw new WebApplicationException();</span>
+            }
+<span class="nc" id="L82">            return Response.ok(responseToken)</span>
+                    .build();
+<span class="nc bnc" id="L84" title="All 2 branches missed.">        } else if (grantType == GrantType.refresh_token) {</span>
+<span class="nc" id="L85">            final TokenResponse responseToken = tp.refreshToken(cred.getClientId(), refreshToken, null, null);</span>
+<span class="nc" id="L86">            return Response.ok(responseToken)</span>
+                    .build();
+        } else {
+<span class="nc" id="L89">            throw new OpenIdConnectException(ErrorCode.invalid_grant);</span>
+        }
+
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span></div></body></html>

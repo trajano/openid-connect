@@ -1,0 +1,5 @@
+net.trajano.openidconnect.provider
+net.trajano.openidconnect.provider.ejb
+net.trajano.openidconnect.provider.endpoints
+net.trajano.openidconnect.provider.internal
+net.trajano.openidconnect.provider.spi

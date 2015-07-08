@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="utf-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>DefaultTokenProvider.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">openid-connect-provider</a> &gt; <a href="index.source.html" class="el_package">net.trajano.openidconnect.provider.ejb</a> &gt; <span class="el_source">DefaultTokenProvider.java</span></div><h1>DefaultTokenProvider.java</h1><pre class="source lang-java linenums">package net.trajano.openidconnect.provider.ejb;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.net.URI;
+import java.security.GeneralSecurityException;
+import java.security.MessageDigest;
+import java.util.Map.Entry;
+import java.util.Set;
+
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
+import javax.json.JsonObject;
+import javax.json.JsonValue;
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.MediaType;
+
+import net.trajano.openidconnect.auth.AuthenticationRequest;
+import net.trajano.openidconnect.core.Scope;
+import net.trajano.openidconnect.crypto.Encoding;
+import net.trajano.openidconnect.crypto.JsonWebAlgorithm;
+import net.trajano.openidconnect.crypto.JsonWebTokenBuilder;
+import net.trajano.openidconnect.internal.CharSets;
+import net.trajano.openidconnect.provider.spi.Consent;
+import net.trajano.openidconnect.provider.spi.KeyProvider;
+import net.trajano.openidconnect.provider.spi.TokenProvider;
+import net.trajano.openidconnect.provider.spi.TokenStorage;
+import net.trajano.openidconnect.provider.spi.UserinfoProvider;
+import net.trajano.openidconnect.rs.IdTokenProvider;
+import net.trajano.openidconnect.token.IdToken;
+import net.trajano.openidconnect.token.IdTokenResponse;
+import net.trajano.openidconnect.token.TokenResponse;
+import net.trajano.openidconnect.userinfo.Userinfo;
+
+@Stateless
+<span class="nc" id="L36">public class DefaultTokenProvider implements TokenProvider {</span>
+
+    @EJB
+    private KeyProvider keyProvider;
+
+    @EJB
+    private TokenStorage tokenStorage;
+
+    @EJB
+    private UserinfoProvider userinfoProvider;
+
+    /**
+     * Calculates the hash for the token. Primarily for at_hash value.
+     *
+     * @param token
+     * @return
+     * @throws GeneralSecurityException
+     */
+    private String computeHash(final String token) throws GeneralSecurityException {
+
+        // TODO this should be based on something.
+<span class="nc" id="L57">        final MessageDigest digest = MessageDigest.getInstance(&quot;SHA-256&quot;);</span>
+<span class="nc" id="L58">        final byte[] digestedBytes = digest.digest(token.getBytes(CharSets.US_ASCII));</span>
+
+<span class="nc" id="L60">        return Encoding.base64urlEncode(digestedBytes, 0, 128 / 8);</span>
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String createNewToken(final String subject,
+            final URI issuer,
+            final AuthenticationRequest req) throws IOException,
+                    GeneralSecurityException {
+
+<span class="nc" id="L72">        final IdToken idToken = new IdToken();</span>
+<span class="nc" id="L73">        idToken.setSub(subject);</span>
+<span class="nc" id="L74">        idToken.setNonce(req.getNonce());</span>
+<span class="nc" id="L75">        idToken.setAuthTime(System.currentTimeMillis() / 1000);</span>
+<span class="nc" id="L76">        idToken.setAud(req.getClientId());</span>
+<span class="nc" id="L77">        idToken.setAzp(req.getClientId());</span>
+<span class="nc" id="L78">        idToken.setIss(issuer.toASCIIString());</span>
+<span class="nc" id="L79">        idToken.setAcr(&quot;0&quot;);</span>
+
+<span class="nc bnc" id="L81" title="All 2 branches missed.">        if (req.getClaims()</span>
+                .containsKey(&quot;id_token&quot;)) {
+<span class="nc" id="L83">            Userinfo userinfo = userinfoProvider.getUserinfo(idToken);</span>
+<span class="nc bnc" id="L84" title="All 2 branches missed.">            for (Entry&lt;String, JsonValue&gt; e : req.getClaims()</span>
+                    .getJsonObject(&quot;id_token&quot;)
+                    .entrySet()) {
+<span class="nc bnc" id="L87" title="All 2 branches missed.">                if (&quot;name&quot;.equals(e.getKey())) {</span>
+<span class="nc" id="L88">                    idToken.setName(userinfo.getName());</span>
+                }
+<span class="nc" id="L90">            }</span>
+        }
+
+<span class="nc" id="L93">        return store(idToken, req);</span>
+    }
+
+    @Override
+    public IdTokenResponse getByAccessToken(final String accessToken) {
+
+<span class="nc" id="L99">        return tokenStorage.getByAccessToken(accessToken);</span>
+    }
+
+    @Override
+    public IdTokenResponse getByCode(final String code,
+            final boolean deleteAfterRetrieval) {
+
+<span class="nc" id="L106">        final IdTokenResponse tokenResponse = tokenStorage.getByCode(code);</span>
+
+<span class="nc bnc" id="L108" title="All 2 branches missed.">        if (tokenStorage.isCodeUsed(code)) {</span>
+            // Revoke access tokens since code was used twice.
+<span class="nc" id="L110">            tokenStorage.removeMappingForAccessToken(tokenResponse.getAccessToken());</span>
+<span class="nc" id="L111">            tokenStorage.removeMappingForRefreshToken(tokenResponse.getRefreshToken());</span>
+<span class="nc" id="L112">            tokenStorage.removeMappingForCode(code);</span>
+<span class="nc" id="L113">            return null;</span>
+        }
+<span class="nc bnc" id="L115" title="All 2 branches missed.">        if (deleteAfterRetrieval) {</span>
+<span class="nc" id="L116">            tokenStorage.markCodeAsUsed(code);</span>
+        }
+<span class="nc" id="L118">        return tokenResponse;</span>
+    }
+
+    @Override
+    public IdTokenResponse getByConsent(final Consent consent) {
+
+<span class="nc" id="L124">        return tokenStorage.getByConsent(consent);</span>
+    }
+
+    @Override
+    public IdTokenResponse refreshToken(final String clientId,
+            final String refreshTokenIn,
+            final Set&lt;Scope&gt; scopes,
+            final Integer expiresIn) throws IOException,
+                    GeneralSecurityException {
+
+<span class="nc" id="L134">        final IdTokenResponse idTokenResponse = tokenStorage.removeMappingForRefreshToken(refreshTokenIn);</span>
+<span class="nc bnc" id="L135" title="All 2 branches missed.">        if (!clientId.equals(idTokenResponse.getIdToken(keyProvider.getPrivateJwks())</span>
+                .getAud())) {
+<span class="nc" id="L137">            throw new WebApplicationException();</span>
+        }
+<span class="nc bnc" id="L139" title="All 4 branches missed.">        if (scopes != null &amp;&amp; !scopes.containsAll(scopes)) {</span>
+<span class="nc" id="L140">            throw new WebApplicationException();</span>
+        }
+<span class="nc bnc" id="L142" title="All 4 branches missed.">        if (scopes != null &amp;&amp; scopes.containsAll(scopes)) {</span>
+<span class="nc" id="L143">            idTokenResponse.setScopes(scopes);</span>
+        }
+
+<span class="nc" id="L146">        JsonObject claims = tokenStorage.getClaimsByAccessToken(idTokenResponse.getAccessToken());</span>
+        // remove from map we are getting a new one
+<span class="nc" id="L148">        tokenStorage.removeMappingForAccessToken(idTokenResponse.getAccessToken());</span>
+<span class="nc" id="L149">        final String newAccessToken = keyProvider.nextEncodedToken();</span>
+<span class="nc" id="L150">        final String newRefreshToken = keyProvider.nextEncodedToken();</span>
+
+<span class="nc" id="L152">        idTokenResponse.setAccessToken(newAccessToken);</span>
+<span class="nc" id="L153">        idTokenResponse.setRefreshToken(newRefreshToken);</span>
+<span class="nc" id="L154">        final IdToken idToken = idTokenResponse.getIdToken(keyProvider.getJwks());</span>
+
+<span class="nc bnc" id="L156" title="All 2 branches missed.">        if (expiresIn != null) {</span>
+<span class="nc" id="L157">            idToken.resetIssueAndExpiration(tokenStorage.getExpiration(expiresIn));</span>
+        } else {
+<span class="nc" id="L159">            idToken.resetIssueAndExpiration(tokenStorage.getDefaultExpiration());</span>
+        }
+
+<span class="nc" id="L162">        idToken.setAtHash(computeHash(newAccessToken));</span>
+
+<span class="nc" id="L164">        final ByteArrayOutputStream baos = new ByteArrayOutputStream();</span>
+<span class="nc" id="L165">        new IdTokenProvider().writeTo(idToken, IdToken.class, IdToken.class, null, MediaType.APPLICATION_JSON_TYPE, null, baos);</span>
+<span class="nc" id="L166">        baos.close();</span>
+
+<span class="nc" id="L168">        final JsonWebTokenBuilder jwtBuilder = new JsonWebTokenBuilder().jwk(keyProvider.getPrivateJwks())</span>
+                .payload(baos.toByteArray());
+<span class="nc" id="L170">        idTokenResponse.setEncodedIdToken(jwtBuilder.toString());</span>
+
+<span class="nc" id="L172">        tokenStorage.store(idToken, idTokenResponse, claims);</span>
+
+<span class="nc" id="L174">        return idTokenResponse;</span>
+    }
+
+    /**
+     * Stores the ID token and associated scope in some storage and creates the
+     * access_token, authorization code and refresh token linkages.
+     *
+     * @param idToken
+     *            idToken
+     * @param req
+     *            Authentication request
+     * @return authorization code to retrieve the token data.
+     * @throws IOException
+     * @throws GeneralSecurityException
+     */
+    private String store(final IdToken idToken,
+            final AuthenticationRequest req) throws IOException,
+                    GeneralSecurityException {
+
+<span class="nc" id="L193">        final IdTokenResponse response = new IdTokenResponse();</span>
+<span class="nc" id="L194">        final String newAccessToken = keyProvider.nextEncodedToken();</span>
+<span class="nc" id="L195">        response.setAccessToken(newAccessToken);</span>
+<span class="nc" id="L196">        response.setRefreshToken(keyProvider.nextEncodedToken());</span>
+<span class="nc" id="L197">        response.setExpiresIn(tokenStorage.getDefaultExpiration());</span>
+<span class="nc" id="L198">        response.setScopes(req.getScopes());</span>
+<span class="nc" id="L199">        response.setTokenType(TokenResponse.BEARER);</span>
+
+<span class="nc" id="L201">        idToken.setAtHash(computeHash(newAccessToken));</span>
+<span class="nc" id="L202">        idToken.resetIssueAndExpiration(tokenStorage.getDefaultExpiration());</span>
+
+<span class="nc" id="L204">        final ByteArrayOutputStream baos = new ByteArrayOutputStream();</span>
+<span class="nc" id="L205">        new IdTokenProvider().writeTo(idToken, IdToken.class, IdToken.class, null, MediaType.APPLICATION_JSON_TYPE, null, baos);</span>
+<span class="nc" id="L206">        baos.close();</span>
+<span class="nc" id="L207">        final JsonWebTokenBuilder jwtBuilder = new JsonWebTokenBuilder().jwk(keyProvider.getPrivateJwks())</span>
+                .alg(JsonWebAlgorithm.RS256)
+                .payload(baos.toByteArray());
+<span class="nc" id="L210">        response.setEncodedIdToken(jwtBuilder.toString());</span>
+
+<span class="nc" id="L212">        final String code = keyProvider.nextEncodedToken();</span>
+<span class="nc" id="L213">        tokenStorage.store(idToken, response, code, req.getClaims());</span>
+
+<span class="nc" id="L215">        return code;</span>
+    }
+
+    @Override
+    public JsonObject getClaimsByAccessToken(String accessToken) {
+
+<span class="nc" id="L221">        return tokenStorage.getClaimsByAccessToken(accessToken);</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span></div></body></html>

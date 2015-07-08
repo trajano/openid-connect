@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>WellKnownOpenIdConfiguration.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">openid-connect-provider</a> &gt; <a href="index.source.html" class="el_package">net.trajano.openidconnect.provider.endpoints</a> &gt; <span class="el_source">WellKnownOpenIdConfiguration.java</span></div><h1>WellKnownOpenIdConfiguration.java</h1><pre class="source lang-java linenums">package net.trajano.openidconnect.provider.endpoints;
+
+import static java.net.URI.create;
+
+import javax.annotation.PostConstruct;
+import javax.ejb.EJB;
+import javax.servlet.ServletRegistration;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.CacheControl;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriBuilder;
+
+import net.trajano.openidconnect.auth.ResponseMode;
+import net.trajano.openidconnect.core.OpenIdProviderConfiguration;
+import net.trajano.openidconnect.core.Scope;
+import net.trajano.openidconnect.core.SubjectIdentifierType;
+import net.trajano.openidconnect.core.TokenEndPointAuthMethod;
+import net.trajano.openidconnect.crypto.JsonWebAlgorithm;
+import net.trajano.openidconnect.provider.spi.KeyProvider;
+import net.trajano.openidconnect.provider.spi.UserinfoProvider;
+import net.trajano.openidconnect.token.GrantType;
+
+@Path(&quot;openid-configuration&quot;)
+<span class="nc" id="L29">public class WellKnownOpenIdConfiguration {</span>
+
+    public static final String CODE = &quot;code&quot;;
+
+    public static final String CODE_ID_TOKEN = &quot;code id_token&quot;;
+
+    public static final String CODE_ID_TOKEN_TOKEN = &quot;code id_token token&quot;;
+
+    public static final String CODE_TOKEN = &quot;code token&quot;;
+
+    public static final String ID_TOKEN = &quot;id_token&quot;;
+
+    public static final String ID_TOKEN_TOKEN = &quot;id_token token&quot;;
+
+    /**
+     * Authorization endpoint mapping that is built during {@link #init()}
+     */
+    private String authorizationMapping;
+
+    /**
+     * JWKS URI mapping that is built during {@link #init()}
+     */
+    private String jwksMapping;
+
+    private KeyProvider keyProvider;
+
+    /**
+     * End session endpoint mapping that is built during {@link #init()}
+     */
+    private String revocationMapping;
+
+    /**
+     * Token endpoint mapping that is built during {@link #init()}
+     */
+    private String tokenMapping;
+
+    /**
+     * Userinfo endpoint mapping that is built during {@link #init()}
+     */
+    private String userinfoMapping;
+
+    /**
+     * Determines the endpoints for OAuth2 based on the mappings specified in
+     * the {@link ServletRegistration}s.
+     */
+    @PostConstruct
+    public void init() {
+
+        // eventually allow for multiple for now hard code.
+<span class="nc" id="L78">        String applicationPath = &quot;V1&quot;;</span>
+<span class="nc bnc" id="L79" title="All 2 branches missed.">        if (!applicationPath.startsWith(&quot;/&quot;)) {</span>
+<span class="nc" id="L80">            applicationPath = &quot;/&quot; + applicationPath;</span>
+        }
+<span class="nc" id="L82">        jwksMapping = applicationPath + &quot;/jwks&quot;;</span>
+<span class="nc" id="L83">        authorizationMapping = applicationPath + &quot;/auth&quot;;</span>
+<span class="nc" id="L84">        tokenMapping = applicationPath + &quot;/token&quot;;</span>
+<span class="nc" id="L85">        userinfoMapping = applicationPath + &quot;/profile&quot;;</span>
+<span class="nc" id="L86">        revocationMapping = applicationPath + &quot;/revocation&quot;;</span>
+<span class="nc" id="L87">        endSessionMapping = applicationPath + &quot;/end&quot;;</span>
+
+<span class="nc" id="L89">    }</span>
+
+    private String endSessionMapping;
+
+    private UserinfoProvider userinfoProvider;
+
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response op(@Context final HttpServletRequest request) {
+
+<span class="nc" id="L99">        final OpenIdProviderConfiguration openIdConfiguration = new OpenIdProviderConfiguration();</span>
+
+<span class="nc" id="L101">        final UriBuilder baseUri = UriBuilder.fromUri(create(request.getRequestURL()</span>
+                .toString()))
+                .scheme(&quot;https&quot;)
+                .replaceQuery(null)
+                .fragment(null);
+<span class="nc" id="L106">        openIdConfiguration.setIssuer(baseUri.replacePath(request.getContextPath())</span>
+                .build());
+<span class="nc" id="L108">        openIdConfiguration.setJwksUri(baseUri.replacePath(request.getContextPath() + jwksMapping)</span>
+                .build());
+<span class="nc" id="L110">        openIdConfiguration.setAuthorizationEndpoint(baseUri.replacePath(request.getContextPath() + authorizationMapping)</span>
+                .build());
+<span class="nc" id="L112">        openIdConfiguration.setRevocationEndpoint(baseUri.replacePath(request.getContextPath() + revocationMapping)</span>
+                .build());
+<span class="nc" id="L114">        openIdConfiguration.setTokenEndpoint(baseUri.replacePath(request.getContextPath() + tokenMapping)</span>
+                .build());
+<span class="nc" id="L116">        openIdConfiguration.setEndSessionEndpoint(baseUri.replacePath(request.getContextPath() + endSessionMapping)</span>
+                .build());
+<span class="nc" id="L118">        openIdConfiguration.setUserinfoEndpoint(baseUri.replacePath(request.getContextPath() + userinfoMapping)</span>
+                .build());
+
+<span class="nc" id="L121">        final Scope[] scopesSupported = userinfoProvider.scopesSupported();</span>
+<span class="nc" id="L122">        final Scope[] scopes = new Scope[scopesSupported.length + 1];</span>
+<span class="nc" id="L123">        System.arraycopy(scopesSupported, 0, scopes, 1, scopesSupported.length);</span>
+<span class="nc" id="L124">        scopes[0] = Scope.openid;</span>
+<span class="nc" id="L125">        openIdConfiguration.setScopesSupported(scopes);</span>
+
+<span class="nc" id="L127">        final String[] claimsSupported = userinfoProvider.claimsSupported();</span>
+<span class="nc" id="L128">        final String[] claims = new String[claimsSupported.length + 3];</span>
+<span class="nc" id="L129">        claims[0] = &quot;sub&quot;;</span>
+<span class="nc" id="L130">        claims[1] = &quot;iss&quot;;</span>
+<span class="nc" id="L131">        claims[2] = &quot;auth_time&quot;;</span>
+<span class="nc" id="L132">        System.arraycopy(claimsSupported, 0, claims, 3, claimsSupported.length);</span>
+<span class="nc" id="L133">        openIdConfiguration.setClaimsSupported(claims);</span>
+
+<span class="nc" id="L135">        openIdConfiguration.setResponseTypesSupported(CODE, ID_TOKEN, ID_TOKEN_TOKEN, CODE_ID_TOKEN, CODE_TOKEN, CODE_ID_TOKEN_TOKEN);</span>
+<span class="nc" id="L136">        openIdConfiguration.setRequestParameterSupported(true);</span>
+<span class="nc" id="L137">        openIdConfiguration.setGrantTypesSupported(GrantType.authorization_code, GrantType.implicit);</span>
+<span class="nc" id="L138">        openIdConfiguration.setRequestUriParameterSupported(false);</span>
+<span class="nc" id="L139">        openIdConfiguration.setSubjectTypesSupported(SubjectIdentifierType.PUBLIC);</span>
+<span class="nc" id="L140">        openIdConfiguration.setTokenEndpointAuthMethodsSupported(TokenEndPointAuthMethod.client_secret_basic, TokenEndPointAuthMethod.client_secret_post);</span>
+<span class="nc" id="L141">        openIdConfiguration.setIdTokenSigningAlgValuesSupported(JsonWebAlgorithm.getSigAlgorithms());</span>
+<span class="nc" id="L142">        openIdConfiguration.setRequestObjectEncryptionAlgValuesSupported(JsonWebAlgorithm.getKexAlgorithms());</span>
+<span class="nc" id="L143">        openIdConfiguration.setRequestObjectEncryptionEncValuesSupported(JsonWebAlgorithm.getEncAlgorithms());</span>
+<span class="nc" id="L144">        openIdConfiguration.setResponseModesSupported(ResponseMode.fragment, ResponseMode.query, ResponseMode.form_post);</span>
+
+<span class="nc" id="L146">        final CacheControl cacheControl = new CacheControl();</span>
+<span class="nc" id="L147">        cacheControl.setPrivate(false);</span>
+<span class="nc" id="L148">        cacheControl.setMaxAge(86400);</span>
+
+<span class="nc" id="L150">        return Response.ok(openIdConfiguration)</span>
+                .cacheControl(cacheControl)
+                .tag(keyProvider.getSecretKeyId())
+                .build();
+
+    }
+
+    @EJB
+    public void setKeyProvider(final KeyProvider keyProvider) {
+
+<span class="nc" id="L160">        this.keyProvider = keyProvider;</span>
+<span class="nc" id="L161">    }</span>
+
+    @EJB
+    public void setUserinfoProvider(final UserinfoProvider userinfoProvider) {
+
+<span class="nc" id="L166">        this.userinfoProvider = userinfoProvider;</span>
+<span class="nc" id="L167">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span></div></body></html>

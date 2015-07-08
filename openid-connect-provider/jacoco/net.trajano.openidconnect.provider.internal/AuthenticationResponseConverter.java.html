@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>AuthenticationResponseConverter.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">openid-connect-provider</a> &gt; <a href="index.source.html" class="el_package">net.trajano.openidconnect.provider.internal</a> &gt; <span class="el_source">AuthenticationResponseConverter.java</span></div><h1>AuthenticationResponseConverter.java</h1><pre class="source lang-java linenums">package net.trajano.openidconnect.provider.internal;
+
+import java.net.URI;
+
+import javax.ws.rs.core.UriBuilder;
+
+import net.trajano.openidconnect.auth.AuthenticationResponse;
+
+/**
+ * Performs conversions of {@link AuthenticationResponse} to other forms.
+ * 
+ * @author Archimedes
+ */
+public class AuthenticationResponseConverter {
+
+    private static final String ACCESS_TOKEN_KEY = &quot;access_token&quot;;
+
+    private static final String CODE_KEY = &quot;code&quot;;
+
+    private static final String ID_TOKEN_KEY = &quot;id_token&quot;;
+
+    private static final String STATE_KEY = &quot;state&quot;;
+
+    private static final String TOKEN_TYPE_KEY = &quot;token_type&quot;;
+
+<span class="nc" id="L26">    public AuthenticationResponseConverter(URI redirectUri, AuthenticationResponse response) {</span>
+
+<span class="nc" id="L28">        this.redirectUri = redirectUri;</span>
+<span class="nc" id="L29">        this.response = response;</span>
+<span class="nc" id="L30">    }</span>
+
+    private final URI redirectUri;
+
+    private final AuthenticationResponse response;
+
+    public String toFormPost() {
+
+<span class="nc" id="L38">        final FormPostBuilder b = new FormPostBuilder(redirectUri);</span>
+<span class="nc bnc" id="L39" title="All 2 branches missed.">        if (response.getState() != null) {</span>
+<span class="nc" id="L40">            b.put(STATE_KEY, response.getState());</span>
+        }
+<span class="nc bnc" id="L42" title="All 2 branches missed.">        if (response.getAccessToken() != null) {</span>
+<span class="nc" id="L43">            b.put(ACCESS_TOKEN_KEY, response.getAccessToken());</span>
+<span class="nc" id="L44">            b.put(TOKEN_TYPE_KEY, response.getTokenType());</span>
+        }
+<span class="nc bnc" id="L46" title="All 2 branches missed.">        if (response.getCode() != null) {</span>
+<span class="nc" id="L47">            b.put(CODE_KEY, response.getCode());</span>
+        }
+<span class="nc bnc" id="L49" title="All 2 branches missed.">        if (response.getEncodedIdToken() != null) {</span>
+<span class="nc" id="L50">            b.put(ID_TOKEN_KEY, response.getEncodedIdToken());</span>
+        }
+<span class="nc" id="L52">        return b.buildFormPost();</span>
+    }
+
+    public URI toFragmentUri() {
+
+<span class="nc" id="L57">        return UriBuilder.fromUri(redirectUri)</span>
+                .fragment(toQueryUri().getQuery())
+                .build();
+    }
+
+    public URI toQueryUri() {
+
+<span class="nc" id="L64">        final UriBuilder b = UriBuilder.fromUri(redirectUri);</span>
+<span class="nc bnc" id="L65" title="All 2 branches missed.">        if (response.getState() != null) {</span>
+<span class="nc" id="L66">            b.queryParam(STATE_KEY, response.getState());</span>
+        }
+<span class="nc bnc" id="L68" title="All 2 branches missed.">        if (response.getAccessToken() != null) {</span>
+<span class="nc" id="L69">            b.queryParam(ACCESS_TOKEN_KEY, response.getAccessToken());</span>
+<span class="nc" id="L70">            b.queryParam(TOKEN_TYPE_KEY, response.getTokenType());</span>
+        }
+<span class="nc bnc" id="L72" title="All 2 branches missed.">        if (response.getCode() != null) {</span>
+<span class="nc" id="L73">            b.queryParam(CODE_KEY, response.getCode());</span>
+        }
+<span class="nc bnc" id="L75" title="All 2 branches missed.">        if (response.getEncodedIdToken() != null) {</span>
+<span class="nc" id="L76">            b.queryParam(ID_TOKEN_KEY, response.getEncodedIdToken());</span>
+        }
+<span class="nc" id="L78">        return b.build();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span></div></body></html>
