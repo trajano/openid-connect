@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>SecurityAssertionPassedRequestProcessor.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">openid-connect-jaspic-module</a> &gt; <a href="index.source.html" class="el_package">net.trajano.openidconnect.jaspic.internal.processors</a> &gt; <span class="el_source">SecurityAssertionPassedRequestProcessor.java</span></div><h1>SecurityAssertionPassedRequestProcessor.java</h1><pre class="source lang-java linenums">package net.trajano.openidconnect.jaspic.internal.processors;
+
+import java.io.IOException;
+
+import javax.security.auth.message.AuthStatus;
+
+import net.trajano.openidconnect.jaspic.internal.ValidateContext;
+import net.trajano.openidconnect.jaspic.internal.ValidateRequestProcessor;
+
+/**
+ * Processes any requests that would pass the security assertions.
+ * 
+ * @author Archimedes
+ */
+<span class="fc" id="L15">public class SecurityAssertionPassedRequestProcessor implements ValidateRequestProcessor {</span>
+
+    @Override
+    public boolean canValidateRequest(final ValidateContext context) {
+
+<span class="pc bpc" id="L20" title="3 of 4 branches missed.">        if (!context.isMandatory() &amp;&amp; !context.isSecure()) {</span>
+<span class="nc" id="L21">            return true;</span>
+        }
+<span class="pc bpc" id="L23" title="4 of 6 branches missed.">        if (!context.isMandatory() || context.hasTokenCookie() &amp;&amp; !context.getTokenCookie()</span>
+                .isExpired()) {
+<span class="nc" id="L25">            return true;</span>
+        }
+<span class="fc" id="L27">        return false;</span>
+    }
+
+    @Override
+    public AuthStatus validateRequest(final ValidateContext context) throws IOException {
+
+<span class="nc" id="L33">        return AuthStatus.SUCCESS;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span></div></body></html>

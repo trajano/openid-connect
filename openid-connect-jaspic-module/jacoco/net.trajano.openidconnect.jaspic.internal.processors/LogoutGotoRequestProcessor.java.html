@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>LogoutGotoRequestProcessor.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">openid-connect-jaspic-module</a> &gt; <a href="index.source.html" class="el_package">net.trajano.openidconnect.jaspic.internal.processors</a> &gt; <span class="el_source">LogoutGotoRequestProcessor.java</span></div><h1>LogoutGotoRequestProcessor.java</h1><pre class="source lang-java linenums">package net.trajano.openidconnect.jaspic.internal.processors;
+
+import java.io.IOException;
+import java.security.GeneralSecurityException;
+
+import javax.security.auth.message.AuthStatus;
+
+import net.trajano.openidconnect.jaspic.OpenIdConnectAuthModule;
+import net.trajano.openidconnect.jaspic.internal.ValidateContext;
+import net.trajano.openidconnect.jaspic.internal.ValidateRequestProcessor;
+
+<span class="fc" id="L12">public class LogoutGotoRequestProcessor implements ValidateRequestProcessor {</span>
+
+    /**
+     * This only supports the scenario when logout goto uri is not available.
+     */
+    @Override
+    public boolean canValidateRequest(final ValidateContext context) {
+
+<span class="pc bpc" id="L20" title="1 of 2 branches missed.">        if (!context.hasOption(OpenIdConnectAuthModule.LOGOUT_GOTO_URI_KEY)) {</span>
+<span class="fc" id="L21">            return false;</span>
+        }
+
+<span class="nc bnc" id="L24" title="All 6 branches missed.">        return context.isSecure() &amp;&amp; context.isGetRequest() &amp;&amp; context.isRequestUri(OpenIdConnectAuthModule.LOGOUT_URI_KEY);</span>
+    }
+
+    @Override
+    public AuthStatus validateRequest(final ValidateContext context) throws IOException,
+            GeneralSecurityException {
+
+<span class="nc" id="L31">        context.getResp()</span>
+                .sendRedirect(context.getOption(OpenIdConnectAuthModule.LOGOUT_GOTO_URI_KEY));
+<span class="nc" id="L33">        return AuthStatus.SEND_SUCCESS;</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span></div></body></html>

@@ -1,0 +1,313 @@
+<?xml version="1.0" encoding="utf-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>ValidateContext.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">openid-connect-jaspic-module</a> &gt; <a href="index.source.html" class="el_package">net.trajano.openidconnect.jaspic.internal</a> &gt; <span class="el_source">ValidateContext.java</span></div><h1>ValidateContext.java</h1><pre class="source lang-java linenums">package net.trajano.openidconnect.jaspic.internal;
+
+import static net.trajano.openidconnect.jaspic.internal.Utils.isNullOrEmpty;
+
+import java.io.IOException;
+import java.net.URI;
+import java.security.GeneralSecurityException;
+import java.util.Map;
+
+import javax.crypto.SecretKey;
+import javax.json.JsonObject;
+import javax.security.auth.Subject;
+import javax.security.auth.callback.CallbackHandler;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.MediaType;
+
+import net.trajano.openidconnect.core.OpenIdConnectKey;
+import net.trajano.openidconnect.core.OpenIdProviderConfiguration;
+import net.trajano.openidconnect.crypto.Encoding;
+import net.trajano.openidconnect.crypto.JsonWebTokenProcessor;
+import net.trajano.openidconnect.internal.CharSets;
+import net.trajano.openidconnect.jaspic.OpenIdConnectAuthModule;
+
+public class ValidateContext {
+
+<span class="fc" id="L30">    private static final String[] AUTH_COOKIE_NAMES = { OpenIdConnectAuthModule.NET_TRAJANO_AUTH_ID, OpenIdConnectAuthModule.NET_TRAJANO_AUTH_AGE, OpenIdConnectAuthModule.NET_TRAJANO_AUTH_NONCE };</span>
+
+    private final Client client;
+
+    private final Subject clientSubject;
+
+    private final String cookieContext;
+
+    private final CallbackHandler handler;
+
+    private final boolean mandatory;
+
+    private OpenIdProviderConfiguration oidConfig;
+
+    private final Map&lt;String, String&gt; options;
+
+    private final HttpServletRequest req;
+
+    private final HttpServletResponse resp;
+
+    private SecretKey secret;
+
+    private final TokenCookie tokenCookie;
+
+<span class="fc" id="L54">    public ValidateContext(final Client client, final Subject clientSubject, final boolean mandatory, final Map&lt;String, String&gt; options, final HttpServletRequest req, final HttpServletResponse resp, final TokenCookie tokenCookie, final String cookieContext, final CallbackHandler handler) {</span>
+
+<span class="fc" id="L56">        this.client = client;</span>
+<span class="fc" id="L57">        this.clientSubject = clientSubject;</span>
+<span class="fc" id="L58">        this.mandatory = mandatory;</span>
+<span class="fc" id="L59">        this.options = options;</span>
+<span class="fc" id="L60">        this.req = req;</span>
+<span class="fc" id="L61">        this.resp = resp;</span>
+<span class="fc" id="L62">        this.tokenCookie = tokenCookie;</span>
+<span class="fc" id="L63">        this.handler = handler;</span>
+
+<span class="fc bfc" id="L65" title="All 2 branches covered.">        if (isNullOrEmpty(cookieContext)) {</span>
+<span class="fc" id="L66">            this.cookieContext = req.getContextPath();</span>
+        } else {
+<span class="fc" id="L68">            this.cookieContext = cookieContext;</span>
+        }
+
+<span class="fc" id="L71">    }</span>
+
+    /**
+     * Deletes the authentication cookies.
+     */
+    public void deleteAuthCookies() {
+
+<span class="nc bnc" id="L78" title="All 2 branches missed.">        for (final String cookieName : AUTH_COOKIE_NAMES) {</span>
+<span class="nc" id="L79">            final Cookie deleteCookie = new Cookie(cookieName, &quot;&quot;);</span>
+<span class="nc" id="L80">            deleteCookie.setMaxAge(0);</span>
+<span class="nc" id="L81">            deleteCookie.setSecure(true);</span>
+<span class="nc" id="L82">            deleteCookie.setPath(cookieContext);</span>
+<span class="nc" id="L83">            resp.addCookie(deleteCookie);</span>
+        }
+
+<span class="nc" id="L86">    }</span>
+
+    public void deleteCookie(final String cookieName) {
+
+<span class="fc" id="L90">        final Cookie deleteNonceCookie = new Cookie(cookieName, &quot;&quot;);</span>
+<span class="fc" id="L91">        deleteNonceCookie.setMaxAge(0);</span>
+<span class="fc" id="L92">        deleteNonceCookie.setSecure(true);</span>
+<span class="fc" id="L93">        deleteNonceCookie.setPath(cookieContext);</span>
+<span class="fc" id="L94">        resp.addCookie(deleteNonceCookie);</span>
+<span class="fc" id="L95">    }</span>
+
+    public Client getClient() {
+
+<span class="nc" id="L99">        return client;</span>
+    }
+
+    public Subject getClientSubject() {
+
+<span class="fc" id="L104">        return clientSubject;</span>
+    }
+
+    public String getCookie(final String cookieName) {
+
+<span class="fc" id="L109">        final Cookie[] cookies = req.getCookies();</span>
+<span class="pc bpc" id="L110" title="1 of 2 branches missed.">        if (cookies == null) {</span>
+<span class="fc" id="L111">            return null;</span>
+        }
+
+<span class="nc bnc" id="L114" title="All 2 branches missed.">        for (final Cookie cookie : cookies) {</span>
+<span class="nc bnc" id="L115" title="All 2 branches missed.">            if (cookieName.equals(cookie.getName())) {</span>
+<span class="nc" id="L116">                return cookie.getValue();</span>
+            }
+        }
+<span class="nc" id="L119">        return null;</span>
+    }
+
+    public CallbackHandler getHandler() {
+
+<span class="fc" id="L124">        return handler;</span>
+    }
+
+    /**
+     * Gets the id_token from the cookie. It will perform the JWT processing
+     * needed.
+     *
+     * @throws GeneralSecurityException
+     * @throws IOException
+     */
+    public JsonObject getIdToken() throws IOException,
+            GeneralSecurityException {
+
+<span class="nc" id="L137">        return new JsonWebTokenProcessor(tokenCookie.getIdTokenJwt()).signatureCheck(false)</span>
+                .getJsonPayload();
+    }
+
+    public synchronized OpenIdProviderConfiguration getOpenIDProviderConfig() {
+
+<span class="fc bfc" id="L143" title="All 2 branches covered.">        if (oidConfig == null) {</span>
+<span class="fc" id="L144">            final String issuerUri = options.get(OpenIdConnectAuthModule.ISSUER_URI_KEY);</span>
+<span class="pc bpc" id="L145" title="1 of 2 branches missed.">            if (issuerUri == null) {</span>
+                // LOG.log(Level.SEVERE, &quot;missingOption&quot;, ISSUER_URI_KEY);
+                // throw new
+                // AuthException(MessageFormat.format(R.getString(&quot;missingOption&quot;),
+                // ISSUER_URI_KEY));
+            }
+<span class="fc" id="L151">            oidConfig = client.target(URI.create(issuerUri)</span>
+                    .resolve(&quot;/.well-known/openid-configuration&quot;))
+                    .request(MediaType.APPLICATION_JSON_TYPE)
+                    .get(OpenIdProviderConfiguration.class);
+
+        }
+<span class="fc" id="L157">        return oidConfig;</span>
+
+    }
+
+    public String getOption(final String key) {
+
+<span class="fc" id="L163">        return options.get(key);</span>
+    }
+
+    public Map&lt;String, String&gt; getOptions() {
+
+<span class="nc" id="L168">        return options;</span>
+    }
+
+    public HttpServletRequest getReq() {
+
+<span class="fc" id="L173">        return req;</span>
+    }
+
+    public HttpServletResponse getResp() {
+
+<span class="nc" id="L178">        return resp;</span>
+    }
+
+    public synchronized SecretKey getSecret() throws GeneralSecurityException {
+
+<span class="pc bpc" id="L183" title="1 of 2 branches missed.">        if (secret == null) {</span>
+<span class="fc" id="L184">            secret = CipherUtil.buildSecretKey(options.get(OpenIdConnectKey.CLIENT_ID), options.get(OpenIdConnectKey.CLIENT_SECRET));</span>
+        }
+<span class="fc" id="L186">        return secret;</span>
+    }
+
+    public TokenCookie getTokenCookie() {
+
+<span class="nc" id="L191">        return tokenCookie;</span>
+    }
+
+    public URI getUri(final String key) {
+
+<span class="fc" id="L196">        return URI.create(req.getRequestURL()</span>
+                .toString())
+                .resolve(options.get(key));
+
+    }
+
+    public boolean hasOption(final String key) {
+
+<span class="pc bpc" id="L204" title="1 of 2 branches missed.">        return options.get(key) != null;</span>
+    }
+
+    public boolean hasTokenCookie() {
+
+<span class="pc bpc" id="L209" title="1 of 2 branches missed.">        return tokenCookie != null;</span>
+    }
+
+    /**
+     * Checks if the request uses the GET method.
+     *
+     * @param req
+     *            request
+     * @return &lt;code&gt;true&lt;/code&gt; if the request uses the GET method.
+     */
+    public boolean isGetRequest() {
+
+<span class="fc" id="L221">        return &quot;GET&quot;.equals(req.getMethod());</span>
+
+    }
+
+    public boolean isMandatory() {
+
+<span class="fc" id="L227">        return mandatory;</span>
+    }
+
+    /**
+     * Checks if the request URI matches the option value for the key provided.
+     *
+     * @param key
+     *            option key
+     * @return
+     */
+    public boolean isRequestUri(final String key) {
+
+<span class="fc" id="L239">        return req.getRequestURI()</span>
+                .equals(options.get(key));
+    }
+
+    public boolean isSecure() {
+
+<span class="fc" id="L245">        return req.isSecure();</span>
+    }
+
+    /**
+     * Redirects to the last state. However, if state is equivalent to the
+     * logout URI it will redirect to the root.
+     *
+     * @throws IOException
+     */
+    public void redirectToState() throws IOException {
+
+<span class="fc" id="L256">        final String stateEncoded = req.getParameter(OpenIdConnectKey.STATE);</span>
+<span class="fc" id="L257">        final String contextRedirectUri = Encoding.base64urlDecodeToString(stateEncoded);</span>
+<span class="fc" id="L258">        final String targetUri = req.getContextPath() + contextRedirectUri;</span>
+<span class="pc bpc" id="L259" title="1 of 2 branches missed.">        if (targetUri.equals(options.get(OpenIdConnectAuthModule.LOGOUT_URI_KEY))) {</span>
+<span class="nc" id="L260">            Log.fine(&quot;state was the Logout URI, redirecting to context root&quot;);</span>
+<span class="nc" id="L261">            resp.sendRedirect(resp.encodeRedirectURL(req.getContextPath()));</span>
+        } else {
+<span class="fc" id="L263">            resp.sendRedirect(resp.encodeRedirectURL(targetUri));</span>
+        }
+
+<span class="fc" id="L266">    }</span>
+
+    public void saveAgeCookie() throws GeneralSecurityException,
+            IOException {
+
+<span class="fc" id="L271">        final Cookie ageCookie = new Cookie(OpenIdConnectAuthModule.NET_TRAJANO_AUTH_AGE, Encoding.base64urlEncode(CipherUtil.encrypt(req.getRemoteAddr()</span>
+                .getBytes(CharSets.US_ASCII), secret)));
+<span class="pc bpc" id="L273" title="1 of 2 branches missed.">        if (isNullOrEmpty(req.getParameter(&quot;expires_in&quot;))) {</span>
+<span class="fc" id="L274">            ageCookie.setMaxAge(3600);</span>
+
+        } else {
+<span class="nc" id="L277">            ageCookie.setMaxAge(Integer.parseInt(req.getParameter(&quot;expires_in&quot;)));</span>
+        }
+<span class="fc" id="L279">        ageCookie.setPath(cookieContext);</span>
+<span class="fc" id="L280">        ageCookie.setSecure(true);</span>
+<span class="fc" id="L281">        ageCookie.setHttpOnly(true);</span>
+<span class="fc" id="L282">        resp.addCookie(ageCookie);</span>
+
+<span class="fc" id="L284">    }</span>
+
+    /**
+     * Saves the ID Token cookie.
+     *
+     * @param tokenCookie
+     * @throws GeneralSecurityException
+     */
+    public void saveIdTokenCookie(final TokenCookie tokenCookie) throws GeneralSecurityException {
+
+<span class="fc" id="L294">        final Cookie idTokenCookie = new Cookie(OpenIdConnectAuthModule.NET_TRAJANO_AUTH_ID, tokenCookie.toCookieValue(getSecret()));</span>
+<span class="fc" id="L295">        idTokenCookie.setMaxAge(-1);</span>
+<span class="fc" id="L296">        idTokenCookie.setSecure(true);</span>
+<span class="fc" id="L297">        idTokenCookie.setHttpOnly(true);</span>
+<span class="fc" id="L298">        idTokenCookie.setPath(cookieContext);</span>
+<span class="fc" id="L299">        resp.addCookie(idTokenCookie);</span>
+<span class="fc" id="L300">    }</span>
+
+    public void setContentType(final String contentType) {
+
+<span class="nc" id="L304">        resp.setContentType(contentType);</span>
+
+<span class="nc" id="L306">    }</span>
+
+    public WebTarget target(final URI uri) {
+
+<span class="fc" id="L310">        return client.target(uri);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span></div></body></html>
