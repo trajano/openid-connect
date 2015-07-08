@@ -4,7 +4,7 @@
     <parent>
         <groupId>net.trajano.openidconnect</groupId>
         <artifactId>openid-connect</artifactId>
-        <version>1.0.1</version>
+        <version>1.0.2-SNAPSHOT</version>
     </parent>
     <artifactId>openid-connect-provider-sample</artifactId>
     <packaging>war</packaging>
@@ -14,5 +14,5 @@
             <artifactId>openid-connect-provider</artifactId>
         </dependency>
     </dependencies>
-    <build/>
+    <build />
 </project>
