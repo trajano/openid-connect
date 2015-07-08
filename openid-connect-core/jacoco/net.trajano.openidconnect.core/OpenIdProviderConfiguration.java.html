@@ -1,0 +1,672 @@
+<?xml version="1.0" encoding="utf-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>OpenIdProviderConfiguration.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">openid-connect-core</a> &gt; <a href="index.source.html" class="el_package">net.trajano.openidconnect.core</a> &gt; <span class="el_source">OpenIdProviderConfiguration.java</span></div><h1>OpenIdProviderConfiguration.java</h1><pre class="source lang-java linenums">package net.trajano.openidconnect.core;
+
+import java.net.URI;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Set;
+
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+
+import net.trajano.openidconnect.auth.Display;
+import net.trajano.openidconnect.auth.ResponseMode;
+import net.trajano.openidconnect.token.GrantType;
+
+/**
+ * &lt;p&gt;
+ * The response is a set of Claims about the OpenID Provider's configuration,
+ * including all necessary endpoints and public key location information. A
+ * successful response MUST use the 200 OK HTTP status code and return a JSON
+ * object using the application/json content type that contains a set of Claims
+ * as its members that are a subset of the Metadata values defined in Section 3.
+ * Other Claims MAY also be returned.
+ * &lt;/p&gt;
+ * &lt;p&gt;
+ * Claims that return multiple values are represented as JSON arrays. Claims
+ * with zero elements MUST be omitted from the response.
+ * &lt;/p&gt;
+ * &lt;p&gt;
+ * An error response uses the applicable HTTP status code value.
+ * &lt;/p&gt;
+ */
+@XmlRootElement
+<span class="nc" id="L35">public class OpenIdProviderConfiguration {</span>
+
+    /**
+     * JSON array containing a list of the Authentication Context Class
+     * References that this OP supports.
+     */
+    @XmlElement(name = &quot;acr_values_supported&quot;)
+    private Set&lt;String&gt; acrValuesSupported;
+
+    /**
+     * URL of the OP's OAuth 2.0 Authorization Endpoint [OpenID.Core].
+     */
+    @XmlElement(name = &quot;authorization_endpoint&quot;)
+    private URI authorizationEndpoint;
+
+    /**
+     * URL of an OP iframe that supports cross-origin communications for session
+     * state information with the RP Client, using the HTML5 postMessage API.
+     * The page is loaded from an invisible iframe embedded in an RP page so
+     * that it can run in the OP's security context. It accepts postMessage
+     * requests from the relevant RP iframe and uses postMessage to post back
+     * the login status of the End-User at the OP.
+     */
+    @XmlElement(name = &quot;check_session_iframe&quot;)
+    private URI checkSessionIframe;
+
+    /**
+     * Boolean value specifying whether the OP supports use of the claims
+     * parameter, with true indicating support. If omitted, the default value is
+     * &lt;code&gt;false&lt;/code&gt;.
+     */
+    @XmlElement(name = &quot;claims_parameter_supported&quot;)
+    private boolean claimsParameterSupported;
+
+    /**
+     * &lt;p&gt;
+     * claims_supported RECOMMENDED. JSON array containing a list of the Claim
+     * Names of the Claims that the OpenID Provider MAY be able to supply values
+     * for. Note that for privacy or other reasons, this might not be an
+     * exhaustive list.
+     * &lt;/p&gt;
+     * &lt;p&gt;
+     * Implementers of the OP would set this rather than being part of the
+     * framework.
+     * &lt;/p&gt;
+     */
+    @XmlElement(name = &quot;claims_supported&quot;)
+    private Set&lt;String&gt; claimsSupported;
+
+    /**
+     * OPTIONAL. JSON array containing a list of the Claim Types that the OpenID
+     * Provider supports. These Claim Types are described in Section 5.6 of
+     * OpenID Connect Core 1.0 [OpenID.Core]. Values defined by this
+     * specification are normal, aggregated, and distributed. If omitted, the
+     * implementation supports only normal Claims.
+     */
+    @XmlElement(name = &quot;claim_types_supported&quot;)
+    private Set&lt;String&gt; claimTypesSupported;
+
+    /**
+     * OPTIONAL. JSON array containing a list of the display parameter values
+     * that the OpenID Provider supports. These values are described in Section
+     * 3.1.2.1 of OpenID Connect Core 1.0 [OpenID.Core].
+     * &lt;p&gt;
+     * This is in the order of preference where the first entry has the highest
+     * preference. This would be described be the implementation rather than the
+     * framework.
+     * &lt;/p&gt;
+     */
+    @XmlElement(name = &quot;display_values_supported&quot;)
+    private List&lt;Display&gt; displayValuesSupported;
+
+    /**
+     * URL at the OP to which an RP can perform a redirect to request that the
+     * End-User be logged out at the OP.
+     */
+    @XmlElement(name = &quot;end_session_endpoint&quot;)
+    private URI endSessionEndpoint;
+
+    /**
+     * OPTIONAL. JSON array containing a list of the OAuth 2.0 Grant Type values
+     * that this OP supports. Dynamic OpenID Providers MUST support the
+     * authorization_code and implicit Grant Type values and MAY support other
+     * Grant Types. If omitted, the default value is [&quot;authorization_code&quot;,
+     * &quot;implicit&quot;].
+     */
+    @XmlElement(name = &quot;grant_types_supported&quot;)
+    private List&lt;GrantType&gt; grantTypesSupported;
+
+    @XmlElement(name = &quot;id_token_encryption_alg_values_supported&quot;)
+    private List&lt;String&gt; idTokenEncryptionAlgValuesSupported;
+
+    @XmlElement(name = &quot;id_token_encryption_enc_values_supported&quot;)
+    private List&lt;String&gt; idTokenEncryptionEncValuesSupported;
+
+    @XmlElement(name = &quot;id_token_signing_alg_values_supported&quot;)
+    private List&lt;String&gt; idTokenSigningAlgValuesSupported;
+
+    /**
+     * URL using the https scheme with no query or fragment component that the
+     * OP asserts as its Issuer Identifier. If Issuer discovery is supported
+     * (see Section 2), this value MUST be identical to the issuer value
+     * returned by WebFinger. This also MUST be identical to the iss Claim value
+     * in ID Tokens issued from this Issuer.
+     * &lt;p&gt;
+     * In order to support Google, this is left as a string rather than a URI.
+     */
+    private String issuer;
+
+    /**
+     * URL of the OP's JSON Web Key Set [JWK] document. This contains the
+     * signing key(s) the RP uses to validate signatures from the OP. The JWK
+     * Set MAY also contain the Server's encryption key(s), which are used by
+     * RPs to encrypt requests to the Server. When both signing and encryption
+     * keys are made available, a use (Key Use) parameter value is REQUIRED for
+     * all keys in the referenced JWK Set to indicate each key's intended usage.
+     * Although some algorithms allow the same key to be used for both
+     * signatures and encryption, doing so is NOT RECOMMENDED, as it is less
+     * secure. The JWK x5c parameter MAY be used to provide X.509
+     * representations of keys provided. When used, the bare key values MUST
+     * still be present and MUST match those in the certificate.
+     */
+    @XmlElement(name = &quot;jwks_uri&quot;)
+    private URI jwksUri;
+
+    /**
+     * URL of the OP's Dynamic Client Registration Endpoint.
+     */
+    @XmlElement(name = &quot;registration_endpoint&quot;)
+    private URI registrationEndpoint;
+
+    /**
+     * &lt;p&gt;
+     * request_object_encryption_alg_values_supported
+     * &lt;/p&gt;
+     * &lt;p&gt;
+     * OPTIONAL. JSON array containing a list of the JWE encryption algorithms
+     * (alg values) supported by the Authorization Server for the Request Object
+     * described in Section 2.9 of OpenID Connect Messages 1.0
+     * [OpenID.Messages]. These algorithms are used both when the Request Object
+     * is passed by value and when it is passed by reference.
+     * &lt;/p&gt;
+     */
+    @XmlElement(name = &quot;request_object_encryption_alg_values_supported&quot;)
+    private List&lt;String&gt; requestObjectEncryptionAlgValuesSupported;
+
+    /**
+     * &lt;p&gt;
+     * request_object_encryption_enc_values_supported
+     * &lt;/p&gt;
+     * &lt;p&gt;
+     * OPTIONAL. JSON array containing a list of the JWE encryption algorithms
+     * (enc values) supported by the Authorization Server for the Request Object
+     * described in Section 2.9 of OpenID Connect Messages 1.0
+     * [OpenID.Messages]. These algorithms are used both when the Request Object
+     * is passed by value and when it is passed by reference.
+     * &lt;/p&gt;
+     */
+    @XmlElement(name = &quot;request_object_encryption_enc_values_supported&quot;)
+    private List&lt;String&gt; requestObjectEncryptionEncValuesSupported;
+
+    @XmlElement(name = &quot;request_object_signing_alg_values_supported&quot;)
+    private List&lt;String&gt; requestObjectSigningAlgValuesSupported;
+
+    /**
+     * Boolean value specifying whether the OP supports use of the request
+     * parameter, with true indicating support. If omitted, the default value is
+     * &lt;code&gt;false&lt;/code&gt;.
+     */
+    @XmlElement(name = &quot;request_parameter_supported&quot;)
+    private boolean requestParameterSupported;
+
+    /**
+     * Boolean value specifying whether the OP supports use of the request_uri
+     * parameter, with true indicating support. If omitted, the default value is
+     * true.
+     */
+<span class="nc" id="L212">    @XmlElement(name = &quot;request_uri_parameter_supported&quot;)</span>
+    private boolean requestUriParameterSupported = true;
+
+    /**
+     * Boolean value specifying whether the OP requires any request_uri values
+     * used to be pre-registered using the request_uris registration parameter.
+     * Pre-registration is REQUIRED when the value is true. If omitted, the
+     * default value is false.
+     */
+    @XmlElement(name = &quot;require_request_uri_registration&quot;)
+    private boolean requireRequestUriRegistration;
+
+    /**
+     * response_modes_supported OPTIONAL. JSON array containing a list of the
+     * OAuth 2.0 response_mode values that this OP supports, as specified in
+     * OAuth 2.0 Multiple Response Type Encoding Practices [OAuth.Responses]. If
+     * omitted, the default for Dynamic OpenID Providers is [&quot;query&quot;,
+     * &quot;fragment&quot;]
+     */
+    @XmlElement(name = &quot;response_modes_supported&quot;)
+    private List&lt;ResponseMode&gt; responseModesSupported;
+
+    /**
+     * &lt;p&gt;
+     * JSON array containing a list of the OAuth 2.0 response_type values that
+     * this OP supports. Dynamic OpenID Providers MUST support the code,
+     * id_token, and the token id_token Response Type values.
+     * &lt;/p&gt;
+     * &lt;p&gt;
+     * This is ordered by order of preference.
+     * &lt;/p&gt;
+     */
+    @XmlElement(name = &quot;response_types_supported&quot;)
+    private List&lt;String&gt; responseTypesSupported;
+
+    @XmlElement(name = &quot;revocation_endpoint&quot;)
+    private URI revocationEndpoint;
+
+    /**
+     * JSON array containing a list of the OAuth 2.0 [RFC6749] scope values that
+     * this server supports. The server MUST support the openid scope value.
+     * Servers MAY choose not to advertise some supported scope values even when
+     * this parameter is used, although those defined in [OpenID.Core] SHOULD be
+     * listed, if supported.
+     */
+    @XmlElement(name = &quot;scopes_supported&quot;)
+    private Set&lt;Scope&gt; scopesSupported;
+
+    /**
+     * URL of a page containing human-readable information that developers might
+     * want or need to know when using the OpenID Provider. In particular, if
+     * the OpenID Provider does not support Dynamic Client Registration, then
+     * information on how to register Clients needs to be provided in this
+     * documentation.
+     */
+    @XmlElement(name = &quot;service_documentation&quot;)
+    private URI serviceDocumentation;
+
+    @XmlElement(name = &quot;subject_types_supported&quot;, required = true)
+    private Set&lt;SubjectIdentifierType&gt; subjectTypesSupported;
+
+    /**
+     * URL of the OP's OAuth 2.0 Token Endpoint [OpenID.Core]. This is REQUIRED
+     * unless only the Implicit Flow is used.
+     */
+    @XmlElement(name = &quot;token_endpoint&quot;)
+    private URI tokenEndpoint;
+
+    /**
+     * token_endpoint_auth_methods_supported OPTIONAL. JSON array containing a
+     * list of Client Authentication methods supported by this Token Endpoint.
+     * The options are client_secret_post, client_secret_basic,
+     * client_secret_jwt, and private_key_jwt, as described in Section 9 of
+     * OpenID Connect Core 1.0 [OpenID.Core]. Other authentication methods MAY
+     * be defined by extensions. If omitted, the default is client_secret_basic
+     * -- the HTTP Basic Authentication Scheme specified in Section 2.3.1 of
+     * OAuth 2.0 [RFC6749].
+     */
+    @XmlElement(name = &quot;token_endpoint_auth_methods_supported&quot;)
+    private List&lt;TokenEndPointAuthMethod&gt; tokenEndpointAuthMethodsSupported;
+
+    @XmlElement(name = &quot;token_endpoint_auth_signing_alg_values_supported&quot;)
+    private Set&lt;String&gt; tokenEndpointAuthSigningAlgValuesSupported;
+
+    @XmlElement(name = &quot;ui_locales_supported&quot;)
+    private Set&lt;Locale&gt; uiLocalesSupported;
+
+    @XmlElement(name = &quot;userinfo_encryption_alg_values_supported&quot;)
+    private Set&lt;String&gt; userinfoEncryptionAlgValuesSupported;
+
+    @XmlElement(name = &quot;userinfo_encryption_enc_values_supported&quot;)
+    private Set&lt;String&gt; userinfoEncryptionEncValuesSupported;
+
+    /**
+     * URL of the OP's UserInfo Endpoint [OpenID.Core]. This URL MUST use the
+     * https scheme and MAY contain port, path, and query parameter components.
+     */
+    @XmlElement(name = &quot;userinfo_endpoint&quot;)
+    private URI userinfoEndpoint;
+
+    @XmlElement(name = &quot;userinfo_signing_alg_values_supported&quot;)
+    private Set&lt;String&gt; userinfoSigningAlgValuesSupported;
+
+    public Set&lt;String&gt; getAcrValuesSupported() {
+
+<span class="nc" id="L317">        return acrValuesSupported;</span>
+    }
+
+    public URI getAuthorizationEndpoint() {
+
+<span class="nc" id="L322">        return authorizationEndpoint;</span>
+    }
+
+    public URI getCheckSessionIframe() {
+
+<span class="nc" id="L327">        return checkSessionIframe;</span>
+    }
+
+    public Set&lt;String&gt; getClaimsSupported() {
+
+<span class="nc" id="L332">        return claimsSupported;</span>
+    }
+
+    public Set&lt;String&gt; getClaimTypesSupported() {
+
+<span class="nc" id="L337">        return claimTypesSupported;</span>
+    }
+
+    public List&lt;Display&gt; getDisplayValuesSupported() {
+
+<span class="nc" id="L342">        return displayValuesSupported;</span>
+    }
+
+    public URI getEndSessionEndpoint() {
+
+<span class="nc" id="L347">        return endSessionEndpoint;</span>
+    }
+
+    public List&lt;GrantType&gt; getGrantTypesSupported() {
+
+<span class="nc" id="L352">        return grantTypesSupported;</span>
+    }
+
+    public List&lt;String&gt; getIdTokenEncryptionAlgValuesSupported() {
+
+<span class="nc" id="L357">        return idTokenEncryptionAlgValuesSupported;</span>
+    }
+
+    public List&lt;String&gt; getIdTokenEncryptionEncValuesSupported() {
+
+<span class="nc" id="L362">        return idTokenEncryptionEncValuesSupported;</span>
+    }
+
+    public List&lt;String&gt; getIdTokenSigningAlgValuesSupported() {
+
+<span class="nc" id="L367">        return idTokenSigningAlgValuesSupported;</span>
+    }
+
+    public String getIssuer() {
+
+<span class="nc" id="L372">        return issuer;</span>
+    }
+
+    public URI getJwksUri() {
+
+<span class="nc" id="L377">        return jwksUri;</span>
+    }
+
+    public URI getRegistrationEndpoint() {
+
+<span class="nc" id="L382">        return registrationEndpoint;</span>
+    }
+
+    public List&lt;String&gt; getRequestObjectEncryptionAlgValuesSupported() {
+
+<span class="nc" id="L387">        return requestObjectEncryptionAlgValuesSupported;</span>
+    }
+
+    public List&lt;String&gt; getRequestObjectEncryptionEncValuesSupported() {
+
+<span class="nc" id="L392">        return requestObjectEncryptionEncValuesSupported;</span>
+    }
+
+    public List&lt;String&gt; getRequestObjectSigningAlgValuesSupported() {
+
+<span class="nc" id="L397">        return requestObjectSigningAlgValuesSupported;</span>
+    }
+
+    public List&lt;String&gt; getResponseTypesSupported() {
+
+<span class="nc" id="L402">        return responseTypesSupported;</span>
+    }
+
+    public URI getRevocationEndpoint() {
+
+<span class="nc" id="L407">        return revocationEndpoint;</span>
+    }
+
+    public Set&lt;Scope&gt; getScopesSupported() {
+
+<span class="nc" id="L412">        return scopesSupported;</span>
+    }
+
+    public URI getServiceDocumentation() {
+
+<span class="nc" id="L417">        return serviceDocumentation;</span>
+    }
+
+    public Set&lt;SubjectIdentifierType&gt; getSubjectTypesSupported() {
+
+<span class="nc" id="L422">        return subjectTypesSupported;</span>
+    }
+
+    public URI getTokenEndpoint() {
+
+<span class="nc" id="L427">        return tokenEndpoint;</span>
+    }
+
+    public List&lt;TokenEndPointAuthMethod&gt; getTokenEndpointAuthMethodsSupported() {
+
+<span class="nc" id="L432">        return tokenEndpointAuthMethodsSupported;</span>
+    }
+
+    public Set&lt;String&gt; getTokenEndpointAuthSigningAlgValuesSupported() {
+
+<span class="nc" id="L437">        return tokenEndpointAuthSigningAlgValuesSupported;</span>
+    }
+
+    public Set&lt;Locale&gt; getUiLocalesSupported() {
+
+<span class="nc" id="L442">        return uiLocalesSupported;</span>
+    }
+
+    public Set&lt;String&gt; getUserinfoEncryptionAlgValuesSupported() {
+
+<span class="nc" id="L447">        return userinfoEncryptionAlgValuesSupported;</span>
+    }
+
+    public Set&lt;String&gt; getUserinfoEncryptionEncValuesSupported() {
+
+<span class="nc" id="L452">        return userinfoEncryptionEncValuesSupported;</span>
+    }
+
+    public URI getUserinfoEndpoint() {
+
+<span class="nc" id="L457">        return userinfoEndpoint;</span>
+    }
+
+    public Set&lt;String&gt; getUserinfoSigningAlgValuesSupported() {
+
+<span class="nc" id="L462">        return userinfoSigningAlgValuesSupported;</span>
+    }
+
+    public boolean isClaimsParameterSupported() {
+
+<span class="nc" id="L467">        return claimsParameterSupported;</span>
+    }
+
+    public boolean isRequestParameterSupported() {
+
+<span class="nc" id="L472">        return requestParameterSupported;</span>
+    }
+
+    public boolean isRequestUriParameterSupported() {
+
+<span class="nc" id="L477">        return requestUriParameterSupported;</span>
+    }
+
+    public boolean isRequireRequestUriRegistration() {
+
+<span class="nc" id="L482">        return requireRequestUriRegistration;</span>
+    }
+
+    public void setAcrValuesSupported(final Set&lt;String&gt; acrValuesSupported) {
+
+<span class="nc" id="L487">        this.acrValuesSupported = acrValuesSupported;</span>
+<span class="nc" id="L488">    }</span>
+
+    public void setAuthorizationEndpoint(final URI authorizationEndpoint) {
+
+<span class="nc" id="L492">        this.authorizationEndpoint = authorizationEndpoint;</span>
+<span class="nc" id="L493">    }</span>
+
+    public void setCheckSessionIframe(final URI checkSessionIframe) {
+
+<span class="nc" id="L497">        this.checkSessionIframe = checkSessionIframe;</span>
+<span class="nc" id="L498">    }</span>
+
+    public void setClaimsParameterSupported(final boolean claimsParameterSupported) {
+
+<span class="nc" id="L502">        this.claimsParameterSupported = claimsParameterSupported;</span>
+<span class="nc" id="L503">    }</span>
+
+    public void setClaimsSupported(final String... claimsSupported) {
+
+<span class="nc" id="L507">        this.claimsSupported = new HashSet&lt;&gt;(Arrays.asList(claimsSupported));</span>
+<span class="nc" id="L508">    }</span>
+
+    public void setClaimTypesSupported(final Set&lt;String&gt; claimTypesSupported) {
+
+<span class="nc" id="L512">        this.claimTypesSupported = claimTypesSupported;</span>
+<span class="nc" id="L513">    }</span>
+
+    public void setDisplayValuesSupported(final Display... displayValuesSupported) {
+
+<span class="nc" id="L517">        this.displayValuesSupported = Arrays.asList(displayValuesSupported);</span>
+<span class="nc" id="L518">    }</span>
+
+    public void setEndSessionEndpoint(final URI endSessionEndpoint) {
+
+<span class="nc" id="L522">        this.endSessionEndpoint = endSessionEndpoint;</span>
+<span class="nc" id="L523">    }</span>
+
+    public void setGrantTypesSupported(final GrantType... grantTypesSupported) {
+
+<span class="nc" id="L527">        this.grantTypesSupported = Arrays.asList(grantTypesSupported);</span>
+<span class="nc" id="L528">    }</span>
+
+    public void setIdTokenEncryptionAlgValuesSupported(final String... alg) {
+
+<span class="nc" id="L532">        idTokenEncryptionAlgValuesSupported = Arrays.asList(alg);</span>
+<span class="nc" id="L533">    }</span>
+
+    public void setIdTokenEncryptionEncValuesSupported(final String... enc) {
+
+<span class="nc" id="L537">        idTokenEncryptionEncValuesSupported = Arrays.asList(enc);</span>
+<span class="nc" id="L538">    }</span>
+
+    public void setIdTokenSigningAlgValuesSupported(final String... alg) {
+
+<span class="nc" id="L542">        idTokenSigningAlgValuesSupported = Arrays.asList(alg);</span>
+<span class="nc" id="L543">    }</span>
+
+    public void setIssuer(final String issuer) {
+
+<span class="nc" id="L547">        this.issuer = issuer;</span>
+<span class="nc" id="L548">    }</span>
+
+    public void setIssuer(final URI issuer) {
+
+<span class="nc" id="L552">        this.issuer = issuer.toASCIIString();</span>
+<span class="nc" id="L553">    }</span>
+
+    public void setJwksUri(final URI jwksUri) {
+
+<span class="nc" id="L557">        this.jwksUri = jwksUri;</span>
+<span class="nc" id="L558">    }</span>
+
+    public void setRegistrationEndpoint(final URI registrationEndpoint) {
+
+<span class="nc" id="L562">        this.registrationEndpoint = registrationEndpoint;</span>
+<span class="nc" id="L563">    }</span>
+
+    public void setRequestObjectEncryptionAlgValuesSupported(final String... alg) {
+
+<span class="nc" id="L567">        requestObjectEncryptionAlgValuesSupported = Arrays.asList(alg);</span>
+<span class="nc" id="L568">    }</span>
+
+    public void setRequestObjectEncryptionEncValuesSupported(final String... enc) {
+
+<span class="nc" id="L572">        requestObjectEncryptionEncValuesSupported = Arrays.asList(enc);</span>
+
+<span class="nc" id="L574">    }</span>
+
+    public void setRequestObjectSigningAlgValuesSupported(final String... alg) {
+
+<span class="nc" id="L578">        requestObjectSigningAlgValuesSupported = Arrays.asList(alg);</span>
+<span class="nc" id="L579">    }</span>
+
+    public void setRequestParameterSupported(final boolean requestParameterSupported) {
+
+<span class="nc" id="L583">        this.requestParameterSupported = requestParameterSupported;</span>
+<span class="nc" id="L584">    }</span>
+
+    public void setRequestUriParameterSupported(final boolean requestUriParameterSupported) {
+
+<span class="nc" id="L588">        this.requestUriParameterSupported = requestUriParameterSupported;</span>
+<span class="nc" id="L589">    }</span>
+
+    public void setRequireRequestUriRegistration(final boolean requireRequestUriRegistration) {
+
+<span class="nc" id="L593">        this.requireRequestUriRegistration = requireRequestUriRegistration;</span>
+<span class="nc" id="L594">    }</span>
+
+    public void setResponseTypesSupported(final String... responseTypesSupported) {
+
+<span class="nc" id="L598">        this.responseTypesSupported = Arrays.asList(responseTypesSupported);</span>
+<span class="nc" id="L599">    }</span>
+
+    public void setRevocationEndpoint(final URI revocationEndpoint) {
+
+<span class="nc" id="L603">        this.revocationEndpoint = revocationEndpoint;</span>
+<span class="nc" id="L604">    }</span>
+
+    public void setScopesSupported(final Scope... scopesSupported) {
+
+<span class="nc" id="L608">        this.scopesSupported = new HashSet&lt;&gt;(Arrays.asList(scopesSupported));</span>
+<span class="nc" id="L609">    }</span>
+
+    public void setServiceDocumentation(final URI serviceDocumentation) {
+
+<span class="nc" id="L613">        this.serviceDocumentation = serviceDocumentation;</span>
+<span class="nc" id="L614">    }</span>
+
+    public void setSubjectTypesSupported(SubjectIdentifierType... subjectTypesSupported) {
+
+<span class="nc" id="L618">        this.subjectTypesSupported = new HashSet&lt;&gt;(Arrays.asList(subjectTypesSupported));</span>
+<span class="nc" id="L619">    }</span>
+
+    public void setTokenEndpoint(final URI tokenEndpoint) {
+
+<span class="nc" id="L623">        this.tokenEndpoint = tokenEndpoint;</span>
+<span class="nc" id="L624">    }</span>
+
+    public void setTokenEndpointAuthMethodsSupported(final TokenEndPointAuthMethod... tokenEndpointAuthMethodsSupported) {
+
+<span class="nc" id="L628">        this.tokenEndpointAuthMethodsSupported = Arrays.asList(tokenEndpointAuthMethodsSupported);</span>
+<span class="nc" id="L629">    }</span>
+
+    public void setTokenEndpointAuthSigningAlgValuesSupported(final Set&lt;String&gt; tokenEndpointAuthSigningAlgValuesSupported) {
+
+<span class="nc" id="L633">        this.tokenEndpointAuthSigningAlgValuesSupported = tokenEndpointAuthSigningAlgValuesSupported;</span>
+<span class="nc" id="L634">    }</span>
+
+    public void setUiLocalesSupported(final Set&lt;Locale&gt; uiLocalesSupported) {
+
+<span class="nc" id="L638">        this.uiLocalesSupported = uiLocalesSupported;</span>
+<span class="nc" id="L639">    }</span>
+
+    public void setUserinfoEncryptionAlgValuesSupported(final Set&lt;String&gt; userinfoEncryptionAlgValuesSupported) {
+
+<span class="nc" id="L643">        this.userinfoEncryptionAlgValuesSupported = userinfoEncryptionAlgValuesSupported;</span>
+<span class="nc" id="L644">    }</span>
+
+    public void setUserinfoEncryptionEncValuesSupported(final Set&lt;String&gt; userinfoEncryptionEncValuesSupported) {
+
+<span class="nc" id="L648">        this.userinfoEncryptionEncValuesSupported = userinfoEncryptionEncValuesSupported;</span>
+<span class="nc" id="L649">    }</span>
+
+    public void setUserinfoEndpoint(final URI userinfoEndpoint) {
+
+<span class="nc" id="L653">        this.userinfoEndpoint = userinfoEndpoint;</span>
+<span class="nc" id="L654">    }</span>
+
+    public void setUserinfoSigningAlgValuesSupported(final Set&lt;String&gt; userinfoSigningAlgValuesSupported) {
+
+<span class="nc" id="L658">        this.userinfoSigningAlgValuesSupported = userinfoSigningAlgValuesSupported;</span>
+<span class="nc" id="L659">    }</span>
+
+    public List&lt;ResponseMode&gt; getResponseModesSupported() {
+
+<span class="nc" id="L663">        return responseModesSupported;</span>
+    }
+
+    public void setResponseModesSupported(ResponseMode... responseModesSupported) {
+
+<span class="nc" id="L668">        this.responseModesSupported = Arrays.asList(responseModesSupported);</span>
+<span class="nc" id="L669">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span></div></body></html>

@@ -1,0 +1,412 @@
+<?xml version="1.0" encoding="utf-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>JcaJsonWebTokenCrypto.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">openid-connect-core</a> &gt; <a href="index.source.html" class="el_package">net.trajano.openidconnect.internal</a> &gt; <span class="el_source">JcaJsonWebTokenCrypto.java</span></div><h1>JcaJsonWebTokenCrypto.java</h1><pre class="source lang-java linenums">package net.trajano.openidconnect.internal;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.security.GeneralSecurityException;
+import java.security.InvalidKeyException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
+import java.security.PublicKey;
+import java.security.SecureRandom;
+import java.security.Signature;
+import java.security.SignatureException;
+import java.util.zip.DataFormatException;
+import java.util.zip.Deflater;
+import java.util.zip.Inflater;
+
+import javax.crypto.Cipher;
+import javax.crypto.CipherOutputStream;
+import javax.crypto.KeyGenerator;
+import javax.crypto.Mac;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.GCMParameterSpec;
+import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.SecretKeySpec;
+
+import net.trajano.openidconnect.crypto.Encoding;
+import net.trajano.openidconnect.crypto.JoseHeader;
+import net.trajano.openidconnect.crypto.JsonWebAlgorithm;
+import net.trajano.openidconnect.crypto.JsonWebKey;
+import net.trajano.openidconnect.crypto.JsonWebToken;
+import net.trajano.openidconnect.crypto.JsonWebTokenCrypto;
+
+<span class="fc" id="L35">public class JcaJsonWebTokenCrypto implements JsonWebTokenCrypto {</span>
+
+<span class="fc" id="L37">    private static final JcaJsonWebTokenCrypto INSTANCE = new JcaJsonWebTokenCrypto();</span>
+
+    public static JsonWebTokenCrypto getInstance() {
+
+<span class="fc" id="L41">        return INSTANCE;</span>
+    }
+
+    /**
+     * Since this class involves cryptography a secure randomizer one is
+     * required.
+     */
+<span class="fc" id="L48">    private final SecureRandom random = new SecureRandom();</span>
+
+    @Override
+    public byte[][] buildJWSPayload(JoseHeader header,
+        byte[] payloadBytes,
+        JsonWebKey jwk) throws GeneralSecurityException {
+
+<span class="fc" id="L55">        final byte[][] payloads = new byte[2][];</span>
+<span class="fc" id="L56">        payloads[0] = payloadBytes;</span>
+
+<span class="pc bpc" id="L58" title="1 of 2 branches missed.">        if (JsonWebAlgorithm.isMac(header.getAlg())) {</span>
+<span class="fc" id="L59">            Mac mac = Mac.getInstance(JsonWebAlgorithm.toJca(header.getAlg()));</span>
+<span class="fc" id="L60">            mac.init(jwk.toJcaKey());</span>
+<span class="fc" id="L61">            mac.update(header.getEncoded());</span>
+<span class="fc" id="L62">            mac.update((byte) '.');</span>
+<span class="fc" id="L63">            mac.update(Encoding.base64urlEncode(payloadBytes).getBytes(</span>
+                CharSets.US_ASCII));
+<span class="fc" id="L65">            payloads[1] = mac.doFinal();</span>
+<span class="fc" id="L66">        } else {</span>
+<span class="nc" id="L67">            final Signature signature = Signature.getInstance(JsonWebAlgorithm</span>
+                .toJca(header.getAlg()));
+<span class="nc" id="L69">            signature.initSign((PrivateKey) jwk.toJcaKey());</span>
+<span class="nc" id="L70">            signature.update(header.getEncoded());</span>
+<span class="nc" id="L71">            signature.update((byte) '.');</span>
+<span class="nc" id="L72">            signature.update(Encoding.base64urlEncode(payloadBytes).getBytes(</span>
+                CharSets.US_ASCII));
+<span class="nc" id="L74">            payloads[1] = signature.sign();</span>
+
+        }
+<span class="fc" id="L77">        return payloads;</span>
+    }
+
+    @Override
+    public byte[][] buildJWEPayload(JoseHeader joseHeader,
+        byte[] payloadBytes,
+        JsonWebKey jwk) throws IOException, GeneralSecurityException {
+
+<span class="fc" id="L85">        String macAlg = JsonWebAlgorithm.getMacAlg(joseHeader.getEnc());</span>
+<span class="fc bfc" id="L86" title="All 2 branches covered.">        if (macAlg == null) {</span>
+<span class="fc" id="L87">            return buildNoMacJWEPayload(joseHeader, payloadBytes, jwk);</span>
+        } else {
+<span class="fc" id="L89">            return buildJWEPayloadWithMac(joseHeader, payloadBytes, jwk, macAlg);</span>
+        }
+    }
+
+    private byte[][] buildJWEPayloadWithMac(JoseHeader joseHeader,
+        byte[] payloadBytes,
+        JsonWebKey jwk,
+        String macAlg)
+            throws IOException, GeneralSecurityException {
+
+<span class="fc" id="L99">        final byte[][] payloads = new byte[4][];</span>
+
+<span class="fc" id="L101">        final KeyGenerator keyGenerator = KeyGenerator.getInstance(&quot;AES&quot;);</span>
+<span class="fc" id="L102">        final int keySize = JsonWebAlgorithm.getKeySize(joseHeader.getEnc());</span>
+<span class="fc" id="L103">        keyGenerator.init(keySize);</span>
+
+<span class="fc" id="L105">        final SecretKey secretKey = keyGenerator.generateKey();</span>
+<span class="fc" id="L106">        final SecretKey macKey = keyGenerator.generateKey();</span>
+
+<span class="fc" id="L108">        ByteArrayOutputStream cekStream = new ByteArrayOutputStream();</span>
+
+<span class="fc" id="L110">        final Cipher cekCipher = Cipher.getInstance(JsonWebAlgorithm</span>
+            .toJca(joseHeader.getAlg()));
+<span class="fc" id="L112">        cekCipher.init(Cipher.ENCRYPT_MODE, jwk.toJcaPublicKey());</span>
+<span class="fc" id="L113">        CipherOutputStream os = new CipherOutputStream(cekStream, cekCipher);</span>
+<span class="fc" id="L114">        os.write(macKey.getEncoded());</span>
+<span class="fc" id="L115">        os.write(secretKey.getEncoded());</span>
+<span class="fc" id="L116">        os.close();</span>
+
+<span class="fc" id="L118">        final byte[] encryptedCek = cekStream.toByteArray();</span>
+<span class="fc" id="L119">        payloads[0] = encryptedCek;</span>
+
+<span class="fc" id="L121">        final byte[] iv = new byte[JsonWebAlgorithm.getIvLen(joseHeader</span>
+            .getEnc())];
+<span class="fc" id="L123">        random.nextBytes(iv);</span>
+<span class="fc" id="L124">        payloads[1] = iv;</span>
+
+<span class="fc" id="L126">        final int authenticationTagBits = 128;</span>
+<span class="fc" id="L127">        final Cipher contentCipher = Cipher.getInstance(JsonWebAlgorithm</span>
+            .toJca(joseHeader.getEnc()));
+
+<span class="fc" id="L130">        final byte[] aad = joseHeader.getEncoded();</span>
+<span class="pc bpc" id="L131" title="1 of 2 branches missed.">        if (JsonWebAlgorithm.isGcm(joseHeader.getEnc())) {</span>
+<span class="nc" id="L132">            final GCMParameterSpec spec = new GCMParameterSpec(</span>
+                authenticationTagBits, iv);
+<span class="nc" id="L134">            contentCipher.init(Cipher.ENCRYPT_MODE, secretKey, spec);</span>
+<span class="nc" id="L135">            contentCipher.updateAAD(aad);</span>
+<span class="nc" id="L136">        } else {</span>
+<span class="fc" id="L137">            final IvParameterSpec spec = new IvParameterSpec(iv);</span>
+<span class="fc" id="L138">            contentCipher.init(Cipher.ENCRYPT_MODE, secretKey, spec);</span>
+        }
+<span class="fc" id="L140">        byte[] cipherText = contentCipher.doFinal(payloadBytes);</span>
+<span class="fc" id="L141">        payloads[2] = cipherText;</span>
+
+<span class="fc" id="L143">        byte[] hmacValue = calculateMac(macKey, iv, cipherText, aad, macAlg);</span>
+<span class="fc" id="L144">        payloads[3] = new byte[authenticationTagBits / 8];</span>
+<span class="fc" id="L145">        System.arraycopy(hmacValue, 0, payloads[3], 0,</span>
+            authenticationTagBits / 8);
+<span class="fc" id="L147">        return payloads;</span>
+    }
+
+    public byte[][] buildNoMacJWEPayload(JoseHeader joseHeader,
+        byte[] payloadBytes,
+        JsonWebKey jwk) throws IOException,
+            GeneralSecurityException {
+
+<span class="fc" id="L155">        final byte[][] payloads = new byte[4][];</span>
+
+<span class="fc" id="L157">        final KeyGenerator keyGenerator = KeyGenerator.getInstance(&quot;AES&quot;);</span>
+<span class="fc" id="L158">        keyGenerator.init(JsonWebAlgorithm.getKeySize(joseHeader.getEnc()));</span>
+
+<span class="fc" id="L160">        final SecretKey secretKey = keyGenerator.generateKey();</span>
+
+<span class="fc" id="L162">        final byte[] cek = secretKey.getEncoded();</span>
+
+<span class="fc" id="L164">        final Cipher cekCipher = Cipher.getInstance(JsonWebAlgorithm</span>
+            .toJca(joseHeader.getAlg()));
+<span class="fc" id="L166">        cekCipher.init(Cipher.ENCRYPT_MODE, jwk.toJcaPublicKey());</span>
+<span class="fc" id="L167">        final byte[] encryptedCek = cekCipher.doFinal(cek);</span>
+
+<span class="fc" id="L169">        payloads[0] = encryptedCek;</span>
+
+<span class="fc" id="L171">        final byte[] iv = new byte[JsonWebAlgorithm.getIvLen(joseHeader</span>
+            .getEnc())];
+<span class="fc" id="L173">        random.nextBytes(iv);</span>
+<span class="fc" id="L174">        payloads[1] = iv;</span>
+
+<span class="fc" id="L176">        final int authenticationTagBits = 128;</span>
+<span class="fc" id="L177">        final Cipher contentCipher = Cipher.getInstance(JsonWebAlgorithm</span>
+            .toJca(joseHeader.getEnc()));
+
+<span class="pc bpc" id="L180" title="1 of 2 branches missed.">        if (JsonWebAlgorithm.isGcm(joseHeader.getEnc())) {</span>
+<span class="nc" id="L181">            final GCMParameterSpec spec = new GCMParameterSpec(</span>
+                authenticationTagBits, iv);
+<span class="nc" id="L183">            contentCipher.init(Cipher.ENCRYPT_MODE, secretKey, spec);</span>
+<span class="nc" id="L184">            contentCipher.updateAAD(joseHeader.getEncoded());</span>
+<span class="nc" id="L185">        } else {</span>
+<span class="fc" id="L186">            final IvParameterSpec spec = new IvParameterSpec(iv);</span>
+<span class="fc" id="L187">            contentCipher.init(Cipher.ENCRYPT_MODE, secretKey, spec);</span>
+        }
+
+<span class="fc" id="L190">        final ByteBuffer cipherTextAndAuthenticationTag = ByteBuffer</span>
+            .wrap(contentCipher.doFinal(payloadBytes));
+
+<span class="fc" id="L193">        payloads[2] = new byte[cipherTextAndAuthenticationTag.capacity()</span>
+                - authenticationTagBits / 8];
+<span class="fc" id="L195">        payloads[3] = new byte[authenticationTagBits / 8];</span>
+
+<span class="fc" id="L197">        cipherTextAndAuthenticationTag.get(payloads[2]).get(payloads[3]);</span>
+<span class="fc" id="L198">        return payloads;</span>
+    }
+
+    @Override
+    public byte[] inflate(final byte[] compressed) throws IOException {
+
+<span class="fc" id="L204">        final Inflater inflater = new Inflater(false);</span>
+<span class="fc" id="L205">        inflater.setInput(compressed);</span>
+<span class="fc" id="L206">        inflater.finished();</span>
+<span class="fc" id="L207">        final ByteArrayOutputStream baos = new ByteArrayOutputStream(</span>
+            compressed.length);
+<span class="fc" id="L209">        final byte[] buffer = new byte[1024];</span>
+        try {
+<span class="fc bfc" id="L211" title="All 2 branches covered.">            while (!inflater.finished()) {</span>
+                int len;
+<span class="fc" id="L213">                len = inflater.inflate(buffer);</span>
+<span class="fc" id="L214">                baos.write(buffer, 0, len);</span>
+<span class="fc" id="L215">            }</span>
+<span class="fc" id="L216">            baos.close();</span>
+<span class="fc" id="L217">            return baos.toByteArray();</span>
+<span class="nc" id="L218">        } catch (DataFormatException e) {</span>
+<span class="nc" id="L219">            throw new IOException(e);</span>
+        }
+    }
+
+    @Override
+    public byte[] deflate(final byte[] uncompressed) throws IOException {
+
+<span class="fc" id="L226">        final Deflater deflater = new Deflater(9, false);</span>
+<span class="fc" id="L227">        deflater.setInput(uncompressed);</span>
+<span class="fc" id="L228">        deflater.finish();</span>
+<span class="fc" id="L229">        final ByteArrayOutputStream baos = new ByteArrayOutputStream(</span>
+            uncompressed.length);
+<span class="fc" id="L231">        final byte[] buffer = new byte[1024];</span>
+<span class="fc bfc" id="L232" title="All 2 branches covered.">        while (!deflater.finished()) {</span>
+<span class="fc" id="L233">            final int len = deflater.deflate(buffer);</span>
+<span class="fc" id="L234">            baos.write(buffer, 0, len);</span>
+<span class="fc" id="L235">        }</span>
+<span class="fc" id="L236">        baos.close();</span>
+<span class="fc" id="L237">        return baos.toByteArray();</span>
+    }
+
+    @Override
+    public byte[] getJWEPayload(JsonWebToken jsonWebToken,
+        JsonWebKey jwk)
+            throws GeneralSecurityException {
+
+<span class="fc" id="L245">        final byte[] encryptedKey = jsonWebToken.getPayload(0);</span>
+<span class="fc" id="L246">        final byte[] initializationVector = jsonWebToken.getPayload(1);</span>
+<span class="fc" id="L247">        final byte[] cipherText = jsonWebToken.getPayload(2);</span>
+<span class="fc" id="L248">        final byte[] authenticationTag = jsonWebToken.getPayload(3);</span>
+<span class="fc" id="L249">        final byte[] aad = jsonWebToken.getJoseHeaderEncoded().getBytes(</span>
+            CharSets.US_ASCII);
+<span class="fc" id="L251">        final PrivateKey privateKey = (PrivateKey) jwk.toJcaKey();</span>
+<span class="fc" id="L252">        final String enc = jsonWebToken.getEnc();</span>
+
+<span class="fc" id="L254">        final Cipher encryptionKeyCipher = Cipher.getInstance(JsonWebAlgorithm</span>
+            .toJca(jsonWebToken.getAlg()));
+<span class="fc" id="L256">        encryptionKeyCipher.init(Cipher.DECRYPT_MODE, privateKey);</span>
+
+<span class="fc" id="L258">        final byte[] decryptedKey = encryptionKeyCipher.doFinal(encryptedKey);</span>
+
+<span class="fc" id="L260">        final String macAlg = JsonWebAlgorithm.getMacAlg(jsonWebToken.getEnc());</span>
+<span class="fc bfc" id="L261" title="All 2 branches covered.">        if (macAlg == null) {</span>
+<span class="fc" id="L262">            return getNoMacJWEPayload(decryptedKey, initializationVector,</span>
+                cipherText, authenticationTag, aad, enc);
+        } else {
+<span class="fc" id="L265">            return getJWEPayloadWithMac(decryptedKey, initializationVector,</span>
+                cipherText, authenticationTag, aad, enc, macAlg);
+        }
+
+    }
+
+    private byte[] getNoMacJWEPayload(final byte[] encryptionKey,
+        final byte[] initializationVector,
+        final byte[] cipherText,
+        final byte[] authenticationTag,
+        final byte[] aad,
+        final String enc)
+            throws GeneralSecurityException {
+
+<span class="fc" id="L279">        final SecretKey contentEncryptionKey = new SecretKeySpec(encryptionKey,</span>
+            &quot;AES&quot;);
+
+<span class="fc" id="L282">        final Cipher contentCipher = Cipher.getInstance(JsonWebAlgorithm</span>
+            .toJca(enc));
+
+<span class="pc bpc" id="L285" title="1 of 2 branches missed.">        if (JsonWebAlgorithm.isGcm(enc)) {</span>
+<span class="nc" id="L286">            final GCMParameterSpec spec = new GCMParameterSpec(</span>
+                authenticationTag.length * 8, initializationVector);
+<span class="nc" id="L288">            contentCipher.init(Cipher.DECRYPT_MODE, contentEncryptionKey, spec);</span>
+<span class="nc" id="L289">            contentCipher.updateAAD(aad);</span>
+<span class="nc" id="L290">        } else {</span>
+<span class="fc" id="L291">            final IvParameterSpec spec = new IvParameterSpec(</span>
+                initializationVector);
+<span class="fc" id="L293">            contentCipher.init(Cipher.DECRYPT_MODE, contentEncryptionKey, spec);</span>
+        }
+        try {
+<span class="fc" id="L296">            final ByteArrayOutputStream baos = new ByteArrayOutputStream();</span>
+<span class="fc" id="L297">            baos.write(contentCipher.update(cipherText));</span>
+<span class="fc" id="L298">            baos.write(contentCipher.doFinal(authenticationTag));</span>
+<span class="fc" id="L299">            baos.close();</span>
+<span class="fc" id="L300">            return baos.toByteArray();</span>
+<span class="nc" id="L301">        } catch (IOException e) {</span>
+<span class="nc" id="L302">            throw new GeneralSecurityException(e);</span>
+        }
+    }
+
+    private byte[] getJWEPayloadWithMac(final byte[] encryptionKey,
+        final byte[] initializationVector,
+        final byte[] cipherText,
+        final byte[] authenticationTag,
+        final byte[] aad,
+        final String enc,
+        String macAlg) throws GeneralSecurityException {
+
+<span class="fc" id="L314">        final int keyLength = JsonWebAlgorithm.getKeySize(enc) / 8;</span>
+<span class="fc" id="L315">        final int macLength = encryptionKey.length - keyLength;</span>
+<span class="fc" id="L316">        final SecretKey macKey = new SecretKeySpec(encryptionKey, 0, macLength,</span>
+            &quot;AES&quot;);
+
+<span class="fc" id="L319">        final SecretKey contentEncryptionKey = new SecretKeySpec(encryptionKey,</span>
+            macLength, keyLength, &quot;AES&quot;);
+<span class="fc" id="L321">        final Cipher contentCipher = Cipher.getInstance(JsonWebAlgorithm</span>
+            .toJca(enc));
+
+<span class="pc bpc" id="L324" title="1 of 2 branches missed.">        if (JsonWebAlgorithm.isGcm(enc)) {</span>
+<span class="nc" id="L325">            final GCMParameterSpec spec = new GCMParameterSpec(</span>
+                authenticationTag.length * 8, initializationVector);
+<span class="nc" id="L327">            contentCipher.init(Cipher.DECRYPT_MODE, contentEncryptionKey, spec);</span>
+<span class="nc" id="L328">            contentCipher.updateAAD(aad);</span>
+<span class="nc" id="L329">        } else {</span>
+<span class="fc" id="L330">            final IvParameterSpec spec = new IvParameterSpec(</span>
+                initializationVector);
+<span class="fc" id="L332">            contentCipher.init(Cipher.DECRYPT_MODE, contentEncryptionKey, spec);</span>
+        }
+        try {
+<span class="fc" id="L335">            final ByteArrayOutputStream baos = new ByteArrayOutputStream();</span>
+<span class="fc" id="L336">            baos.write(contentCipher.doFinal(cipherText));</span>
+<span class="fc" id="L337">            baos.close();</span>
+
+<span class="fc" id="L339">            byte[] hmacValue = calculateMac(macKey, initializationVector,</span>
+                cipherText, aad, macAlg);
+
+<span class="fc bfc" id="L342" title="All 2 branches covered.">            for (int i = 0; i &lt; authenticationTag.length; ++i) {</span>
+<span class="pc bpc" id="L343" title="1 of 2 branches missed.">                if (hmacValue[i] != authenticationTag[i]) {</span>
+<span class="nc" id="L344">                    throw new GeneralSecurityException(&quot;MAC validation failed&quot;);</span>
+                }
+            }
+
+<span class="fc" id="L348">            return baos.toByteArray();</span>
+<span class="nc" id="L349">        } catch (IOException e) {</span>
+<span class="nc" id="L350">            throw new GeneralSecurityException(e);</span>
+        }
+    }
+
+    private byte[] calculateMac(final SecretKey macKey,
+        final byte[] initializationVector,
+        final byte[] cipherText,
+        final byte[] aad,
+        String macAlg) throws NoSuchAlgorithmException,
+            InvalidKeyException {
+
+<span class="fc" id="L361">        final Mac mac = Mac.getInstance(macAlg);</span>
+<span class="fc" id="L362">        mac.init(macKey);</span>
+<span class="fc" id="L363">        long bits = aad.length * 8;</span>
+<span class="fc" id="L364">        byte[] al = new byte[8];</span>
+<span class="fc bfc" id="L365" title="All 2 branches covered.">        for (int i = 7; i &gt;= 0; --i) {</span>
+<span class="fc" id="L366">            al[i] = (byte) (bits % 256);</span>
+<span class="fc" id="L367">            bits = bits / 256;</span>
+        }
+
+<span class="fc" id="L370">        mac.update(aad);</span>
+<span class="fc" id="L371">        mac.update(initializationVector);</span>
+<span class="fc" id="L372">        mac.update(cipherText);</span>
+<span class="fc" id="L373">        byte[] hmacValue = mac.doFinal(al);</span>
+<span class="fc" id="L374">        return hmacValue;</span>
+    }
+
+    @Override
+    public byte[] getJWSPayload(JsonWebToken jsonWebToken,
+        JsonWebKey jwk,
+        String alg) throws GeneralSecurityException {
+
+<span class="pc bpc" id="L382" title="1 of 2 branches missed.">        if (JsonWebAlgorithm.isMac(alg)) {</span>
+<span class="fc" id="L383">            Mac mac = Mac.getInstance(JsonWebAlgorithm.toJca(alg));</span>
+<span class="fc" id="L384">            mac.init(jwk.toJcaKey());</span>
+<span class="fc" id="L385">            mac.update(jsonWebToken.getJoseHeaderEncoded().getBytes());</span>
+<span class="fc" id="L386">            mac.update((byte) '.');</span>
+<span class="fc" id="L387">            byte[] macValue = mac.doFinal(Encoding.base64urlEncode(</span>
+                jsonWebToken.getPayload(0)).getBytes());
+<span class="pc bpc" id="L389" title="1 of 2 branches missed.">            if (!MessageDigest.isEqual(macValue, jsonWebToken.getPayload(1))) {</span>
+<span class="nc" id="L390">                throw new SignatureException(&quot;signature verification failed&quot;);</span>
+            }
+<span class="fc" id="L392">        } else {</span>
+<span class="nc" id="L393">            final PublicKey signingKey = (PublicKey) jwk.toJcaPublicKey();</span>
+
+<span class="nc" id="L395">            final Signature signature = Signature.getInstance(JsonWebAlgorithm</span>
+                .toJca(alg));
+
+<span class="nc" id="L398">            final byte[] jwtSignatureBytes = jsonWebToken.getPayload(1);</span>
+
+<span class="nc" id="L400">            signature.initVerify(signingKey);</span>
+<span class="nc" id="L401">            signature.update(jsonWebToken.getJoseHeaderEncoded().getBytes());</span>
+<span class="nc" id="L402">            signature.update((byte) '.');</span>
+<span class="nc" id="L403">            signature.update(Encoding.base64urlEncode(</span>
+                jsonWebToken.getPayload(0)).getBytes());
+<span class="nc bnc" id="L405" title="All 2 branches missed.">            if (!signature.verify(jwtSignatureBytes)) {</span>
+<span class="nc" id="L406">                throw new SignatureException(&quot;signature verification failed&quot;);</span>
+            }
+        }
+<span class="fc" id="L409">        return jsonWebToken.getPayload(0);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span></div></body></html>

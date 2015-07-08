@@ -1,0 +1,410 @@
+<?xml version="1.0" encoding="utf-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>JsonWebAlgorithm.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">openid-connect-core</a> &gt; <a href="index.source.html" class="el_package">net.trajano.openidconnect.crypto</a> &gt; <span class="el_source">JsonWebAlgorithm.java</span></div><h1>JsonWebAlgorithm.java</h1><pre class="source lang-java linenums">package net.trajano.openidconnect.crypto;
+
+import java.security.GeneralSecurityException;
+import java.security.Signature;
+import java.security.spec.ECParameterSpec;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.crypto.Cipher;
+import javax.crypto.KeyGenerator;
+import javax.crypto.Mac;
+
+import net.trajano.openidconnect.internal.Log;
+
+/**
+ * &lt;p&gt;
+ * This maps the algorithms to their JCA counterparts. This is a singleton to
+ * prevent multiple instantiations that cost environment analysis time.
+ * &lt;/p&gt;
+ * &lt;p&gt;
+ * This mapping is based on Appendix A &amp; B of &lt;a href=
+ * &quot;http://self-issued.info/docs/draft-ietf-jose-json-web-algorithms-00.html&quot;&gt;
+ * JWA&lt;/a&gt;.
+ * &lt;/p&gt;
+ *
+ * @author Archimedes
+ */
+public class JsonWebAlgorithm {
+
+    public static final String A128CBC = &quot;A128CBC&quot;;
+
+    /**
+     * Advanced Encryption Standard (AES) using 256 bit keys in Cipher Block
+     * Chaining mode.
+     */
+    public static final String A256CBC = &quot;A256CBC&quot;;
+
+    /**
+     * Advanced Encryption Standard (AES) using 256 bit keys in Galois/Counter
+     * Mode.
+     */
+    public static final String A256GCM = &quot;A256GCM&quot;;
+
+    /**
+     * Instance.
+     */
+<span class="fc" id="L51">    private static JsonWebAlgorithm INSTANCE = new JsonWebAlgorithm();</span>
+
+    public static final String RS256 = &quot;RS256&quot;;
+
+    /**
+     * RSA using Optimal Asymmetric Encryption Padding (OAEP).
+     */
+    public static final String RSA_OAEP = &quot;RSA-OAEP&quot;;
+
+    public static final String RSA1_5 = &quot;RSA1_5&quot;;
+
+    public static String[] getEncAlgorithms() {
+
+<span class="fc" id="L64">        return INSTANCE.encs.toArray(new String[0]);</span>
+    }
+
+    public static String getFirstMatchingEncAlgorithm(
+        final List&lt;String&gt; encryptionEncValuesSupported) {
+
+<span class="nc bnc" id="L70" title="All 2 branches missed.">        for (final String enc : INSTANCE.encs) {</span>
+<span class="nc bnc" id="L71" title="All 2 branches missed.">            if (encryptionEncValuesSupported.contains(enc)) {</span>
+<span class="nc" id="L72">                return enc;</span>
+            }
+<span class="nc" id="L74">        }</span>
+<span class="nc" id="L75">        return null;</span>
+    }
+
+    public static String getFirstMatchingKexAlgorithm(
+        final List&lt;String&gt; encryptionAlgValuesSupported) {
+
+<span class="nc bnc" id="L81" title="All 2 branches missed.">        for (final String kex : INSTANCE.kexs) {</span>
+<span class="nc bnc" id="L82" title="All 2 branches missed.">            if (encryptionAlgValuesSupported.contains(kex)) {</span>
+<span class="nc" id="L83">                return kex;</span>
+            }
+<span class="nc" id="L85">        }</span>
+<span class="nc" id="L86">        return null;</span>
+    }
+
+    public static int getIvLen(final String enc) {
+
+<span class="fc" id="L91">        return INSTANCE.jwaIvLenMap.get(enc);</span>
+    }
+
+    public static String[] getKexAlgorithms() {
+
+<span class="fc" id="L96">        return INSTANCE.kexs.toArray(new String[0]);</span>
+    }
+
+    public static int getKeySize(final String enc)
+        throws GeneralSecurityException {
+
+<span class="pc bpc" id="L102" title="1 of 2 branches missed.">        if (INSTANCE.jwaKeySizeMap.containsKey(enc)) {</span>
+<span class="fc" id="L103">            return INSTANCE.jwaKeySizeMap.get(enc);</span>
+        } else {
+<span class="nc" id="L105">            throw new GeneralSecurityException(&quot;enc algorithm &quot; + enc</span>
+                    + &quot; does not have a defined keysize or is not supported.&quot;);
+        }
+    }
+
+    public static String getMacAlg(final String enc) {
+
+<span class="fc" id="L112">        return INSTANCE.jwaJcaMacMap.get(enc);</span>
+    }
+
+    public static String[] getSigAlgorithms() {
+
+<span class="fc" id="L117">        return INSTANCE.sigs.toArray(new String[0]);</span>
+    }
+
+    public static boolean isGcm(final String enc) {
+
+<span class="pc bpc" id="L122" title="2 of 4 branches missed.">        return A256GCM.equals(enc) || &quot;A128GCM&quot;.equals(enc);</span>
+    }
+
+    public static boolean isMac(final String alg) {
+
+<span class="fc" id="L127">        return INSTANCE.macs.contains(alg);</span>
+    }
+
+    public static String toJca(final String jwa) {
+
+<span class="fc" id="L132">        return INSTANCE.jwaJcaMap.get(jwa);</span>
+    }
+
+    /**
+     * Encryption algorithms list. The data is in order of preference with the
+     * strongest being the first entry.
+     */
+<span class="fc" id="L139">    private final List&lt;String&gt; encs = new LinkedList&lt;&gt;();</span>
+
+    /**
+     * A map of EC JWA names to EC Curves.
+     */
+<span class="fc" id="L144">    private final Map&lt;String, ECParameterSpec&gt; jwaEcMap = new HashMap&lt;&gt;();</span>
+
+    /**
+     * A map of AES JWA names to initialVector sizes.
+     */
+<span class="fc" id="L149">    private final Map&lt;String, Integer&gt; jwaIvLenMap = new HashMap&lt;&gt;();</span>
+
+    /**
+     * A map of AES JWA names to MAC algorithms if available.
+     */
+<span class="fc" id="L154">    private final Map&lt;String, String&gt; jwaJcaMacMap = new HashMap&lt;&gt;();</span>
+
+    /**
+     * A map of JWA names to JCA names.
+     */
+<span class="fc" id="L159">    private final Map&lt;String, String&gt; jwaJcaMap = new HashMap&lt;&gt;();</span>
+
+    /**
+     * A map of AES JWA names to key sizes.
+     */
+<span class="fc" id="L164">    private final Map&lt;String, Integer&gt; jwaKeySizeMap = new HashMap&lt;&gt;();</span>
+
+    /**
+     * Key Exchange algorithms list. The data is in order of preference with the
+     * strongest being the first entry.
+     */
+<span class="fc" id="L170">    private final List&lt;String&gt; kexs = new LinkedList&lt;&gt;();</span>
+
+    /**
+     * Set of mac algorithms registered.
+     */
+<span class="fc" id="L175">    private final Set&lt;String&gt; macs = new HashSet&lt;&gt;();</span>
+
+    /**
+     * Signature algorithms list. The data is in order of preference with the
+     * strongest being the first entry.
+     */
+<span class="fc" id="L181">    private final List&lt;String&gt; sigs = new LinkedList&lt;&gt;();</span>
+
+<span class="fc" id="L183">    private JsonWebAlgorithm() {</span>
+
+        /**
+         * Advanced Encryption Standard (AES) using 256 bit keys in
+         * Galois/Counter Mode. Note this is only available from JDK8 onwards or
+         * Bouncy Castle.
+         */
+<span class="fc" id="L190">        putEncIfAvailable(A256GCM, &quot;AES/GCM/NoPadding&quot;, null, 256, 96);</span>
+
+        /**
+         * Advanced Encryption Standard (AES) using 256 bit keys in Cipher Block
+         * Chaining mode. With HMAC using SHA-512 hash algorithm.
+         */
+<span class="fc" id="L196">        putEncIfAvailable(&quot;A256CBC-HS512&quot;, &quot;AES/CBC/PKCS5Padding&quot;,</span>
+            &quot;HmacSHA512&quot;, 256, 16);
+
+        /**
+         * Advanced Encryption Standard (AES) using 256 bit keys in Cipher Block
+         * Chaining mode. With HMAC using SHA-384 hash algorithm.
+         */
+<span class="fc" id="L203">        putEncIfAvailable(&quot;A256CBC-HS384&quot;, &quot;AES/CBC/PKCS5Padding&quot;,</span>
+            &quot;HmacSHA384&quot;, 256, 16);
+
+        /**
+         * Advanced Encryption Standard (AES) using 256 bit keys in Cipher Block
+         * Chaining mode. With HMAC using SHA-256 hash algorithm.
+         */
+<span class="fc" id="L210">        putEncIfAvailable(&quot;A256CBC-HS256&quot;, &quot;AES/CBC/PKCS5Padding&quot;,</span>
+            &quot;HmacSHA256&quot;, 256, 16);
+
+        /**
+         * Advanced Encryption Standard (AES) using 256 bit keys in Cipher Block
+         * Chaining mode.
+         */
+<span class="fc" id="L217">        putEncIfAvailable(A256CBC, &quot;AES/CBC/PKCS5Padding&quot;, null, 256, 16);</span>
+
+        /**
+         * Advanced Encryption Standard (AES) using 128 bit keys in
+         * Galois/Counter Mode.
+         */
+<span class="fc" id="L223">        putEncIfAvailable(&quot;A128GCM&quot;, &quot;AES/GCM/NoPadding&quot;, null, 128, 96);</span>
+
+        /**
+         * Advanced Encryption Standard (AES) using 256 bit keys in Cipher Block
+         * Chaining mode. With HMAC using SHA-512 hash algorithm.
+         */
+<span class="fc" id="L229">        putEncIfAvailable(&quot;A128CBC-HS512&quot;, &quot;AES/CBC/PKCS5Padding&quot;,</span>
+            &quot;HmacSHA512&quot;, 128, 16);
+
+        /**
+         * Advanced Encryption Standard (AES) using 256 bit keys in Cipher Block
+         * Chaining mode. With HMAC using SHA-384 hash algorithm.
+         */
+<span class="fc" id="L236">        putEncIfAvailable(&quot;A128CBC-HS384&quot;, &quot;AES/CBC/PKCS5Padding&quot;,</span>
+            &quot;HmacSHA384&quot;, 128, 16);
+
+        /**
+         * Advanced Encryption Standard (AES) using 256 bit keys in Cipher Block
+         * Chaining mode. With HMAC using SHA-256 hash algorithm.
+         */
+<span class="fc" id="L243">        putEncIfAvailable(&quot;A128CBC-HS256&quot;, &quot;AES/CBC/PKCS5Padding&quot;,</span>
+            &quot;HmacSHA256&quot;, 128, 16);
+
+        /**
+         * Advanced Encryption Standard (AES) using 128 bit keys in Cipher Block
+         * Chaining mode.
+         */
+<span class="fc" id="L250">        putEncIfAvailable(&quot;A128CBC&quot;, &quot;AES/CBC/PKCS5Padding&quot;, null, 128, 16);</span>
+
+        /**
+         * ECDSA using P-521 curve and SHA-512 hash algorithm.
+         */
+<span class="fc" id="L255">        putEcIfAvailable(&quot;ES512&quot;, &quot;SHA512withECDSA&quot;, NamedEllipticCurve.P521);</span>
+
+        /**
+         * ECDSA using P-384 curve and SHA-384 hash algorithm.
+         */
+<span class="fc" id="L260">        putEcIfAvailable(&quot;ES384&quot;, &quot;SHA384withECDSA&quot;, NamedEllipticCurve.P384);</span>
+
+        /**
+         * ECDSA using P-256 curve and SHA-256 hash algorithm.
+         */
+<span class="fc" id="L265">        putEcIfAvailable(&quot;ES256&quot;, &quot;SHA256withECDSA&quot;, NamedEllipticCurve.P256);</span>
+
+        /**
+         * RSA using SHA-512 hash algorithm.
+         */
+<span class="fc" id="L270">        putRsaIfAvailable(&quot;RS512&quot;, &quot;SHA512withRSA&quot;);</span>
+        /**
+         * RSA using SHA-384 hash algorithm.
+         */
+<span class="fc" id="L274">        putRsaIfAvailable(&quot;RS384&quot;, &quot;SHA384withRSA&quot;);</span>
+        /**
+         * RSA using SHA-256 hash algorithm.
+         */
+<span class="fc" id="L278">        putRsaIfAvailable(&quot;RS256&quot;, &quot;SHA256withRSA&quot;);</span>
+
+<span class="fc" id="L280">        putMacIfAvailable(&quot;HS512&quot;, &quot;HmacSHA512&quot;);</span>
+<span class="fc" id="L281">        putMacIfAvailable(&quot;HS384&quot;, &quot;HmacSHA384&quot;);</span>
+<span class="fc" id="L282">        putMacIfAvailable(&quot;HS256&quot;, &quot;HmacSHA256&quot;);</span>
+
+        /**
+         * RSA using Optimal Asymmetric Encryption Padding (OAEP).
+         */
+<span class="fc" id="L287">        putKexIfAvailable(RSA_OAEP, &quot;RSA/ECB/OAEPWithSHA-1AndMGF1Padding&quot;);</span>
+        /**
+         * RSA using RSA-PKCS1-1.5 padding.
+         */
+<span class="fc" id="L291">        putKexIfAvailable(&quot;RSA1_5&quot;, &quot;RSA/ECB/PKCS1Padding&quot;);</span>
+
+<span class="fc" id="L293">    }</span>
+
+    /**
+     * Adds to the jwaToJca map if the algorithm is available for the bit length
+     * specified
+     *
+     * @param jwa
+     * @param jca
+     * @param crv
+     *            curve name
+     */
+    private void putEcIfAvailable(final String jwa,
+        final String jca,
+        final NamedEllipticCurve crv) {
+
+        try {
+<span class="fc" id="L309">            Signature.getInstance(jca);</span>
+<span class="fc" id="L310">            jwaJcaMap.put(jwa, jca);</span>
+<span class="fc" id="L311">            jwaEcMap.put(jwa, crv.toECParameterSpec());</span>
+<span class="fc" id="L312">            sigs.add(jwa);</span>
+<span class="nc" id="L313">        } catch (final GeneralSecurityException e) {</span>
+<span class="nc" id="L314">            Log.fine(&quot;algNotSupportedForSig&quot;, jwa);</span>
+<span class="fc" id="L315">        }</span>
+<span class="fc" id="L316">    }</span>
+
+    /**
+     * Adds to the jwaToJca map if the algorithm is available for the bit length
+     * specified
+     *
+     * @param jwa
+     * @param jca
+     * @param jcaMac
+     *            JCA Mac algorithm, may be null.
+     */
+    private void putEncIfAvailable(final String jwa,
+        final String jca,
+        final String jcaMac,
+        final int keySize,
+        final int ivLen) {
+
+        try {
+<span class="fc" id="L334">            final KeyGenerator gen = KeyGenerator.getInstance(&quot;AES&quot;);</span>
+<span class="fc" id="L335">            gen.init(keySize);</span>
+<span class="fc" id="L336">            Cipher.getInstance(jca)</span>
+                .init(Cipher.ENCRYPT_MODE, gen.generateKey());
+<span class="fc bfc" id="L338" title="All 2 branches covered.">            if (jcaMac != null) {</span>
+<span class="fc" id="L339">                Mac.getInstance(jcaMac);</span>
+<span class="fc" id="L340">                jwaJcaMacMap.put(jwa, jcaMac);</span>
+            }
+<span class="fc" id="L342">            jwaJcaMap.put(jwa, jca);</span>
+<span class="fc" id="L343">            jwaKeySizeMap.put(jwa, keySize);</span>
+<span class="fc" id="L344">            jwaIvLenMap.put(jwa, ivLen);</span>
+<span class="fc" id="L345">            encs.add(jwa);</span>
+<span class="fc" id="L346">        } catch (final GeneralSecurityException e) {</span>
+<span class="fc" id="L347">            Log.fine(&quot;algNotSupportedForEnc&quot;, jwa);</span>
+<span class="fc" id="L348">        }</span>
+<span class="fc" id="L349">    }</span>
+
+    /**
+     * Adds to the jwaToJca map if the algorithm is available for the bit length
+     * specified
+     *
+     * @param jwa
+     * @param jca
+     */
+    private void putKexIfAvailable(final String jwa,
+        final String jca) {
+
+        try {
+<span class="fc" id="L362">            Cipher.getInstance(jca);</span>
+<span class="fc" id="L363">            jwaJcaMap.put(jwa, jca);</span>
+<span class="fc" id="L364">            kexs.add(jwa);</span>
+<span class="nc" id="L365">        } catch (final GeneralSecurityException e) {</span>
+<span class="nc" id="L366">            Log.fine(&quot;algNotSupportedForKex&quot;, jwa);</span>
+<span class="fc" id="L367">        }</span>
+<span class="fc" id="L368">    }</span>
+
+    /**
+     * Adds to the jwaToJca map if the algorithm is available for the bit length
+     * specified
+     *
+     * @param jwa
+     * @param jca
+     */
+    private void putMacIfAvailable(final String jwa,
+        final String jca) {
+
+        try {
+<span class="fc" id="L381">            Mac.getInstance(jca);</span>
+<span class="fc" id="L382">            jwaJcaMap.put(jwa, jca);</span>
+<span class="fc" id="L383">            sigs.add(jwa);</span>
+<span class="fc" id="L384">            macs.add(jwa);</span>
+<span class="nc" id="L385">        } catch (final GeneralSecurityException e) {</span>
+<span class="nc" id="L386">            Log.fine(&quot;algNotSupportedForSig&quot;, jwa);</span>
+<span class="fc" id="L387">        }</span>
+<span class="fc" id="L388">    }</span>
+
+    /**
+     * Adds to the jwaToJca map if the algorithm is available for the bit length
+     * specified
+     *
+     * @param jwa
+     * @param jca
+     */
+    private void putRsaIfAvailable(final String jwa,
+        final String jca) {
+
+        try {
+<span class="fc" id="L401">            Signature.getInstance(jca);</span>
+<span class="fc" id="L402">            jwaJcaMap.put(jwa, jca);</span>
+<span class="fc" id="L403">            sigs.add(jwa);</span>
+<span class="nc" id="L404">        } catch (final GeneralSecurityException e) {</span>
+<span class="nc" id="L405">            Log.fine(&quot;algNotSupportedForSig&quot;, jwa);</span>
+<span class="fc" id="L406">        }</span>
+<span class="fc" id="L407">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span></div></body></html>

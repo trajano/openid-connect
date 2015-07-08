@@ -1,0 +1,422 @@
+<?xml version="1.0" encoding="utf-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>JoseHeader.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">openid-connect-core</a> &gt; <a href="index.source.html" class="el_package">net.trajano.openidconnect.crypto</a> &gt; <span class="el_source">JoseHeader.java</span></div><h1>JoseHeader.java</h1><pre class="source lang-java linenums">package net.trajano.openidconnect.crypto;
+
+import java.io.StringReader;
+import java.net.URI;
+
+import javax.json.Json;
+import javax.json.JsonObject;
+import javax.ws.rs.core.MediaType;
+
+import net.trajano.openidconnect.internal.CharSets;
+import net.trajano.openidconnect.internal.Util;
+
+/**
+ * This is a mutable JOSE header.
+ * 
+ * @author Archimedes Trajano
+ */
+public class JoseHeader {
+
+    /**
+     * &lt;p&gt;
+     * &quot;alg&quot; (Algorithm) Header Parameter
+     * &lt;/p&gt;
+     * &lt;p&gt;
+     * This parameter has the same meaning, syntax, and processing rules as the
+     * alg Header Parameter defined in Section 4.1.1 of [JWS], except that the
+     * Header Parameter identifies the cryptographic algorithm used to encrypt
+     * or determine the value of the Content Encryption Key (CEK). The encrypted
+     * content is not usable if the alg value does not represent a supported
+     * algorithm, or if the recipient does not have a key that can be used with
+     * that algorithm.
+     * &lt;/p&gt;
+     * &lt;p&gt;
+     * A list of defined alg values for this use can be found in the IANA JSON
+     * Web Signature and Encryption Algorithms registry defined in [JWA]; the
+     * initial contents of this registry are the values defined in Section 4.1
+     * of the JSON Web Algorithms (JWA) [JWA] specification.
+     * &lt;/p&gt;
+     */
+<span class="fc" id="L40">    private String alg = JsonWebToken.ALG_NONE;</span>
+
+    /**
+     * &quot;crit&quot; (Critical) Header Parameter
+     * &lt;p&gt;
+     * This parameter has the same meaning, syntax, and processing rules as the
+     * crit Header Parameter defined in Section 4.1.11 of [JWS], except that
+     * Header Parameters for a JWE are being referred to, rather than Header
+     * Parameters for a JWS.
+     */
+    private String[] crit;
+
+    /**
+     * &quot;cty&quot; (Content Type) Header Parameter
+     * &lt;p&gt;
+     * The &quot;cty&quot; (content type) Header Parameter is used by JWS applications to
+     * declare the MIME Media Type [IANA.MediaTypes] of the secured &lt;b&gt;content
+     * (the payload)&lt;/b&gt;. This is intended for use by the application when more
+     * than one kind of object could be present in the JWS payload; the
+     * application can use this value to disambiguate among the different kinds
+     * of objects that might be present. It will typically not be used by
+     * applications when the kind of object is already known. This parameter is
+     * ignored by JWS implementations; any processing of this parameter is
+     * performed by the JWS application. Use of this Header Parameter is
+     * OPTIONAL.
+     * &lt;/p&gt;
+     * &lt;p&gt;
+     * Per RFC 2045 [RFC2045], all media type values, subtype values, and
+     * parameter names are case-insensitive. However, parameter values are
+     * case-sensitive unless otherwise specified for the specific parameter. *
+     * &lt;/p&gt;
+     * &lt;p&gt;
+     * To keep messages compact in common situations, it is RECOMMENDED that
+     * producers omit an &quot;application/&quot; prefix of a media type value in a &quot;cty&quot;
+     * Header Parameter when no other '/' appears in the media type value. A
+     * recipient using the media type value MUST treat it as if &quot;application/&quot;
+     * were prepended to any &quot;cty&quot; value not containing a '/'. For instance, a
+     * &quot;cty&quot; value of &quot;example&quot; SHOULD be used to represent the
+     * &quot;application/example&quot; media type; whereas, the media type
+     * &quot;application/example;part=&quot;1/2&quot;&quot; cannot be shortened to
+     * &quot;example;part=&quot;1/2&quot;&quot;.
+     * &lt;/p&gt;
+     */
+    private MediaType cty;
+
+    /**
+     * &lt;p&gt;
+     * &quot;enc&quot; (Encryption Algorithm) Header Parameter
+     * &lt;/p&gt;
+     * &lt;p&gt;
+     * The enc (encryption algorithm) Header Parameter identifies the content
+     * encryption algorithm used to perform authenticated encryption on the
+     * Plaintext to produce the Ciphertext and the Authentication Tag. This
+     * algorithm MUST be an AEAD algorithm with a specified key length. The
+     * encrypted content is not usable if the enc value does not represent a
+     * supported algorithm. enc values should either be registered in the IANA
+     * JSON Web Signature and Encryption Algorithms registry defined in [JWA] or
+     * be a value that contains a Collision-Resistant Name. The enc value is a
+     * case-sensitive ASCII string containing a StringOrURI value. This Header
+     * Parameter MUST be present and MUST be understood and processed by
+     * implementations.
+     * &lt;/p&gt;
+     * &lt;p&gt;
+     * A list of defined enc values for this use can be found in the IANA JSON
+     * Web Signature and Encryption Algorithms registry defined in [JWA]; the
+     * initial contents of this registry are the values defined in Section 5.1
+     * of the JSON Web Algorithms (JWA) [JWA] specification.
+     * &lt;/p&gt;
+     */
+    private String enc;
+
+    /**
+     * &quot;jku&quot; (JWK Set URL) Header Parameter
+     * &lt;p&gt;
+     * This parameter has the same meaning, syntax, and processing rules as the
+     * jku Header Parameter defined in Section 4.1.2 of [JWS], except that the
+     * JWK Set resource contains the public key to which the JWE was encrypted;
+     * this can be used to determine the private key needed to decrypt the JWE.
+     */
+    private URI jku;
+
+    /**
+     * &lt;p&gt;
+     * &quot;jwk&quot; (JSON Web Key) Header Parameter
+     * &lt;/p&gt;
+     * &lt;p&gt;
+     * This parameter has the same meaning, syntax, and processing rules as the
+     * jwk Header Parameter defined in Section 4.1.3 of [JWS], except that the
+     * key is the public key to which the JWE was encrypted; this can be used to
+     * determine the private key needed to decrypt the JWE.
+     * &lt;/p&gt;
+     */
+    private JsonWebKey jwk;
+
+    /**
+     * &quot;kid&quot; (Key ID) Header Parameter
+     * &lt;p&gt;
+     * This parameter has the same meaning, syntax, and processing rules as the
+     * kid Header Parameter defined in Section 4.1.4 of [JWS], except that the
+     * key hint references the public key to which the JWE was encrypted; this
+     * can be used to determine the private key needed to decrypt the JWE. This
+     * parameter allows originators to explicitly signal a change of key to JWE
+     * recipients.
+     */
+    private String kid;
+
+    /**
+     * &quot;typ&quot; (Type) Header Parameter
+     * &lt;p&gt;
+     * The &quot;typ&quot; (type) Header Parameter is used by JWS applications to declare
+     * the MIME Media Type [IANA.MediaTypes] of this &lt;b&gt;complete JWS&lt;/b&gt;. This
+     * is intended for use by the application when more than one kind of object
+     * could be present in an application data structure that can contain a JWS;
+     * the application can use this value to disambiguate among the different
+     * kinds of objects that might be present. It will typically not be used by
+     * applications when the kind of object is already known. This parameter is
+     * ignored by JWS implementations; any processing of this parameter is
+     * performed by the JWS application. Use of this Header Parameter is
+     * OPTIONAL.
+     * &lt;/p&gt;
+     * &lt;p&gt;
+     * Per RFC 2045 [RFC2045], all media type values, subtype values, and
+     * parameter names are case-insensitive. However, parameter values are
+     * case-sensitive unless otherwise specified for the specific parameter.
+     * &lt;/p&gt;
+     * &lt;p&gt;
+     * To keep messages compact in common situations, it is RECOMMENDED that
+     * producers omit an &quot;application/&quot; prefix of a media type value in a &quot;typ&quot;
+     * Header Parameter when no other '/' appears in the media type value. A
+     * recipient using the media type value MUST treat it as if &quot;application/&quot;
+     * were prepended to any &quot;typ&quot; value not containing a '/'. For instance, a
+     * &quot;typ&quot; value of &quot;example&quot; SHOULD be used to represent the
+     * &quot;application/example&quot; media type; whereas, the media type
+     * &quot;application/example;part=&quot;1/2&quot;&quot; cannot be shortened to
+     * &quot;example;part=&quot;1/2&quot;&quot;.
+     * &lt;/p&gt;
+     * &lt;p&gt;
+     * The &quot;typ&quot; value &quot;JOSE&quot; can be used by applications to indicate that this
+     * object is a JWS or JWE using the JWS Compact Serialization or the JWE
+     * Compact Serialization. The &quot;typ&quot; value &quot;JOSE+JSON&quot; can be used by
+     * applications to indicate that this object is a JWS or JWE using the JWS
+     * JSON Serialization or the JWE JSON Serialization. Other type values can
+     * also be used by applications.
+     */
+    private MediaType typ;
+
+    /**
+     * &quot;x5c&quot; (X.509 Certificate Chain) Header Parameter
+     *
+     &lt;p&gt;
+     * This parameter has the same meaning, syntax, and processing rules as the
+     * x5c Header Parameter defined in Section 4.1.6 of [JWS], except that the
+     * X.509 public key certificate or certificate chain [RFC5280] contains the
+     * public key to which the JWE was encrypted; this can be used to determine
+     * the private key needed to decrypt the JWE.
+     * &lt;/p&gt;
+     * &lt;p&gt;
+     * See Appendix B of [JWS] for an example x5c value.
+     * &lt;/p&gt;
+     */
+    private String x5c;
+
+    /**
+     * &quot;x5t&quot; (X.509 Certificate SHA-1 Thumbprint) Header Parameter
+     * &lt;p&gt;
+     * This parameter has the same meaning, syntax, and processing rules as the
+     * x5t Header Parameter defined in Section 4.1.7 of [JWS], except that the
+     * certificate referenced by the thumbprint contains the public key to which
+     * the JWE was encrypted; this can be used to determine the private key
+     * needed to decrypt the JWE. Note that certificate thumbprints are also
+     * sometimes known as certificate fingerprints.
+     */
+    private String x5t;
+
+    /**
+     * &quot;x5t#S256&quot; (X.509 Certificate SHA-256 Thumbprint) Header Parameter This
+     * parameter has the same meaning, syntax, and processing rules as the
+     * x5t#S256 Header Parameter defined in Section 4.1.8 of [JWS], except that
+     * the certificate referenced by the thumbprint contains the public key to
+     * which the JWE was encrypted; this can be used to determine the private
+     * key needed to decrypt the JWE. Note that certificate thumbprints are also
+     * sometimes known as certificate fingerprints.
+     */
+    private String x5t_s256;
+
+    /**
+     * &quot;x5u&quot; (X.509 URL) Header Parameter This parameter has the same meaning,
+     * syntax, and processing rules as the x5u Header Parameter defined in
+     * Section 4.1.5 of [JWS], except that the X.509 public key certificate or
+     * certificate chain [RFC5280] contains the public key to which the JWE was
+     * encrypted; this can be used to determine the private key needed to
+     * decrypt the JWE.
+     */
+    private URI x5u;
+
+    /**
+     * &lt;p&gt;
+     * &quot;zip&quot; (Compression Algorithm) Header Parameter
+     * &lt;p&gt;
+     * &lt;p&gt;
+     * The zip (compression algorithm) applied to the Plaintext before
+     * encryption, if any. The zip value defined by this specification is:
+     * &lt;/p&gt;
+     * &lt;ul&gt;
+     * &lt;li&gt;DEF - Compression with the DEFLATE [RFC1951] algorithm
+     * &lt;/ul&gt;
+     * &lt;p&gt;
+     * Other values MAY be used. Compression algorithm values can be registered
+     * in the IANA JSON Web Encryption Compression Algorithm registry defined in
+     * [JWA]. The zip value is a case-sensitive string. If no zip parameter is
+     * present, no compression is applied to the Plaintext before encryption.
+     * When used, this Header Parameter MUST be integrity protected; therefore,
+     * it MUST occur only within the JWE Protected Header. Use of this Header
+     * Parameter is OPTIONAL. This Header Parameter MUST be understood and
+     * processed by implementations.
+     * &lt;/p&gt;
+     */
+    private String zip;
+
+<span class="fc" id="L259">    public JoseHeader() {</span>
+
+        // TODO make this immutable
+<span class="fc" id="L262">    }</span>
+
+<span class="fc" id="L264">    public JoseHeader(final String jsonString) {</span>
+
+<span class="fc" id="L266">        final JsonObject json = Json.createReader(new StringReader(jsonString))</span>
+                .readObject();
+<span class="fc" id="L268">        Util.populateWithJson(this, json);</span>
+<span class="fc" id="L269">    }</span>
+
+    public String getAlg() {
+
+<span class="fc" id="L273">        return alg;</span>
+    }
+
+    public String[] getCrit() {
+
+<span class="nc" id="L278">        return crit;</span>
+    }
+
+    public MediaType getCty() {
+
+<span class="nc" id="L283">        return cty;</span>
+    }
+
+    public String getEnc() {
+
+<span class="fc" id="L288">        return enc;</span>
+    }
+
+    public URI getJku() {
+
+<span class="nc" id="L293">        return jku;</span>
+    }
+
+    public JsonWebKey getJwk() {
+
+<span class="nc" id="L298">        return jwk;</span>
+    }
+
+    public String getKid() {
+
+<span class="fc" id="L303">        return kid;</span>
+    }
+
+    public MediaType getTyp() {
+
+<span class="nc" id="L308">        return typ;</span>
+    }
+
+    public String getX5c() {
+
+<span class="nc" id="L313">        return x5c;</span>
+    }
+
+    public String getX5t() {
+
+<span class="nc" id="L318">        return x5t;</span>
+    }
+
+    public String getX5t_s256() {
+
+<span class="nc" id="L323">        return x5t_s256;</span>
+    }
+
+    public URI getX5u() {
+
+<span class="nc" id="L328">        return x5u;</span>
+    }
+
+    public String getZip() {
+
+<span class="fc" id="L333">        return zip;</span>
+    }
+
+    public void setAlg(final String alg) {
+
+<span class="fc" id="L338">        this.alg = alg;</span>
+<span class="fc" id="L339">    }</span>
+
+    public void setCrit(final String[] crit) {
+
+<span class="nc" id="L343">        this.crit = crit;</span>
+<span class="nc" id="L344">    }</span>
+
+    public void setCty(final MediaType cty) {
+
+<span class="nc" id="L348">        this.cty = cty;</span>
+<span class="nc" id="L349">    }</span>
+
+    public void setEnc(final String enc) {
+
+<span class="fc" id="L353">        this.enc = enc;</span>
+<span class="fc" id="L354">    }</span>
+
+    public void setJku(final URI jku) {
+
+<span class="nc" id="L358">        this.jku = jku;</span>
+<span class="nc" id="L359">    }</span>
+
+    public void setJwk(final JsonWebKey jwk) {
+
+<span class="fc" id="L363">        this.jwk = jwk;</span>
+<span class="fc" id="L364">    }</span>
+
+    public void setKid(final String kid) {
+
+<span class="fc" id="L368">        this.kid = kid;</span>
+<span class="fc" id="L369">    }</span>
+
+    public void setTyp(final MediaType typ) {
+
+<span class="nc" id="L373">        this.typ = typ;</span>
+<span class="nc" id="L374">    }</span>
+
+    public void setX5c(final String x5c) {
+
+<span class="nc" id="L378">        this.x5c = x5c;</span>
+<span class="nc" id="L379">    }</span>
+
+    public void setX5t(final String x5t) {
+
+<span class="nc" id="L383">        this.x5t = x5t;</span>
+<span class="nc" id="L384">    }</span>
+
+    public void setX5t_s256(final String x5t_s256) {
+
+<span class="nc" id="L388">        this.x5t_s256 = x5t_s256;</span>
+<span class="nc" id="L389">    }</span>
+
+    public void setX5u(final URI x5u) {
+
+<span class="nc" id="L393">        this.x5u = x5u;</span>
+<span class="nc" id="L394">    }</span>
+
+    public void setZip(final String zip) {
+
+<span class="fc" id="L398">        this.zip = zip;</span>
+<span class="fc" id="L399">    }</span>
+
+    /**
+     * Returns a JSON string representing the JOSE header.
+     */
+    @Override
+    public String toString() {
+
+<span class="fc" id="L407">        return Util.convertToJson(this)</span>
+                .toString();
+    }
+
+    /**
+     * Gets the encoded version of the JOSE header.
+     * 
+     * @return bytes
+     */
+    public byte[] getEncoded() {
+
+<span class="fc" id="L418">        return Encoding.base64urlEncode(toString())</span>
+                .getBytes(CharSets.US_ASCII);
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span></div></body></html>

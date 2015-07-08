@@ -1,0 +1,7 @@
+net.trajano.openidconnect.auth
+net.trajano.openidconnect.core
+net.trajano.openidconnect.crypto
+net.trajano.openidconnect.internal
+net.trajano.openidconnect.rs
+net.trajano.openidconnect.token
+net.trajano.openidconnect.userinfo

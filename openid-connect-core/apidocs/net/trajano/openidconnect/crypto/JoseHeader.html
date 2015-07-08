@@ -1,0 +1,1056 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!-- NewPage -->
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html" charset="utf-8">
+<title>JoseHeader (openid-connect-core 1.0.1 API)</title>
+<link rel="stylesheet" type="text/css" href="../../../../stylesheet.css" title="Style">
+</head>
+<body>
+<script type="text/javascript"><!--
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="JoseHeader (openid-connect-core 1.0.1 API)";
+    }
+//-->
+</script>
+<noscript>
+<div>JavaScript is disabled on your browser.</div>
+</noscript>
+<!-- ========= START OF TOP NAVBAR ======= -->
+<div class="topNav"><a name="navbar_top">
+<!--   -->
+</a><a href="#skip-navbar_top" title="Skip navigation links"></a><a name="navbar_top_firstrow">
+<!--   -->
+</a>
+<ul class="navList" title="Navigation">
+<li><a href="../../../../overview-summary.html">Overview</a></li>
+<li><a href="package-summary.html">Package</a></li>
+<li class="navBarCell1Rev">Class</li>
+<li><a href="class-use/JoseHeader.html">Use</a></li>
+<li><a href="package-tree.html">Tree</a></li>
+<li><a href="../../../../deprecated-list.html">Deprecated</a></li>
+<li><a href="../../../../index-all.html">Index</a></li>
+<li><a href="../../../../help-doc.html">Help</a></li>
+</ul>
+</div>
+<div class="subNav">
+<ul class="navList">
+<li><a href="../../../../net/trajano/openidconnect/crypto/Encoding.html" title="class in net.trajano.openidconnect.crypto"><span class="strong">Prev Class</span></a></li>
+<li><a href="../../../../net/trajano/openidconnect/crypto/JsonWebAlgorithm.html" title="class in net.trajano.openidconnect.crypto"><span class="strong">Next Class</span></a></li>
+</ul>
+<ul class="navList">
+<li><a href="../../../../index.html?net/trajano/openidconnect/crypto/JoseHeader.html" target="_top">Frames</a></li>
+<li><a href="JoseHeader.html" target="_top">No Frames</a></li>
+</ul>
+<ul class="navList" id="allclasses_navbar_top">
+<li><a href="../../../../allclasses-noframe.html">All Classes</a></li>
+</ul>
+<div>
+<script type="text/javascript"><!--
+  allClassesLink = document.getElementById("allclasses_navbar_top");
+  if(window==top) {
+    allClassesLink.style.display = "block";
+  }
+  else {
+    allClassesLink.style.display = "none";
+  }
+  //-->
+</script>
+</div>
+<div>
+<ul class="subNavList">
+<li>Summary:&nbsp;</li>
+<li>Nested&nbsp;|&nbsp;</li>
+<li><a href="#field_summary">Field</a>&nbsp;|&nbsp;</li>
+<li><a href="#constructor_summary">Constr</a>&nbsp;|&nbsp;</li>
+<li><a href="#method_summary">Method</a></li>
+</ul>
+<ul class="subNavList">
+<li>Detail:&nbsp;</li>
+<li><a href="#field_detail">Field</a>&nbsp;|&nbsp;</li>
+<li><a href="#constructor_detail">Constr</a>&nbsp;|&nbsp;</li>
+<li><a href="#method_detail">Method</a></li>
+</ul>
+</div>
+<a name="skip-navbar_top">
+<!--   -->
+</a></div>
+<!-- ========= END OF TOP NAVBAR ========= -->
+<!-- ======== START OF CLASS DATA ======== -->
+<div class="header">
+<div class="subTitle">net.trajano.openidconnect.crypto</div>
+<h2 title="Class JoseHeader" class="title">Class JoseHeader</h2>
+</div>
+<div class="contentContainer">
+<map id="APIVIZ" name="APIVIZ">
+<area shape="rect" id="node1" href="JoseHeader.html" title="JoseHeader" alt="" coords="5,5,96,31"/>
+</map>
+<div id="apivizContainer" style="text-align: center;"><img src="JoseHeader.png" usemap="#APIVIZ" border="0"></div>
+<ul class="inheritance">
+<li><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">java.lang.Object</a></li>
+<li>
+<ul class="inheritance">
+<li>net.trajano.openidconnect.crypto.JoseHeader</li>
+</ul>
+</li>
+</ul>
+<div class="description">
+<ul class="blockList">
+<li class="blockList">
+<hr>
+<br>
+<pre>public class <span class="strong">JoseHeader</span>
+extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></pre>
+<div class="block">This is a mutable JOSE header.</div>
+<dl><dt><span class="strong">Author:</span></dt>
+  <dd>Archimedes Trajano</dd></dl>
+</li>
+</ul>
+</div>
+<div class="summary">
+<ul class="blockList">
+<li class="blockList">
+<!-- =========== FIELD SUMMARY =========== -->
+<ul class="blockList">
+<li class="blockList"><a name="field_summary">
+<!--   -->
+</a>
+<h3>Field Summary</h3>
+<table class="overviewSummary" border="0" cellpadding="3" cellspacing="0" summary="Field Summary table, listing fields, and an explanation">
+<caption><span>Fields</span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colFirst" scope="col">Modifier and Type</th>
+<th class="colLast" scope="col">Field and Description</th>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>private <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
+<td class="colLast"><code><strong><a href="../../../../net/trajano/openidconnect/crypto/JoseHeader.html#alg">alg</a></strong></code>
+<div class="block">
+ "alg" (Algorithm) Header Parameter</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>private <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>[]</code></td>
+<td class="colLast"><code><strong><a href="../../../../net/trajano/openidconnect/crypto/JoseHeader.html#crit">crit</a></strong></code>
+<div class="block">"crit" (Critical) Header Parameter</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>private javax.ws.rs.core.MediaType</code></td>
+<td class="colLast"><code><strong><a href="../../../../net/trajano/openidconnect/crypto/JoseHeader.html#cty">cty</a></strong></code>
+<div class="block">"cty" (Content Type) Header Parameter</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>private <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
+<td class="colLast"><code><strong><a href="../../../../net/trajano/openidconnect/crypto/JoseHeader.html#enc">enc</a></strong></code>
+<div class="block">
+ "enc" (Encryption Algorithm) Header Parameter</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>private <a href="http://docs.oracle.com/javase/7/docs/api/java/net/URI.html?is-external=true" title="class or interface in java.net">URI</a></code></td>
+<td class="colLast"><code><strong><a href="../../../../net/trajano/openidconnect/crypto/JoseHeader.html#jku">jku</a></strong></code>
+<div class="block">"jku" (JWK Set URL) Header Parameter</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>private <a href="../../../../net/trajano/openidconnect/crypto/JsonWebKey.html" title="class in net.trajano.openidconnect.crypto">JsonWebKey</a></code></td>
+<td class="colLast"><code><strong><a href="../../../../net/trajano/openidconnect/crypto/JoseHeader.html#jwk">jwk</a></strong></code>
+<div class="block">
+ "jwk" (JSON Web Key) Header Parameter</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>private <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
+<td class="colLast"><code><strong><a href="../../../../net/trajano/openidconnect/crypto/JoseHeader.html#kid">kid</a></strong></code>
+<div class="block">"kid" (Key ID) Header Parameter</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>private javax.ws.rs.core.MediaType</code></td>
+<td class="colLast"><code><strong><a href="../../../../net/trajano/openidconnect/crypto/JoseHeader.html#typ">typ</a></strong></code>
+<div class="block">"typ" (Type) Header Parameter</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>private <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
+<td class="colLast"><code><strong><a href="../../../../net/trajano/openidconnect/crypto/JoseHeader.html#x5c">x5c</a></strong></code>
+<div class="block">"x5c" (X.509 Certificate Chain) Header Parameter</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>private <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
+<td class="colLast"><code><strong><a href="../../../../net/trajano/openidconnect/crypto/JoseHeader.html#x5t">x5t</a></strong></code>
+<div class="block">"x5t" (X.509 Certificate SHA-1 Thumbprint) Header Parameter</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>private <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
+<td class="colLast"><code><strong><a href="../../../../net/trajano/openidconnect/crypto/JoseHeader.html#x5t_s256">x5t_s256</a></strong></code>
+<div class="block">"x5t#S256" (X.509 Certificate SHA-256 Thumbprint) Header Parameter This
+ parameter has the same meaning, syntax, and processing rules as the
+ x5t#S256 Header Parameter defined in Section 4.1.8 of [JWS], except that
+ the certificate referenced by the thumbprint contains the public key to
+ which the JWE was encrypted; this can be used to determine the private
+ key needed to decrypt the JWE.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>private <a href="http://docs.oracle.com/javase/7/docs/api/java/net/URI.html?is-external=true" title="class or interface in java.net">URI</a></code></td>
+<td class="colLast"><code><strong><a href="../../../../net/trajano/openidconnect/crypto/JoseHeader.html#x5u">x5u</a></strong></code>
+<div class="block">"x5u" (X.509 URL) Header Parameter This parameter has the same meaning,
+ syntax, and processing rules as the x5u Header Parameter defined in
+ Section 4.1.5 of [JWS], except that the X.509 public key certificate or
+ certificate chain [RFC5280] contains the public key to which the JWE was
+ encrypted; this can be used to determine the private key needed to
+ decrypt the JWE.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>private <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
+<td class="colLast"><code><strong><a href="../../../../net/trajano/openidconnect/crypto/JoseHeader.html#zip">zip</a></strong></code>
+<div class="block">
+ "zip" (Compression Algorithm) Header Parameter</div>
+</td>
+</tr>
+</table>
+</li>
+</ul>
+<!-- ======== CONSTRUCTOR SUMMARY ======== -->
+<ul class="blockList">
+<li class="blockList"><a name="constructor_summary">
+<!--   -->
+</a>
+<h3>Constructor Summary</h3>
+<table class="overviewSummary" border="0" cellpadding="3" cellspacing="0" summary="Constructor Summary table, listing constructors, and an explanation">
+<caption><span>Constructors</span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colOne" scope="col">Constructor and Description</th>
+</tr>
+<tr class="altColor">
+<td class="colOne"><code><strong><a href="../../../../net/trajano/openidconnect/crypto/JoseHeader.html#JoseHeader()">JoseHeader</a></strong>()</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colOne"><code><strong><a href="../../../../net/trajano/openidconnect/crypto/JoseHeader.html#JoseHeader(java.lang.String)">JoseHeader</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;jsonString)</code>&nbsp;</td>
+</tr>
+</table>
+</li>
+</ul>
+<!-- ========== METHOD SUMMARY =========== -->
+<ul class="blockList">
+<li class="blockList"><a name="method_summary">
+<!--   -->
+</a>
+<h3>Method Summary</h3>
+<table class="overviewSummary" border="0" cellpadding="3" cellspacing="0" summary="Method Summary table, listing methods, and an explanation">
+<caption><span>Methods</span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colFirst" scope="col">Modifier and Type</th>
+<th class="colLast" scope="col">Method and Description</th>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
+<td class="colLast"><code><strong><a href="../../../../net/trajano/openidconnect/crypto/JoseHeader.html#getAlg()">getAlg</a></strong>()</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>[]</code></td>
+<td class="colLast"><code><strong><a href="../../../../net/trajano/openidconnect/crypto/JoseHeader.html#getCrit()">getCrit</a></strong>()</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>javax.ws.rs.core.MediaType</code></td>
+<td class="colLast"><code><strong><a href="../../../../net/trajano/openidconnect/crypto/JoseHeader.html#getCty()">getCty</a></strong>()</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
+<td class="colLast"><code><strong><a href="../../../../net/trajano/openidconnect/crypto/JoseHeader.html#getEnc()">getEnc</a></strong>()</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>byte[]</code></td>
+<td class="colLast"><code><strong><a href="../../../../net/trajano/openidconnect/crypto/JoseHeader.html#getEncoded()">getEncoded</a></strong>()</code>
+<div class="block">Gets the encoded version of the JOSE header.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/net/URI.html?is-external=true" title="class or interface in java.net">URI</a></code></td>
+<td class="colLast"><code><strong><a href="../../../../net/trajano/openidconnect/crypto/JoseHeader.html#getJku()">getJku</a></strong>()</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code><a href="../../../../net/trajano/openidconnect/crypto/JsonWebKey.html" title="class in net.trajano.openidconnect.crypto">JsonWebKey</a></code></td>
+<td class="colLast"><code><strong><a href="../../../../net/trajano/openidconnect/crypto/JoseHeader.html#getJwk()">getJwk</a></strong>()</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
+<td class="colLast"><code><strong><a href="../../../../net/trajano/openidconnect/crypto/JoseHeader.html#getKid()">getKid</a></strong>()</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>javax.ws.rs.core.MediaType</code></td>
+<td class="colLast"><code><strong><a href="../../../../net/trajano/openidconnect/crypto/JoseHeader.html#getTyp()">getTyp</a></strong>()</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
+<td class="colLast"><code><strong><a href="../../../../net/trajano/openidconnect/crypto/JoseHeader.html#getX5c()">getX5c</a></strong>()</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
+<td class="colLast"><code><strong><a href="../../../../net/trajano/openidconnect/crypto/JoseHeader.html#getX5t_s256()">getX5t_s256</a></strong>()</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
+<td class="colLast"><code><strong><a href="../../../../net/trajano/openidconnect/crypto/JoseHeader.html#getX5t()">getX5t</a></strong>()</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/net/URI.html?is-external=true" title="class or interface in java.net">URI</a></code></td>
+<td class="colLast"><code><strong><a href="../../../../net/trajano/openidconnect/crypto/JoseHeader.html#getX5u()">getX5u</a></strong>()</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
+<td class="colLast"><code><strong><a href="../../../../net/trajano/openidconnect/crypto/JoseHeader.html#getZip()">getZip</a></strong>()</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../../net/trajano/openidconnect/crypto/JoseHeader.html#setAlg(java.lang.String)">setAlg</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;alg)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../../net/trajano/openidconnect/crypto/JoseHeader.html#setCrit(java.lang.String[])">setCrit</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>[]&nbsp;crit)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../../net/trajano/openidconnect/crypto/JoseHeader.html#setCty(javax.ws.rs.core.MediaType)">setCty</a></strong>(javax.ws.rs.core.MediaType&nbsp;cty)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../../net/trajano/openidconnect/crypto/JoseHeader.html#setEnc(java.lang.String)">setEnc</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;enc)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../../net/trajano/openidconnect/crypto/JoseHeader.html#setJku(java.net.URI)">setJku</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/net/URI.html?is-external=true" title="class or interface in java.net">URI</a>&nbsp;jku)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../../net/trajano/openidconnect/crypto/JoseHeader.html#setJwk(net.trajano.openidconnect.crypto.JsonWebKey)">setJwk</a></strong>(<a href="../../../../net/trajano/openidconnect/crypto/JsonWebKey.html" title="class in net.trajano.openidconnect.crypto">JsonWebKey</a>&nbsp;jwk)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../../net/trajano/openidconnect/crypto/JoseHeader.html#setKid(java.lang.String)">setKid</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;kid)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../../net/trajano/openidconnect/crypto/JoseHeader.html#setTyp(javax.ws.rs.core.MediaType)">setTyp</a></strong>(javax.ws.rs.core.MediaType&nbsp;typ)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../../net/trajano/openidconnect/crypto/JoseHeader.html#setX5c(java.lang.String)">setX5c</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;x5c)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../../net/trajano/openidconnect/crypto/JoseHeader.html#setX5t_s256(java.lang.String)">setX5t_s256</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;x5t_s256)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../../net/trajano/openidconnect/crypto/JoseHeader.html#setX5t(java.lang.String)">setX5t</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;x5t)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../../net/trajano/openidconnect/crypto/JoseHeader.html#setX5u(java.net.URI)">setX5u</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/net/URI.html?is-external=true" title="class or interface in java.net">URI</a>&nbsp;x5u)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../../net/trajano/openidconnect/crypto/JoseHeader.html#setZip(java.lang.String)">setZip</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;zip)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
+<td class="colLast"><code><strong><a href="../../../../net/trajano/openidconnect/crypto/JoseHeader.html#toString()">toString</a></strong>()</code>
+<div class="block">Returns a JSON string representing the JOSE header.</div>
+</td>
+</tr>
+</table>
+<ul class="blockList">
+<li class="blockList"><a name="methods_inherited_from_class_java.lang.Object">
+<!--   -->
+</a>
+<h3>Methods inherited from class&nbsp;java.lang.<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></h3>
+<code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#clone()" title="class or interface in java.lang">clone</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#equals(java.lang.Object)" title="class or interface in java.lang">equals</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#finalize()" title="class or interface in java.lang">finalize</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#getClass()" title="class or interface in java.lang">getClass</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#hashCode()" title="class or interface in java.lang">hashCode</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#notify()" title="class or interface in java.lang">notify</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#notifyAll()" title="class or interface in java.lang">notifyAll</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#wait()" title="class or interface in java.lang">wait</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#wait(long)" title="class or interface in java.lang">wait</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#wait(long, int)" title="class or interface in java.lang">wait</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="details">
+<ul class="blockList">
+<li class="blockList">
+<!-- ============ FIELD DETAIL =========== -->
+<ul class="blockList">
+<li class="blockList"><a name="field_detail">
+<!--   -->
+</a>
+<h3>Field Detail</h3>
+<a name="alg">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>alg</h4>
+<pre>private&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a> alg</pre>
+<div class="block"><p>
+ "alg" (Algorithm) Header Parameter
+ </p>
+ <p>
+ This parameter has the same meaning, syntax, and processing rules as the
+ alg Header Parameter defined in Section 4.1.1 of [JWS], except that the
+ Header Parameter identifies the cryptographic algorithm used to encrypt
+ or determine the value of the Content Encryption Key (CEK). The encrypted
+ content is not usable if the alg value does not represent a supported
+ algorithm, or if the recipient does not have a key that can be used with
+ that algorithm.
+ </p>
+ <p>
+ A list of defined alg values for this use can be found in the IANA JSON
+ Web Signature and Encryption Algorithms registry defined in [JWA]; the
+ initial contents of this registry are the values defined in Section 4.1
+ of the JSON Web Algorithms (JWA) [JWA] specification.
+ </p></div>
+</li>
+</ul>
+<a name="crit">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>crit</h4>
+<pre>private&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>[] crit</pre>
+<div class="block">"crit" (Critical) Header Parameter
+ <p>
+ This parameter has the same meaning, syntax, and processing rules as the
+ crit Header Parameter defined in Section 4.1.11 of [JWS], except that
+ Header Parameters for a JWE are being referred to, rather than Header
+ Parameters for a JWS.</div>
+</li>
+</ul>
+<a name="cty">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>cty</h4>
+<pre>private&nbsp;javax.ws.rs.core.MediaType cty</pre>
+<div class="block">"cty" (Content Type) Header Parameter
+ <p>
+ The "cty" (content type) Header Parameter is used by JWS applications to
+ declare the MIME Media Type [IANA.MediaTypes] of the secured <b>content
+ (the payload)</b>. This is intended for use by the application when more
+ than one kind of object could be present in the JWS payload; the
+ application can use this value to disambiguate among the different kinds
+ of objects that might be present. It will typically not be used by
+ applications when the kind of object is already known. This parameter is
+ ignored by JWS implementations; any processing of this parameter is
+ performed by the JWS application. Use of this Header Parameter is
+ OPTIONAL.
+ </p>
+ <p>
+ Per RFC 2045 [RFC2045], all media type values, subtype values, and
+ parameter names are case-insensitive. However, parameter values are
+ case-sensitive unless otherwise specified for the specific parameter. *
+ </p>
+ <p>
+ To keep messages compact in common situations, it is RECOMMENDED that
+ producers omit an "application/" prefix of a media type value in a "cty"
+ Header Parameter when no other '/' appears in the media type value. A
+ recipient using the media type value MUST treat it as if "application/"
+ were prepended to any "cty" value not containing a '/'. For instance, a
+ "cty" value of "example" SHOULD be used to represent the
+ "application/example" media type; whereas, the media type
+ "application/example;part="1/2"" cannot be shortened to
+ "example;part="1/2"".
+ </p></div>
+</li>
+</ul>
+<a name="enc">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>enc</h4>
+<pre>private&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a> enc</pre>
+<div class="block"><p>
+ "enc" (Encryption Algorithm) Header Parameter
+ </p>
+ <p>
+ The enc (encryption algorithm) Header Parameter identifies the content
+ encryption algorithm used to perform authenticated encryption on the
+ Plaintext to produce the Ciphertext and the Authentication Tag. This
+ algorithm MUST be an AEAD algorithm with a specified key length. The
+ encrypted content is not usable if the enc value does not represent a
+ supported algorithm. enc values should either be registered in the IANA
+ JSON Web Signature and Encryption Algorithms registry defined in [JWA] or
+ be a value that contains a Collision-Resistant Name. The enc value is a
+ case-sensitive ASCII string containing a StringOrURI value. This Header
+ Parameter MUST be present and MUST be understood and processed by
+ implementations.
+ </p>
+ <p>
+ A list of defined enc values for this use can be found in the IANA JSON
+ Web Signature and Encryption Algorithms registry defined in [JWA]; the
+ initial contents of this registry are the values defined in Section 5.1
+ of the JSON Web Algorithms (JWA) [JWA] specification.
+ </p></div>
+</li>
+</ul>
+<a name="jku">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>jku</h4>
+<pre>private&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/net/URI.html?is-external=true" title="class or interface in java.net">URI</a> jku</pre>
+<div class="block">"jku" (JWK Set URL) Header Parameter
+ <p>
+ This parameter has the same meaning, syntax, and processing rules as the
+ jku Header Parameter defined in Section 4.1.2 of [JWS], except that the
+ JWK Set resource contains the public key to which the JWE was encrypted;
+ this can be used to determine the private key needed to decrypt the JWE.</div>
+</li>
+</ul>
+<a name="jwk">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>jwk</h4>
+<pre>private&nbsp;<a href="../../../../net/trajano/openidconnect/crypto/JsonWebKey.html" title="class in net.trajano.openidconnect.crypto">JsonWebKey</a> jwk</pre>
+<div class="block"><p>
+ "jwk" (JSON Web Key) Header Parameter
+ </p>
+ <p>
+ This parameter has the same meaning, syntax, and processing rules as the
+ jwk Header Parameter defined in Section 4.1.3 of [JWS], except that the
+ key is the public key to which the JWE was encrypted; this can be used to
+ determine the private key needed to decrypt the JWE.
+ </p></div>
+</li>
+</ul>
+<a name="kid">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>kid</h4>
+<pre>private&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a> kid</pre>
+<div class="block">"kid" (Key ID) Header Parameter
+ <p>
+ This parameter has the same meaning, syntax, and processing rules as the
+ kid Header Parameter defined in Section 4.1.4 of [JWS], except that the
+ key hint references the public key to which the JWE was encrypted; this
+ can be used to determine the private key needed to decrypt the JWE. This
+ parameter allows originators to explicitly signal a change of key to JWE
+ recipients.</div>
+</li>
+</ul>
+<a name="typ">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>typ</h4>
+<pre>private&nbsp;javax.ws.rs.core.MediaType typ</pre>
+<div class="block">"typ" (Type) Header Parameter
+ <p>
+ The "typ" (type) Header Parameter is used by JWS applications to declare
+ the MIME Media Type [IANA.MediaTypes] of this <b>complete JWS</b>. This
+ is intended for use by the application when more than one kind of object
+ could be present in an application data structure that can contain a JWS;
+ the application can use this value to disambiguate among the different
+ kinds of objects that might be present. It will typically not be used by
+ applications when the kind of object is already known. This parameter is
+ ignored by JWS implementations; any processing of this parameter is
+ performed by the JWS application. Use of this Header Parameter is
+ OPTIONAL.
+ </p>
+ <p>
+ Per RFC 2045 [RFC2045], all media type values, subtype values, and
+ parameter names are case-insensitive. However, parameter values are
+ case-sensitive unless otherwise specified for the specific parameter.
+ </p>
+ <p>
+ To keep messages compact in common situations, it is RECOMMENDED that
+ producers omit an "application/" prefix of a media type value in a "typ"
+ Header Parameter when no other '/' appears in the media type value. A
+ recipient using the media type value MUST treat it as if "application/"
+ were prepended to any "typ" value not containing a '/'. For instance, a
+ "typ" value of "example" SHOULD be used to represent the
+ "application/example" media type; whereas, the media type
+ "application/example;part="1/2"" cannot be shortened to
+ "example;part="1/2"".
+ </p>
+ <p>
+ The "typ" value "JOSE" can be used by applications to indicate that this
+ object is a JWS or JWE using the JWS Compact Serialization or the JWE
+ Compact Serialization. The "typ" value "JOSE+JSON" can be used by
+ applications to indicate that this object is a JWS or JWE using the JWS
+ JSON Serialization or the JWE JSON Serialization. Other type values can
+ also be used by applications.</div>
+</li>
+</ul>
+<a name="x5c">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>x5c</h4>
+<pre>private&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a> x5c</pre>
+<div class="block">"x5c" (X.509 Certificate Chain) Header Parameter
+
+     <p>
+ This parameter has the same meaning, syntax, and processing rules as the
+ x5c Header Parameter defined in Section 4.1.6 of [JWS], except that the
+ X.509 public key certificate or certificate chain [RFC5280] contains the
+ public key to which the JWE was encrypted; this can be used to determine
+ the private key needed to decrypt the JWE.
+ </p>
+ <p>
+ See Appendix B of [JWS] for an example x5c value.
+ </p></div>
+</li>
+</ul>
+<a name="x5t">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>x5t</h4>
+<pre>private&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a> x5t</pre>
+<div class="block">"x5t" (X.509 Certificate SHA-1 Thumbprint) Header Parameter
+ <p>
+ This parameter has the same meaning, syntax, and processing rules as the
+ x5t Header Parameter defined in Section 4.1.7 of [JWS], except that the
+ certificate referenced by the thumbprint contains the public key to which
+ the JWE was encrypted; this can be used to determine the private key
+ needed to decrypt the JWE. Note that certificate thumbprints are also
+ sometimes known as certificate fingerprints.</div>
+</li>
+</ul>
+<a name="x5t_s256">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>x5t_s256</h4>
+<pre>private&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a> x5t_s256</pre>
+<div class="block">"x5t#S256" (X.509 Certificate SHA-256 Thumbprint) Header Parameter This
+ parameter has the same meaning, syntax, and processing rules as the
+ x5t#S256 Header Parameter defined in Section 4.1.8 of [JWS], except that
+ the certificate referenced by the thumbprint contains the public key to
+ which the JWE was encrypted; this can be used to determine the private
+ key needed to decrypt the JWE. Note that certificate thumbprints are also
+ sometimes known as certificate fingerprints.</div>
+</li>
+</ul>
+<a name="x5u">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>x5u</h4>
+<pre>private&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/net/URI.html?is-external=true" title="class or interface in java.net">URI</a> x5u</pre>
+<div class="block">"x5u" (X.509 URL) Header Parameter This parameter has the same meaning,
+ syntax, and processing rules as the x5u Header Parameter defined in
+ Section 4.1.5 of [JWS], except that the X.509 public key certificate or
+ certificate chain [RFC5280] contains the public key to which the JWE was
+ encrypted; this can be used to determine the private key needed to
+ decrypt the JWE.</div>
+</li>
+</ul>
+<a name="zip">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>zip</h4>
+<pre>private&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a> zip</pre>
+<div class="block"><p>
+ "zip" (Compression Algorithm) Header Parameter
+ <p>
+ <p>
+ The zip (compression algorithm) applied to the Plaintext before
+ encryption, if any. The zip value defined by this specification is:
+ </p>
+ <ul>
+ <li>DEF - Compression with the DEFLATE [RFC1951] algorithm
+ </ul>
+ <p>
+ Other values MAY be used. Compression algorithm values can be registered
+ in the IANA JSON Web Encryption Compression Algorithm registry defined in
+ [JWA]. The zip value is a case-sensitive string. If no zip parameter is
+ present, no compression is applied to the Plaintext before encryption.
+ When used, this Header Parameter MUST be integrity protected; therefore,
+ it MUST occur only within the JWE Protected Header. Use of this Header
+ Parameter is OPTIONAL. This Header Parameter MUST be understood and
+ processed by implementations.
+ </p></div>
+</li>
+</ul>
+</li>
+</ul>
+<!-- ========= CONSTRUCTOR DETAIL ======== -->
+<ul class="blockList">
+<li class="blockList"><a name="constructor_detail">
+<!--   -->
+</a>
+<h3>Constructor Detail</h3>
+<a name="JoseHeader()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>JoseHeader</h4>
+<pre>public&nbsp;JoseHeader()</pre>
+</li>
+</ul>
+<a name="JoseHeader(java.lang.String)">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>JoseHeader</h4>
+<pre>public&nbsp;JoseHeader(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;jsonString)</pre>
+</li>
+</ul>
+</li>
+</ul>
+<!-- ============ METHOD DETAIL ========== -->
+<ul class="blockList">
+<li class="blockList"><a name="method_detail">
+<!--   -->
+</a>
+<h3>Method Detail</h3>
+<a name="getAlg()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getAlg</h4>
+<pre>public&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;getAlg()</pre>
+</li>
+</ul>
+<a name="getCrit()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getCrit</h4>
+<pre>public&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>[]&nbsp;getCrit()</pre>
+</li>
+</ul>
+<a name="getCty()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getCty</h4>
+<pre>public&nbsp;javax.ws.rs.core.MediaType&nbsp;getCty()</pre>
+</li>
+</ul>
+<a name="getEnc()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getEnc</h4>
+<pre>public&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;getEnc()</pre>
+</li>
+</ul>
+<a name="getJku()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getJku</h4>
+<pre>public&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/net/URI.html?is-external=true" title="class or interface in java.net">URI</a>&nbsp;getJku()</pre>
+</li>
+</ul>
+<a name="getJwk()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getJwk</h4>
+<pre>public&nbsp;<a href="../../../../net/trajano/openidconnect/crypto/JsonWebKey.html" title="class in net.trajano.openidconnect.crypto">JsonWebKey</a>&nbsp;getJwk()</pre>
+</li>
+</ul>
+<a name="getKid()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getKid</h4>
+<pre>public&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;getKid()</pre>
+</li>
+</ul>
+<a name="getTyp()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getTyp</h4>
+<pre>public&nbsp;javax.ws.rs.core.MediaType&nbsp;getTyp()</pre>
+</li>
+</ul>
+<a name="getX5c()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getX5c</h4>
+<pre>public&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;getX5c()</pre>
+</li>
+</ul>
+<a name="getX5t()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getX5t</h4>
+<pre>public&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;getX5t()</pre>
+</li>
+</ul>
+<a name="getX5t_s256()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getX5t_s256</h4>
+<pre>public&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;getX5t_s256()</pre>
+</li>
+</ul>
+<a name="getX5u()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getX5u</h4>
+<pre>public&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/net/URI.html?is-external=true" title="class or interface in java.net">URI</a>&nbsp;getX5u()</pre>
+</li>
+</ul>
+<a name="getZip()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getZip</h4>
+<pre>public&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;getZip()</pre>
+</li>
+</ul>
+<a name="setAlg(java.lang.String)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setAlg</h4>
+<pre>public&nbsp;void&nbsp;setAlg(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;alg)</pre>
+</li>
+</ul>
+<a name="setCrit(java.lang.String[])">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setCrit</h4>
+<pre>public&nbsp;void&nbsp;setCrit(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>[]&nbsp;crit)</pre>
+</li>
+</ul>
+<a name="setCty(javax.ws.rs.core.MediaType)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setCty</h4>
+<pre>public&nbsp;void&nbsp;setCty(javax.ws.rs.core.MediaType&nbsp;cty)</pre>
+</li>
+</ul>
+<a name="setEnc(java.lang.String)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setEnc</h4>
+<pre>public&nbsp;void&nbsp;setEnc(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;enc)</pre>
+</li>
+</ul>
+<a name="setJku(java.net.URI)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setJku</h4>
+<pre>public&nbsp;void&nbsp;setJku(<a href="http://docs.oracle.com/javase/7/docs/api/java/net/URI.html?is-external=true" title="class or interface in java.net">URI</a>&nbsp;jku)</pre>
+</li>
+</ul>
+<a name="setJwk(net.trajano.openidconnect.crypto.JsonWebKey)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setJwk</h4>
+<pre>public&nbsp;void&nbsp;setJwk(<a href="../../../../net/trajano/openidconnect/crypto/JsonWebKey.html" title="class in net.trajano.openidconnect.crypto">JsonWebKey</a>&nbsp;jwk)</pre>
+</li>
+</ul>
+<a name="setKid(java.lang.String)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setKid</h4>
+<pre>public&nbsp;void&nbsp;setKid(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;kid)</pre>
+</li>
+</ul>
+<a name="setTyp(javax.ws.rs.core.MediaType)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setTyp</h4>
+<pre>public&nbsp;void&nbsp;setTyp(javax.ws.rs.core.MediaType&nbsp;typ)</pre>
+</li>
+</ul>
+<a name="setX5c(java.lang.String)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setX5c</h4>
+<pre>public&nbsp;void&nbsp;setX5c(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;x5c)</pre>
+</li>
+</ul>
+<a name="setX5t(java.lang.String)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setX5t</h4>
+<pre>public&nbsp;void&nbsp;setX5t(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;x5t)</pre>
+</li>
+</ul>
+<a name="setX5t_s256(java.lang.String)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setX5t_s256</h4>
+<pre>public&nbsp;void&nbsp;setX5t_s256(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;x5t_s256)</pre>
+</li>
+</ul>
+<a name="setX5u(java.net.URI)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setX5u</h4>
+<pre>public&nbsp;void&nbsp;setX5u(<a href="http://docs.oracle.com/javase/7/docs/api/java/net/URI.html?is-external=true" title="class or interface in java.net">URI</a>&nbsp;x5u)</pre>
+</li>
+</ul>
+<a name="setZip(java.lang.String)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setZip</h4>
+<pre>public&nbsp;void&nbsp;setZip(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;zip)</pre>
+</li>
+</ul>
+<a name="toString()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>toString</h4>
+<pre>public&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;toString()</pre>
+<div class="block">Returns a JSON string representing the JOSE header.</div>
+<dl>
+<dt><strong>Overrides:</strong></dt>
+<dd><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#toString()" title="class or interface in java.lang">toString</a></code>&nbsp;in class&nbsp;<code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></code></dd>
+</dl>
+</li>
+</ul>
+<a name="getEncoded()">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>getEncoded</h4>
+<pre>public&nbsp;byte[]&nbsp;getEncoded()</pre>
+<div class="block">Gets the encoded version of the JOSE header.</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd>bytes</dd></dl>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<!-- ========= END OF CLASS DATA ========= -->
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<div class="bottomNav"><a name="navbar_bottom">
+<!--   -->
+</a><a href="#skip-navbar_bottom" title="Skip navigation links"></a><a name="navbar_bottom_firstrow">
+<!--   -->
+</a>
+<ul class="navList" title="Navigation">
+<li><a href="../../../../overview-summary.html">Overview</a></li>
+<li><a href="package-summary.html">Package</a></li>
+<li class="navBarCell1Rev">Class</li>
+<li><a href="class-use/JoseHeader.html">Use</a></li>
+<li><a href="package-tree.html">Tree</a></li>
+<li><a href="../../../../deprecated-list.html">Deprecated</a></li>
+<li><a href="../../../../index-all.html">Index</a></li>
+<li><a href="../../../../help-doc.html">Help</a></li>
+</ul>
+</div>
+<div class="subNav">
+<ul class="navList">
+<li><a href="../../../../net/trajano/openidconnect/crypto/Encoding.html" title="class in net.trajano.openidconnect.crypto"><span class="strong">Prev Class</span></a></li>
+<li><a href="../../../../net/trajano/openidconnect/crypto/JsonWebAlgorithm.html" title="class in net.trajano.openidconnect.crypto"><span class="strong">Next Class</span></a></li>
+</ul>
+<ul class="navList">
+<li><a href="../../../../index.html?net/trajano/openidconnect/crypto/JoseHeader.html" target="_top">Frames</a></li>
+<li><a href="JoseHeader.html" target="_top">No Frames</a></li>
+</ul>
+<ul class="navList" id="allclasses_navbar_bottom">
+<li><a href="../../../../allclasses-noframe.html">All Classes</a></li>
+</ul>
+<div>
+<script type="text/javascript"><!--
+  allClassesLink = document.getElementById("allclasses_navbar_bottom");
+  if(window==top) {
+    allClassesLink.style.display = "block";
+  }
+  else {
+    allClassesLink.style.display = "none";
+  }
+  //-->
+</script>
+</div>
+<div>
+<ul class="subNavList">
+<li>Summary:&nbsp;</li>
+<li>Nested&nbsp;|&nbsp;</li>
+<li><a href="#field_summary">Field</a>&nbsp;|&nbsp;</li>
+<li><a href="#constructor_summary">Constr</a>&nbsp;|&nbsp;</li>
+<li><a href="#method_summary">Method</a></li>
+</ul>
+<ul class="subNavList">
+<li>Detail:&nbsp;</li>
+<li><a href="#field_detail">Field</a>&nbsp;|&nbsp;</li>
+<li><a href="#constructor_detail">Constr</a>&nbsp;|&nbsp;</li>
+<li><a href="#method_detail">Method</a></li>
+</ul>
+</div>
+<a name="skip-navbar_bottom">
+<!--   -->
+</a></div>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+<p class="legalCopy"><small>Copyright &#169; 2012&#x2013;2015 <a href="http://www.trajano.net/">Trajano</a>. All rights reserved.</small></p>
+</body>
+</html>

@@ -1,0 +1,1022 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!-- NewPage -->
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html" charset="utf-8">
+<title>AuthenticationRequest (openid-connect-core 1.0.1 API)</title>
+<link rel="stylesheet" type="text/css" href="../../../../stylesheet.css" title="Style">
+</head>
+<body>
+<script type="text/javascript"><!--
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="AuthenticationRequest (openid-connect-core 1.0.1 API)";
+    }
+//-->
+</script>
+<noscript>
+<div>JavaScript is disabled on your browser.</div>
+</noscript>
+<!-- ========= START OF TOP NAVBAR ======= -->
+<div class="topNav"><a name="navbar_top">
+<!--   -->
+</a><a href="#skip-navbar_top" title="Skip navigation links"></a><a name="navbar_top_firstrow">
+<!--   -->
+</a>
+<ul class="navList" title="Navigation">
+<li><a href="../../../../overview-summary.html">Overview</a></li>
+<li><a href="package-summary.html">Package</a></li>
+<li class="navBarCell1Rev">Class</li>
+<li><a href="class-use/AuthenticationRequest.html">Use</a></li>
+<li><a href="package-tree.html">Tree</a></li>
+<li><a href="../../../../deprecated-list.html">Deprecated</a></li>
+<li><a href="../../../../index-all.html">Index</a></li>
+<li><a href="../../../../help-doc.html">Help</a></li>
+</ul>
+</div>
+<div class="subNav">
+<ul class="navList">
+<li>Prev Class</li>
+<li><a href="../../../../net/trajano/openidconnect/auth/AuthenticationRequest.Builder.html" title="class in net.trajano.openidconnect.auth"><span class="strong">Next Class</span></a></li>
+</ul>
+<ul class="navList">
+<li><a href="../../../../index.html?net/trajano/openidconnect/auth/AuthenticationRequest.html" target="_top">Frames</a></li>
+<li><a href="AuthenticationRequest.html" target="_top">No Frames</a></li>
+</ul>
+<ul class="navList" id="allclasses_navbar_top">
+<li><a href="../../../../allclasses-noframe.html">All Classes</a></li>
+</ul>
+<div>
+<script type="text/javascript"><!--
+  allClassesLink = document.getElementById("allclasses_navbar_top");
+  if(window==top) {
+    allClassesLink.style.display = "block";
+  }
+  else {
+    allClassesLink.style.display = "none";
+  }
+  //-->
+</script>
+</div>
+<div>
+<ul class="subNavList">
+<li>Summary:&nbsp;</li>
+<li><a href="#nested_class_summary">Nested</a>&nbsp;|&nbsp;</li>
+<li><a href="#field_summary">Field</a>&nbsp;|&nbsp;</li>
+<li><a href="#constructor_summary">Constr</a>&nbsp;|&nbsp;</li>
+<li><a href="#method_summary">Method</a></li>
+</ul>
+<ul class="subNavList">
+<li>Detail:&nbsp;</li>
+<li><a href="#field_detail">Field</a>&nbsp;|&nbsp;</li>
+<li><a href="#constructor_detail">Constr</a>&nbsp;|&nbsp;</li>
+<li><a href="#method_detail">Method</a></li>
+</ul>
+</div>
+<a name="skip-navbar_top">
+<!--   -->
+</a></div>
+<!-- ========= END OF TOP NAVBAR ========= -->
+<!-- ======== START OF CLASS DATA ======== -->
+<div class="header">
+<div class="subTitle">net.trajano.openidconnect.auth</div>
+<h2 title="Class AuthenticationRequest" class="title">Class AuthenticationRequest</h2>
+</div>
+<div class="contentContainer">
+<map id="APIVIZ" name="APIVIZ">
+<area shape="rect" id="node1" href="AuthenticationRequest.html" title="AuthenticationRequest" alt="" coords="5,5,159,31"/>
+</map>
+<div id="apivizContainer" style="text-align: center;"><img src="AuthenticationRequest.png" usemap="#APIVIZ" border="0"></div>
+<ul class="inheritance">
+<li><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">java.lang.Object</a></li>
+<li>
+<ul class="inheritance">
+<li>net.trajano.openidconnect.auth.AuthenticationRequest</li>
+</ul>
+</li>
+</ul>
+<div class="description">
+<ul class="blockList">
+<li class="blockList">
+<hr>
+<br>
+<pre>public class <span class="strong">AuthenticationRequest</span>
+extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></pre>
+<div class="block">Wraps an HttpServletRequest to provide a cleaner API to the request
+ parameters. This is not serializable as the serialized version will already
+ be in JWT.</div>
+<dl><dt><span class="strong">Author:</span></dt>
+  <dd>Archimedes</dd></dl>
+</li>
+</ul>
+</div>
+<div class="summary">
+<ul class="blockList">
+<li class="blockList">
+<!-- ======== NESTED CLASS SUMMARY ======== -->
+<ul class="blockList">
+<li class="blockList"><a name="nested_class_summary">
+<!--   -->
+</a>
+<h3>Nested Class Summary</h3>
+<table class="overviewSummary" border="0" cellpadding="3" cellspacing="0" summary="Nested Class Summary table, listing nested classes, and an explanation">
+<caption><span>Nested Classes</span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colFirst" scope="col">Modifier and Type</th>
+<th class="colLast" scope="col">Class and Description</th>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static class&nbsp;</code></td>
+<td class="colLast"><code><strong><a href="../../../../net/trajano/openidconnect/auth/AuthenticationRequest.Builder.html" title="class in net.trajano.openidconnect.auth">AuthenticationRequest.Builder</a></strong></code>
+<div class="block">Builder for the Authentication request</div>
+</td>
+</tr>
+</table>
+</li>
+</ul>
+<!-- =========== FIELD SUMMARY =========== -->
+<ul class="blockList">
+<li class="blockList"><a name="field_summary">
+<!--   -->
+</a>
+<h3>Field Summary</h3>
+<table class="overviewSummary" border="0" cellpadding="3" cellspacing="0" summary="Field Summary table, listing fields, and an explanation">
+<caption><span>Fields</span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colFirst" scope="col">Modifier and Type</th>
+<th class="colLast" scope="col">Field and Description</th>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>private <a href="http://docs.oracle.com/javase/7/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&gt;</code></td>
+<td class="colLast"><code><strong><a href="../../../../net/trajano/openidconnect/auth/AuthenticationRequest.html#acrValues">acrValues</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>private javax.json.JsonObject</code></td>
+<td class="colLast"><code><strong><a href="../../../../net/trajano/openidconnect/auth/AuthenticationRequest.html#claims">claims</a></strong></code>
+<div class="block">Claims.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>private <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
+<td class="colLast"><code><strong><a href="../../../../net/trajano/openidconnect/auth/AuthenticationRequest.html#clientId">clientId</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>private boolean</code></td>
+<td class="colLast"><code><strong><a href="../../../../net/trajano/openidconnect/auth/AuthenticationRequest.html#codeOnlyResponseType">codeOnlyResponseType</a></strong></code>
+<div class="block">Flag to indicate that "code" is the only response type.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>private <a href="../../../../net/trajano/openidconnect/auth/Display.html" title="enum in net.trajano.openidconnect.auth">Display</a></code></td>
+<td class="colLast"><code><strong><a href="../../../../net/trajano/openidconnect/auth/AuthenticationRequest.html#display">display</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>private <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
+<td class="colLast"><code><strong><a href="../../../../net/trajano/openidconnect/auth/AuthenticationRequest.html#idTokenHint">idTokenHint</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>private <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
+<td class="colLast"><code><strong><a href="../../../../net/trajano/openidconnect/auth/AuthenticationRequest.html#loginHint">loginHint</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>private <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Integer.html?is-external=true" title="class or interface in java.lang">Integer</a></code></td>
+<td class="colLast"><code><strong><a href="../../../../net/trajano/openidconnect/auth/AuthenticationRequest.html#maxAge">maxAge</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>private <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
+<td class="colLast"><code><strong><a href="../../../../net/trajano/openidconnect/auth/AuthenticationRequest.html#nonce">nonce</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>private <a href="http://docs.oracle.com/javase/7/docs/api/java/util/Set.html?is-external=true" title="class or interface in java.util">Set</a>&lt;<a href="../../../../net/trajano/openidconnect/auth/Prompt.html" title="enum in net.trajano.openidconnect.auth">Prompt</a>&gt;</code></td>
+<td class="colLast"><code><strong><a href="../../../../net/trajano/openidconnect/auth/AuthenticationRequest.html#prompts">prompts</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>private <a href="http://docs.oracle.com/javase/7/docs/api/java/net/URI.html?is-external=true" title="class or interface in java.net">URI</a></code></td>
+<td class="colLast"><code><strong><a href="../../../../net/trajano/openidconnect/auth/AuthenticationRequest.html#redirectUri">redirectUri</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>private static <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>[]</code></td>
+<td class="colLast"><code><strong><a href="../../../../net/trajano/openidconnect/auth/AuthenticationRequest.html#REQUEST_KEYS">REQUEST_KEYS</a></strong></code>
+<div class="block">Keys for objects that go to the request object when serialized to a JWT.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>private <a href="http://docs.oracle.com/javase/7/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util">Map</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>,<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&gt;</code></td>
+<td class="colLast"><code><strong><a href="../../../../net/trajano/openidconnect/auth/AuthenticationRequest.html#requestMap">requestMap</a></strong></code>
+<div class="block">Stringified values for the request.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>private <a href="../../../../net/trajano/openidconnect/auth/ResponseMode.html" title="enum in net.trajano.openidconnect.auth">ResponseMode</a></code></td>
+<td class="colLast"><code><strong><a href="../../../../net/trajano/openidconnect/auth/AuthenticationRequest.html#responseMode">responseMode</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>private <a href="http://docs.oracle.com/javase/7/docs/api/java/util/Set.html?is-external=true" title="class or interface in java.util">Set</a>&lt;<a href="../../../../net/trajano/openidconnect/auth/ResponseType.html" title="enum in net.trajano.openidconnect.auth">ResponseType</a>&gt;</code></td>
+<td class="colLast"><code><strong><a href="../../../../net/trajano/openidconnect/auth/AuthenticationRequest.html#responseTypes">responseTypes</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>private <a href="http://docs.oracle.com/javase/7/docs/api/java/util/Set.html?is-external=true" title="class or interface in java.util">Set</a>&lt;<a href="../../../../net/trajano/openidconnect/core/Scope.html" title="enum in net.trajano.openidconnect.core">Scope</a>&gt;</code></td>
+<td class="colLast"><code><strong><a href="../../../../net/trajano/openidconnect/auth/AuthenticationRequest.html#scopes">scopes</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>private <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
+<td class="colLast"><code><strong><a href="../../../../net/trajano/openidconnect/auth/AuthenticationRequest.html#state">state</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>private <a href="http://docs.oracle.com/javase/7/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/util/Locale.html?is-external=true" title="class or interface in java.util">Locale</a>&gt;</code></td>
+<td class="colLast"><code><strong><a href="../../../../net/trajano/openidconnect/auth/AuthenticationRequest.html#uiLocales">uiLocales</a></strong></code>&nbsp;</td>
+</tr>
+</table>
+</li>
+</ul>
+<!-- ======== CONSTRUCTOR SUMMARY ======== -->
+<ul class="blockList">
+<li class="blockList"><a name="constructor_summary">
+<!--   -->
+</a>
+<h3>Constructor Summary</h3>
+<table class="overviewSummary" border="0" cellpadding="3" cellspacing="0" summary="Constructor Summary table, listing constructors, and an explanation">
+<caption><span>Constructors</span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colFirst" scope="col">Modifier</th>
+<th class="colLast" scope="col">Constructor and Description</th>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>&nbsp;</code></td>
+<td class="colLast"><code><strong><a href="../../../../net/trajano/openidconnect/auth/AuthenticationRequest.html#AuthenticationRequest(javax.servlet.http.HttpServletRequest, net.trajano.openidconnect.crypto.JsonWebKeySet)">AuthenticationRequest</a></strong>(javax.servlet.http.HttpServletRequest&nbsp;req,
+                     <a href="../../../../net/trajano/openidconnect/crypto/JsonWebKeySet.html" title="class in net.trajano.openidconnect.crypto">JsonWebKeySet</a>&nbsp;privateJwks)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>private </code></td>
+<td class="colLast"><code><strong><a href="../../../../net/trajano/openidconnect/auth/AuthenticationRequest.html#AuthenticationRequest(java.util.Map)">AuthenticationRequest</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util">Map</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>,<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&gt;&nbsp;requestMap)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>&nbsp;</code></td>
+<td class="colLast"><code><strong><a href="../../../../net/trajano/openidconnect/auth/AuthenticationRequest.html#AuthenticationRequest(java.lang.String, net.trajano.openidconnect.crypto.JsonWebKeySet)">AuthenticationRequest</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;requestJwt,
+                     <a href="../../../../net/trajano/openidconnect/crypto/JsonWebKeySet.html" title="class in net.trajano.openidconnect.crypto">JsonWebKeySet</a>&nbsp;privateJwks)</code>
+<div class="block">Constructs the authentication request using the Request JWT.</div>
+</td>
+</tr>
+</table>
+</li>
+</ul>
+<!-- ========== METHOD SUMMARY =========== -->
+<ul class="blockList">
+<li class="blockList"><a name="method_summary">
+<!--   -->
+</a>
+<h3>Method Summary</h3>
+<table class="overviewSummary" border="0" cellpadding="3" cellspacing="0" summary="Method Summary table, listing methods, and an explanation">
+<caption><span>Methods</span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colFirst" scope="col">Modifier and Type</th>
+<th class="colLast" scope="col">Method and Description</th>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../../net/trajano/openidconnect/auth/AuthenticationRequest.html#addQueryParams(javax.ws.rs.core.UriBuilder)">addQueryParams</a></strong>(javax.ws.rs.core.UriBuilder&nbsp;b)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>private static <a href="http://docs.oracle.com/javase/7/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util">Map</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>,<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&gt;</code></td>
+<td class="colLast"><code><strong><a href="../../../../net/trajano/openidconnect/auth/AuthenticationRequest.html#buildRequestMap(javax.servlet.http.HttpServletRequest, net.trajano.openidconnect.crypto.JsonWebKeySet)">buildRequestMap</a></strong>(javax.servlet.http.HttpServletRequest&nbsp;req,
+               <a href="../../../../net/trajano/openidconnect/crypto/JsonWebKeySet.html" title="class in net.trajano.openidconnect.crypto">JsonWebKeySet</a>&nbsp;privateJwks)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>private static <a href="http://docs.oracle.com/javase/7/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util">Map</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>,<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&gt;</code></td>
+<td class="colLast"><code><strong><a href="../../../../net/trajano/openidconnect/auth/AuthenticationRequest.html#buildRequestMap(java.lang.String, net.trajano.openidconnect.crypto.JsonWebKeySet)">buildRequestMap</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;requestJwt,
+               <a href="../../../../net/trajano/openidconnect/crypto/JsonWebKeySet.html" title="class in net.trajano.openidconnect.crypto">JsonWebKeySet</a>&nbsp;privateJwks)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><strong><a href="../../../../net/trajano/openidconnect/auth/AuthenticationRequest.html#containsResponseType(net.trajano.openidconnect.auth.ResponseType)">containsResponseType</a></strong>(<a href="../../../../net/trajano/openidconnect/auth/ResponseType.html" title="enum in net.trajano.openidconnect.auth">ResponseType</a>&nbsp;responseType)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&gt;</code></td>
+<td class="colLast"><code><strong><a href="../../../../net/trajano/openidconnect/auth/AuthenticationRequest.html#getAcrValues()">getAcrValues</a></strong>()</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>javax.json.JsonObject</code></td>
+<td class="colLast"><code><strong><a href="../../../../net/trajano/openidconnect/auth/AuthenticationRequest.html#getClaims()">getClaims</a></strong>()</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
+<td class="colLast"><code><strong><a href="../../../../net/trajano/openidconnect/auth/AuthenticationRequest.html#getClientId()">getClientId</a></strong>()</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>private <a href="../../../../net/trajano/openidconnect/auth/ResponseMode.html" title="enum in net.trajano.openidconnect.auth">ResponseMode</a></code></td>
+<td class="colLast"><code><strong><a href="../../../../net/trajano/openidconnect/auth/AuthenticationRequest.html#getDefaultResponseMode()">getDefaultResponseMode</a></strong>()</code>
+<div class="block">For purposes of this specification, the default Response Mode for the
+ OAuth 2.0 code Response Type is the query encoding.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code><a href="../../../../net/trajano/openidconnect/auth/Display.html" title="enum in net.trajano.openidconnect.auth">Display</a></code></td>
+<td class="colLast"><code><strong><a href="../../../../net/trajano/openidconnect/auth/AuthenticationRequest.html#getDisplay()">getDisplay</a></strong>()</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
+<td class="colLast"><code><strong><a href="../../../../net/trajano/openidconnect/auth/AuthenticationRequest.html#getIdTokenHint()">getIdTokenHint</a></strong>()</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
+<td class="colLast"><code><strong><a href="../../../../net/trajano/openidconnect/auth/AuthenticationRequest.html#getLoginHint()">getLoginHint</a></strong>()</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Integer.html?is-external=true" title="class or interface in java.lang">Integer</a></code></td>
+<td class="colLast"><code><strong><a href="../../../../net/trajano/openidconnect/auth/AuthenticationRequest.html#getMaxAge()">getMaxAge</a></strong>()</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
+<td class="colLast"><code><strong><a href="../../../../net/trajano/openidconnect/auth/AuthenticationRequest.html#getNonce()">getNonce</a></strong>()</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/util/Set.html?is-external=true" title="class or interface in java.util">Set</a>&lt;<a href="../../../../net/trajano/openidconnect/auth/Prompt.html" title="enum in net.trajano.openidconnect.auth">Prompt</a>&gt;</code></td>
+<td class="colLast"><code><strong><a href="../../../../net/trajano/openidconnect/auth/AuthenticationRequest.html#getPrompts()">getPrompts</a></strong>()</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/net/URI.html?is-external=true" title="class or interface in java.net">URI</a></code></td>
+<td class="colLast"><code><strong><a href="../../../../net/trajano/openidconnect/auth/AuthenticationRequest.html#getRedirectUri()">getRedirectUri</a></strong>()</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code><a href="../../../../net/trajano/openidconnect/auth/ResponseMode.html" title="enum in net.trajano.openidconnect.auth">ResponseMode</a></code></td>
+<td class="colLast"><code><strong><a href="../../../../net/trajano/openidconnect/auth/AuthenticationRequest.html#getResponseMode()">getResponseMode</a></strong>()</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
+<td class="colLast"><code><strong><a href="../../../../net/trajano/openidconnect/auth/AuthenticationRequest.html#getResponseType()">getResponseType</a></strong>()</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/util/Set.html?is-external=true" title="class or interface in java.util">Set</a>&lt;<a href="../../../../net/trajano/openidconnect/auth/ResponseType.html" title="enum in net.trajano.openidconnect.auth">ResponseType</a>&gt;</code></td>
+<td class="colLast"><code><strong><a href="../../../../net/trajano/openidconnect/auth/AuthenticationRequest.html#getResponseTypes()">getResponseTypes</a></strong>()</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
+<td class="colLast"><code><strong><a href="../../../../net/trajano/openidconnect/auth/AuthenticationRequest.html#getScope()">getScope</a></strong>()</code>
+<div class="block">Gets a string representation of the scope set.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/util/Set.html?is-external=true" title="class or interface in java.util">Set</a>&lt;<a href="../../../../net/trajano/openidconnect/core/Scope.html" title="enum in net.trajano.openidconnect.core">Scope</a>&gt;</code></td>
+<td class="colLast"><code><strong><a href="../../../../net/trajano/openidconnect/auth/AuthenticationRequest.html#getScopes()">getScopes</a></strong>()</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
+<td class="colLast"><code><strong><a href="../../../../net/trajano/openidconnect/auth/AuthenticationRequest.html#getState()">getState</a></strong>()</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/util/Locale.html?is-external=true" title="class or interface in java.util">Locale</a>&gt;</code></td>
+<td class="colLast"><code><strong><a href="../../../../net/trajano/openidconnect/auth/AuthenticationRequest.html#getUiLocales()">getUiLocales</a></strong>()</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><strong><a href="../../../../net/trajano/openidconnect/auth/AuthenticationRequest.html#isAuthorizationCodeFlow()">isAuthorizationCodeFlow</a></strong>()</code>
+<div class="block">Checks if the <em>Authorization Code</em> flow is used.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><strong><a href="../../../../net/trajano/openidconnect/auth/AuthenticationRequest.html#isDefaultResponseMode()">isDefaultResponseMode</a></strong>()</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><strong><a href="../../../../net/trajano/openidconnect/auth/AuthenticationRequest.html#isImplicitFlow()">isImplicitFlow</a></strong>()</code>
+<div class="block">Checks if we are using the <em>implicit</em> flow.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>private static void</code></td>
+<td class="colLast"><code><strong><a href="../../../../net/trajano/openidconnect/auth/AuthenticationRequest.html#processValueFromMapOrObject(java.util.Map, java.lang.String, javax.servlet.http.HttpServletRequest, javax.json.JsonObject)">processValueFromMapOrObject</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util">Map</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>,<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&gt;&nbsp;reqMap,
+                           <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;key,
+                           javax.servlet.http.HttpServletRequest&nbsp;servletRequest,
+                           javax.json.JsonObject&nbsp;requestObject)</code>
+<div class="block">
+ So that the request is a valid OAuth 2.0 Authorization Request, values
+ for the response_type and client_id parameters MUST be included using the
+ OAuth 2.0 request syntax, since they are REQUIRED by OAuth 2.0.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>javax.json.JsonObject</code></td>
+<td class="colLast"><code><strong><a href="../../../../net/trajano/openidconnect/auth/AuthenticationRequest.html#toJsonObject()">toJsonObject</a></strong>()</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>private void</code></td>
+<td class="colLast"><code><strong><a href="../../../../net/trajano/openidconnect/auth/AuthenticationRequest.html#validate()">validate</a></strong>()</code>
+<div class="block">Performs the validation on the Authentication token.</div>
+</td>
+</tr>
+</table>
+<ul class="blockList">
+<li class="blockList"><a name="methods_inherited_from_class_java.lang.Object">
+<!--   -->
+</a>
+<h3>Methods inherited from class&nbsp;java.lang.<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></h3>
+<code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#clone()" title="class or interface in java.lang">clone</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#equals(java.lang.Object)" title="class or interface in java.lang">equals</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#finalize()" title="class or interface in java.lang">finalize</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#getClass()" title="class or interface in java.lang">getClass</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#hashCode()" title="class or interface in java.lang">hashCode</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#notify()" title="class or interface in java.lang">notify</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#notifyAll()" title="class or interface in java.lang">notifyAll</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#toString()" title="class or interface in java.lang">toString</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#wait()" title="class or interface in java.lang">wait</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#wait(long)" title="class or interface in java.lang">wait</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#wait(long, int)" title="class or interface in java.lang">wait</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="details">
+<ul class="blockList">
+<li class="blockList">
+<!-- ============ FIELD DETAIL =========== -->
+<ul class="blockList">
+<li class="blockList"><a name="field_detail">
+<!--   -->
+</a>
+<h3>Field Detail</h3>
+<a name="REQUEST_KEYS">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>REQUEST_KEYS</h4>
+<pre>private static final&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>[] REQUEST_KEYS</pre>
+<div class="block">Keys for objects that go to the request object when serialized to a JWT.</div>
+</li>
+</ul>
+<a name="acrValues">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>acrValues</h4>
+<pre>private final&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&gt; acrValues</pre>
+</li>
+</ul>
+<a name="claims">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>claims</h4>
+<pre>private final&nbsp;javax.json.JsonObject claims</pre>
+<div class="block">Claims.</div>
+</li>
+</ul>
+<a name="clientId">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>clientId</h4>
+<pre>private final&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a> clientId</pre>
+</li>
+</ul>
+<a name="codeOnlyResponseType">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>codeOnlyResponseType</h4>
+<pre>private final&nbsp;boolean codeOnlyResponseType</pre>
+<div class="block">Flag to indicate that "code" is the only response type. This is used in a
+ few places so minor efficiency boost.</div>
+</li>
+</ul>
+<a name="display">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>display</h4>
+<pre>private final&nbsp;<a href="../../../../net/trajano/openidconnect/auth/Display.html" title="enum in net.trajano.openidconnect.auth">Display</a> display</pre>
+</li>
+</ul>
+<a name="idTokenHint">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>idTokenHint</h4>
+<pre>private final&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a> idTokenHint</pre>
+</li>
+</ul>
+<a name="loginHint">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>loginHint</h4>
+<pre>private final&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a> loginHint</pre>
+</li>
+</ul>
+<a name="maxAge">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>maxAge</h4>
+<pre>private final&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Integer.html?is-external=true" title="class or interface in java.lang">Integer</a> maxAge</pre>
+</li>
+</ul>
+<a name="nonce">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>nonce</h4>
+<pre>private final&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a> nonce</pre>
+</li>
+</ul>
+<a name="prompts">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>prompts</h4>
+<pre>private final&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/util/Set.html?is-external=true" title="class or interface in java.util">Set</a>&lt;<a href="../../../../net/trajano/openidconnect/auth/Prompt.html" title="enum in net.trajano.openidconnect.auth">Prompt</a>&gt; prompts</pre>
+</li>
+</ul>
+<a name="redirectUri">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>redirectUri</h4>
+<pre>private final&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/net/URI.html?is-external=true" title="class or interface in java.net">URI</a> redirectUri</pre>
+</li>
+</ul>
+<a name="requestMap">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>requestMap</h4>
+<pre>private final&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util">Map</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>,<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&gt; requestMap</pre>
+<div class="block">Stringified values for the request.</div>
+</li>
+</ul>
+<a name="responseMode">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>responseMode</h4>
+<pre>private final&nbsp;<a href="../../../../net/trajano/openidconnect/auth/ResponseMode.html" title="enum in net.trajano.openidconnect.auth">ResponseMode</a> responseMode</pre>
+</li>
+</ul>
+<a name="responseTypes">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>responseTypes</h4>
+<pre>private final&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/util/Set.html?is-external=true" title="class or interface in java.util">Set</a>&lt;<a href="../../../../net/trajano/openidconnect/auth/ResponseType.html" title="enum in net.trajano.openidconnect.auth">ResponseType</a>&gt; responseTypes</pre>
+</li>
+</ul>
+<a name="scopes">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>scopes</h4>
+<pre>private final&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/util/Set.html?is-external=true" title="class or interface in java.util">Set</a>&lt;<a href="../../../../net/trajano/openidconnect/core/Scope.html" title="enum in net.trajano.openidconnect.core">Scope</a>&gt; scopes</pre>
+</li>
+</ul>
+<a name="state">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>state</h4>
+<pre>private final&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a> state</pre>
+</li>
+</ul>
+<a name="uiLocales">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>uiLocales</h4>
+<pre>private final&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/util/Locale.html?is-external=true" title="class or interface in java.util">Locale</a>&gt; uiLocales</pre>
+</li>
+</ul>
+</li>
+</ul>
+<!-- ========= CONSTRUCTOR DETAIL ======== -->
+<ul class="blockList">
+<li class="blockList"><a name="constructor_detail">
+<!--   -->
+</a>
+<h3>Constructor Detail</h3>
+<a name="AuthenticationRequest(javax.servlet.http.HttpServletRequest, net.trajano.openidconnect.crypto.JsonWebKeySet)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>AuthenticationRequest</h4>
+<pre>public&nbsp;AuthenticationRequest(javax.servlet.http.HttpServletRequest&nbsp;req,
+                     <a href="../../../../net/trajano/openidconnect/crypto/JsonWebKeySet.html" title="class in net.trajano.openidconnect.crypto">JsonWebKeySet</a>&nbsp;privateJwks)
+                      throws <a href="http://docs.oracle.com/javase/7/docs/api/java/io/IOException.html?is-external=true" title="class or interface in java.io">IOException</a>,
+                             <a href="http://docs.oracle.com/javase/7/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></pre>
+<dl><dt><span class="strong">Throws:</span></dt>
+<dd><code><a href="http://docs.oracle.com/javase/7/docs/api/java/io/IOException.html?is-external=true" title="class or interface in java.io">IOException</a></code></dd>
+<dd><code><a href="http://docs.oracle.com/javase/7/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></code></dd></dl>
+</li>
+</ul>
+<a name="AuthenticationRequest(java.util.Map)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>AuthenticationRequest</h4>
+<pre>private&nbsp;AuthenticationRequest(<a href="http://docs.oracle.com/javase/7/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util">Map</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>,<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&gt;&nbsp;requestMap)
+                       throws <a href="http://docs.oracle.com/javase/7/docs/api/java/io/IOException.html?is-external=true" title="class or interface in java.io">IOException</a>,
+                              <a href="http://docs.oracle.com/javase/7/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></pre>
+<dl><dt><span class="strong">Throws:</span></dt>
+<dd><code><a href="http://docs.oracle.com/javase/7/docs/api/java/io/IOException.html?is-external=true" title="class or interface in java.io">IOException</a></code></dd>
+<dd><code><a href="http://docs.oracle.com/javase/7/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></code></dd></dl>
+</li>
+</ul>
+<a name="AuthenticationRequest(java.lang.String, net.trajano.openidconnect.crypto.JsonWebKeySet)">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>AuthenticationRequest</h4>
+<pre>public&nbsp;AuthenticationRequest(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;requestJwt,
+                     <a href="../../../../net/trajano/openidconnect/crypto/JsonWebKeySet.html" title="class in net.trajano.openidconnect.crypto">JsonWebKeySet</a>&nbsp;privateJwks)
+                      throws <a href="http://docs.oracle.com/javase/7/docs/api/java/io/IOException.html?is-external=true" title="class or interface in java.io">IOException</a>,
+                             <a href="http://docs.oracle.com/javase/7/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></pre>
+<div class="block">Constructs the authentication request using the Request JWT.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>requestJwt</code> - request JWT</dd><dd><code>privateJwks</code> - JWKS containing private keys if necessary.</dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code><a href="http://docs.oracle.com/javase/7/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></code></dd>
+<dd><code><a href="http://docs.oracle.com/javase/7/docs/api/java/io/IOException.html?is-external=true" title="class or interface in java.io">IOException</a></code></dd></dl>
+</li>
+</ul>
+</li>
+</ul>
+<!-- ============ METHOD DETAIL ========== -->
+<ul class="blockList">
+<li class="blockList"><a name="method_detail">
+<!--   -->
+</a>
+<h3>Method Detail</h3>
+<a name="buildRequestMap(javax.servlet.http.HttpServletRequest, net.trajano.openidconnect.crypto.JsonWebKeySet)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>buildRequestMap</h4>
+<pre>private static&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util">Map</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>,<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&gt;&nbsp;buildRequestMap(javax.servlet.http.HttpServletRequest&nbsp;req,
+                                 <a href="../../../../net/trajano/openidconnect/crypto/JsonWebKeySet.html" title="class in net.trajano.openidconnect.crypto">JsonWebKeySet</a>&nbsp;privateJwks)
+                                           throws <a href="http://docs.oracle.com/javase/7/docs/api/java/io/IOException.html?is-external=true" title="class or interface in java.io">IOException</a>,
+                                                  <a href="http://docs.oracle.com/javase/7/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></pre>
+<dl><dt><span class="strong">Throws:</span></dt>
+<dd><code><a href="http://docs.oracle.com/javase/7/docs/api/java/io/IOException.html?is-external=true" title="class or interface in java.io">IOException</a></code></dd>
+<dd><code><a href="http://docs.oracle.com/javase/7/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></code></dd></dl>
+</li>
+</ul>
+<a name="buildRequestMap(java.lang.String, net.trajano.openidconnect.crypto.JsonWebKeySet)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>buildRequestMap</h4>
+<pre>private static&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util">Map</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>,<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&gt;&nbsp;buildRequestMap(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;requestJwt,
+                                 <a href="../../../../net/trajano/openidconnect/crypto/JsonWebKeySet.html" title="class in net.trajano.openidconnect.crypto">JsonWebKeySet</a>&nbsp;privateJwks)
+                                           throws <a href="http://docs.oracle.com/javase/7/docs/api/java/io/IOException.html?is-external=true" title="class or interface in java.io">IOException</a>,
+                                                  <a href="http://docs.oracle.com/javase/7/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></pre>
+<dl><dt><span class="strong">Throws:</span></dt>
+<dd><code><a href="http://docs.oracle.com/javase/7/docs/api/java/io/IOException.html?is-external=true" title="class or interface in java.io">IOException</a></code></dd>
+<dd><code><a href="http://docs.oracle.com/javase/7/docs/api/java/security/GeneralSecurityException.html?is-external=true" title="class or interface in java.security">GeneralSecurityException</a></code></dd></dl>
+</li>
+</ul>
+<a name="processValueFromMapOrObject(java.util.Map, java.lang.String, javax.servlet.http.HttpServletRequest, javax.json.JsonObject)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>processValueFromMapOrObject</h4>
+<pre>private static&nbsp;void&nbsp;processValueFromMapOrObject(<a href="http://docs.oracle.com/javase/7/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util">Map</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>,<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&gt;&nbsp;reqMap,
+                               <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;key,
+                               javax.servlet.http.HttpServletRequest&nbsp;servletRequest,
+                               javax.json.JsonObject&nbsp;requestObject)</pre>
+<div class="block"><p>
+ So that the request is a valid OAuth 2.0 Authorization Request, values
+ for the response_type and client_id parameters MUST be included using the
+ OAuth 2.0 request syntax, since they are REQUIRED by OAuth 2.0. The
+ values for these parameters MUST match those in the Request Object, if
+ present.
+ </p></div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>reqMap</code> - </dd><dd><code>key</code> - </dd><dd><code>servletRequest</code> - </dd><dd><code>requestObject</code> - </dd></dl>
+</li>
+</ul>
+<a name="addQueryParams(javax.ws.rs.core.UriBuilder)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>addQueryParams</h4>
+<pre>public&nbsp;void&nbsp;addQueryParams(javax.ws.rs.core.UriBuilder&nbsp;b)</pre>
+</li>
+</ul>
+<a name="containsResponseType(net.trajano.openidconnect.auth.ResponseType)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>containsResponseType</h4>
+<pre>public&nbsp;boolean&nbsp;containsResponseType(<a href="../../../../net/trajano/openidconnect/auth/ResponseType.html" title="enum in net.trajano.openidconnect.auth">ResponseType</a>&nbsp;responseType)</pre>
+</li>
+</ul>
+<a name="getAcrValues()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getAcrValues</h4>
+<pre>public&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&gt;&nbsp;getAcrValues()</pre>
+</li>
+</ul>
+<a name="getClaims()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getClaims</h4>
+<pre>public&nbsp;javax.json.JsonObject&nbsp;getClaims()</pre>
+</li>
+</ul>
+<a name="getClientId()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getClientId</h4>
+<pre>public&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;getClientId()</pre>
+</li>
+</ul>
+<a name="getDefaultResponseMode()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getDefaultResponseMode</h4>
+<pre>private&nbsp;<a href="../../../../net/trajano/openidconnect/auth/ResponseMode.html" title="enum in net.trajano.openidconnect.auth">ResponseMode</a>&nbsp;getDefaultResponseMode()</pre>
+<div class="block">For purposes of this specification, the default Response Mode for the
+ OAuth 2.0 code Response Type is the query encoding. For purposes of this
+ specification, the default Response Mode for the OAuth 2.0 token Response
+ Type is the fragment encoding.</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd>default respopnse mode.</dd></dl>
+</li>
+</ul>
+<a name="getDisplay()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getDisplay</h4>
+<pre>public&nbsp;<a href="../../../../net/trajano/openidconnect/auth/Display.html" title="enum in net.trajano.openidconnect.auth">Display</a>&nbsp;getDisplay()</pre>
+</li>
+</ul>
+<a name="getIdTokenHint()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getIdTokenHint</h4>
+<pre>public&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;getIdTokenHint()</pre>
+</li>
+</ul>
+<a name="getLoginHint()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getLoginHint</h4>
+<pre>public&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;getLoginHint()</pre>
+</li>
+</ul>
+<a name="getMaxAge()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getMaxAge</h4>
+<pre>public&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Integer.html?is-external=true" title="class or interface in java.lang">Integer</a>&nbsp;getMaxAge()</pre>
+</li>
+</ul>
+<a name="getNonce()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getNonce</h4>
+<pre>public&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;getNonce()</pre>
+</li>
+</ul>
+<a name="getPrompts()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getPrompts</h4>
+<pre>public&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/util/Set.html?is-external=true" title="class or interface in java.util">Set</a>&lt;<a href="../../../../net/trajano/openidconnect/auth/Prompt.html" title="enum in net.trajano.openidconnect.auth">Prompt</a>&gt;&nbsp;getPrompts()</pre>
+</li>
+</ul>
+<a name="getRedirectUri()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getRedirectUri</h4>
+<pre>public&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/net/URI.html?is-external=true" title="class or interface in java.net">URI</a>&nbsp;getRedirectUri()</pre>
+</li>
+</ul>
+<a name="getResponseMode()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getResponseMode</h4>
+<pre>public&nbsp;<a href="../../../../net/trajano/openidconnect/auth/ResponseMode.html" title="enum in net.trajano.openidconnect.auth">ResponseMode</a>&nbsp;getResponseMode()</pre>
+</li>
+</ul>
+<a name="getResponseType()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getResponseType</h4>
+<pre>public&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;getResponseType()</pre>
+</li>
+</ul>
+<a name="getResponseTypes()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getResponseTypes</h4>
+<pre>public&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/util/Set.html?is-external=true" title="class or interface in java.util">Set</a>&lt;<a href="../../../../net/trajano/openidconnect/auth/ResponseType.html" title="enum in net.trajano.openidconnect.auth">ResponseType</a>&gt;&nbsp;getResponseTypes()</pre>
+</li>
+</ul>
+<a name="getScope()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getScope</h4>
+<pre>public&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;getScope()</pre>
+<div class="block">Gets a string representation of the scope set.</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd>string representation of the scope set.</dd></dl>
+</li>
+</ul>
+<a name="getScopes()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getScopes</h4>
+<pre>public&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/util/Set.html?is-external=true" title="class or interface in java.util">Set</a>&lt;<a href="../../../../net/trajano/openidconnect/core/Scope.html" title="enum in net.trajano.openidconnect.core">Scope</a>&gt;&nbsp;getScopes()</pre>
+</li>
+</ul>
+<a name="getState()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getState</h4>
+<pre>public&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;getState()</pre>
+</li>
+</ul>
+<a name="getUiLocales()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getUiLocales</h4>
+<pre>public&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/util/Locale.html?is-external=true" title="class or interface in java.util">Locale</a>&gt;&nbsp;getUiLocales()</pre>
+</li>
+</ul>
+<a name="isAuthorizationCodeFlow()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>isAuthorizationCodeFlow</h4>
+<pre>public&nbsp;boolean&nbsp;isAuthorizationCodeFlow()</pre>
+<div class="block">Checks if the <em>Authorization Code</em> flow is used. This is
+ <code>true</code> if the response types contains code and only code.</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd><code>true</code> if the response types contains code and only
+         code</dd></dl>
+</li>
+</ul>
+<a name="isDefaultResponseMode()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>isDefaultResponseMode</h4>
+<pre>public&nbsp;boolean&nbsp;isDefaultResponseMode()</pre>
+</li>
+</ul>
+<a name="isImplicitFlow()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>isImplicitFlow</h4>
+<pre>public&nbsp;boolean&nbsp;isImplicitFlow()</pre>
+<div class="block">Checks if we are using the <em>implicit</em> flow. All but the
+ <code>code</code> Response Type value, which is defined by OAuth 2.0
+ [RFC6749], are defined in the OAuth 2.0 Multiple Response Type Encoding
+ Practices [OAuth.Responses] specification. NOTE: While OAuth 2.0 also
+ defines the token Response Type value for the Implicit Flow, OpenID
+ Connect does not use this Response Type, since no ID Token would be
+ returned.</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd>the response types does not contain <code>code</code></dd></dl>
+</li>
+</ul>
+<a name="toJsonObject()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>toJsonObject</h4>
+<pre>public&nbsp;javax.json.JsonObject&nbsp;toJsonObject()</pre>
+</li>
+</ul>
+<a name="validate()">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>validate</h4>
+<pre>private&nbsp;void&nbsp;validate()</pre>
+<div class="block">Performs the validation on the Authentication token.</div>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<!-- ========= END OF CLASS DATA ========= -->
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<div class="bottomNav"><a name="navbar_bottom">
+<!--   -->
+</a><a href="#skip-navbar_bottom" title="Skip navigation links"></a><a name="navbar_bottom_firstrow">
+<!--   -->
+</a>
+<ul class="navList" title="Navigation">
+<li><a href="../../../../overview-summary.html">Overview</a></li>
+<li><a href="package-summary.html">Package</a></li>
+<li class="navBarCell1Rev">Class</li>
+<li><a href="class-use/AuthenticationRequest.html">Use</a></li>
+<li><a href="package-tree.html">Tree</a></li>
+<li><a href="../../../../deprecated-list.html">Deprecated</a></li>
+<li><a href="../../../../index-all.html">Index</a></li>
+<li><a href="../../../../help-doc.html">Help</a></li>
+</ul>
+</div>
+<div class="subNav">
+<ul class="navList">
+<li>Prev Class</li>
+<li><a href="../../../../net/trajano/openidconnect/auth/AuthenticationRequest.Builder.html" title="class in net.trajano.openidconnect.auth"><span class="strong">Next Class</span></a></li>
+</ul>
+<ul class="navList">
+<li><a href="../../../../index.html?net/trajano/openidconnect/auth/AuthenticationRequest.html" target="_top">Frames</a></li>
+<li><a href="AuthenticationRequest.html" target="_top">No Frames</a></li>
+</ul>
+<ul class="navList" id="allclasses_navbar_bottom">
+<li><a href="../../../../allclasses-noframe.html">All Classes</a></li>
+</ul>
+<div>
+<script type="text/javascript"><!--
+  allClassesLink = document.getElementById("allclasses_navbar_bottom");
+  if(window==top) {
+    allClassesLink.style.display = "block";
+  }
+  else {
+    allClassesLink.style.display = "none";
+  }
+  //-->
+</script>
+</div>
+<div>
+<ul class="subNavList">
+<li>Summary:&nbsp;</li>
+<li><a href="#nested_class_summary">Nested</a>&nbsp;|&nbsp;</li>
+<li><a href="#field_summary">Field</a>&nbsp;|&nbsp;</li>
+<li><a href="#constructor_summary">Constr</a>&nbsp;|&nbsp;</li>
+<li><a href="#method_summary">Method</a></li>
+</ul>
+<ul class="subNavList">
+<li>Detail:&nbsp;</li>
+<li><a href="#field_detail">Field</a>&nbsp;|&nbsp;</li>
+<li><a href="#constructor_detail">Constr</a>&nbsp;|&nbsp;</li>
+<li><a href="#method_detail">Method</a></li>
+</ul>
+</div>
+<a name="skip-navbar_bottom">
+<!--   -->
+</a></div>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+<p class="legalCopy"><small>Copyright &#169; 2012&#x2013;2015 <a href="http://www.trajano.net/">Trajano</a>. All rights reserved.</small></p>
+</body>
+</html>

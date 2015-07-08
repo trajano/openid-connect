@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>IdTokenProvider.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">openid-connect-core</a> &gt; <a href="index.source.html" class="el_package">net.trajano.openidconnect.rs</a> &gt; <span class="el_source">IdTokenProvider.java</span></div><h1>IdTokenProvider.java</h1><pre class="source lang-java linenums">package net.trajano.openidconnect.rs;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Type;
+
+import javax.json.Json;
+import javax.json.JsonArray;
+import javax.json.JsonArrayBuilder;
+import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
+import javax.json.JsonString;
+import javax.json.JsonValue;
+import javax.json.JsonWriter;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.ext.MessageBodyReader;
+import javax.ws.rs.ext.MessageBodyWriter;
+import javax.ws.rs.ext.Provider;
+
+import net.trajano.openidconnect.token.IdToken;
+
+@Provider
+@Produces(MediaType.APPLICATION_JSON)
+@Consumes(MediaType.APPLICATION_JSON)
+<span class="nc" id="L30">public class IdTokenProvider implements MessageBodyReader&lt;IdToken&gt;, MessageBodyWriter&lt;IdToken&gt; {</span>
+
+    @Override
+    public long getSize(final IdToken token,
+            final Class&lt;?&gt; arg1,
+            final Type arg2,
+            final Annotation[] arg3,
+            final MediaType arg4) {
+
+<span class="nc" id="L39">        return -1;</span>
+    }
+
+    @Override
+    public boolean isReadable(final Class&lt;?&gt; type,
+            final Type genericType,
+            final Annotation[] arg2,
+            final MediaType mediaType) {
+
+<span class="nc bnc" id="L48" title="All 4 branches missed.">        return type == IdToken.class &amp;&amp; MediaType.APPLICATION_JSON_TYPE.equals(mediaType);</span>
+    }
+
+    @Override
+    public boolean isWriteable(final Class&lt;?&gt; type,
+            final Type genericType,
+            final Annotation[] arg2,
+            final MediaType mediaType) {
+
+<span class="nc" id="L57">        return isReadable(type, genericType, arg2, mediaType);</span>
+    }
+
+    @Override
+    public IdToken readFrom(final Class&lt;IdToken&gt; type,
+            final Type genericType,
+            final Annotation[] arg2,
+            final MediaType mediaType,
+            final MultivaluedMap&lt;String, String&gt; arg4,
+            final InputStream is) throws IOException {
+
+<span class="nc" id="L68">        final JsonObject obj = Json.createReader(is)</span>
+                .readObject();
+<span class="nc" id="L70">        final IdToken idToken = new IdToken();</span>
+<span class="nc bnc" id="L71" title="All 2 branches missed.">        if (obj.containsKey(&quot;acr&quot;)) {</span>
+<span class="nc" id="L72">            idToken.setAcr(obj.getString(&quot;acr&quot;));</span>
+        }
+<span class="nc bnc" id="L74" title="All 2 branches missed.">        if (obj.containsKey(&quot;amr&quot;)) {</span>
+<span class="nc" id="L75">            final JsonArray amrs = obj.getJsonArray(&quot;amr&quot;);</span>
+<span class="nc" id="L76">            final String[] amrArray = new String[amrs.size()];</span>
+<span class="nc" id="L77">            int i = 0;</span>
+<span class="nc bnc" id="L78" title="All 2 branches missed.">            for (final JsonValue amr : amrs) {</span>
+<span class="nc" id="L79">                amrArray[i] = ((JsonString) amr).getString();</span>
+<span class="nc" id="L80">                ++i;</span>
+<span class="nc" id="L81">            }</span>
+<span class="nc" id="L82">            idToken.setAmr(amrArray);</span>
+        }
+
+<span class="nc" id="L85">        idToken.setAud(obj.getString(&quot;aud&quot;));</span>
+<span class="nc bnc" id="L86" title="All 2 branches missed.">        if (obj.containsKey(&quot;auth_time&quot;)) {</span>
+<span class="nc" id="L87">            idToken.setAuthTime(obj.getInt(&quot;auth_time&quot;));</span>
+        }
+<span class="nc bnc" id="L89" title="All 2 branches missed.">        if (obj.containsKey(&quot;azp&quot;)) {</span>
+<span class="nc" id="L90">            idToken.setAzp(obj.getString(&quot;azp&quot;));</span>
+        }
+
+<span class="nc" id="L93">        idToken.setExp(obj.getInt(&quot;exp&quot;));</span>
+<span class="nc" id="L94">        idToken.setIat(obj.getInt(&quot;iat&quot;));</span>
+<span class="nc" id="L95">        idToken.setIss(obj.getString(&quot;iss&quot;));</span>
+<span class="nc bnc" id="L96" title="All 2 branches missed.">        if (obj.containsKey(&quot;nonce&quot;)) {</span>
+<span class="nc" id="L97">            idToken.setNonce(obj.getString(&quot;nonce&quot;));</span>
+        }
+<span class="nc" id="L99">        idToken.setSub(obj.getString(&quot;sub&quot;));</span>
+<span class="nc" id="L100">        return idToken;</span>
+    }
+
+    @Override
+    public void writeTo(final IdToken idToken,
+            final Class&lt;?&gt; type,
+            final Type genericType,
+            final Annotation[] arg3,
+            final MediaType mediaType,
+            final MultivaluedMap&lt;String, Object&gt; arg5,
+            final OutputStream os) throws IOException {
+
+<span class="nc" id="L112">        final JsonObjectBuilder b = Json.createObjectBuilder();</span>
+<span class="nc bnc" id="L113" title="All 2 branches missed.">        if (idToken.getAcr() != null) {</span>
+<span class="nc" id="L114">            b.add(&quot;acr&quot;, idToken.getAcr());</span>
+        }
+<span class="nc bnc" id="L116" title="All 2 branches missed.">        if (idToken.getAmr() != null) {</span>
+<span class="nc" id="L117">            final JsonArrayBuilder amrBuilder = Json.createArrayBuilder();</span>
+<span class="nc bnc" id="L118" title="All 2 branches missed.">            for (final String amr : idToken.getAmr()) {</span>
+<span class="nc" id="L119">                amrBuilder.add(amr);</span>
+            }
+<span class="nc" id="L121">            b.add(&quot;amr&quot;, amrBuilder);</span>
+        }
+
+<span class="nc" id="L124">        b.add(&quot;aud&quot;, idToken.getAud());</span>
+<span class="nc bnc" id="L125" title="All 2 branches missed.">        if (idToken.getAuthTime() != 0) {</span>
+<span class="nc" id="L126">            b.add(&quot;auth_time&quot;, idToken.getAuthTime());</span>
+        }
+<span class="nc bnc" id="L128" title="All 2 branches missed.">        if (idToken.getAzp() != null) {</span>
+<span class="nc" id="L129">            b.add(&quot;azp&quot;, idToken.getAzp());</span>
+        }
+<span class="nc bnc" id="L131" title="All 2 branches missed.">        if (idToken.getAtHash() != null) {</span>
+<span class="nc" id="L132">            b.add(&quot;at_hash&quot;, idToken.getAtHash());</span>
+        }
+<span class="nc" id="L134">        b.add(&quot;iat&quot;, idToken.getIat());</span>
+<span class="nc" id="L135">        b.add(&quot;exp&quot;, idToken.getExp());</span>
+<span class="nc" id="L136">        b.add(&quot;iss&quot;, idToken.getIss());</span>
+<span class="nc bnc" id="L137" title="All 2 branches missed.">        if (idToken.getNonce() != null) {</span>
+<span class="nc" id="L138">            b.add(&quot;nonce&quot;, idToken.getNonce());</span>
+        }
+<span class="nc" id="L140">        b.add(&quot;sub&quot;, idToken.getSub());</span>
+
+<span class="nc" id="L142">        final JsonWriter w = Json.createWriter(os);</span>
+<span class="nc" id="L143">        w.writeObject(b.build());</span>
+<span class="nc" id="L144">        w.close();</span>
+
+<span class="nc" id="L146">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span></div></body></html>

@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="utf-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>JsonWebTokenBuilder.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">openid-connect-core</a> &gt; <a href="index.source.html" class="el_package">net.trajano.openidconnect.crypto</a> &gt; <span class="el_source">JsonWebTokenBuilder.java</span></div><h1>JsonWebTokenBuilder.java</h1><pre class="source lang-java linenums">package net.trajano.openidconnect.crypto;
+
+import static net.trajano.openidconnect.crypto.JsonWebToken.ALG_NONE;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.security.GeneralSecurityException;
+import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
+
+import javax.json.JsonObject;
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.ext.MessageBodyWriter;
+import javax.ws.rs.ext.Providers;
+
+import net.trajano.openidconnect.internal.CharSets;
+import net.trajano.openidconnect.internal.JcaJsonWebTokenCrypto;
+
+/**
+ * Used to build {@link JsonWebToken}. It will handle signing and encryption of
+ * data as needed.
+ *
+ * @author Archimedes
+ */
+<span class="fc" id="L26">public class JsonWebTokenBuilder {</span>
+
+    /**
+     * Algorithm applied to the JWT. Defaults to none.
+     */
+<span class="fc" id="L31">    private String alg = JsonWebToken.ALG_NONE;</span>
+
+    private boolean compressed;
+
+<span class="fc" id="L35">    private final JsonWebTokenCrypto crypto = JcaJsonWebTokenCrypto.getInstance();</span>
+
+    /**
+     * Encryption algorithm.
+     */
+    private String enc;
+
+    /**
+     * Json Web Key to apply. If it is an encryption one it will do JWE else it
+     * will do JWS.
+     */
+    private JsonWebKey jwk;
+
+    /**
+     * No need for a cryptographically secure random for choosing a random JWK
+     * from a JWKS.
+     */
+<span class="fc" id="L52">    private final Random random = ThreadLocalRandom.current();</span>
+
+    /**
+     * The actual payload.
+     */
+    private byte[] uncompressedPayloadBytes;
+
+    /**
+     * Sets the algorithm. This should be done after setting the jwk/jwks.
+     *
+     * @param alg2
+     *            algorithm name
+     * @return &lt;code&gt;this&lt;/code&gt;
+     */
+    public JsonWebTokenBuilder alg(final String alg2) {
+
+<span class="fc" id="L68">        alg = alg2;</span>
+<span class="fc" id="L69">        return this;</span>
+    }
+
+    public JsonWebToken build() throws IOException,
+        GeneralSecurityException {
+
+<span class="fc" id="L75">        final JoseHeader header = new JoseHeader();</span>
+<span class="fc" id="L76">        header.setAlg(alg);</span>
+
+<span class="fc" id="L78">        byte[] payloadBytes = uncompressedPayloadBytes;</span>
+<span class="fc bfc" id="L79" title="All 2 branches covered.">        if (compressed) {</span>
+<span class="fc" id="L80">            header.setZip(&quot;DEF&quot;);</span>
+<span class="fc" id="L81">            payloadBytes = crypto.deflate(payloadBytes);</span>
+        }
+
+<span class="pc bpc" id="L84" title="1 of 4 branches missed.">        if (ALG_NONE.equals(alg) &amp;&amp; jwk == null) {</span>
+<span class="fc" id="L85">            final byte[][] payloads = new byte[1][];</span>
+<span class="fc" id="L86">            payloads[0] = payloadBytes;</span>
+<span class="fc" id="L87">            return new JsonWebToken(header, payloads);</span>
+        }
+
+<span class="pc bpc" id="L90" title="1 of 2 branches missed.">        if (jwk == null) {</span>
+<span class="nc" id="L91">            throw new IOException(&quot;JWK must be defined for any alg that is not none&quot;);</span>
+        }
+
+<span class="fc bfc" id="L94" title="All 2 branches covered.">        if (jwk.getKid() != null) {</span>
+<span class="fc" id="L95">            header.setKid(jwk.getKid());</span>
+        } else {
+<span class="fc" id="L97">            header.setJwk(jwk);</span>
+        }
+
+<span class="fc bfc" id="L100" title="All 2 branches covered.">        if (enc == null) {</span>
+<span class="fc" id="L101">            return new JsonWebToken(header, crypto.buildJWSPayload(header, payloadBytes, jwk));</span>
+        }
+
+        // JWE
+<span class="fc" id="L105">        header.setEnc(enc);</span>
+<span class="fc" id="L106">        return new JsonWebToken(header, crypto.buildJWEPayload(header, payloadBytes, jwk));</span>
+    }
+
+    public JsonWebTokenBuilder compress(final boolean compressed) {
+
+<span class="fc" id="L111">        this.compressed = compressed;</span>
+<span class="fc" id="L112">        return this;</span>
+    }
+
+    /**
+     * Sets the encoding algorithm.
+     * 
+     * @param enc2
+     *            algorithm.
+     * @return &lt;code&gt;this&lt;/code&gt;
+     */
+    public JsonWebTokenBuilder enc(final String enc2) {
+
+<span class="fc" id="L124">        enc = enc2;</span>
+<span class="fc" id="L125">        return this;</span>
+    }
+
+    /**
+     * Sets the JSON Web Key. This will also set the algorithm if it is defined
+     * in the key.
+     *
+     * @param jwk
+     *            JSON web key.
+     * @return &lt;code&gt;this&lt;/code&gt;
+     */
+    public JsonWebTokenBuilder jwk(final JsonWebKey jwk) {
+
+<span class="fc" id="L138">        this.jwk = jwk;</span>
+<span class="fc bfc" id="L139" title="All 2 branches covered.">        if (jwk.getAlg() != null) {</span>
+<span class="fc" id="L140">            alg = jwk.getAlg();</span>
+        }
+<span class="fc" id="L142">        return this;</span>
+    }
+
+    /**
+     * Chooses a random key from the JWKS.
+     *
+     * @param jwks
+     *            JWK set
+     * @return &lt;code&gt;this&lt;/code&gt;
+     */
+    public JsonWebTokenBuilder jwk(final JsonWebKeySet jwks) {
+
+<span class="nc" id="L154">        final JsonWebKey[] keys = jwks.getSigningKeys();</span>
+
+<span class="nc" id="L156">        jwk = keys[random.nextInt(keys.length)];</span>
+
+<span class="nc" id="L158">        return this;</span>
+    }
+
+    public JsonWebTokenBuilder payload(final byte[] payloadBytes) {
+
+<span class="fc" id="L163">        uncompressedPayloadBytes = payloadBytes;</span>
+<span class="fc" id="L164">        return this;</span>
+    }
+
+    public JsonWebTokenBuilder payload(final JsonObject jsonObject) {
+
+<span class="fc" id="L169">        return payload(jsonObject.toString());</span>
+    }
+
+    public JsonWebTokenBuilder payload(final String s) {
+
+<span class="fc" id="L174">        return payload(s.getBytes(CharSets.UTF8));</span>
+    }
+
+    private Providers providers;
+
+    public JsonWebTokenBuilder providers(Providers providers) {
+
+<span class="nc" id="L181">        this.providers = providers;</span>
+<span class="nc" id="L182">        return this;</span>
+    }
+
+    /**
+     * Sets the payload to a JSON object that is built using the provided
+     * writer.
+     *
+     * @param object
+     *            object to encode
+     * @param type
+     *            target type
+     * @return &lt;code&gt;this&lt;/code&gt;
+     * @throws IOException
+     * @throws WebApplicationException
+     */
+    public &lt;T&gt; JsonWebTokenBuilder payload(final T object,
+        Class&lt;T&gt; type) throws IOException {
+
+<span class="nc" id="L200">        MessageBodyWriter&lt;T&gt; writer = (MessageBodyWriter&lt;T&gt;) providers.getMessageBodyWriter(type, null, null, MediaType.APPLICATION_JSON_TYPE);</span>
+<span class="nc" id="L201">        final ByteArrayOutputStream baos = new ByteArrayOutputStream();</span>
+<span class="nc" id="L202">        writer.writeTo(object, object.getClass(), null, null, MediaType.APPLICATION_JSON_TYPE, null, baos);</span>
+<span class="nc" id="L203">        baos.close();</span>
+<span class="nc" id="L204">        return payload(baos.toByteArray());</span>
+    }
+
+    /**
+     * Gets the string representation of the JWT so far.
+     */
+    @Override
+    public String toString() {
+
+        try {
+<span class="fc" id="L214">            return build().toString();</span>
+<span class="nc" id="L215">        } catch (IOException</span>
+                 | GeneralSecurityException e) {
+<span class="nc" id="L217">            throw new RuntimeException(e);</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span></div></body></html>

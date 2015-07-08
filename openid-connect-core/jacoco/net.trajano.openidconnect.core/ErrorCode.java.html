@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>ErrorCode.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">openid-connect-core</a> &gt; <a href="index.source.html" class="el_package">net.trajano.openidconnect.core</a> &gt; <span class="el_source">ErrorCode.java</span></div><h1>ErrorCode.java</h1><pre class="source lang-java linenums">package net.trajano.openidconnect.core;
+
+/**
+ * Registered OpenID Connect error codes. This also include
+ * &lt;a href=&quot;http://tools.ietf.org/html/rfc6749#section-4.1.2.1&quot;&gt;OAuth 2.0&lt;/a&gt;
+ * responses as well.
+ *
+ * @author Archimedes Trajano
+ */
+<span class="nc" id="L10">public enum ErrorCode {</span>
+        /**
+         * The resource owner or authorization server denied the request.
+         */
+<span class="nc" id="L14">    access_denied,</span>
+
+        /**
+         * The End-User is REQUIRED to select a session at the Authorization
+         * Server. The End-User MAY be authenticated at the Authorization Server
+         * with different associated accounts, but the End-User did not select a
+         * session. This error MAY be returned when the prompt parameter value
+         * in the Authentication Request is none, but the Authentication Request
+         * cannot be completed without displaying a user interface to prompt for
+         * a session to use.
+         */
+<span class="nc" id="L25">    account_selection_required,</span>
+
+        /**
+         * The Authorization Server requires End-User consent. This error MAY be
+         * returned when the prompt parameter value in the Authentication
+         * Request is none, but the Authentication Request cannot be completed
+         * without displaying a user interface for End-User consent.
+         */
+<span class="nc" id="L33">    consent_required,</span>
+
+        /**
+         * The Authorization Server requires End-User interaction of some form
+         * to proceed. This error MAY be returned when the prompt parameter
+         * value in the Authentication Request is none, but the Authentication
+         * Request cannot be completed without displaying a user interface for
+         * End-User interaction.
+         */
+<span class="nc" id="L42">    interaction_required,</span>
+
+        /**
+         * Client authentication failed (e.g., unknown client, no client
+         * authentication included, or unsupported authentication method). The
+         * authorization server MAY return an HTTP 401 (Unauthorized) status
+         * code to indicate which HTTP authentication schemes are supported. If
+         * the client attempted to authenticate via the &quot;Authorization&quot; request
+         * header field, the authorization server MUST respond with an HTTP 401
+         * (Unauthorized) status code and include the &quot;WWW-Authenticate&quot;
+         * response header field matching the authentication scheme used by the
+         * client.
+         */
+<span class="nc" id="L55">    invalid_client,</span>
+
+        /**
+         * The provided authorization grant (e.g., authorization code, resource
+         * owner credentials) or refresh token is invalid, expired, revoked,
+         * does not match the redirection URI used in the authorization request,
+         * or was issued to another client.
+         */
+<span class="nc" id="L63">    invalid_grant,</span>
+
+        /**
+         * The request is missing a required parameter, includes an invalid
+         * parameter value, includes a parameter more than once, or is otherwise
+         * malformed.
+         */
+<span class="nc" id="L70">    invalid_request,</span>
+
+        /**
+         * The request parameter contains an invalid Request Object.
+         */
+<span class="nc" id="L75">    invalid_request_object,</span>
+
+        /**
+         * The request_uri in the Authorization Request returns an error or
+         * contains invalid data.
+         */
+<span class="nc" id="L81">    invalid_request_uri,</span>
+
+        /**
+         * The requested scope is invalid, unknown, malformed, or exceeds the
+         * scope granted by the resource owner.
+         */
+<span class="nc" id="L87">    invalid_scope,</span>
+
+        /**
+         * The Authorization Server requires End-User authentication. This error
+         * MAY be returned when the prompt parameter value in the Authentication
+         * Request is none, but the Authentication Request cannot be completed
+         * without displaying a user interface for End-User authentication.
+         */
+<span class="nc" id="L95">    login_required,</span>
+
+        /**
+         * The OP does not support use of the registration parameter defined in
+         * Section 7.2.1.
+         */
+<span class="nc" id="L101">    registration_not_supported,</span>
+
+        /**
+         * The OP does not support use of the request parameter defined in
+         * Section 6.
+         */
+<span class="nc" id="L107">    request_not_supported,</span>
+
+        /**
+         * The OP does not support use of the request_uri parameter defined in
+         * Section 6.
+         */
+<span class="nc" id="L113">    request_uri_not_supported,</span>
+
+        /**
+         * The authorization server encountered an unexpected condition that
+         * prevented it from fulfilling the request. (This error code is needed
+         * because a 500 Internal Server Error HTTP status code cannot be
+         * returned to the client via an HTTP redirect.)
+         */
+<span class="nc" id="L121">    server_error,</span>
+
+        /**
+         * The authorization server is currently unable to handle the request
+         * due to a temporary overloading or maintenance of the server. (This
+         * error code is needed because a 503 Service Unavailable HTTP status
+         * code cannot be returned to the client via an HTTP redirect.)
+         */
+<span class="nc" id="L129">    temporarily_unavailable,</span>
+
+        /**
+         * The client is not authorized to request an authorization code using
+         * this method.
+         */
+<span class="nc" id="L135">    unauthorized_client,</span>
+
+        /**
+         * The authorization grant type is not supported by the authorization
+         * server.
+         */
+<span class="nc" id="L141">    unsupported_grant_type,</span>
+
+        /**
+         * The authorization server does not support obtaining an authorization
+         * code using this method.
+         */
+<span class="nc" id="L147">    unsupported_response_type</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span></div></body></html>

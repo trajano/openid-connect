@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="utf-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>JsonWebToken.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">openid-connect-core</a> &gt; <a href="index.source.html" class="el_package">net.trajano.openidconnect.crypto</a> &gt; <span class="el_source">JsonWebToken.java</span></div><h1>JsonWebToken.java</h1><pre class="source lang-java linenums">package net.trajano.openidconnect.crypto;
+
+import java.io.IOException;
+
+/**
+ * The JSON Web Token. It is comprised of a header that is a Base64url encoded
+ * JSON followed by 1 to many Base64url encoded payloads joined by '.'
+ * character. This class is immutable
+ *
+ * @author Archimedes
+ */
+public class JsonWebToken {
+
+    /**
+     * Constant for the &quot;none&quot; algorithm.
+     */
+    public static final String ALG_NONE = &quot;none&quot;;
+
+    /**
+     * &lt;p&gt;
+     * &quot;alg&quot; (Algorithm) Header Parameter
+     * &lt;/p&gt;
+     * &lt;p&gt;
+     * This parameter has the same meaning, syntax, and processing rules as the
+     * alg Header Parameter defined in Section 4.1.1 of [JWS], except that the
+     * Header Parameter identifies the cryptographic algorithm used to encrypt
+     * or determine the value of the Content Encryption Key (CEK). The encrypted
+     * content is not usable if the alg value does not represent a supported
+     * algorithm, or if the recipient does not have a key that can be used with
+     * that algorithm.
+     * &lt;/p&gt;
+     * &lt;p&gt;
+     * A list of defined alg values for this use can be found in the IANA JSON
+     * Web Signature and Encryption Algorithms registry defined in [JWA]; the
+     * initial contents of this registry are the values defined in Section 4.1
+     * of the JSON Web Algorithms (JWA) [JWA] specification.
+     * &lt;/p&gt;
+     */
+    private final String alg;
+
+    /**
+     * &lt;p&gt;
+     * &quot;enc&quot; (Encryption Algorithm) Header Parameter
+     * &lt;/p&gt;
+     * &lt;p&gt;
+     * The enc (encryption algorithm) Header Parameter identifies the content
+     * encryption algorithm used to perform authenticated encryption on the
+     * Plaintext to produce the Ciphertext and the Authentication Tag. This
+     * algorithm MUST be an AEAD algorithm with a specified key length. The
+     * encrypted content is not usable if the enc value does not represent a
+     * supported algorithm. enc values should either be registered in the IANA
+     * JSON Web Signature and Encryption Algorithms registry defined in [JWA] or
+     * be a value that contains a Collision-Resistant Name. The enc value is a
+     * case-sensitive ASCII string containing a StringOrURI value. This Header
+     * Parameter MUST be present and MUST be understood and processed by
+     * implementations.
+     * &lt;/p&gt;
+     * &lt;p&gt;
+     * A list of defined enc values for this use can be found in the IANA JSON
+     * Web Signature and Encryption Algorithms registry defined in [JWA]; the
+     * initial contents of this registry are the values defined in Section 5.1
+     * of the JSON Web Algorithms (JWA) [JWA] specification.
+     * &lt;/p&gt;
+     */
+    private final String enc;
+
+    private final String joseHeaderEncoded;
+
+    private final byte[][] payloads;
+
+    /**
+     * &lt;p&gt;
+     * &quot;zip&quot; (Compression Algorithm) Header Parameter
+     * &lt;p&gt;
+     * &lt;p&gt;
+     * The zip (compression algorithm) applied to the Plaintext before
+     * encryption, if any. The zip value defined by this specification is:
+     * &lt;/p&gt;
+     * &lt;ul&gt;
+     * &lt;li&gt;DEF - Compression with the DEFLATE [RFC1951] algorithm
+     * &lt;/ul&gt;
+     * &lt;p&gt;
+     * Other values MAY be used. Compression algorithm values can be registered
+     * in the IANA JSON Web Encryption Compression Algorithm registry defined in
+     * [JWA]. The zip value is a case-sensitive string. If no zip parameter is
+     * present, no compression is applied to the Plaintext before encryption.
+     * When used, this Header Parameter MUST be integrity protected; therefore,
+     * it MUST occur only within the JWE Protected Header. Use of this Header
+     * Parameter is OPTIONAL. This Header Parameter MUST be understood and
+     * processed by implementations.
+     * &lt;/p&gt;
+     */
+    private final String zip;
+
+    /**
+     * &quot;kid&quot; (Key ID) Header Parameter
+     * &lt;p&gt;
+     * This parameter has the same meaning, syntax, and processing rules as the
+     * kid Header Parameter defined in Section 4.1.4 of [JWS], except that the
+     * key hint references the public key to which the JWE was encrypted; this
+     * can be used to determine the private key needed to decrypt the JWE. This
+     * parameter allows originators to explicitly signal a change of key to JWE
+     * recipients.
+     */
+    private final String kid;
+
+<span class="fc" id="L107">    public JsonWebToken(final JoseHeader joseHeader, final byte[][] payloads) {</span>
+
+<span class="fc" id="L109">        joseHeaderEncoded = new String(joseHeader.getEncoded());</span>
+<span class="fc" id="L110">        alg = joseHeader.getAlg();</span>
+<span class="fc" id="L111">        enc = joseHeader.getEnc();</span>
+<span class="fc" id="L112">        kid = joseHeader.getKid();</span>
+<span class="fc" id="L113">        zip = joseHeader.getZip();</span>
+<span class="fc" id="L114">        this.payloads = payloads;</span>
+<span class="fc" id="L115">    }</span>
+
+<span class="fc" id="L117">    public JsonWebToken(final String jwt) throws IOException {</span>
+
+<span class="fc" id="L119">        final String[] tokens = jwt.split(&quot;\\.&quot;);</span>
+
+<span class="fc" id="L121">        joseHeaderEncoded = tokens[0];</span>
+<span class="fc" id="L122">        final JoseHeader joseHeader = new JoseHeader(Encoding.base64urlDecodeToString(joseHeaderEncoded));</span>
+
+<span class="fc" id="L124">        alg = joseHeader.getAlg();</span>
+<span class="fc" id="L125">        enc = joseHeader.getEnc();</span>
+<span class="fc" id="L126">        kid = joseHeader.getKid();</span>
+<span class="fc" id="L127">        zip = joseHeader.getZip();</span>
+
+<span class="fc" id="L129">        payloads = new byte[tokens.length - 1][];</span>
+<span class="fc bfc" id="L130" title="All 2 branches covered.">        for (int i = 1; i &lt; tokens.length; ++i) {</span>
+<span class="fc" id="L131">            payloads[i - 1] = Encoding.base64urlDecode(tokens[i]);</span>
+        }
+
+<span class="fc" id="L134">    }</span>
+
+    public String getKid() {
+
+<span class="fc" id="L138">        return kid;</span>
+    }
+
+    public String getAlg() {
+
+<span class="fc" id="L143">        return alg;</span>
+    }
+
+    public String getEnc() {
+
+<span class="fc" id="L148">        return enc;</span>
+    }
+
+    /**
+     * This retrieves the JOSE header. Please note that this is an expensive
+     * process because it will perform decoding of the data. The JOSE header
+     * returned may be mutable but it is not associated with this object.
+     *
+     * @return JOSE header
+     */
+    public JoseHeader getJoseHeader() {
+
+<span class="nc" id="L160">        return new JoseHeader(Encoding.base64urlDecodeToString(joseHeaderEncoded));</span>
+    }
+
+    /**
+     * Gets the encoded JOSE Header as it was provided.
+     *
+     * @return encoded JOSE header.
+     */
+    public String getJoseHeaderEncoded() {
+
+<span class="fc" id="L170">        return joseHeaderEncoded;</span>
+    }
+
+    public int getNumberOfPayloads() {
+
+<span class="fc" id="L175">        return payloads.length;</span>
+    }
+
+    public byte[] getPayload(final int i) {
+
+<span class="fc" id="L180">        return payloads[i];</span>
+    }
+
+    public String getZip() {
+
+<span class="fc" id="L185">        return zip;</span>
+    }
+
+    /**
+     * Builds the serialized JWT.
+     */
+    @Override
+    public String toString() {
+
+<span class="fc" id="L194">        final StringBuilder b = new StringBuilder(joseHeaderEncoded);</span>
+<span class="fc bfc" id="L195" title="All 2 branches covered.">        for (final byte[] payload : payloads) {</span>
+<span class="fc" id="L196">            b.append('.')</span>
+                    .append(Encoding.base64urlEncode(payload));
+        }
+<span class="fc" id="L199">        return b.toString();</span>
+
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span></div></body></html>

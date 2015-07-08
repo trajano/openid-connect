@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>ErrorResponse.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">openid-connect-core</a> &gt; <a href="index.source.html" class="el_package">net.trajano.openidconnect.core</a> &gt; <span class="el_source">ErrorResponse.java</span></div><h1>ErrorResponse.java</h1><pre class="source lang-java linenums">package net.trajano.openidconnect.core;
+
+import java.net.URI;
+
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+
+/**
+ * &lt;a href=&quot;http://tools.ietf.org/html/rfc6749#section-5.2&quot;&gt;Error response&lt;/a&gt;.
+ * This holds the data that gets sent either as a JSON object or query
+ * parameters depending on the exception. The authorization server responds with
+ * an HTTP 400 (Bad Request) status code (unless specified otherwise). This can
+ * be sent for a &lt;a href=
+ * &quot;http://openid.net/specs/openid-connect-core-1_0.html#TokenErrorResponse&quot;&gt;
+ * Token Error Response&lt;/a&gt;.
+ *
+ * @author Archimedes Trajano
+ */
+@XmlRootElement
+@XmlAccessorType(XmlAccessType.FIELD)
+public class ErrorResponse {
+
+    /**
+     * REQUIRED. A single ASCII [USASCII] error code.
+     */
+    @XmlElement(required = true)
+    private ErrorCode error;
+
+    /**
+     * OPTIONAL. Human-readable ASCII [USASCII] text providing additional
+     * information, used to assist the client developer in understanding the
+     * error that occurred. Values for the &quot;error_description&quot; parameter MUST
+     * NOT include characters outside the set %x20-21 / %x23-5B / %x5D-7E.
+     */
+    @XmlElement(name = &quot;error_description&quot;)
+    private String errorDescription;
+
+    /**
+     * OPTIONAL. A URI identifying a human-readable web page with information
+     * about the error, used to provide the client developer with additional
+     * information about the error. Values for the &quot;error_uri&quot; parameter MUST
+     * conform to the URI-reference syntax and thus MUST NOT include characters
+     * outside the set %x21 / %x23-5B / %x5D-7E.
+     */
+    @XmlElement(name = &quot;error_uri&quot;)
+    private URI errorUri;
+
+<span class="nc" id="L50">    public ErrorResponse() {</span>
+
+<span class="nc" id="L52">    }</span>
+
+<span class="nc" id="L54">    public ErrorResponse(final ErrorCode error) {</span>
+
+<span class="nc" id="L56">        this.error = error;</span>
+<span class="nc" id="L57">    }</span>
+
+    public ErrorResponse(final ErrorCode error, final String errorDescription) {
+
+<span class="nc" id="L61">        this(error);</span>
+<span class="nc" id="L62">        this.errorDescription = errorDescription;</span>
+<span class="nc" id="L63">    }</span>
+
+    public ErrorResponse(final ErrorCode error, final String errorDescription, final URI errorUri) {
+
+<span class="nc" id="L67">        this(error, errorDescription);</span>
+<span class="nc" id="L68">        this.errorUri = errorUri;</span>
+<span class="nc" id="L69">    }</span>
+
+    public ErrorCode getError() {
+
+<span class="nc" id="L73">        return error;</span>
+    }
+
+    public String getErrorDescription() {
+
+<span class="nc" id="L78">        return errorDescription;</span>
+    }
+
+    public URI getErrorUri() {
+
+<span class="nc" id="L83">        return errorUri;</span>
+    }
+
+    public void setError(final ErrorCode error) {
+
+<span class="nc" id="L88">        this.error = error;</span>
+<span class="nc" id="L89">    }</span>
+
+    public void setErrorDescription(final String errorDescription) {
+
+<span class="nc" id="L93">        this.errorDescription = errorDescription;</span>
+<span class="nc" id="L94">    }</span>
+
+    public void setErrorUri(final URI errorUri) {
+
+<span class="nc" id="L98">        this.errorUri = errorUri;</span>
+<span class="nc" id="L99">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span></div></body></html>

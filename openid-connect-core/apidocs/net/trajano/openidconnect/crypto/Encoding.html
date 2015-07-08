@@ -1,0 +1,534 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!-- NewPage -->
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html" charset="utf-8">
+<title>Encoding (openid-connect-core 1.0.1 API)</title>
+<link rel="stylesheet" type="text/css" href="../../../../stylesheet.css" title="Style">
+</head>
+<body>
+<script type="text/javascript"><!--
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="Encoding (openid-connect-core 1.0.1 API)";
+    }
+//-->
+</script>
+<noscript>
+<div>JavaScript is disabled on your browser.</div>
+</noscript>
+<!-- ========= START OF TOP NAVBAR ======= -->
+<div class="topNav"><a name="navbar_top">
+<!--   -->
+</a><a href="#skip-navbar_top" title="Skip navigation links"></a><a name="navbar_top_firstrow">
+<!--   -->
+</a>
+<ul class="navList" title="Navigation">
+<li><a href="../../../../overview-summary.html">Overview</a></li>
+<li><a href="package-summary.html">Package</a></li>
+<li class="navBarCell1Rev">Class</li>
+<li><a href="class-use/Encoding.html">Use</a></li>
+<li><a href="package-tree.html">Tree</a></li>
+<li><a href="../../../../deprecated-list.html">Deprecated</a></li>
+<li><a href="../../../../index-all.html">Index</a></li>
+<li><a href="../../../../help-doc.html">Help</a></li>
+</ul>
+</div>
+<div class="subNav">
+<ul class="navList">
+<li><a href="../../../../net/trajano/openidconnect/crypto/EcWebKey.html" title="class in net.trajano.openidconnect.crypto"><span class="strong">Prev Class</span></a></li>
+<li><a href="../../../../net/trajano/openidconnect/crypto/JoseHeader.html" title="class in net.trajano.openidconnect.crypto"><span class="strong">Next Class</span></a></li>
+</ul>
+<ul class="navList">
+<li><a href="../../../../index.html?net/trajano/openidconnect/crypto/Encoding.html" target="_top">Frames</a></li>
+<li><a href="Encoding.html" target="_top">No Frames</a></li>
+</ul>
+<ul class="navList" id="allclasses_navbar_top">
+<li><a href="../../../../allclasses-noframe.html">All Classes</a></li>
+</ul>
+<div>
+<script type="text/javascript"><!--
+  allClassesLink = document.getElementById("allclasses_navbar_top");
+  if(window==top) {
+    allClassesLink.style.display = "block";
+  }
+  else {
+    allClassesLink.style.display = "none";
+  }
+  //-->
+</script>
+</div>
+<div>
+<ul class="subNavList">
+<li>Summary:&nbsp;</li>
+<li>Nested&nbsp;|&nbsp;</li>
+<li><a href="#field_summary">Field</a>&nbsp;|&nbsp;</li>
+<li><a href="#constructor_summary">Constr</a>&nbsp;|&nbsp;</li>
+<li><a href="#method_summary">Method</a></li>
+</ul>
+<ul class="subNavList">
+<li>Detail:&nbsp;</li>
+<li><a href="#field_detail">Field</a>&nbsp;|&nbsp;</li>
+<li><a href="#constructor_detail">Constr</a>&nbsp;|&nbsp;</li>
+<li><a href="#method_detail">Method</a></li>
+</ul>
+</div>
+<a name="skip-navbar_top">
+<!--   -->
+</a></div>
+<!-- ========= END OF TOP NAVBAR ========= -->
+<!-- ======== START OF CLASS DATA ======== -->
+<div class="header">
+<div class="subTitle">net.trajano.openidconnect.crypto</div>
+<h2 title="Class Encoding" class="title">Class Encoding</h2>
+</div>
+<div class="contentContainer">
+<map id="APIVIZ" name="APIVIZ">
+<area shape="rect" id="node1" href="Encoding.html" title="&#171;static&#187; Encoding" alt="" coords="5,5,81,45"/>
+</map>
+<div id="apivizContainer" style="text-align: center;"><img src="Encoding.png" usemap="#APIVIZ" border="0"></div>
+<ul class="inheritance">
+<li><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">java.lang.Object</a></li>
+<li>
+<ul class="inheritance">
+<li>net.trajano.openidconnect.crypto.Encoding</li>
+</ul>
+</li>
+</ul>
+<div class="description">
+<ul class="blockList">
+<li class="blockList">
+<hr>
+<br>
+<pre>public final class <span class="strong">Encoding</span>
+extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></pre>
+<div class="block">base64url implementation.</div>
+<dl><dt><span class="strong">Author:</span></dt>
+  <dd>Archimedes Trajano</dd></dl>
+</li>
+</ul>
+</div>
+<div class="summary">
+<ul class="blockList">
+<li class="blockList">
+<!-- =========== FIELD SUMMARY =========== -->
+<ul class="blockList">
+<li class="blockList"><a name="field_summary">
+<!--   -->
+</a>
+<h3>Field Summary</h3>
+<table class="overviewSummary" border="0" cellpadding="3" cellspacing="0" summary="Field Summary table, listing fields, and an explanation">
+<caption><span>Fields</span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colFirst" scope="col">Modifier and Type</th>
+<th class="colLast" scope="col">Field and Description</th>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>private static byte[]</code></td>
+<td class="colLast"><code><strong><a href="../../../../net/trajano/openidconnect/crypto/Encoding.html#DECODE_MAP">DECODE_MAP</a></strong></code>
+<div class="block">Decoding map.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>private static char[]</code></td>
+<td class="colLast"><code><strong><a href="../../../../net/trajano/openidconnect/crypto/Encoding.html#ENCODE_MAP">ENCODE_MAP</a></strong></code>
+<div class="block">Encoding map.</div>
+</td>
+</tr>
+</table>
+</li>
+</ul>
+<!-- ======== CONSTRUCTOR SUMMARY ======== -->
+<ul class="blockList">
+<li class="blockList"><a name="constructor_summary">
+<!--   -->
+</a>
+<h3>Constructor Summary</h3>
+<table class="overviewSummary" border="0" cellpadding="3" cellspacing="0" summary="Constructor Summary table, listing constructors, and an explanation">
+<caption><span>Constructors</span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colFirst" scope="col">Modifier</th>
+<th class="colLast" scope="col">Constructor and Description</th>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>private </code></td>
+<td class="colLast"><code><strong><a href="../../../../net/trajano/openidconnect/crypto/Encoding.html#Encoding()">Encoding</a></strong>()</code>
+<div class="block">Prevent instantiation of utility class.</div>
+</td>
+</tr>
+</table>
+</li>
+</ul>
+<!-- ========== METHOD SUMMARY =========== -->
+<ul class="blockList">
+<li class="blockList"><a name="method_summary">
+<!--   -->
+</a>
+<h3>Method Summary</h3>
+<table class="overviewSummary" border="0" cellpadding="3" cellspacing="0" summary="Method Summary table, listing methods, and an explanation">
+<caption><span>Methods</span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colFirst" scope="col">Modifier and Type</th>
+<th class="colLast" scope="col">Method and Description</th>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
+<td class="colLast"><code><strong><a href="../../../../net/trajano/openidconnect/crypto/Encoding.html#base64Encode(byte[], int, int, boolean)">base64Encode</a></strong>(byte[]&nbsp;bytes,
+            int&nbsp;offset,
+            int&nbsp;length,
+            boolean&nbsp;padding)</code>
+<div class="block">Encodes bytes in a buffer into a Base64 string.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
+<td class="colLast"><code><strong><a href="../../../../net/trajano/openidconnect/crypto/Encoding.html#base64Encode(java.lang.String)">base64Encode</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;s)</code>
+<div class="block">Encodes bytes into a base64 string as UTF8</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
+<td class="colLast"><code><strong><a href="../../../../net/trajano/openidconnect/crypto/Encoding.html#base64EncodeAscii(java.lang.String)">base64EncodeAscii</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;s)</code>
+<div class="block">Encodes a US-ASCII string.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
+<td class="colLast"><code><strong><a href="../../../../net/trajano/openidconnect/crypto/Encoding.html#base64EncodeUint(java.math.BigInteger)">base64EncodeUint</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/math/BigInteger.html?is-external=true" title="class or interface in java.math">BigInteger</a>&nbsp;v)</code>
+<div class="block">Encodes Base64urlUInt.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static byte[]</code></td>
+<td class="colLast"><code><strong><a href="../../../../net/trajano/openidconnect/crypto/Encoding.html#base64urlDecode(java.lang.String)">base64urlDecode</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;base64String)</code>
+<div class="block">Decodes a base64 or base64url string.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static int</code></td>
+<td class="colLast"><code><strong><a href="../../../../net/trajano/openidconnect/crypto/Encoding.html#base64urlDecode(java.lang.String, byte[], int)">base64urlDecode</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;base64String,
+               byte[]&nbsp;buffer,
+               int&nbsp;offset)</code>
+<div class="block">Decodes a base64 string to a buffer.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static int</code></td>
+<td class="colLast"><code><strong><a href="../../../../net/trajano/openidconnect/crypto/Encoding.html#base64urlDecodeLength(java.lang.String)">base64urlDecodeLength</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;base64String)</code>
+<div class="block">Gets the byte length of the decoded text.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
+<td class="colLast"><code><strong><a href="../../../../net/trajano/openidconnect/crypto/Encoding.html#base64urlDecodeToString(java.lang.String)">base64urlDecodeToString</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;encoded)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static <a href="http://docs.oracle.com/javase/7/docs/api/java/math/BigInteger.html?is-external=true" title="class or interface in java.math">BigInteger</a></code></td>
+<td class="colLast"><code><strong><a href="../../../../net/trajano/openidconnect/crypto/Encoding.html#base64urlDecodeUint(java.lang.String)">base64urlDecodeUint</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;s)</code>
+<div class="block">Decodes Base64urlUInt.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
+<td class="colLast"><code><strong><a href="../../../../net/trajano/openidconnect/crypto/Encoding.html#base64urlEncode(byte[])">base64urlEncode</a></strong>(byte[]&nbsp;bytes)</code>
+<div class="block">Encodes bytes into a base64url string.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
+<td class="colLast"><code><strong><a href="../../../../net/trajano/openidconnect/crypto/Encoding.html#base64urlEncode(byte[], int, int)">base64urlEncode</a></strong>(byte[]&nbsp;bytes,
+               int&nbsp;offset,
+               int&nbsp;len)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
+<td class="colLast"><code><strong><a href="../../../../net/trajano/openidconnect/crypto/Encoding.html#base64urlEncode(java.lang.String)">base64urlEncode</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;s)</code>
+<div class="block">Encodes a Unicode string as UTF-8.</div>
+</td>
+</tr>
+</table>
+<ul class="blockList">
+<li class="blockList"><a name="methods_inherited_from_class_java.lang.Object">
+<!--   -->
+</a>
+<h3>Methods inherited from class&nbsp;java.lang.<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></h3>
+<code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#clone()" title="class or interface in java.lang">clone</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#equals(java.lang.Object)" title="class or interface in java.lang">equals</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#finalize()" title="class or interface in java.lang">finalize</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#getClass()" title="class or interface in java.lang">getClass</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#hashCode()" title="class or interface in java.lang">hashCode</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#notify()" title="class or interface in java.lang">notify</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#notifyAll()" title="class or interface in java.lang">notifyAll</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#toString()" title="class or interface in java.lang">toString</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#wait()" title="class or interface in java.lang">wait</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#wait(long)" title="class or interface in java.lang">wait</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#wait(long, int)" title="class or interface in java.lang">wait</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="details">
+<ul class="blockList">
+<li class="blockList">
+<!-- ============ FIELD DETAIL =========== -->
+<ul class="blockList">
+<li class="blockList"><a name="field_detail">
+<!--   -->
+</a>
+<h3>Field Detail</h3>
+<a name="DECODE_MAP">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>DECODE_MAP</h4>
+<pre>private static final&nbsp;byte[] DECODE_MAP</pre>
+<div class="block">Decoding map.</div>
+</li>
+</ul>
+<a name="ENCODE_MAP">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>ENCODE_MAP</h4>
+<pre>private static final&nbsp;char[] ENCODE_MAP</pre>
+<div class="block">Encoding map.</div>
+</li>
+</ul>
+</li>
+</ul>
+<!-- ========= CONSTRUCTOR DETAIL ======== -->
+<ul class="blockList">
+<li class="blockList"><a name="constructor_detail">
+<!--   -->
+</a>
+<h3>Constructor Detail</h3>
+<a name="Encoding()">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>Encoding</h4>
+<pre>private&nbsp;Encoding()</pre>
+<div class="block">Prevent instantiation of utility class.</div>
+</li>
+</ul>
+</li>
+</ul>
+<!-- ============ METHOD DETAIL ========== -->
+<ul class="blockList">
+<li class="blockList"><a name="method_detail">
+<!--   -->
+</a>
+<h3>Method Detail</h3>
+<a name="base64Encode(byte[], int, int, boolean)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>base64Encode</h4>
+<pre>public static&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;base64Encode(byte[]&nbsp;bytes,
+                  int&nbsp;offset,
+                  int&nbsp;length,
+                  boolean&nbsp;padding)</pre>
+<div class="block">Encodes bytes in a buffer into a Base64 string.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>bytes</code> - bytes buffer</dd><dd><code>offset</code> - offset</dd><dd><code>length</code> - number of bytes to encode</dd>
+<dt><span class="strong">Returns:</span></dt><dd>Base64Url string</dd></dl>
+</li>
+</ul>
+<a name="base64Encode(java.lang.String)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>base64Encode</h4>
+<pre>public static&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;base64Encode(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;s)</pre>
+<div class="block">Encodes bytes into a base64 string as UTF8</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>s</code> - string to encode.</dd>
+<dt><span class="strong">Returns:</span></dt><dd>Base64 string</dd></dl>
+</li>
+</ul>
+<a name="base64EncodeAscii(java.lang.String)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>base64EncodeAscii</h4>
+<pre>public static&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;base64EncodeAscii(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;s)</pre>
+<div class="block">Encodes a US-ASCII string.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>s</code> - string to encode</dd>
+<dt><span class="strong">Returns:</span></dt><dd>Base64 string</dd></dl>
+</li>
+</ul>
+<a name="base64EncodeUint(java.math.BigInteger)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>base64EncodeUint</h4>
+<pre>public static&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;base64EncodeUint(<a href="http://docs.oracle.com/javase/7/docs/api/java/math/BigInteger.html?is-external=true" title="class or interface in java.math">BigInteger</a>&nbsp;v)</pre>
+<div class="block">Encodes Base64urlUInt. The representation of a positive or zero integer
+ value as the base64url encoding of the value's unsigned big endian
+ representation as an octet sequence. The octet sequence MUST utilize the
+ minimum number of octets needed to represent the value. Zero is
+ represented as BASE64URL(single zero-valued octet), which is "AA".</div>
+</li>
+</ul>
+<a name="base64urlDecode(java.lang.String)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>base64urlDecode</h4>
+<pre>public static&nbsp;byte[]&nbsp;base64urlDecode(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;base64String)</pre>
+<div class="block">Decodes a base64 or base64url string.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>base64String</code> - base64 string</dd>
+<dt><span class="strong">Returns:</span></dt><dd>bytes</dd></dl>
+</li>
+</ul>
+<a name="base64urlDecode(java.lang.String, byte[], int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>base64urlDecode</h4>
+<pre>public static&nbsp;int&nbsp;base64urlDecode(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;base64String,
+                  byte[]&nbsp;buffer,
+                  int&nbsp;offset)</pre>
+<div class="block">Decodes a base64 string to a buffer.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>base64String</code> - base64 string</dd><dd><code>buffer</code> - buffer to fill</dd><dd><code>offset</code> - offset</dd>
+<dt><span class="strong">Returns:</span></dt><dd>amount of bytes decoded.</dd></dl>
+</li>
+</ul>
+<a name="base64urlDecodeLength(java.lang.String)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>base64urlDecodeLength</h4>
+<pre>public static&nbsp;int&nbsp;base64urlDecodeLength(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;base64String)</pre>
+<div class="block">Gets the byte length of the decoded text.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>base64String</code> - Base64 string</dd>
+<dt><span class="strong">Returns:</span></dt><dd>byte length of the decoded text.</dd></dl>
+</li>
+</ul>
+<a name="base64urlDecodeToString(java.lang.String)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>base64urlDecodeToString</h4>
+<pre>public static&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;base64urlDecodeToString(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;encoded)</pre>
+</li>
+</ul>
+<a name="base64urlDecodeUint(java.lang.String)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>base64urlDecodeUint</h4>
+<pre>public static&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/math/BigInteger.html?is-external=true" title="class or interface in java.math">BigInteger</a>&nbsp;base64urlDecodeUint(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;s)</pre>
+<div class="block">Decodes Base64urlUInt. The representation of a positive or zero integer
+ value as the base64url encoding of the value's unsigned big endian
+ representation as an octet sequence. The octet sequence MUST utilize the
+ minimum number of octets needed to represent the value. Zero is
+ represented as BASE64URL(single zero-valued octet), which is "AA".</div>
+</li>
+</ul>
+<a name="base64urlEncode(byte[])">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>base64urlEncode</h4>
+<pre>public static&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;base64urlEncode(byte[]&nbsp;bytes)</pre>
+<div class="block">Encodes bytes into a base64url string.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>bytes</code> - bytes to encode</dd>
+<dt><span class="strong">Returns:</span></dt><dd>Base64 string</dd></dl>
+</li>
+</ul>
+<a name="base64urlEncode(byte[], int, int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>base64urlEncode</h4>
+<pre>public static&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;base64urlEncode(byte[]&nbsp;bytes,
+                     int&nbsp;offset,
+                     int&nbsp;len)</pre>
+</li>
+</ul>
+<a name="base64urlEncode(java.lang.String)">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>base64urlEncode</h4>
+<pre>public static&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;base64urlEncode(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;s)</pre>
+<div class="block">Encodes a Unicode string as UTF-8.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>s</code> - string to encode</dd>
+<dt><span class="strong">Returns:</span></dt><dd>Base64 string</dd></dl>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<!-- ========= END OF CLASS DATA ========= -->
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<div class="bottomNav"><a name="navbar_bottom">
+<!--   -->
+</a><a href="#skip-navbar_bottom" title="Skip navigation links"></a><a name="navbar_bottom_firstrow">
+<!--   -->
+</a>
+<ul class="navList" title="Navigation">
+<li><a href="../../../../overview-summary.html">Overview</a></li>
+<li><a href="package-summary.html">Package</a></li>
+<li class="navBarCell1Rev">Class</li>
+<li><a href="class-use/Encoding.html">Use</a></li>
+<li><a href="package-tree.html">Tree</a></li>
+<li><a href="../../../../deprecated-list.html">Deprecated</a></li>
+<li><a href="../../../../index-all.html">Index</a></li>
+<li><a href="../../../../help-doc.html">Help</a></li>
+</ul>
+</div>
+<div class="subNav">
+<ul class="navList">
+<li><a href="../../../../net/trajano/openidconnect/crypto/EcWebKey.html" title="class in net.trajano.openidconnect.crypto"><span class="strong">Prev Class</span></a></li>
+<li><a href="../../../../net/trajano/openidconnect/crypto/JoseHeader.html" title="class in net.trajano.openidconnect.crypto"><span class="strong">Next Class</span></a></li>
+</ul>
+<ul class="navList">
+<li><a href="../../../../index.html?net/trajano/openidconnect/crypto/Encoding.html" target="_top">Frames</a></li>
+<li><a href="Encoding.html" target="_top">No Frames</a></li>
+</ul>
+<ul class="navList" id="allclasses_navbar_bottom">
+<li><a href="../../../../allclasses-noframe.html">All Classes</a></li>
+</ul>
+<div>
+<script type="text/javascript"><!--
+  allClassesLink = document.getElementById("allclasses_navbar_bottom");
+  if(window==top) {
+    allClassesLink.style.display = "block";
+  }
+  else {
+    allClassesLink.style.display = "none";
+  }
+  //-->
+</script>
+</div>
+<div>
+<ul class="subNavList">
+<li>Summary:&nbsp;</li>
+<li>Nested&nbsp;|&nbsp;</li>
+<li><a href="#field_summary">Field</a>&nbsp;|&nbsp;</li>
+<li><a href="#constructor_summary">Constr</a>&nbsp;|&nbsp;</li>
+<li><a href="#method_summary">Method</a></li>
+</ul>
+<ul class="subNavList">
+<li>Detail:&nbsp;</li>
+<li><a href="#field_detail">Field</a>&nbsp;|&nbsp;</li>
+<li><a href="#constructor_detail">Constr</a>&nbsp;|&nbsp;</li>
+<li><a href="#method_detail">Method</a></li>
+</ul>
+</div>
+<a name="skip-navbar_bottom">
+<!--   -->
+</a></div>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+<p class="legalCopy"><small>Copyright &#169; 2012&#x2013;2015 <a href="http://www.trajano.net/">Trajano</a>. All rights reserved.</small></p>
+</body>
+</html>

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>Prompt.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">openid-connect-core</a> &gt; <a href="index.source.html" class="el_package">net.trajano.openidconnect.auth</a> &gt; <span class="el_source">Prompt.java</span></div><h1>Prompt.java</h1><pre class="source lang-java linenums">package net.trajano.openidconnect.auth;
+
+<span class="pc" id="L3">public enum Prompt {</span>
+
+    /**
+     * The Authorization Server SHOULD prompt the End-User for consent
+     * before returning information to the Client. If it cannot obtain
+     * consent, it MUST return an error, typically consent_required.
+     */
+<span class="fc" id="L10">    consent,</span>
+
+    /**
+     * The Authorization Server SHOULD prompt the End-User for
+     * reauthentication. If it cannot reauthenticate the End-User, it MUST
+     * return an error, typically login_required.
+     */
+<span class="fc" id="L17">    login,</span>
+
+    /**
+     * The Authorization Server MUST NOT display any authentication or
+     * consent user interface pages. An error is returned if an End-User is
+     * not already authenticated or the Client does not have pre-configured
+     * consent for the requested Claims or does not fulfill other conditions
+     * for processing the request. The error code will typically be
+     * login_required, interaction_required, or another code defined in
+     * Section 3.1.2.6. This can be used as a method to check for existing
+     * authentication and/or consent.
+     */
+<span class="fc" id="L29">    none,</span>
+
+    /**
+     * The Authorization Server SHOULD prompt the End-User to select a user
+     * account. This enables an End-User who has multiple accounts at the
+     * Authorization Server to select amongst the multiple accounts that
+     * they might have current sessions for. If it cannot obtain an account
+     * selection choice made by the End-User, it MUST return an error,
+     * typically account_selection_required.
+     */
+<span class="fc" id="L39">    select_account</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span></div></body></html>

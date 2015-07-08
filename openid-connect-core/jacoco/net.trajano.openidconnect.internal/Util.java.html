@@ -1,0 +1,342 @@
+<?xml version="1.0" encoding="utf-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>Util.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">openid-connect-core</a> &gt; <a href="index.source.html" class="el_package">net.trajano.openidconnect.internal</a> &gt; <span class="el_source">Util.java</span></div><h1>Util.java</h1><pre class="source lang-java linenums">package net.trajano.openidconnect.internal;
+
+import java.lang.reflect.Field;
+import java.math.BigInteger;
+import java.net.URI;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+
+import javax.json.Json;
+import javax.json.JsonNumber;
+import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
+import javax.json.JsonString;
+import javax.json.JsonValue;
+import javax.json.JsonValue.ValueType;
+import javax.servlet.http.HttpServletRequest;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlEnumValue;
+import javax.xml.bind.annotation.XmlTransient;
+
+<span class="nc" id="L30">public class Util {</span>
+
+    public static JsonObject convertToJson(final Object obj) {
+
+<span class="fc" id="L34">        final JsonObjectBuilder b = Json.createObjectBuilder();</span>
+
+        try {
+<span class="fc" id="L37">            final Class&lt;?&gt; objClass = obj.getClass();</span>
+<span class="fc bfc" id="L38" title="All 2 branches covered.">            for (final Field field : objClass.getDeclaredFields()) {</span>
+<span class="fc" id="L39">                String name = field.getName();</span>
+<span class="pc bpc" id="L40" title="1 of 2 branches missed.">                if (field.getAnnotation(XmlTransient.class) != null) {</span>
+<span class="nc" id="L41">                    continue;</span>
+                }
+
+<span class="fc" id="L44">                final XmlElement xmlElement = field.getAnnotation(XmlElement.class);</span>
+<span class="pc bpc" id="L45" title="3 of 4 branches missed.">                if (xmlElement != null &amp;&amp; xmlElement.name() != null) {</span>
+<span class="nc" id="L46">                    name = xmlElement.name();</span>
+                }
+<span class="fc" id="L48">                field.setAccessible(true);</span>
+<span class="fc" id="L49">                final Object value = field.get(obj);</span>
+<span class="fc bfc" id="L50" title="All 2 branches covered.">                if (value == null) {</span>
+<span class="fc" id="L51">                    continue;</span>
+                }
+<span class="pc bpc" id="L53" title="1 of 2 branches missed.">                if (field.getType()</span>
+                    .isEnum()) {
+<span class="nc" id="L55">                    final String enumValue = ((Enum&lt;?&gt;) value).name();</span>
+<span class="nc" id="L56">                    final XmlEnumValue xmlEnumValue = ((Enum&lt;?&gt;) value).getDeclaringClass()</span>
+                        .getField(enumValue)
+                        .getAnnotation(XmlEnumValue.class);
+<span class="nc bnc" id="L59" title="All 4 branches missed.">                    if (xmlEnumValue != null &amp;&amp; xmlEnumValue.value() != null) {</span>
+<span class="nc" id="L60">                        b.add(name, xmlEnumValue.value());</span>
+                    } else {
+<span class="nc" id="L62">                        b.add(name, enumValue);</span>
+                    }
+
+<span class="pc bfc" id="L65" title="All 2 branches covered.">                } else if (field.getType() == String.class) {</span>
+<span class="fc" id="L66">                    b.add(name, (String) value);</span>
+<span class="pc bpc" id="L67" title="1 of 2 branches missed.">                } else if (field.getType() == Integer.class) {</span>
+<span class="nc" id="L68">                    b.add(name, (Integer) value);</span>
+<span class="pc bpc" id="L69" title="1 of 2 branches missed.">                } else if (field.getType() == BigInteger.class) {</span>
+<span class="nc" id="L70">                    b.add(name, (BigInteger) value);</span>
+                }
+            }
+<span class="fc" id="L73">            return b.build();</span>
+<span class="nc" id="L74">        } catch (IllegalAccessException</span>
+                 | SecurityException
+                 | NoSuchFieldException e1) {
+<span class="nc" id="L77">            throw new RuntimeException(e1);</span>
+        }
+    }
+
+    @SafeVarargs
+    public static &lt;T&gt; T firstNonNull(final T... vals) {
+
+<span class="nc bnc" id="L84" title="All 2 branches missed.">        for (final T val : vals) {</span>
+<span class="nc bnc" id="L85" title="All 2 branches missed.">            if (val != null) {</span>
+<span class="nc" id="L86">                return val;</span>
+            }
+        }
+<span class="nc" id="L89">        return null;</span>
+    }
+
+    /**
+     * Checks if the parameter being passed in is not null or empty. If it is
+     * not null or empty it will return the value of the parameter otherwise it
+     * will return null. This will not return an empty string.
+     *
+     * @param req
+     *            request
+     * @param param
+     *            parameter name
+     * @return the parameter value (may be &lt;code&gt;null&lt;/code&gt;).
+     */
+    public static final String getParameter(final HttpServletRequest req,
+        final String param) {
+
+<span class="nc" id="L106">        final String parameter = req.getParameter(param);</span>
+<span class="nc bnc" id="L107" title="All 2 branches missed.">        if (Util.isNotNullOrEmpty(parameter)) {</span>
+<span class="nc" id="L108">            return parameter;</span>
+        } else {
+<span class="nc" id="L110">            return null;</span>
+        }
+    }
+
+    /**
+     * Returns a valid parameter value and will convert the value to the enum.
+     *
+     * @param req
+     * @param param
+     * @param enumClass
+     */
+    public static &lt;E extends Enum&lt;E&gt;&gt; E getParameter(final HttpServletRequest req,
+        final String param,
+        final Class&lt;E&gt; enumClass) {
+
+<span class="nc" id="L125">        final String enumParam = getParameter(req, param);</span>
+<span class="nc bnc" id="L126" title="All 2 branches missed.">        if (enumParam != null) {</span>
+<span class="nc" id="L127">            return valueOf(enumClass, enumParam);</span>
+        }
+<span class="nc" id="L129">        return null;</span>
+    }
+
+    /**
+     * Returns a set for the enums or an empty set if nothing was defined.
+     *
+     * @param req
+     * @param param
+     * @param enumClass
+     */
+    public static &lt;E extends Enum&lt;E&gt;&gt; Set&lt;E&gt; getParameterSet(final HttpServletRequest req,
+        final String param,
+        final Class&lt;E&gt; enumClass) {
+
+<span class="nc" id="L143">        final Set&lt;E&gt; ret = new HashSet&lt;&gt;();</span>
+<span class="nc" id="L144">        final String enumParams = getParameter(req, param);</span>
+<span class="nc bnc" id="L145" title="All 2 branches missed.">        if (enumParams != null) {</span>
+<span class="nc bnc" id="L146" title="All 2 branches missed.">            for (final String enumParam : enumParams.split(&quot;\\s+&quot;)) {</span>
+<span class="nc" id="L147">                ret.add(Enum.valueOf(enumClass, enumParam));</span>
+            }
+        }
+<span class="nc" id="L150">        return Collections.unmodifiableSet(ret);</span>
+    }
+
+    public static final boolean isNotNullOrEmpty(final String s) {
+
+<span class="pc bpc" id="L155" title="1 of 4 branches missed.">        return s != null &amp;&amp; !s.trim()</span>
+            .isEmpty();
+    }
+
+    public static String join(final Iterable&lt;String&gt; values) {
+
+<span class="nc" id="L161">        final StringBuilder b = new StringBuilder();</span>
+<span class="nc bnc" id="L162" title="All 2 branches missed.">        for (final String value : values) {</span>
+<span class="nc" id="L163">            b.append(value);</span>
+<span class="nc" id="L164">            b.append(' ');</span>
+<span class="nc" id="L165">        }</span>
+<span class="nc bnc" id="L166" title="All 2 branches missed.">        if (b.length() &gt; 0) {</span>
+<span class="nc" id="L167">            b.delete(b.length() - 1, b.length());</span>
+        }
+<span class="nc" id="L169">        return b.toString();</span>
+
+    }
+
+    /**
+     * Populates an object with the JSON data. Assumes a flat data structure,
+     * does not support nested data structures.
+     *
+     * @param obj
+     * @param json
+     */
+    public static &lt;T&gt; void populateWithJson(final T obj,
+        final JsonObject json) {
+
+<span class="fc" id="L183">        final Collection&lt;Class&lt;?&gt;&gt; SUPPORTED_CLASSES = Arrays.&lt;Class&lt;?&gt;&gt; asList(Enum.class, String.class, Integer.class, URI.class, Boolean.class, BigInteger.class, Long.class);</span>
+<span class="fc" id="L184">        final Class&lt;?&gt; objClass = obj.getClass();</span>
+<span class="fc" id="L185">        final Map&lt;String, Field&gt; fieldMap = new HashMap&lt;&gt;();</span>
+<span class="fc bfc" id="L186" title="All 2 branches covered.">        for (final Field field : objClass.getDeclaredFields()) {</span>
+<span class="pc bpc" id="L187" title="1 of 4 branches missed.">            if (!field.getType()</span>
+                .isEnum() &amp;&amp; !SUPPORTED_CLASSES.contains(field.getType())) {
+<span class="fc" id="L189">                continue;</span>
+            }
+<span class="fc" id="L191">            final XmlElement xmlElement = field.getAnnotation(XmlElement.class);</span>
+<span class="pc bpc" id="L192" title="3 of 4 branches missed.">            if (xmlElement != null &amp;&amp; xmlElement.name() != null) {</span>
+<span class="nc" id="L193">                fieldMap.put(xmlElement.name(), field);</span>
+            } else {
+<span class="fc" id="L195">                fieldMap.put(field.getName(), field);</span>
+            }
+        }
+        try {
+<span class="fc bfc" id="L199" title="All 2 branches covered.">            for (final Entry&lt;String, JsonValue&gt; entry : json.entrySet()) {</span>
+<span class="pc bpc" id="L200" title="1 of 2 branches missed.">                if (entry.getValue()</span>
+                    .getValueType() == ValueType.OBJECT) {
+<span class="nc" id="L202">                    continue;</span>
+<span class="pc bpc" id="L203" title="1 of 2 branches missed.">                } else if (entry.getValue()</span>
+                    .getValueType() == ValueType.NULL) {
+<span class="nc" id="L205">                    continue;</span>
+                }
+<span class="fc" id="L207">                final Field field = fieldMap.get(entry.getKey());</span>
+<span class="fc bfc" id="L208" title="All 2 branches covered.">                if (field != null) {</span>
+<span class="fc" id="L209">                    field.setAccessible(true);</span>
+<span class="pc bpc" id="L210" title="1 of 2 branches missed.">                    if (field.getType() == URI.class) {</span>
+<span class="nc" id="L211">                        field.set(obj, URI.create(((JsonString) entry.getValue()).getString()));</span>
+<span class="pc bpc" id="L212" title="3 of 4 branches missed.">                    } else if (field.getType() == Boolean.class &amp;&amp; entry.getValue()</span>
+                        .getValueType() == ValueType.TRUE) {
+<span class="nc" id="L214">                        field.set(obj, true);</span>
+<span class="pc bpc" id="L215" title="3 of 4 branches missed.">                    } else if (field.getType() == Boolean.class &amp;&amp; entry.getValue()</span>
+                        .getValueType() == ValueType.FALSE) {
+<span class="nc" id="L217">                        field.set(obj, false);</span>
+<span class="pc bpc" id="L218" title="1 of 2 branches missed.">                    } else if (field.getType() == String.class) {</span>
+<span class="fc" id="L219">                        field.set(obj, ((JsonString) entry.getValue()).getString());</span>
+<span class="nc bnc" id="L220" title="All 2 branches missed.">                    } else if (field.getType() == Integer.class) {</span>
+<span class="nc" id="L221">                        field.set(obj, ((JsonNumber) entry.getValue()).intValueExact());</span>
+<span class="nc bnc" id="L222" title="All 2 branches missed.">                    } else if (field.getType() == BigInteger.class) {</span>
+<span class="nc" id="L223">                        field.set(obj, ((JsonNumber) entry.getValue()).bigIntegerValueExact());</span>
+<span class="nc bnc" id="L224" title="All 2 branches missed.">                    } else if (field.getType() == Long.class) {</span>
+<span class="nc" id="L225">                        field.set(obj, ((JsonNumber) entry.getValue()).longValueExact());</span>
+<span class="nc bnc" id="L226" title="All 2 branches missed.">                    } else if (field.getType()</span>
+                        .isEnum()) {
+<span class="nc" id="L228">                        field.set(obj, valueOf((Class&lt;? extends Enum&gt;) field.getType(), ((JsonString) entry.getValue()).getString()));</span>
+                    }
+                }
+<span class="fc" id="L231">            }</span>
+<span class="nc" id="L232">        } catch (final IllegalAccessException e) {</span>
+<span class="nc" id="L233">            throw new RuntimeException(e);</span>
+<span class="fc" id="L234">        }</span>
+<span class="fc" id="L235">    }</span>
+
+    public static &lt;E extends Enum&lt;E&gt;&gt; List&lt;E&gt; splitToList(final Class&lt;E&gt; enumType,
+        final String names) {
+
+<span class="nc" id="L240">        final List&lt;E&gt; ret = new LinkedList&lt;&gt;();</span>
+<span class="nc bnc" id="L241" title="All 2 branches missed.">        for (final String name : splitToList(names)) {</span>
+<span class="nc" id="L242">            ret.add(valueOf(enumType, name));</span>
+<span class="nc" id="L243">        }</span>
+<span class="nc" id="L244">        return ret;</span>
+    }
+
+    public static List&lt;String&gt; splitToList(final String in) {
+
+<span class="pc bpc" id="L249" title="1 of 2 branches missed.">        if (in != null) {</span>
+<span class="fc" id="L250">            return Arrays.asList(in.split(&quot;\\s+&quot;));</span>
+        } else {
+<span class="nc" id="L252">            return Collections.emptyList();</span>
+        }
+    }
+
+    public static List&lt;Locale&gt; splitToLocaleList(final String locales) {
+
+<span class="nc" id="L258">        final List&lt;Locale&gt; ret = new LinkedList&lt;&gt;();</span>
+<span class="nc bnc" id="L259" title="All 2 branches missed.">        for (final String languageTag : splitToList(locales)) {</span>
+<span class="nc" id="L260">            ret.add(Locale.forLanguageTag(languageTag));</span>
+<span class="nc" id="L261">        }</span>
+<span class="nc" id="L262">        return ret;</span>
+    }
+
+    public static &lt;E extends Enum&lt;E&gt;&gt; Set&lt;E&gt; splitToSet(final Class&lt;E&gt; enumType,
+        final String names) {
+
+<span class="fc" id="L268">        final Set&lt;E&gt; ret = new HashSet&lt;&gt;();</span>
+<span class="fc bfc" id="L269" title="All 2 branches covered.">        for (final String name : splitToList(names)) {</span>
+<span class="fc" id="L270">            ret.add(valueOf(enumType, name));</span>
+<span class="fc" id="L271">        }</span>
+<span class="fc" id="L272">        return ret;</span>
+    }
+
+    public static Set&lt;String&gt; splitToSet(final String in) {
+
+<span class="nc" id="L277">        return new HashSet&lt;&gt;(splitToList(in));</span>
+    }
+
+    public static String toLocaleString(final Iterable&lt;Locale&gt; locales) {
+
+<span class="nc" id="L282">        final List&lt;String&gt; stringValues = new LinkedList&lt;&gt;();</span>
+<span class="nc bnc" id="L283" title="All 2 branches missed.">        for (final Locale locale : locales) {</span>
+<span class="nc" id="L284">            stringValues.add(locale.toLanguageTag());</span>
+<span class="nc" id="L285">        }</span>
+<span class="nc" id="L286">        return join(stringValues);</span>
+    }
+
+    public static &lt;E extends Enum&lt;E&gt;&gt; String toString(final E value) {
+
+<span class="nc" id="L291">        final Class&lt;E&gt; enumType = value.getDeclaringClass();</span>
+        try {
+<span class="nc" id="L293">            final XmlEnumValue xmlEnumValue = enumType.getField(value.name())</span>
+                .getAnnotation(XmlEnumValue.class);
+<span class="nc bnc" id="L295" title="All 4 branches missed.">            if (xmlEnumValue != null &amp;&amp; xmlEnumValue.value() != null) {</span>
+<span class="nc" id="L296">                return xmlEnumValue.value();</span>
+            } else {
+<span class="nc" id="L298">                return value.name();</span>
+            }
+<span class="nc" id="L300">        } catch (NoSuchFieldException</span>
+                 | SecurityException e1) {
+<span class="nc" id="L302">            throw new RuntimeException(e1);</span>
+        }
+
+    }
+
+    public static &lt;E extends Enum&lt;E&gt;&gt; String toString(final Iterable&lt;E&gt; values) {
+
+<span class="nc" id="L309">        final List&lt;String&gt; stringValues = new LinkedList&lt;&gt;();</span>
+<span class="nc bnc" id="L310" title="All 2 branches missed.">        for (final E value : values) {</span>
+<span class="nc" id="L311">            stringValues.add(toString(value));</span>
+<span class="nc" id="L312">        }</span>
+<span class="nc" id="L313">        return join(stringValues);</span>
+    }
+
+    public static &lt;E extends Enum&lt;E&gt;&gt; E valueOf(final Class&lt;E&gt; enumType,
+        final String name) {
+
+<span class="pc bpc" id="L319" title="1 of 2 branches missed.">        if (!isNotNullOrEmpty(name)) {</span>
+<span class="nc" id="L320">            return null;</span>
+        }
+        try {
+<span class="pc bpc" id="L323" title="1 of 2 branches missed.">            for (final E e : enumType.getEnumConstants()) {</span>
+<span class="fc" id="L324">                String ename = e.name();</span>
+<span class="fc" id="L325">                final XmlEnumValue xmlEnumValue = enumType.getField(ename)</span>
+                    .getAnnotation(XmlEnumValue.class);
+<span class="pc bpc" id="L327" title="3 of 4 branches missed.">                if (xmlEnumValue != null &amp;&amp; xmlEnumValue.value() != null) {</span>
+<span class="nc" id="L328">                    ename = xmlEnumValue.value();</span>
+                }
+<span class="fc bfc" id="L330" title="All 2 branches covered.">                if (name.equals(ename)) {</span>
+<span class="fc" id="L331">                    return e;</span>
+                }
+            }
+<span class="nc" id="L334">        } catch (NoSuchFieldException</span>
+                 | SecurityException e1) {
+<span class="nc" id="L336">            throw new RuntimeException(e1);</span>
+<span class="nc" id="L337">        }</span>
+<span class="nc" id="L338">        throw new IllegalArgumentException(&quot;unable to find the value &quot; + name + &quot; in enum &quot; + enumType);</span>
+
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span></div></body></html>

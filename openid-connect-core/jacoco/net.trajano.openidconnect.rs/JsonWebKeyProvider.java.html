@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>JsonWebKeyProvider.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">openid-connect-core</a> &gt; <a href="index.source.html" class="el_package">net.trajano.openidconnect.rs</a> &gt; <span class="el_source">JsonWebKeyProvider.java</span></div><h1>JsonWebKeyProvider.java</h1><pre class="source lang-java linenums">package net.trajano.openidconnect.rs;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Type;
+
+import javax.json.Json;
+import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
+import javax.json.JsonWriter;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.Produces;
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.ext.MessageBodyReader;
+import javax.ws.rs.ext.MessageBodyWriter;
+import javax.ws.rs.ext.Provider;
+
+import net.trajano.openidconnect.crypto.EcWebKey;
+import net.trajano.openidconnect.crypto.JsonWebKey;
+import net.trajano.openidconnect.crypto.KeyType;
+import net.trajano.openidconnect.crypto.KeyUse;
+import net.trajano.openidconnect.crypto.OctWebKey;
+import net.trajano.openidconnect.crypto.RsaWebKey;
+
+// TODO should we have the reader in jaspic and the writer in the rest api?
+@Provider
+@Produces(MediaType.APPLICATION_JSON)
+@Consumes(MediaType.APPLICATION_JSON)
+<span class="fc" id="L33">public class JsonWebKeyProvider implements MessageBodyReader&lt;JsonWebKey&gt;, MessageBodyWriter&lt;JsonWebKey&gt; {</span>
+
+    @Override
+    public long getSize(final JsonWebKey jwks,
+            final Class&lt;?&gt; type,
+            final Type genericType,
+            final Annotation[] annotations,
+            final MediaType mediaType) {
+
+<span class="nc" id="L42">        return -1;</span>
+    }
+
+    @Override
+    public boolean isReadable(final Class&lt;?&gt; type,
+            final Type genericType,
+            final Annotation[] annotations,
+            final MediaType mediaType) {
+
+<span class="fc bfc" id="L51" title="All 4 branches covered.">        return JsonWebKey.class.isAssignableFrom(type) &amp;&amp; MediaType.APPLICATION_JSON_TYPE.isCompatible(mediaType);</span>
+    }
+
+    @Override
+    public boolean isWriteable(final Class&lt;?&gt; type,
+            final Type genericType,
+            final Annotation[] annotations,
+            final MediaType mediaType) {
+
+<span class="fc" id="L60">        return isReadable(type, genericType, annotations, mediaType);</span>
+    }
+
+    @Override
+    public JsonWebKey readFrom(final Class&lt;JsonWebKey&gt; type,
+            final Type genericType,
+            final Annotation[] annotations,
+            final MediaType mediaType,
+            final MultivaluedMap&lt;String, String&gt; httpHeaders,
+            final InputStream inputStream) throws IOException,
+            WebApplicationException {
+
+<span class="fc" id="L72">        final JsonObject keyObject = Json.createReader(inputStream)</span>
+                .readObject();
+
+<span class="fc bfc" id="L75" title="All 2 branches covered.">        final String kid = keyObject.containsKey(&quot;kid&quot;) ? keyObject.getString(&quot;kid&quot;) : null;</span>
+<span class="fc" id="L76">        final KeyType kty = KeyType.valueOf(keyObject.getString(&quot;kty&quot;));</span>
+<span class="fc bfc" id="L77" title="All 2 branches covered.">        final String  alg = keyObject.containsKey(&quot;alg&quot;) ? keyObject.getString(&quot;alg&quot;) : null;</span>
+<span class="fc bfc" id="L78" title="All 2 branches covered.">        final KeyUse use = keyObject.containsKey(&quot;use&quot;) ? KeyUse.valueOf(keyObject.getString(&quot;use&quot;)) : null;</span>
+<span class="pc bpc" id="L79" title="1 of 2 branches missed.">        if (kty == KeyType.RSA) {</span>
+<span class="fc" id="L80">            final RsaWebKey rsaWebKey = new RsaWebKey();</span>
+<span class="fc" id="L81">            rsaWebKey.setKty(kty);</span>
+<span class="fc bfc" id="L82" title="All 2 branches covered.">            if (kid != null)</span>
+<span class="fc" id="L83">                rsaWebKey.setKid(kid);</span>
+<span class="fc bfc" id="L84" title="All 2 branches covered.">            if (alg != null)</span>
+<span class="fc" id="L85">                rsaWebKey.setAlg(alg);</span>
+<span class="fc bfc" id="L86" title="All 2 branches covered.">            if (use != null)</span>
+<span class="fc" id="L87">                rsaWebKey.setUse(use);</span>
+<span class="pc bpc" id="L88" title="1 of 4 branches missed.">            if (use == KeyUse.enc || keyObject.containsKey(&quot;qi&quot;)) {</span>
+<span class="fc" id="L89">                rsaWebKey.setD(keyObject.getString(&quot;d&quot;));</span>
+<span class="fc" id="L90">                rsaWebKey.setP(keyObject.getString(&quot;p&quot;));</span>
+<span class="fc" id="L91">                rsaWebKey.setDp(keyObject.getString(&quot;dp&quot;));</span>
+<span class="fc" id="L92">                rsaWebKey.setDq(keyObject.getString(&quot;dq&quot;));</span>
+<span class="fc" id="L93">                rsaWebKey.setQ(keyObject.getString(&quot;q&quot;));</span>
+<span class="fc" id="L94">                rsaWebKey.setQi(keyObject.getString(&quot;qi&quot;));</span>
+            }
+<span class="fc" id="L96">            rsaWebKey.setN(keyObject.getString(&quot;n&quot;));</span>
+<span class="fc" id="L97">            rsaWebKey.setE(keyObject.getString(&quot;e&quot;));</span>
+<span class="fc" id="L98">            return rsaWebKey;</span>
+<span class="nc bnc" id="L99" title="All 2 branches missed.">        } else if (kty == KeyType.EC) {</span>
+<span class="nc" id="L100">            final EcWebKey ecWebKey = new EcWebKey();</span>
+<span class="nc" id="L101">            ecWebKey.setKty(kty);</span>
+<span class="nc bnc" id="L102" title="All 2 branches missed.">            if (kid != null)</span>
+<span class="nc" id="L103">                ecWebKey.setKid(kid);</span>
+<span class="nc bnc" id="L104" title="All 2 branches missed.">            if (alg != null)</span>
+<span class="nc" id="L105">                ecWebKey.setAlg(alg);</span>
+<span class="nc bnc" id="L106" title="All 2 branches missed.">            if (use != null)</span>
+<span class="nc" id="L107">                ecWebKey.setUse(use);</span>
+
+<span class="nc" id="L109">            return ecWebKey;</span>
+<span class="nc bnc" id="L110" title="All 2 branches missed.">        } else if (kty == KeyType.oct) {</span>
+<span class="nc" id="L111">            final OctWebKey octWebKey = new OctWebKey();</span>
+<span class="nc" id="L112">            octWebKey.setKty(kty);</span>
+<span class="nc bnc" id="L113" title="All 2 branches missed.">            if (kid != null)</span>
+<span class="nc" id="L114">                octWebKey.setKid(kid);</span>
+<span class="nc bnc" id="L115" title="All 2 branches missed.">            if (alg != null)</span>
+<span class="nc" id="L116">                octWebKey.setAlg(alg);</span>
+<span class="nc bnc" id="L117" title="All 2 branches missed.">            if (use != null)</span>
+<span class="nc" id="L118">                octWebKey.setUse(use);</span>
+<span class="nc" id="L119">            return octWebKey;</span>
+
+        } else {
+<span class="nc" id="L122">            throw new IOException(&quot;kty of &quot; + kty + &quot; is not supported&quot;);</span>
+        }
+    }
+
+    @Override
+    public void writeTo(final JsonWebKey jwks,
+            final Class&lt;?&gt; type,
+            final Type genericType,
+            final Annotation[] annotations,
+            final MediaType mediaType,
+            final MultivaluedMap&lt;String, Object&gt; httpHeaders,
+            final OutputStream os) throws IOException,
+            WebApplicationException {
+
+<span class="fc" id="L136">        JsonObjectBuilder keyBuilder = Json.createObjectBuilder();</span>
+<span class="fc" id="L137">        jwks.buildJsonObject(keyBuilder);</span>
+
+<span class="fc" id="L139">        JsonWriter w = Json.createWriter(os);</span>
+<span class="fc" id="L140">        w.write(keyBuilder.build());</span>
+<span class="fc" id="L141">        w.close();</span>
+<span class="fc" id="L142">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span></div></body></html>

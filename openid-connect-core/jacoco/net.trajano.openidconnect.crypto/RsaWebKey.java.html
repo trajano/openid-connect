@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="utf-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>RsaWebKey.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">openid-connect-core</a> &gt; <a href="index.source.html" class="el_package">net.trajano.openidconnect.crypto</a> &gt; <span class="el_source">RsaWebKey.java</span></div><h1>RsaWebKey.java</h1><pre class="source lang-java linenums">package net.trajano.openidconnect.crypto;
+
+import java.math.BigInteger;
+import java.security.GeneralSecurityException;
+import java.security.Key;
+import java.security.KeyFactory;
+import java.security.PublicKey;
+import java.security.interfaces.RSAPrivateCrtKey;
+import java.security.interfaces.RSAPublicKey;
+import java.security.spec.RSAPrivateCrtKeySpec;
+import java.security.spec.RSAPublicKeySpec;
+
+import javax.json.JsonObjectBuilder;
+import javax.xml.bind.annotation.XmlElement;
+
+
+public class RsaWebKey extends JsonWebKey {
+
+<span class="fc" id="L19">    public RsaWebKey() {</span>
+
+<span class="fc" id="L21">        setKty(KeyType.RSA);</span>
+<span class="fc" id="L22">    }</span>
+
+<span class="fc" id="L24">    public RsaWebKey(String kid, RSAPublicKey publicKey) {</span>
+
+<span class="fc" id="L26">        setKty(KeyType.RSA);</span>
+<span class="fc" id="L27">        setKid(kid);</span>
+<span class="fc" id="L28">        setUse(KeyUse.sig);</span>
+<span class="fc" id="L29">        n = (Encoding.base64EncodeUint(publicKey.getModulus()));</span>
+<span class="fc" id="L30">        e = (Encoding.base64EncodeUint(publicKey.getPublicExponent()));</span>
+<span class="fc" id="L31">    }</span>
+
+<span class="fc" id="L33">    public RsaWebKey(String kid, RSAPrivateCrtKey privateKey) {</span>
+
+<span class="fc" id="L35">        setKty(KeyType.RSA);</span>
+<span class="fc" id="L36">        setKid(kid);</span>
+<span class="fc" id="L37">        setUse(KeyUse.enc);</span>
+<span class="fc" id="L38">        n = (Encoding.base64EncodeUint(privateKey.getModulus()));</span>
+<span class="fc" id="L39">        e = (Encoding.base64EncodeUint(privateKey.getPublicExponent()));</span>
+<span class="fc" id="L40">        p = (Encoding.base64EncodeUint(privateKey.getPrimeP()));</span>
+<span class="fc" id="L41">        q = (Encoding.base64EncodeUint(privateKey.getPrimeQ()));</span>
+<span class="fc" id="L42">        dp = (Encoding.base64EncodeUint(privateKey.getPrimeExponentP()));</span>
+<span class="fc" id="L43">        dq = (Encoding.base64EncodeUint(privateKey.getPrimeExponentQ()));</span>
+<span class="fc" id="L44">        d = (Encoding.base64EncodeUint(privateKey.getPrivateExponent()));</span>
+<span class="fc" id="L45">        qi = (Encoding.base64EncodeUint(privateKey.getCrtCoefficient()));</span>
+
+<span class="fc" id="L47">    }</span>
+
+    /**
+     * The &quot;d&quot; (private exponent) member contains the private exponent value for
+     * the RSA private key. It is represented as a Base64urlUInt encoded value.
+     */
+    @XmlElement
+    private String d;
+
+    /**
+     * &lt;p&gt;
+     * The &quot;e&quot; (exponent) member contains the exponent value for the RSA public
+     * key. It is represented as a Base64urlUInt encoded value.
+     * &lt;/p&gt;
+     * &lt;p&gt;
+     * For instance, when representing the value 65537, the octet sequence to be
+     * base64url encoded MUST consist of the three octets [1, 0, 1]; the
+     * resulting representation for this value is &quot;AQAB&quot;.
+     * &lt;/p&gt;
+     */
+    @XmlElement
+    private String e;
+
+    /**
+     * &lt;p&gt;
+     * The &quot;n&quot; (modulus) member contains the modulus value for the RSA public
+     * key. It is represented as a Base64urlUInt encoded value.
+     * &lt;/p&gt;
+     * &lt;p&gt;
+     * Note that implementers have found that some cryptographic libraries
+     * prefix an extra zero-valued octet to the modulus representations they
+     * return, for instance, returning 257 octets for a 2048 bit key, rather
+     * than 256. Implementations using such libraries will need to take care to
+     * omit the extra octet from the base64url encoded representation.
+     * &lt;/p&gt;
+     */
+    @XmlElement
+    private String n;
+
+    /**
+     * 
+     The &quot;p&quot; (first prime factor) member contains the first prime factor. It
+     * is represented as a Base64urlUInt encoded value.
+     */
+    @XmlElement
+    private String p;
+
+    /**
+     * 
+     The &quot;q&quot; (second prime factor) member contains the second prime factor. It
+     * is represented as a Base64urlUInt encoded value.
+     */
+    @XmlElement
+    private String q;
+
+    /**
+     * The &quot;dp&quot; (first factor CRT exponent) member contains the Chinese
+     * Remainder Theorem (CRT) exponent of the first factor. It is represented
+     * as a Base64urlUInt encoded value.
+     */
+    @XmlElement
+    private String dp;
+
+    /**
+     * The &quot;dq&quot; (second factor CRT exponent) member contains the Chinese
+     * Remainder Theorem (CRT) exponent of the second factor. It is represented
+     * as a Base64urlUInt encoded value.
+     */
+    @XmlElement
+    private String dq;
+
+    public String getD() {
+
+<span class="nc" id="L120">        return d;</span>
+    }
+
+    /**
+     * The &quot;qi&quot; (first CRT coefficient) member contains the Chinese Remainder
+     * Theorem (CRT) coefficient of the second factor. It is represented as a
+     * Base64urlUInt encoded value.
+     */
+    @XmlElement
+    private String qi;
+
+    public String getE() {
+
+<span class="nc" id="L133">        return e;</span>
+    }
+
+    public String getQ() {
+
+<span class="nc" id="L138">        return q;</span>
+    }
+
+    public void setQ(String q) {
+
+<span class="fc" id="L143">        this.q = q;</span>
+<span class="fc" id="L144">    }</span>
+
+    public String getDp() {
+
+<span class="nc" id="L148">        return dp;</span>
+    }
+
+    public void setDp(String dp) {
+
+<span class="fc" id="L153">        this.dp = dp;</span>
+<span class="fc" id="L154">    }</span>
+
+    public String getDq() {
+
+<span class="nc" id="L158">        return dq;</span>
+    }
+
+    public void setDq(String dq) {
+
+<span class="fc" id="L163">        this.dq = dq;</span>
+<span class="fc" id="L164">    }</span>
+
+    public String getQi() {
+
+<span class="nc" id="L168">        return qi;</span>
+    }
+
+    public void setQi(String qi) {
+
+<span class="fc" id="L173">        this.qi = qi;</span>
+<span class="fc" id="L174">    }</span>
+
+    public String getN() {
+
+<span class="nc" id="L178">        return n;</span>
+    }
+
+    public String getP() {
+
+<span class="nc" id="L183">        return p;</span>
+    }
+
+    public void setD(final String d) {
+
+<span class="fc" id="L188">        this.d = d;</span>
+<span class="fc" id="L189">    }</span>
+
+    public void setE(final String e) {
+
+<span class="fc" id="L193">        this.e = e;</span>
+<span class="fc" id="L194">    }</span>
+
+    public void setN(final String n) {
+
+<span class="fc" id="L198">        this.n = n;</span>
+<span class="fc" id="L199">    }</span>
+
+    public void setP(final String p) {
+
+<span class="fc" id="L203">        this.p = p;</span>
+<span class="fc" id="L204">    }</span>
+
+    @Override
+    public PublicKey toJcaPublicKey() throws GeneralSecurityException {
+
+<span class="fc" id="L209">        final BigInteger modulus = Encoding.base64urlDecodeUint(n);</span>
+<span class="fc" id="L210">        final BigInteger publicExponent = Encoding.base64urlDecodeUint(e);</span>
+<span class="fc" id="L211">        return KeyFactory.getInstance(&quot;RSA&quot;)</span>
+                .generatePublic(new RSAPublicKeySpec(modulus, publicExponent));
+    }
+
+    @Override
+    public Key toJcaKey() throws GeneralSecurityException {
+
+<span class="fc" id="L218">        final BigInteger modulus = Encoding.base64urlDecodeUint(n);</span>
+<span class="fc" id="L219">        final BigInteger publicExponent = Encoding.base64urlDecodeUint(e);</span>
+<span class="fc bfc" id="L220" title="All 4 branches covered.">        if (getUse() == KeyUse.sig || d == null) {</span>
+<span class="fc" id="L221">            return KeyFactory.getInstance(&quot;RSA&quot;)</span>
+                    .generatePublic(new RSAPublicKeySpec(modulus, publicExponent));
+        } else {
+
+<span class="fc" id="L225">            final BigInteger privateExponent = Encoding.base64urlDecodeUint(d);</span>
+<span class="fc" id="L226">            final BigInteger primeP = Encoding.base64urlDecodeUint(p);</span>
+<span class="fc" id="L227">            final BigInteger primeQ = Encoding.base64urlDecodeUint(q);</span>
+<span class="fc" id="L228">            final BigInteger primeExponentP = Encoding.base64urlDecodeUint(dp);</span>
+<span class="fc" id="L229">            final BigInteger primeExponentQ = Encoding.base64urlDecodeUint(dq);</span>
+<span class="fc" id="L230">            final BigInteger crtCoefficent = Encoding.base64urlDecodeUint(qi);</span>
+<span class="fc" id="L231">            return KeyFactory.getInstance(&quot;RSA&quot;)</span>
+                    .generatePrivate(new RSAPrivateCrtKeySpec(modulus, publicExponent, privateExponent, primeP, primeQ, primeExponentP, primeExponentQ, crtCoefficent));
+        }
+
+    }
+
+    @Override
+    protected void addToJsonObject(JsonObjectBuilder keyBuilder) {
+
+<span class="pc bpc" id="L240" title="1 of 2 branches missed.">        if (getUse() == KeyUse.enc) {</span>
+<span class="nc" id="L241">            keyBuilder.add(&quot;d&quot;, d);</span>
+<span class="nc" id="L242">            keyBuilder.add(&quot;p&quot;, p);</span>
+<span class="nc" id="L243">            keyBuilder.add(&quot;dp&quot;, dp);</span>
+<span class="nc" id="L244">            keyBuilder.add(&quot;dq&quot;, dq);</span>
+<span class="nc" id="L245">            keyBuilder.add(&quot;qi&quot;, qi);</span>
+        }
+<span class="fc" id="L247">        keyBuilder.add(&quot;n&quot;, n);</span>
+<span class="fc" id="L248">        keyBuilder.add(&quot;e&quot;, e);</span>
+
+<span class="fc" id="L250">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span></div></body></html>

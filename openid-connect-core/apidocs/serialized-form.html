@@ -1,0 +1,374 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!-- NewPage -->
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html" charset="utf-8">
+<title>Serialized Form (openid-connect-core 1.0.1 API)</title>
+<link rel="stylesheet" type="text/css" href="stylesheet.css" title="Style">
+</head>
+<body>
+<script type="text/javascript"><!--
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="Serialized Form (openid-connect-core 1.0.1 API)";
+    }
+//-->
+</script>
+<noscript>
+<div>JavaScript is disabled on your browser.</div>
+</noscript>
+<!-- ========= START OF TOP NAVBAR ======= -->
+<div class="topNav"><a name="navbar_top">
+<!--   -->
+</a><a href="#skip-navbar_top" title="Skip navigation links"></a><a name="navbar_top_firstrow">
+<!--   -->
+</a>
+<ul class="navList" title="Navigation">
+<li><a href="overview-summary.html">Overview</a></li>
+<li>Package</li>
+<li>Class</li>
+<li>Use</li>
+<li><a href="overview-tree.html">Tree</a></li>
+<li><a href="deprecated-list.html">Deprecated</a></li>
+<li><a href="index-all.html">Index</a></li>
+<li><a href="help-doc.html">Help</a></li>
+</ul>
+</div>
+<div class="subNav">
+<ul class="navList">
+<li>Prev</li>
+<li>Next</li>
+</ul>
+<ul class="navList">
+<li><a href="index.html?serialized-form.html" target="_top">Frames</a></li>
+<li><a href="serialized-form.html" target="_top">No Frames</a></li>
+</ul>
+<ul class="navList" id="allclasses_navbar_top">
+<li><a href="allclasses-noframe.html">All Classes</a></li>
+</ul>
+<div>
+<script type="text/javascript"><!--
+  allClassesLink = document.getElementById("allclasses_navbar_top");
+  if(window==top) {
+    allClassesLink.style.display = "block";
+  }
+  else {
+    allClassesLink.style.display = "none";
+  }
+  //-->
+</script>
+</div>
+<a name="skip-navbar_top">
+<!--   -->
+</a></div>
+<!-- ========= END OF TOP NAVBAR ========= -->
+<div class="header">
+<h1 title="Serialized Form" class="title">Serialized Form</h1>
+</div>
+<div class="serializedFormContainer">
+<ul class="blockList">
+<li class="blockList">
+<h2 title="Package">Package&nbsp;net.trajano.openidconnect.core</h2>
+<ul class="blockList">
+<li class="blockList"><a name="net.trajano.openidconnect.core.OpenIdConnectException">
+<!--   -->
+</a>
+<h3>Class <a href="net/trajano/openidconnect/core/OpenIdConnectException.html" title="class in net.trajano.openidconnect.core">net.trajano.openidconnect.core.OpenIdConnectException</a> extends javax.ws.rs.BadRequestException implements Serializable</h3>
+<dl class="nameValue">
+<dt>serialVersionUID:</dt>
+<dd>7363379256768742855L</dd>
+</dl>
+</li>
+<li class="blockList"><a name="net.trajano.openidconnect.core.RedirectedOpenIdProviderException">
+<!--   -->
+</a>
+<h3>Class <a href="net/trajano/openidconnect/core/RedirectedOpenIdProviderException.html" title="class in net.trajano.openidconnect.core">net.trajano.openidconnect.core.RedirectedOpenIdProviderException</a> extends javax.ws.rs.WebApplicationException implements Serializable</h3>
+<dl class="nameValue">
+<dt>serialVersionUID:</dt>
+<dd>-8684305650194342408L</dd>
+</dl>
+</li>
+</ul>
+</li>
+<li class="blockList">
+<h2 title="Package">Package&nbsp;net.trajano.openidconnect.token</h2>
+<ul class="blockList">
+<li class="blockList"><a name="net.trajano.openidconnect.token.IdToken">
+<!--   -->
+</a>
+<h3>Class <a href="net/trajano/openidconnect/token/IdToken.html" title="class in net.trajano.openidconnect.token">net.trajano.openidconnect.token.IdToken</a> extends <a href="net/trajano/openidconnect/userinfo/Userinfo.html" title="class in net.trajano.openidconnect.userinfo">Userinfo</a> implements Serializable</h3>
+<dl class="nameValue">
+<dt>serialVersionUID:</dt>
+<dd>-6920223034971350418L</dd>
+</dl>
+<ul class="blockList">
+<li class="blockList"><a name="serializedForm">
+<!--   -->
+</a>
+<h3>Serialized Fields</h3>
+<ul class="blockList">
+<li class="blockList">
+<h4>acr</h4>
+<pre><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a> acr</pre>
+<div class="block">OPTIONAL. Authentication Context Class Reference. String specifying an
+ Authentication Context Class Reference value that identifies the
+ Authentication Context Class that the authentication performed satisfied.
+ The value "0" indicates the End-User authentication did not meet the
+ requirements of ISO/IEC 29115 [ISO29115] level 1. Authentication using a
+ long-lived browser cookie, for instance, is one example where the use of
+ "level 0" is appropriate. Authentications with level 0 SHOULD NOT be used
+ to authorize access to any resource of any monetary value. (This
+ corresponds to the OpenID 2.0 PAPE [OpenID.PAPE] nist_auth_level 0.) An
+ absolute URI or an RFC 6711 [RFC6711] registered name SHOULD be used as
+ the acr value; registered names MUST NOT be used with a different meaning
+ than that which is registered. Parties using this claim will need to
+ agree upon the meanings of the values used, which may be
+ context-specific. The acr value is a case sensitive string.</div>
+</li>
+<li class="blockList">
+<h4>amr</h4>
+<pre><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>[] amr</pre>
+<div class="block">OPTIONAL. Authentication Methods References. JSON array of strings that
+ are identifiers for authentication methods used in the authentication.
+ For instance, values might indicate that both password and OTP
+ authentication methods were used. The definition of particular values to
+ be used in the amr Claim is beyond the scope of this specification.
+ Parties using this claim will need to agree upon the meanings of the
+ values used, which may be context-specific. The amr value is an array of
+ case sensitive strings.</div>
+</li>
+<li class="blockList">
+<h4>atHash</h4>
+<pre><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a> atHash</pre>
+</li>
+<li class="blockList">
+<h4>aud</h4>
+<pre><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a> aud</pre>
+<div class="block">REQUIRED. Audience(s) that this ID Token is intended for. It MUST contain
+ the OAuth 2.0 client_id of the Relying Party as an audience value. It MAY
+ also contain identifiers for other audiences. In the general case, the
+ aud value is an array of case sensitive strings. In the common special
+ case when there is one audience, the aud value MAY be a single case
+ sensitive string.</div>
+</li>
+<li class="blockList">
+<h4>authTime</h4>
+<pre>long authTime</pre>
+<div class="block">Time when the End-User authentication occurred. Its value is a JSON
+ number representing the number of seconds from 1970-01-01T0:0:0Z as
+ measured in UTC until the date/time. When a max_age request is made or
+ when auth_time is requested as an Essential Claim, then this Claim is
+ REQUIRED; otherwise, its inclusion is OPTIONAL. (The auth_time Claim
+ semantically corresponds to the OpenID 2.0 PAPE [OpenID.PAPE] auth_time
+ response parameter.)</div>
+</li>
+<li class="blockList">
+<h4>azp</h4>
+<pre><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a> azp</pre>
+<div class="block">OPTIONAL. Authorized party - the party to which the ID Token was issued.
+ If present, it MUST contain the OAuth 2.0 Client ID of this party. This
+ Claim is only needed when the ID Token has a single audience value and
+ that audience is different than the authorized party. It MAY be included
+ even when the authorized party is the same as the sole audience. The azp
+ value is a case sensitive string containing a StringOrURI value.</div>
+</li>
+<li class="blockList">
+<h4>exp</h4>
+<pre>long exp</pre>
+<div class="block">REQUIRED. Expiration time on or after which the ID Token MUST NOT be
+ accepted for processing. The processing of this parameter requires that
+ the current date/time MUST be before the expiration date/time listed in
+ the value. Implementers MAY provide for some small leeway, usually no
+ more than a few minutes, to account for clock skew. Its value is a JSON
+ number representing the number of seconds from 1970-01-01T0:0:0Z as
+ measured in UTC until the date/time. See RFC 3339 [RFC3339] for details
+ regarding date/times in general and UTC in particular.</div>
+</li>
+<li class="blockList">
+<h4>iat</h4>
+<pre>long iat</pre>
+<div class="block">REQUIRED. Time at which the JWT was issued. Its value is a JSON number
+ representing the number of seconds from 1970-01-01T0:0:0Z as measured in
+ UTC until the date/time.</div>
+</li>
+<li class="blockList">
+<h4>iss</h4>
+<pre><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a> iss</pre>
+<div class="block">REQUIRED. Issuer Identifier for the Issuer of the response. The iss value
+ is a case sensitive URL using the https scheme that contains scheme,
+ host, and optionally, port number and path components and no query or
+ fragment components.</div>
+</li>
+<li class="blockList">
+<h4>nonce</h4>
+<pre><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a> nonce</pre>
+<div class="block">String value used to associate a Client session with an ID Token, and to
+ mitigate replay attacks. The value is passed through unmodified from the
+ Authentication Request to the ID Token. If present in the ID Token,
+ Clients MUST verify that the nonce Claim Value is equal to the value of
+ the nonce parameter sent in the Authentication Request. If present in the
+ Authentication Request, Authorization Servers MUST include a nonce Claim
+ in the ID Token with the Claim Value being the nonce value sent in the
+ Authentication Request. Authorization Servers SHOULD perform no other
+ processing on nonce values used. The nonce value is a case sensitive
+ string.</div>
+</li>
+<li class="blockListLast">
+<h4>sub</h4>
+<pre><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a> sub</pre>
+<div class="block">REQUIRED. Subject Identifier. A locally unique and never reassigned
+ identifier within the Issuer for the End-User, which is intended to be
+ consumed by the Client, e.g., 24400320 or
+ AItOawmwtWwcT0k51BayewNvutrJUqsvl6qs7A4. It MUST NOT exceed 255 ASCII
+ characters in length. The sub value is a case sensitive string.</div>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="blockList"><a name="net.trajano.openidconnect.token.IdTokenResponse">
+<!--   -->
+</a>
+<h3>Class <a href="net/trajano/openidconnect/token/IdTokenResponse.html" title="class in net.trajano.openidconnect.token">net.trajano.openidconnect.token.IdTokenResponse</a> extends <a href="net/trajano/openidconnect/token/TokenResponse.html" title="class in net.trajano.openidconnect.token">TokenResponse</a> implements Serializable</h3>
+<dl class="nameValue">
+<dt>serialVersionUID:</dt>
+<dd>-6175007590579157079L</dd>
+</dl>
+<ul class="blockList">
+<li class="blockList"><a name="serializedForm">
+<!--   -->
+</a>
+<h3>Serialized Fields</h3>
+<ul class="blockList">
+<li class="blockList">
+<h4>usedUpAuthenticationCode</h4>
+<pre>boolean usedUpAuthenticationCode</pre>
+<div class="block">Flag to indicate that the token was retrieved using a used up
+ authentication code.</div>
+</li>
+<li class="blockListLast">
+<h4>encodedIdToken</h4>
+<pre><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a> encodedIdToken</pre>
+<div class="block">Encoded ID Token value associated with the authenticated session.</div>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="blockList"><a name="net.trajano.openidconnect.token.InvalidClientException">
+<!--   -->
+</a>
+<h3>Class <a href="net/trajano/openidconnect/token/InvalidClientException.html" title="class in net.trajano.openidconnect.token">net.trajano.openidconnect.token.InvalidClientException</a> extends javax.ws.rs.NotAuthorizedException implements Serializable</h3>
+<dl class="nameValue">
+<dt>serialVersionUID:</dt>
+<dd>6647799059101432680L</dd>
+</dl>
+</li>
+<li class="blockList"><a name="net.trajano.openidconnect.token.TokenResponse">
+<!--   -->
+</a>
+<h3>Class <a href="net/trajano/openidconnect/token/TokenResponse.html" title="class in net.trajano.openidconnect.token">net.trajano.openidconnect.token.TokenResponse</a> extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a> implements Serializable</h3>
+<dl class="nameValue">
+<dt>serialVersionUID:</dt>
+<dd>5216911835177655318L</dd>
+</dl>
+<ul class="blockList">
+<li class="blockList"><a name="serializedForm">
+<!--   -->
+</a>
+<h3>Serialized Fields</h3>
+<ul class="blockList">
+<li class="blockList">
+<h4>accessToken</h4>
+<pre><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a> accessToken</pre>
+<div class="block">REQUIRED. The access token issued by the authorization server.</div>
+</li>
+<li class="blockList">
+<h4>expiresIn</h4>
+<pre>int expiresIn</pre>
+<div class="block">RECOMMENDED. The lifetime in seconds of the access token. For example,
+ the value "3600" denotes that the access token will expire in one hour
+ from the time the response was generated. If omitted, the authorization
+ server SHOULD provide the expiration time via other means or document the
+ default value.</div>
+</li>
+<li class="blockList">
+<h4>refreshToken</h4>
+<pre><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a> refreshToken</pre>
+</li>
+<li class="blockList">
+<h4>scope</h4>
+<pre><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a> scope</pre>
+<div class="block">OPTIONAL, if identical to the scope requested by the client; otherwise,
+ REQUIRED. The scope of the access token as described by Section 3.3.</div>
+</li>
+<li class="blockListLast">
+<h4>tokenType</h4>
+<pre><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a> tokenType</pre>
+<div class="block"><p>
+ REQUIRED. The type of the token issued as described in Section 7.1. Value
+ is case insensitive.
+ </p>
+ <p>
+ The OAuth 2.0 token_type response parameter value MUST be Bearer, as
+ specified in OAuth 2.0 Bearer Token Usage [RFC6750], unless another Token
+ Type has been negotiated with the Client. Servers SHOULD support the
+ Bearer Token Type; use of other Token Types is outside the scope of this
+ specification.
+ </p></div>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<div class="bottomNav"><a name="navbar_bottom">
+<!--   -->
+</a><a href="#skip-navbar_bottom" title="Skip navigation links"></a><a name="navbar_bottom_firstrow">
+<!--   -->
+</a>
+<ul class="navList" title="Navigation">
+<li><a href="overview-summary.html">Overview</a></li>
+<li>Package</li>
+<li>Class</li>
+<li>Use</li>
+<li><a href="overview-tree.html">Tree</a></li>
+<li><a href="deprecated-list.html">Deprecated</a></li>
+<li><a href="index-all.html">Index</a></li>
+<li><a href="help-doc.html">Help</a></li>
+</ul>
+</div>
+<div class="subNav">
+<ul class="navList">
+<li>Prev</li>
+<li>Next</li>
+</ul>
+<ul class="navList">
+<li><a href="index.html?serialized-form.html" target="_top">Frames</a></li>
+<li><a href="serialized-form.html" target="_top">No Frames</a></li>
+</ul>
+<ul class="navList" id="allclasses_navbar_bottom">
+<li><a href="allclasses-noframe.html">All Classes</a></li>
+</ul>
+<div>
+<script type="text/javascript"><!--
+  allClassesLink = document.getElementById("allclasses_navbar_bottom");
+  if(window==top) {
+    allClassesLink.style.display = "block";
+  }
+  else {
+    allClassesLink.style.display = "none";
+  }
+  //-->
+</script>
+</div>
+<a name="skip-navbar_bottom">
+<!--   -->
+</a></div>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+<p class="legalCopy"><small>Copyright &#169; 2012&#x2013;2015 <a href="http://www.trajano.net/">Trajano</a>. All rights reserved.</small></p>
+</body>
+</html>

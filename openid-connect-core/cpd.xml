@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<pmd-cpd>
+   <duplication lines="58" tokens="214">
+      <file line="24"
+            path="/var/lib/jenkins/jobs/openid-connect/workspace/target/checkout/openid-connect-core/src/main/java/net/trajano/openidconnect/rs/AuthenticationRequestJsonProvider.java"/>
+      <file line="24"
+            path="/var/lib/jenkins/jobs/openid-connect/workspace/target/checkout/openid-connect-core/src/main/java/net/trajano/openidconnect/rs/AuthenticationRequestUriProvider.java"/>
+      <codefragment><![CDATA[public class AuthenticationRequestJsonProvider implements MessageBodyReader<AuthenticationRequest>, MessageBodyWriter<AuthenticationRequest> {
+
+    @Override
+    public long getSize(AuthenticationRequest arg0,
+            Class<?> arg1,
+            Type arg2,
+            Annotation[] arg3,
+            MediaType arg4) {
+
+        return -1;
+    }
+
+    @Override
+    public boolean isWriteable(Class<?> type,
+            Type arg1,
+            Annotation[] arg2,
+            MediaType mediaType) {
+
+        return JsonWebKeySet.class.isAssignableFrom(type) && MediaType.APPLICATION_JSON_TYPE.equals(mediaType);
+    }
+
+    @Override
+    public void writeTo(AuthenticationRequest arg0,
+            Class<?> arg1,
+            Type arg2,
+            Annotation[] arg3,
+            MediaType arg4,
+            MultivaluedMap<String, Object> arg5,
+            OutputStream arg6) throws IOException,
+            WebApplicationException {
+
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public boolean isReadable(Class<?> type,
+            Type arg1,
+            Annotation[] arg2,
+            MediaType mediaType) {
+
+        return JsonWebKeySet.class.isAssignableFrom(type) && MediaType.APPLICATION_JSON_TYPE.equals(mediaType);
+    }
+
+    @Override
+    public AuthenticationRequest readFrom(Class<AuthenticationRequest> arg0,
+            Type arg1,
+            Annotation[] arg2,
+            MediaType arg3,
+            MultivaluedMap<String, String> arg4,
+            InputStream arg5) throws IOException,
+            WebApplicationException {
+
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+}]]></codefragment>
+   </duplication>
+   <duplication lines="19" tokens="102">
+      <file line="279"
+            path="/var/lib/jenkins/jobs/openid-connect/workspace/target/checkout/openid-connect-core/src/main/java/net/trajano/openidconnect/internal/JcaJsonWebTokenCrypto.java"/>
+      <file line="320"
+            path="/var/lib/jenkins/jobs/openid-connect/workspace/target/checkout/openid-connect-core/src/main/java/net/trajano/openidconnect/internal/JcaJsonWebTokenCrypto.java"/>
+      <codefragment><![CDATA[        final SecretKey contentEncryptionKey = new SecretKeySpec(encryptionKey,
+            "AES");
+
+        final Cipher contentCipher = Cipher.getInstance(JsonWebAlgorithm
+            .toJca(enc));
+
+        if (JsonWebAlgorithm.isGcm(enc)) {
+            final GCMParameterSpec spec = new GCMParameterSpec(
+                authenticationTag.length * 8, initializationVector);
+            contentCipher.init(Cipher.DECRYPT_MODE, contentEncryptionKey, spec);
+            contentCipher.updateAAD(aad);
+        } else {
+            final IvParameterSpec spec = new IvParameterSpec(
+                initializationVector);
+            contentCipher.init(Cipher.DECRYPT_MODE, contentEncryptionKey, spec);
+        }
+        try {
+            final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            baos.write(contentCipher.update(cipherText));]]></codefragment>
+   </duplication>
+</pmd-cpd>

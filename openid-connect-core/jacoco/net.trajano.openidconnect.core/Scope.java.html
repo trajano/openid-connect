@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>Scope.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">openid-connect-core</a> &gt; <a href="index.source.html" class="el_package">net.trajano.openidconnect.core</a> &gt; <span class="el_source">Scope.java</span></div><h1>Scope.java</h1><pre class="source lang-java linenums">package net.trajano.openidconnect.core;
+
+/**
+ * &lt;p&gt;
+ * OpenID Connect Clients use scope values as defined in 3.3 of OAuth 2.0
+ * [RFC6749] to specify what access privileges are being requested for Access
+ * Tokens. The scopes associated with Access Tokens determine what resources
+ * will be available when they are used to access OAuth 2.0 protected endpoints.
+ * For OpenID Connect, scopes can be used to request that specific sets of
+ * information be made available as Claim Values. This specification describes
+ * only the scope values used by OpenID Connect.
+ * &lt;/p&gt;
+ * &lt;p&gt;
+ * OpenID Connect allows additional scope values to be defined and used. Scope
+ * values used that are not understood by an implementation SHOULD be ignored.
+ * &lt;/p&gt;
+ * &lt;p&gt;
+ * Claims requested by the following scopes are treated by Authorization Servers
+ * as Voluntary Claims.
+ * &lt;/p&gt;
+ */
+<span class="pc" id="L22">public enum Scope {</span>
+    /**
+     * OPTIONAL. This scope value requests access to the address Claim.
+     */
+<span class="fc" id="L26">    address,</span>
+    /**
+     * OPTIONAL. This scope value requests access to the email and
+     * email_verified Claims.
+     */
+<span class="fc" id="L31">    email,</span>
+    /**
+     * OPTIONAL. This scope value requests that an OAuth 2.0 Refresh Token be
+     * issued that can be used to obtain an Access Token that grants access to
+     * the End-User's UserInfo Endpoint even when the End-User is not present
+     * (not logged in).
+     */
+<span class="fc" id="L38">    offline_access,</span>
+    /**
+     * REQUIRED. Informs the Authorization Server that the Client is making an
+     * OpenID Connect request. If the openid scope value is not present, the
+     * behavior is entirely unspecified.
+     */
+<span class="fc" id="L44">    openid,</span>
+    /**
+     * OPTIONAL. This scope value requests access to the phone_number and
+     * phone_number_verified Claims.
+     */
+<span class="fc" id="L49">    phone,</span>
+    /**
+     * OPTIONAL. This scope value requests access to the End-User's default
+     * profile Claims, which are: name, family_name, given_name, middle_name,
+     * nickname, preferred_username, profile, picture, website, gender,
+     * birthdate, zoneinfo, locale, and updated_at.
+     */
+<span class="fc" id="L56">    profile</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span></div></body></html>

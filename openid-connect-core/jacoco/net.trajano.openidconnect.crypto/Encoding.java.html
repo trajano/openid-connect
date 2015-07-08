@@ -1,0 +1,269 @@
+<?xml version="1.0" encoding="utf-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>Encoding.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">openid-connect-core</a> &gt; <a href="index.source.html" class="el_package">net.trajano.openidconnect.crypto</a> &gt; <span class="el_source">Encoding.java</span></div><h1>Encoding.java</h1><pre class="source lang-java linenums">package net.trajano.openidconnect.crypto;
+
+import static net.trajano.openidconnect.internal.CharSets.US_ASCII;
+import static net.trajano.openidconnect.internal.CharSets.UTF8;
+
+import java.math.BigInteger;
+
+/**
+ * base64url implementation.
+ *
+ * @author Archimedes Trajano
+ */
+public final class Encoding {
+
+    /**
+     * Decoding map.
+     */
+    private static final byte[] DECODE_MAP;
+
+    /**
+     * Encoding map.
+     */
+<span class="fc" id="L23">    private static final char[] ENCODE_MAP = &quot;ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_&quot;.toCharArray();</span>
+
+    static {
+<span class="fc" id="L26">        DECODE_MAP = new byte[128];</span>
+<span class="fc bfc" id="L27" title="All 2 branches covered.">        for (byte b = 0; b &lt; 64; ++b) {</span>
+<span class="fc" id="L28">            DECODE_MAP[ENCODE_MAP[b]] = b;</span>
+        }
+<span class="fc" id="L30">        DECODE_MAP['+'] = 62;</span>
+<span class="fc" id="L31">        DECODE_MAP['/'] = 63;</span>
+<span class="fc" id="L32">    }</span>
+
+    /**
+     * Encodes bytes in a buffer into a Base64 string.
+     *
+     * @param bytes
+     *            bytes buffer
+     * @param offset
+     *            offset
+     * @param length
+     *            number of bytes to encode
+     * @return Base64Url string
+     */
+    public static String base64Encode(final byte[] bytes,
+            final int offset,
+            final int length,
+            final boolean padding) {
+
+<span class="fc" id="L50">        final StringBuilder buffer = new StringBuilder(length * 3);</span>
+<span class="fc bfc" id="L51" title="All 2 branches covered.">        for (int i = offset; i &lt; offset + length; i += 3) {</span>
+            // p's are the segments for each byte. For every triple there are 6
+            // segments
+<span class="fc" id="L54">            int p0 = bytes[i] &amp; 0xFC;</span>
+<span class="fc" id="L55">            p0 &gt;&gt;= 2;</span>
+
+<span class="fc" id="L57">        int p1 = bytes[i] &amp; 0x03;</span>
+<span class="fc" id="L58">        p1 &lt;&lt;= 4;</span>
+
+        int p2;
+        int p3;
+<span class="fc bfc" id="L62" title="All 2 branches covered.">        if (i + 1 &lt; offset + length) {</span>
+<span class="fc" id="L63">            p2 = bytes[i + 1] &amp; 0xF0;</span>
+<span class="fc" id="L64">            p2 &gt;&gt;= 4;</span>
+<span class="fc" id="L65">        p3 = bytes[i + 1] &amp; 0x0F;</span>
+<span class="fc" id="L66">        p3 &lt;&lt;= 2;</span>
+        } else {
+<span class="fc" id="L68">            p2 = 0;</span>
+<span class="fc" id="L69">            p3 = 0;</span>
+        }
+        int p4;
+        int p5;
+<span class="fc bfc" id="L73" title="All 2 branches covered.">        if (i + 2 &lt; offset + length) {</span>
+<span class="fc" id="L74">            p4 = bytes[i + 2] &amp; 0xC0;</span>
+<span class="fc" id="L75">            p4 &gt;&gt;= 6;</span>
+<span class="fc" id="L76">        p5 = bytes[i + 2] &amp; 0x3F;</span>
+        } else {
+<span class="fc" id="L78">            p4 = 0;</span>
+<span class="fc" id="L79">            p5 = 0;</span>
+        }
+
+<span class="fc bfc" id="L82" title="All 2 branches covered.">        if (i + 2 &lt; offset + length) {</span>
+<span class="fc" id="L83">            buffer.append(ENCODE_MAP[p0]);</span>
+<span class="fc" id="L84">            buffer.append(ENCODE_MAP[p1 | p2]);</span>
+<span class="fc" id="L85">            buffer.append(ENCODE_MAP[p3 | p4]);</span>
+<span class="fc" id="L86">            buffer.append(ENCODE_MAP[p5]);</span>
+<span class="fc bfc" id="L87" title="All 2 branches covered.">        } else if (i + 1 &lt; offset + length) {</span>
+<span class="fc" id="L88">            buffer.append(ENCODE_MAP[p0]);</span>
+<span class="fc" id="L89">            buffer.append(ENCODE_MAP[p1 | p2]);</span>
+<span class="fc" id="L90">            buffer.append(ENCODE_MAP[p3]);</span>
+<span class="pc bpc" id="L91" title="1 of 2 branches missed.">            if (padding) {</span>
+<span class="nc" id="L92">                buffer.append('=');</span>
+            }
+        } else {
+<span class="fc" id="L95">            buffer.append(ENCODE_MAP[p0]);</span>
+<span class="fc" id="L96">            buffer.append(ENCODE_MAP[p1 | p2]);</span>
+<span class="pc bpc" id="L97" title="1 of 2 branches missed.">            if (padding) {</span>
+<span class="nc" id="L98">                buffer.append(&quot;==&quot;);</span>
+            }
+        }
+        }
+<span class="fc" id="L102">        return buffer.toString();</span>
+    }
+
+    /**
+     * Encodes bytes into a base64 string as UTF8
+     *
+     * @param s
+     *            string to encode.
+     * @return Base64 string
+     */
+    public static String base64Encode(final String s) {
+
+<span class="nc" id="L114">        return base64Encode(s.getBytes(UTF8), 0, s.getBytes(UTF8).length, true);</span>
+    }
+
+    /**
+     * Encodes a US-ASCII string.
+     *
+     * @param s
+     *            string to encode
+     * @return Base64 string
+     */
+    public static String base64EncodeAscii(final String s) {
+
+<span class="nc" id="L126">        return base64urlEncode(s.getBytes(US_ASCII));</span>
+    }
+
+    /**
+     * Encodes Base64urlUInt. The representation of a positive or zero integer
+     * value as the base64url encoding of the value's unsigned big endian
+     * representation as an octet sequence. The octet sequence MUST utilize the
+     * minimum number of octets needed to represent the value. Zero is
+     * represented as BASE64URL(single zero-valued octet), which is &quot;AA&quot;.
+     */
+    public static String base64EncodeUint(final BigInteger v) {
+
+<span class="fc" id="L138">        return base64urlEncode(v.toByteArray());</span>
+    }
+
+    /**
+     * Decodes a base64 or base64url string.
+     *
+     * @param base64String
+     *            base64 string
+     * @return bytes
+     */
+    public static byte[] base64urlDecode(final String base64String) {
+
+<span class="fc" id="L150">        final byte[] buffer = new byte[base64urlDecodeLength(base64String)];</span>
+<span class="fc" id="L151">        base64urlDecode(base64String, buffer, 0);</span>
+<span class="fc" id="L152">        return buffer;</span>
+    }
+
+    /**
+     * Decodes a base64 string to a buffer.
+     *
+     * @param base64String
+     *            base64 string
+     * @param buffer
+     *            buffer to fill
+     * @param offset
+     *            offset
+     * @return amount of bytes decoded.
+     */
+    public static int base64urlDecode(final String base64String,
+            final byte[] buffer,
+            final int offset) {
+
+<span class="fc" id="L170">        int p = 0;</span>
+<span class="fc" id="L171">        final byte[] base64Chars = base64String.getBytes();</span>
+<span class="fc bfc" id="L172" title="All 2 branches covered.">        for (int i = 0; i &lt; base64Chars.length; ++i) {</span>
+<span class="fc bfc" id="L173" title="All 2 branches covered.">            if (i % 4 == 0) {</span>
+<span class="fc" id="L174">                buffer[offset + i - p] = (byte) (DECODE_MAP[base64Chars[i]] &lt;&lt; 2);</span>
+<span class="pc bpc" id="L175" title="1 of 4 branches missed.">            } else if (i % 4 == 1 &amp;&amp; offset + i - p - 1 &lt; buffer.length) {</span>
+<span class="fc" id="L176">                buffer[offset + i - p - 1] |= DECODE_MAP[base64Chars[i]] &gt;&gt; 4;</span>
+<span class="fc bfc" id="L177" title="All 2 branches covered.">            if (offset + i - p &lt; buffer.length) {</span>
+<span class="fc" id="L178">                buffer[offset + i - p] = (byte) (DECODE_MAP[base64Chars[i]] &lt;&lt; 4);</span>
+            }
+<span class="pc bpc" id="L180" title="1 of 4 branches missed.">            } else if (i % 4 == 2 &amp;&amp; offset + i - p - 1 &lt; buffer.length) {</span>
+<span class="fc" id="L181">                buffer[offset + i - p - 1] |= DECODE_MAP[base64Chars[i]] &gt;&gt;&gt; 2;</span>
+<span class="fc bfc" id="L182" title="All 2 branches covered.">                if (offset + i - p &lt; buffer.length) {</span>
+<span class="fc" id="L183">                    buffer[offset + i - p] = (byte) (DECODE_MAP[base64Chars[i]] &lt;&lt; 6);</span>
+                }
+<span class="pc bpc" id="L185" title="1 of 4 branches missed.">            } else if (i % 4 == 3 &amp;&amp; offset + i - p - 1 &lt; buffer.length) {</span>
+<span class="fc" id="L186">                buffer[offset + i - p - 1] |= DECODE_MAP[base64Chars[i]];</span>
+<span class="fc" id="L187">                p++;</span>
+            }
+        }
+<span class="fc" id="L190">        return base64urlDecodeLength(base64String);</span>
+    }
+
+    /**
+     * Gets the byte length of the decoded text.
+     *
+     * @param base64String
+     *            Base64 string
+     * @return byte length of the decoded text.
+     */
+    public static int base64urlDecodeLength(final String base64String) {
+
+<span class="fc" id="L202">        final int originalLength = base64String.length();</span>
+<span class="pc bpc" id="L203" title="1 of 2 branches missed.">        if (originalLength == 0) {</span>
+<span class="nc" id="L204">            return 0;</span>
+<span class="pc bpc" id="L205" title="1 of 2 branches missed.">        } else if (base64String.charAt(originalLength - 2) == '=') {</span>
+<span class="nc" id="L206">            return (originalLength - 2) * 3 / 4;</span>
+<span class="fc bfc" id="L207" title="All 2 branches covered.">        } else if (base64String.charAt(originalLength - 1) == '=') {</span>
+<span class="fc" id="L208">            return (originalLength - 1) * 3 / 4;</span>
+        } else {
+<span class="fc" id="L210">            return originalLength * 3 / 4;</span>
+        }
+    }
+
+    public static String base64urlDecodeToString(final String encoded) {
+
+<span class="fc" id="L216">        return new String(base64urlDecode(encoded), UTF8);</span>
+    }
+
+    /**
+     * Decodes Base64urlUInt. The representation of a positive or zero integer
+     * value as the base64url encoding of the value's unsigned big endian
+     * representation as an octet sequence. The octet sequence MUST utilize the
+     * minimum number of octets needed to represent the value. Zero is
+     * represented as BASE64URL(single zero-valued octet), which is &quot;AA&quot;.
+     */
+    public static BigInteger base64urlDecodeUint(final String s) {
+
+<span class="fc" id="L228">        return new BigInteger(1, base64urlDecode(s));</span>
+    }
+
+    /**
+     * Encodes bytes into a base64url string.
+     *
+     * @param bytes
+     *            bytes to encode
+     * @return Base64 string
+     */
+    public static String base64urlEncode(final byte[] bytes) {
+
+<span class="fc" id="L240">        return base64Encode(bytes, 0, bytes.length, false);</span>
+    }
+
+    public static String base64urlEncode(final byte[] bytes,
+            final int offset,
+            final int len) {
+
+<span class="fc" id="L247">        return base64Encode(bytes, offset, len, false);</span>
+    }
+
+    /**
+     * Encodes a Unicode string as UTF-8.
+     *
+     * @param s
+     *            string to encode
+     * @return Base64 string
+     */
+    public static String base64urlEncode(final String s) {
+
+<span class="fc" id="L259">        return base64urlEncode(s.getBytes(UTF8));</span>
+    }
+
+    /**
+     * Prevent instantiation of utility class.
+     */
+<span class="nc" id="L265">    private Encoding() {</span>
+
+<span class="nc" id="L267">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span></div></body></html>

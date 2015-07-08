@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>IdTokenResponse.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">openid-connect-core</a> &gt; <a href="index.source.html" class="el_package">net.trajano.openidconnect.token</a> &gt; <span class="el_source">IdTokenResponse.java</span></div><h1>IdTokenResponse.java</h1><pre class="source lang-java linenums">package net.trajano.openidconnect.token;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.security.GeneralSecurityException;
+
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.MediaType;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+
+import net.trajano.openidconnect.core.ErrorCode;
+import net.trajano.openidconnect.core.OpenIdConnectException;
+import net.trajano.openidconnect.crypto.JsonWebKeySet;
+import net.trajano.openidconnect.crypto.JsonWebTokenProcessor;
+import net.trajano.openidconnect.rs.IdTokenProvider;
+
+/**
+ * &lt;p&gt;
+ * &lt;a href=&quot;http://openid.net/specs/openid-connect-core-1_0.html#TokenResponse&quot;&gt;
+ * Access Token Response&lt;/a&gt;.
+ * &lt;/p&gt;
+ * &lt;p&gt;
+ * After receiving and validating a valid and authorized Token Request from the
+ * Client, the Authorization Server returns a successful response that includes
+ * an ID Token and an Access Token. The parameters in the successful response
+ * are defined in Section 4.1.4 of OAuth 2.0 [RFC6749]. The response uses the
+ * application/json media type.
+ * &lt;/p&gt;
+ * &lt;p&gt;
+ * The OAuth 2.0 token_type response parameter value MUST be Bearer, as
+ * specified in OAuth 2.0 Bearer Token Usage [RFC6750], unless another Token
+ * Type has been negotiated with the Client. Servers SHOULD support the Bearer
+ * Token Type; use of other Token Types is outside the scope of this
+ * specification.
+ * &lt;/p&gt;
+ * &lt;p&gt;
+ * All Token Responses that contain tokens, secrets, or other sensitive
+ * information MUST include the following HTTP response header fields and
+ * values:
+ * &lt;table&gt;
+ * &lt;tr&gt;
+ * &lt;th&gt;Header Name&lt;/th&gt;
+ * &lt;th&gt;Header Value&lt;/th&gt;
+ * &lt;/tr&gt;
+ * &lt;tr&gt;
+ * &lt;td&gt;Cache-Control&lt;/td&gt;
+ * &lt;td&gt;no-store&lt;/td&gt;
+ * &lt;/tr&gt;
+ * &lt;tr&gt;
+ * &lt;td&gt;Pragma&lt;/td&gt;
+ * &lt;td&gt;no-cache&lt;/td&gt;
+ * &lt;/tr&gt;
+ * &lt;/table&gt;
+ *
+ * @author Archimedes Trajano
+ */
+@XmlRootElement
+@XmlAccessorType(XmlAccessType.FIELD)
+<span class="nc" id="L63">public class IdTokenResponse extends TokenResponse {</span>
+
+    /**
+     * Flag to indicate that the token was retrieved using a used up
+     * authentication code.
+     */
+
+    @XmlTransient
+    private boolean usedUpAuthenticationCode;
+
+    public boolean isUsedUpAuthenticationCode() {
+
+<span class="nc" id="L75">        return usedUpAuthenticationCode;</span>
+    }
+
+    public void setUsedUpAuthenticationCode(boolean usedUpAuthenticationCode) {
+
+<span class="nc" id="L80">        this.usedUpAuthenticationCode = usedUpAuthenticationCode;</span>
+<span class="nc" id="L81">    }</span>
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -6175007590579157079L;
+
+    /**
+     * Encoded ID Token value associated with the authenticated session.
+     */
+    @XmlElement(name = &quot;id_token&quot;,
+        required = true)
+    private String encodedIdToken;
+
+    public String getEncodedIdToken() {
+
+<span class="nc" id="L97">        return encodedIdToken;</span>
+    }
+
+    /**
+     * Gets the ID Token with signature validation.
+     *
+     * @param jwks
+     *            JSON web key set
+     * @return ID token
+     */
+    public IdToken getIdToken(final JsonWebKeySet jwks) {
+
+        try {
+<span class="nc" id="L110">            final JsonWebTokenProcessor p = new JsonWebTokenProcessor(encodedIdToken).jwks(jwks);</span>
+<span class="nc bnc" id="L111" title="All 2 branches missed.">            if (!p.isJwkAvailable()) {</span>
+<span class="nc" id="L112">                throw new OpenIdConnectException(ErrorCode.invalid_request, &quot;no jwk available for kid&quot;);</span>
+            }
+<span class="nc" id="L114">            return new IdTokenProvider().readFrom(IdToken.class, null, null, MediaType.APPLICATION_JSON_TYPE, null, new ByteArrayInputStream(p.getPayload()));</span>
+<span class="nc" id="L115">        } catch (IOException</span>
+                 | GeneralSecurityException e) {
+<span class="nc" id="L117">            throw new WebApplicationException(e);</span>
+        }
+
+    }
+
+    public void setEncodedIdToken(final String encodedIdToken) throws GeneralSecurityException {
+
+<span class="nc" id="L124">        this.encodedIdToken = encodedIdToken;</span>
+<span class="nc" id="L125">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span></div></body></html>

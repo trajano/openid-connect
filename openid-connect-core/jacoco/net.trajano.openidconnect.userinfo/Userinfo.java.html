@@ -1,0 +1,426 @@
+<?xml version="1.0" encoding="utf-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>Userinfo.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">openid-connect-core</a> &gt; <a href="index.source.html" class="el_package">net.trajano.openidconnect.userinfo</a> &gt; <span class="el_source">Userinfo.java</span></div><h1>Userinfo.java</h1><pre class="source lang-java linenums">package net.trajano.openidconnect.userinfo;
+
+import java.util.Date;
+import java.util.Locale;
+
+import javax.json.JsonObject;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+
+/**
+ * &lt;p&gt;
+ * The UserInfo Claims MUST be returned as the members of a JSON object. The
+ * response body SHOULD be encoded using UTF-8. The Claims defined in Section
+ * 2.5 can be returned, as can additional Claims not specified there.
+ * &lt;/p&gt;
+ * &lt;p&gt;
+ * If a Claim is not returned, that Claim Name SHOULD be omitted from the JSON
+ * object representing the Claims; it SHOULD NOT be present with a null or empty
+ * string value.
+ * &lt;/p&gt;
+ * &lt;p&gt;
+ * The sub (subject) Claim MUST always be returned in the UserInfo Response.
+ * &lt;/p&gt;
+ * &lt;p&gt;
+ * NOTE: The UserInfo Endpoint response is not guaranteed to be about the
+ * End-User identified by the sub (subject) element of the ID Token. The sub
+ * Claim in the UserInfo Endpoint response MUST be verified to exactly match the
+ * sub Claim in the ID Token before using additional UserInfo Endpoint Claims.
+ * &lt;/p&gt;
+ */
+@XmlRootElement
+@XmlAccessorType(XmlAccessType.FIELD)
+<span class="fc" id="L35">public class Userinfo {</span>
+
+    /**
+     * End-User's preferred address. The value of the address member is a JSON
+     * [RFC4627] structure containing some or all of the members defined in
+     * Section 2.5.1.
+     */
+    @XmlElement(name = &quot;address&quot;)
+    private JsonObject address;
+
+    /**
+     * End-User's birthday, represented as an ISO 8601:2004 [ISO8601‑2004]
+     * YYYY-MM-DD format. The year MAY be 0000, indicating that it is omitted.
+     * To represent only the year, YYYY format is allowed. Note that depending
+     * on the underlying platform's date related function, providing just year
+     * can result in varying month and day, so the implementers need to take
+     * this factor into account to correctly process the dates.
+     */
+    @XmlElement(name = &quot;birthdate&quot;)
+    private String birthdate;
+
+    /**
+     * End-User's preferred e-mail address. Its value MUST conform to the RFC
+     * 5322 [RFC5322] addr-spec syntax. This value MUST NOT be relied upon to be
+     * unique by the RP, as discussed in Section 2.5.3.
+     */
+    @XmlElement(name = &quot;email&quot;)
+    private String email;
+
+    /**
+     * True if the End-User's e-mail address has been verified; otherwise false.
+     * When this Claim Value is true, this means that the OP took affirmative
+     * steps to ensure that this e-mail address was controlled by the End-User
+     * at the time the verification was performed. The means by which an e-mail
+     * address is verified is context-specific, and dependent upon the trust
+     * framework or contractual agreements within which the parties are
+     * operating.
+     */
+    @XmlElement(name = &quot;email_verified&quot;)
+    private Boolean emailVerified;
+
+    /**
+     * Surname(s) or last name(s) of the End-User. Note that in some cultures,
+     * people can have multiple family names or no family name; all can be
+     * present, with the names being separated by space characters.
+     */
+    @XmlElement(name = &quot;family_name&quot;)
+    private String familyName;
+
+    /**
+     * End-User's gender. Values defined by this specification are female and
+     * male. Other values MAY be used when neither of the defined values are
+     * applicable.
+     */
+    @XmlElement(name = &quot;gender&quot;)
+    private String gender;
+
+    /**
+     * Given name(s) or first name(s) of the End-User. Note that in some
+     * cultures, people can have multiple given names; all can be present, with
+     * the names being separated by space characters.
+     */
+    @XmlElement(name = &quot;given_name&quot;)
+    private String givenName;
+
+    /**
+     * End-User's locale, represented as a BCP47 [RFC5646] language tag. This is
+     * typically an ISO 639-1 Alpha-2 [ISO639‑1] language code in lowercase and
+     * an ISO 3166-1 Alpha-2 [ISO3166‑1] country code in uppercase, separated by
+     * a dash. For example, en-US or fr-CA. As a compatibility note, some
+     * implementations have used an underscore as the separator rather than a
+     * dash, for example, en_US; Implementations MAY choose to accept this
+     * locale syntax as well.
+     */
+    @XmlElement(name = &quot;locale&quot;)
+    private Locale locale;
+
+    /**
+     * Middle name(s) of the End-User. Note that in some cultures, people can
+     * have multiple middle names; all can be present, with the names being
+     * separated by space characters. Also note that in some cultures, middle
+     * names are not used.
+     */
+    @XmlElement(name = &quot;middle_name&quot;)
+    private String middleName;
+
+    /**
+     * End-User's full name in displayable form including all name parts,
+     * possibly including titles and suffixes, ordered according to the
+     * End-User's locale and preferences.
+     */
+    @XmlElement(name = &quot;name&quot;)
+    private String name;
+
+    /**
+     * Casual name of the End-User that may or may not be the same as the
+     * given_name. For instance, a nickname value of Mike might be returned
+     * alongside a given_name value of Michael.
+     */
+    @XmlElement(name = &quot;nickname&quot;)
+    private String nickname;
+
+    /**
+     * End-User's preferred telephone number. E.164 [E.164] is RECOMMENDED as
+     * the format of this Claim, for example, +1 (425) 555-1212 or +56 (2) 687
+     * 2400. If the phone number contains an extension, it is RECOMMENDED that
+     * the extension be represented using the RFC 3966 [RFC3966] extension
+     * syntax, for example, +1 (604) 555-1234;ext=5678.
+     */
+    @XmlElement(name = &quot;phone_number&quot;)
+    private String phoneNumber;
+
+    /**
+     * True if the End-User's phone number has been verified; otherwise false.
+     * When this Claim Value is true, this means that the OP took affirmative
+     * steps to ensure that this phone number was controlled by the End-User at
+     * the time the verification was performed. The means by which a phone
+     * number is verified is context-specific, and dependent upon the trust
+     * framework or contractual agreements within which the parties are
+     * operating. When true, the phone_number Claim MUST be in E.164 format and
+     * any extensions MUST be represented in RFC 3966 format.
+     */
+    @XmlElement(name = &quot;phone_number_verified&quot;)
+    private Boolean phoneNumberVerified;
+
+    /**
+     * URL of the End-User's profile picture. This URL MUST refer to an image
+     * file (for example, a PNG, JPEG, or GIF image file), rather than to a Web
+     * page containing an image. Note that this URL SHOULD specifically
+     * reference a profile photo of the End-User suitable for displaying when
+     * describing the End-User, rather than an arbitrary photo taken by the
+     * End-User.
+     */
+    @XmlElement(name = &quot;picture&quot;)
+    private String picture;
+
+    /**
+     * Shorthand name that the End-User wishes to be referred to at the RP, such
+     * as janedoe or j.doe. This value MAY be any valid JSON string including
+     * special characters such as @, /, or whitespace. This value MUST NOT be
+     * relied upon to be unique by the RP. (See Section 2.5.3.)
+     */
+    @XmlElement(name = &quot;preferred_username&quot;)
+    private String preferredUsername;
+
+    /**
+     * URL of the End-User's profile page. The contents of this Web page SHOULD
+     * be about the End-User.
+     */
+    @XmlElement(name = &quot;profile&quot;)
+    private String profile;
+
+    /**
+     * Subject - Identifier for the End-User at the Issuer.
+     */
+    @XmlElement(name = &quot;sub&quot;, required = true)
+    private String sub;
+
+    /**
+     * Time the End-User's information was last updated. The time is represented
+     * as the number of seconds from 1970-01-01T0:0:0Z as measured in UTC until
+     * the date/time.
+     */
+    @XmlElement(name = &quot;updated_at&quot;)
+    private Long updatedAt;
+
+    /**
+     * URL of the End-User's Web page or blog. This Web page SHOULD contain
+     * information published by the End-User or an organization that the
+     * End-User is affiliated with.
+     */
+    @XmlElement(name = &quot;website&quot;)
+    private String website;
+
+    /**
+     * String from zoneinfo [zoneinfo] time zone database representing the
+     * End-User's time zone. For example, Europe/Paris or America/Los_Angeles.
+     */
+    @XmlElement(name = &quot;zoneinfo&quot;)
+    private String zoneinfo;
+
+    public JsonObject getAddress() {
+
+<span class="nc" id="L218">        return address;</span>
+    }
+
+    public String getBirthdate() {
+
+<span class="nc" id="L223">        return birthdate;</span>
+    }
+
+    public String getEmail() {
+
+<span class="nc" id="L228">        return email;</span>
+    }
+
+    public String getFamilyName() {
+
+<span class="nc" id="L233">        return familyName;</span>
+    }
+
+    public String getGender() {
+
+<span class="nc" id="L238">        return gender;</span>
+    }
+
+    public String getGivenName() {
+
+<span class="nc" id="L243">        return givenName;</span>
+    }
+
+    public Locale getLocale() {
+
+<span class="nc" id="L248">        return locale;</span>
+    }
+
+    public String getMiddleName() {
+
+<span class="nc" id="L253">        return middleName;</span>
+    }
+
+    public String getName() {
+
+<span class="nc" id="L258">        return name;</span>
+    }
+
+    public String getNickname() {
+
+<span class="nc" id="L263">        return nickname;</span>
+    }
+
+    public String getPhoneNumber() {
+
+<span class="nc" id="L268">        return phoneNumber;</span>
+    }
+
+    public String getPicture() {
+
+<span class="nc" id="L273">        return picture;</span>
+    }
+
+    public String getPreferredUsername() {
+
+<span class="nc" id="L278">        return preferredUsername;</span>
+    }
+
+    public String getProfile() {
+
+<span class="nc" id="L283">        return profile;</span>
+    }
+
+    public String getSub() {
+
+<span class="nc" id="L288">        return sub;</span>
+    }
+
+    public long getUpdatedAt() {
+
+<span class="nc" id="L293">        return updatedAt;</span>
+    }
+
+    public String getWebsite() {
+
+<span class="nc" id="L298">        return website;</span>
+    }
+
+    public String getZoneinfo() {
+
+<span class="nc" id="L303">        return zoneinfo;</span>
+    }
+
+    public boolean isEmailVerified() {
+
+<span class="nc" id="L308">        return emailVerified;</span>
+    }
+
+    public boolean isPhoneNumberVerified() {
+
+<span class="nc" id="L313">        return phoneNumberVerified;</span>
+    }
+
+    public void setAddress(final JsonObject address) {
+
+<span class="nc" id="L318">        this.address = address;</span>
+<span class="nc" id="L319">    }</span>
+
+    public void setBirthdate(final String birthdate) {
+
+<span class="nc" id="L323">        this.birthdate = birthdate;</span>
+<span class="nc" id="L324">    }</span>
+
+    public void setEmail(final String email) {
+
+<span class="nc" id="L328">        this.email = email;</span>
+<span class="nc" id="L329">    }</span>
+
+    public void setEmailVerified(final Boolean emailVerified) {
+
+<span class="nc" id="L333">        this.emailVerified = emailVerified;</span>
+<span class="nc" id="L334">    }</span>
+
+    public void setFamilyName(final String familyName) {
+
+<span class="nc" id="L338">        this.familyName = familyName;</span>
+<span class="nc" id="L339">    }</span>
+
+    public void setGender(final String gender) {
+
+<span class="nc" id="L343">        this.gender = gender;</span>
+<span class="nc" id="L344">    }</span>
+
+    public void setGivenName(final String givenName) {
+
+<span class="nc" id="L348">        this.givenName = givenName;</span>
+<span class="nc" id="L349">    }</span>
+
+    public void setLocale(final Locale locale) {
+
+<span class="nc" id="L353">        this.locale = locale;</span>
+<span class="nc" id="L354">    }</span>
+
+    public void setMiddleName(final String middleName) {
+
+<span class="nc" id="L358">        this.middleName = middleName;</span>
+<span class="nc" id="L359">    }</span>
+
+    public void setName(final String name) {
+
+<span class="nc" id="L363">        this.name = name;</span>
+<span class="nc" id="L364">    }</span>
+
+    public void setNickname(final String nickname) {
+
+<span class="nc" id="L368">        this.nickname = nickname;</span>
+<span class="nc" id="L369">    }</span>
+
+    public void setPhoneNumber(final String phoneNumber) {
+
+<span class="nc" id="L373">        this.phoneNumber = phoneNumber;</span>
+<span class="nc" id="L374">    }</span>
+
+    public void setPhoneNumberVerified(final Boolean phoneNumberVerified) {
+
+<span class="nc" id="L378">        this.phoneNumberVerified = phoneNumberVerified;</span>
+<span class="nc" id="L379">    }</span>
+
+    public void setPicture(final String picture) {
+
+<span class="nc" id="L383">        this.picture = picture;</span>
+<span class="nc" id="L384">    }</span>
+
+    public void setPreferredUsername(final String preferredUsername) {
+
+<span class="nc" id="L388">        this.preferredUsername = preferredUsername;</span>
+<span class="nc" id="L389">    }</span>
+
+    public void setProfile(final String profile) {
+
+<span class="nc" id="L393">        this.profile = profile;</span>
+<span class="nc" id="L394">    }</span>
+
+    public void setSub(final String sub) {
+
+<span class="nc" id="L398">        this.sub = sub;</span>
+<span class="nc" id="L399">    }</span>
+
+    public void setUpdatedAt(final long updatedAt) {
+
+<span class="nc" id="L403">        this.updatedAt = updatedAt;</span>
+<span class="nc" id="L404">    }</span>
+
+    public void setUpdatedAt(final Date updatedAt) {
+
+<span class="nc bnc" id="L408" title="All 2 branches missed.">        if (updatedAt != null) {</span>
+<span class="nc" id="L409">            this.updatedAt = updatedAt.getTime() / 1000;</span>
+        } else {
+<span class="nc" id="L411">            this.updatedAt = null;</span>
+        }
+<span class="nc" id="L413">    }</span>
+
+    public void setWebsite(final String website) {
+
+<span class="nc" id="L417">        this.website = website;</span>
+<span class="nc" id="L418">    }</span>
+
+    public void setZoneinfo(final String zoneinfo) {
+
+<span class="nc" id="L422">        this.zoneinfo = zoneinfo;</span>
+<span class="nc" id="L423">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span></div></body></html>

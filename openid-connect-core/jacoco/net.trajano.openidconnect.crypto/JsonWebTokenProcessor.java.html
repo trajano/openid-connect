@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>JsonWebTokenProcessor.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">openid-connect-core</a> &gt; <a href="index.source.html" class="el_package">net.trajano.openidconnect.crypto</a> &gt; <span class="el_source">JsonWebTokenProcessor.java</span></div><h1>JsonWebTokenProcessor.java</h1><pre class="source lang-java linenums">package net.trajano.openidconnect.crypto;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.security.GeneralSecurityException;
+
+import javax.json.Json;
+import javax.json.JsonObject;
+import javax.json.JsonReader;
+
+import net.trajano.openidconnect.internal.JcaJsonWebTokenCrypto;
+
+public class JsonWebTokenProcessor {
+
+<span class="fc" id="L15">    private String alg = JsonWebToken.ALG_NONE;</span>
+
+    /**
+     * Flag to indicate whether jwk can be set directly.
+     */
+<span class="fc" id="L20">    private boolean allowJwkToBeSet = false;</span>
+
+<span class="fc" id="L22">    private final JsonWebTokenCrypto crypto = JcaJsonWebTokenCrypto.getInstance();</span>
+
+<span class="fc" id="L24">    private String enc = null;</span>
+
+    private JsonWebToken jsonWebToken;
+
+<span class="fc" id="L28">    private JsonWebKey jwk = null;</span>
+
+<span class="fc" id="L30">    private String kid = null;</span>
+
+    /**
+     * Flag to indicate that signature check is required.
+     */
+<span class="fc" id="L35">    private boolean signatureCheck = true;</span>
+
+<span class="fc" id="L37">    public JsonWebTokenProcessor(final JsonWebToken jsonWebToken) {</span>
+
+<span class="fc" id="L39">        this.jsonWebToken = jsonWebToken;</span>
+<span class="fc" id="L40">        alg = jsonWebToken.getAlg();</span>
+<span class="fc" id="L41">        enc = jsonWebToken.getEnc();</span>
+<span class="fc" id="L42">        kid = jsonWebToken.getKid();</span>
+
+<span class="fc" id="L44">    }</span>
+
+    public JsonWebTokenProcessor(final String serialization) throws IOException {
+
+<span class="fc" id="L48">        this(new JsonWebToken(serialization));</span>
+<span class="fc" id="L49">    }</span>
+
+    public JsonWebTokenProcessor allowJwkToBeSet(final boolean flag) throws IOException {
+
+<span class="fc" id="L53">        allowJwkToBeSet = flag;</span>
+<span class="fc" id="L54">        return this;</span>
+    }
+
+    /**
+     * Gets the payload JSON object.
+     *
+     * @return payload a a JSON object.
+     * @throws GeneralSecurityException
+     */
+    public JsonObject getJsonPayload() throws GeneralSecurityException {
+
+<span class="fc" id="L65">        final JsonReader r = Json.createReader(new ByteArrayInputStream(getPayload()));</span>
+<span class="fc" id="L66">        return r.readObject();</span>
+
+    }
+
+    public byte[] getPayload() throws GeneralSecurityException {
+
+        byte[] payload;
+<span class="fc bfc" id="L73" title="All 2 branches covered.">        if (JsonWebToken.ALG_NONE.equals(alg)) {</span>
+<span class="fc" id="L74">            payload = jsonWebToken.getPayload(0);</span>
+<span class="fc bfc" id="L75" title="All 2 branches covered.">        } else if (enc != null) {</span>
+<span class="pc bpc" id="L76" title="1 of 2 branches missed.">            if (jsonWebToken.getNumberOfPayloads() != 4) {</span>
+<span class="nc" id="L77">                throw new GeneralSecurityException(&quot;invalid number of payloads in JWT for JWE&quot;);</span>
+            }
+<span class="fc" id="L79">            payload = crypto.getJWEPayload(jsonWebToken, jwk);</span>
+<span class="pc bpc" id="L80" title="3 of 6 branches missed.">        } else if (enc == null &amp;&amp; alg != null &amp;&amp; signatureCheck) {</span>
+<span class="pc bpc" id="L81" title="1 of 2 branches missed.">            if (jsonWebToken.getNumberOfPayloads() != 2) {</span>
+<span class="nc" id="L82">                throw new GeneralSecurityException(&quot;invalid number of payloads in JWT for JWS&quot;);</span>
+            }
+<span class="pc bpc" id="L84" title="1 of 2 branches missed.">            if (jwk == null) {</span>
+<span class="nc" id="L85">                throw new GeneralSecurityException(&quot;No JWK available to validate signature&quot;);</span>
+            }
+<span class="fc" id="L87">            payload = crypto.getJWSPayload(jsonWebToken, jwk, alg);</span>
+<span class="nc bnc" id="L88" title="All 6 branches missed.">        } else if (enc == null &amp;&amp; alg != null &amp;&amp; !signatureCheck) {</span>
+<span class="nc bnc" id="L89" title="All 2 branches missed.">            if (jsonWebToken.getNumberOfPayloads() != 2) {</span>
+<span class="nc" id="L90">                throw new GeneralSecurityException(&quot;invalid number of payloads in JWT for JWS&quot;);</span>
+            }
+<span class="nc" id="L92">            payload = jsonWebToken.getPayload(0);</span>
+        } else {
+<span class="nc" id="L94">            throw new GeneralSecurityException(&quot;invalid JOSE header&quot;);</span>
+        }
+<span class="fc bfc" id="L96" title="All 2 branches covered.">        if (&quot;DEF&quot;.equals(jsonWebToken.getZip())) {</span>
+            try {
+<span class="fc" id="L98">                return crypto.inflate(payload);</span>
+<span class="nc" id="L99">            } catch (IOException e) {</span>
+<span class="nc" id="L100">                throw new GeneralSecurityException(e);</span>
+            }
+        } else {
+<span class="fc" id="L103">            return payload;</span>
+        }
+
+    }
+
+    public JsonWebTokenProcessor jwk(final JsonWebKey jwk) throws IOException {
+
+<span class="pc bpc" id="L110" title="1 of 2 branches missed.">        if (!allowJwkToBeSet) {</span>
+<span class="nc" id="L111">            throw new IOException(&quot;jwk cannot be explicitly set&quot;);</span>
+        }
+<span class="fc" id="L113">        this.jwk = jwk;</span>
+<span class="fc" id="L114">        return this;</span>
+
+    }
+
+    public JsonWebTokenProcessor jwks(final JsonWebKeySet jwks) throws IOException {
+
+<span class="fc bfc" id="L120" title="All 2 branches covered.">        if (kid != null) {</span>
+<span class="fc" id="L121">            jwk = jwks.getJwk(kid);</span>
+<span class="pc bpc" id="L122" title="1 of 2 branches missed.">        } else if (jwks.getKeys().length == 1) {</span>
+<span class="nc" id="L123">            jwk = jwks.getKeys()[0];</span>
+        }
+<span class="fc" id="L125">        return this;</span>
+
+    }
+
+    /**
+     * &lt;p&gt;
+     * Checks if the JWK is already set for the processor. The value is not set
+     * if the {@link #jwk(JsonWebKey)} is not called or the
+     * {@link #jwks(JsonWebKeySet)} is not called or does not contain the key
+     * specified by the {@link #kid}.
+     * &lt;/p&gt;
+     * &lt;p&gt;
+     * If the algorithm is none then it will also return &lt;code&gt;true&lt;/code&gt; as a
+     * JWK is not needed.
+     * &lt;/p&gt;
+     * 
+     * @return jwk is set.
+     */
+    public boolean isJwkAvailable() {
+
+<span class="pc bpc" id="L145" title="1 of 4 branches missed.">        return jwk != null || JsonWebToken.ALG_NONE.equals(alg);</span>
+    }
+
+    /**
+     * Enable or disable signature checks. Signature checks are enabled by
+     * default. Signature checks can be disabled for scenarios where the
+     * signature had already been validated previously in the process and the
+     * JWT was stored as is rather than having the extracted payload kept.
+     */
+    public JsonWebTokenProcessor signatureCheck(boolean b) {
+
+<span class="nc" id="L156">        signatureCheck = b;</span>
+<span class="nc" id="L157">        return this;</span>
+
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span></div></body></html>

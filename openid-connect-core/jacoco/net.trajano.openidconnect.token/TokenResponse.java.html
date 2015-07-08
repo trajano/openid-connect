@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>TokenResponse.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">openid-connect-core</a> &gt; <a href="index.source.html" class="el_package">net.trajano.openidconnect.token</a> &gt; <span class="el_source">TokenResponse.java</span></div><h1>TokenResponse.java</h1><pre class="source lang-java linenums">package net.trajano.openidconnect.token;
+
+import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
+
+import javax.xml.bind.annotation.XmlElement;
+
+import net.trajano.openidconnect.core.Scope;
+
+<span class="nc" id="L12">public class TokenResponse implements Serializable{</span>
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 5216911835177655318L;
+
+    public String getAccessToken() {
+
+<span class="nc" id="L21">        return accessToken;</span>
+    }
+
+    public void setAccessToken(String accessToken) {
+
+<span class="nc" id="L26">        this.accessToken = accessToken;</span>
+<span class="nc" id="L27">    }</span>
+
+    public int getExpiresIn() {
+
+<span class="nc" id="L31">        return expiresIn;</span>
+    }
+
+    public void setExpiresIn(int expiresIn) {
+
+<span class="nc" id="L36">        this.expiresIn = expiresIn;</span>
+<span class="nc" id="L37">    }</span>
+
+    public String getRefreshToken() {
+
+<span class="nc" id="L41">        return refreshToken;</span>
+    }
+
+    public void setRefreshToken(String refreshToken) {
+
+<span class="nc" id="L46">        this.refreshToken = refreshToken;</span>
+<span class="nc" id="L47">    }</span>
+
+    public static final String BEARER = &quot;Bearer&quot;;
+
+    /**
+     * REQUIRED. The access token issued by the authorization server.
+     */
+    @XmlElement(name = &quot;access_token&quot;, required = true)
+    private String accessToken;
+
+    /**
+     * RECOMMENDED. The lifetime in seconds of the access token. For example,
+     * the value &quot;3600&quot; denotes that the access token will expire in one hour
+     * from the time the response was generated. If omitted, the authorization
+     * server SHOULD provide the expiration time via other means or document the
+     * default value.
+     */
+    @XmlElement(name = &quot;expires_in&quot;, required = false)
+    private int expiresIn;
+
+    @XmlElement(name = &quot;refresh_token&quot;)
+    private String refreshToken;
+
+    public void setScope(final String scope) {
+
+<span class="nc" id="L72">        this.scope = scope;</span>
+<span class="nc" id="L73">    }</span>
+
+
+    /**
+     * OPTIONAL, if identical to the scope requested by the client; otherwise,
+     * REQUIRED. The scope of the access token as described by Section 3.3.
+     */
+    private String scope;
+
+    public String getScope() {
+
+<span class="nc" id="L84">        return scope;</span>
+    }
+
+    public void setTokenType(final String tokenType) {
+
+<span class="nc" id="L89">        this.tokenType = tokenType;</span>
+<span class="nc" id="L90">    }</span>
+
+    public void setScopes(Set&lt;Scope&gt; scopes) {
+
+<span class="nc" id="L94">        StringBuilder b = new StringBuilder();</span>
+<span class="nc" id="L95">        Iterator&lt;Scope&gt; i = scopes.iterator();</span>
+<span class="nc" id="L96">        b.append(i.next());</span>
+<span class="nc bnc" id="L97" title="All 2 branches missed.">        while (i.hasNext()) {</span>
+<span class="nc" id="L98">            b.append(' ');</span>
+<span class="nc" id="L99">            b.append(i.next());</span>
+        }
+<span class="nc" id="L101">        scope = b.toString();</span>
+
+<span class="nc" id="L103">    }</span>
+
+    public Set&lt;Scope&gt; getScopes() {
+
+<span class="nc" id="L107">        Set&lt;Scope&gt; scopes = new HashSet&lt;&gt;();</span>
+<span class="nc bnc" id="L108" title="All 2 branches missed.">        for (final String scopePart : scope.split(&quot;\\s&quot;)) {</span>
+<span class="nc" id="L109">            scopes.add(Scope.valueOf(scopePart));</span>
+        }
+<span class="nc" id="L111">        return scopes;</span>
+
+    }
+
+    public String getTokenType() {
+
+<span class="nc" id="L117">        return tokenType;</span>
+    }
+
+    /**
+     * &lt;p&gt;
+     * REQUIRED. The type of the token issued as described in Section 7.1. Value
+     * is case insensitive.
+     * &lt;/p&gt;
+     * &lt;p&gt;
+     * The OAuth 2.0 token_type response parameter value MUST be Bearer, as
+     * specified in OAuth 2.0 Bearer Token Usage [RFC6750], unless another Token
+     * Type has been negotiated with the Client. Servers SHOULD support the
+     * Bearer Token Type; use of other Token Types is outside the scope of this
+     * specification.
+     * &lt;/p&gt;
+     */
+<span class="nc" id="L133">    @XmlElement(name = &quot;token_type&quot;, required = true)</span>
+    private String tokenType = BEARER;
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span></div></body></html>
