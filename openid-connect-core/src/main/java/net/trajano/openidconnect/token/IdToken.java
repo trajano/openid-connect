@@ -91,6 +91,9 @@ public class IdToken extends Userinfo implements Serializable {
     @XmlElement(name = "at_hash")
     private String atHash;
 
+    @XmlElement(name = "c_hash")
+    private String cHash;
+
     /**
      * REQUIRED. Audience(s) that this ID Token is intended for. It MUST contain
      * the OAuth 2.0 client_id of the Relying Party as an audience value. It MAY
@@ -248,6 +251,7 @@ public class IdToken extends Userinfo implements Serializable {
         return nonce;
     }
 
+    @Override
     public String getSub() {
 
         return sub;
@@ -326,8 +330,26 @@ public class IdToken extends Userinfo implements Serializable {
         this.nonce = nonce;
     }
 
+    @Override
     public void setSub(final String sub) {
 
         this.sub = sub;
+    }
+
+    public String getCHash() {
+
+        return cHash;
+    }
+
+    /**
+     * Sets the code hash value.
+     * 
+     * @param cHash
+     *            code hash
+     */
+    public void setCHash(String cHash) {
+
+        this.cHash = cHash;
+
     }
 }

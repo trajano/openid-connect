@@ -199,6 +199,10 @@ public class DefaultTokenProvider implements TokenProvider {
         response.setTokenType(TokenResponse.BEARER);
 
         idToken.setAtHash(computeHash(newAccessToken));
+
+        final String code = keyProvider.nextEncodedToken();
+        idToken.setCHash(computeHash(code));
+        
         idToken.resetIssueAndExpiration(tokenStorage.getDefaultExpiration());
 
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -209,7 +213,6 @@ public class DefaultTokenProvider implements TokenProvider {
                 .payload(baos.toByteArray());
         response.setEncodedIdToken(jwtBuilder.toString());
 
-        final String code = keyProvider.nextEncodedToken();
         tokenStorage.store(idToken, response, code, req.getClaims());
 
         return code;

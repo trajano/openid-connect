@@ -1,5 +1,6 @@
 package net.trajano.openidconnect.auth;
 
+import static net.trajano.openidconnect.core.ErrorCode.access_denied;
 import static net.trajano.openidconnect.core.ErrorCode.invalid_request;
 
 import java.io.IOException;
@@ -26,6 +27,7 @@ import javax.ws.rs.BadRequestException;
 import javax.ws.rs.core.UriBuilder;
 import javax.xml.bind.annotation.XmlTransient;
 
+import net.trajano.openidconnect.core.ErrorCode;
 import net.trajano.openidconnect.core.ErrorResponse;
 import net.trajano.openidconnect.core.OpenIdConnectKey;
 import net.trajano.openidconnect.core.RedirectedOpenIdProviderException;
@@ -630,6 +632,9 @@ public class AuthenticationRequest {
      */
     private void validate() {
 
+        if (responseTypes.isEmpty()) {
+            throw new RedirectedOpenIdProviderException(this, new ErrorResponse(invalid_request, "the request must contain the 'response_types'"), false);
+        }
         if (redirectUri == null) {
             throw new BadRequestException("the request must contain the 'redirect_uri'");
         }
@@ -646,6 +651,10 @@ public class AuthenticationRequest {
 
             throw new RedirectedOpenIdProviderException(this, new ErrorResponse(invalid_request, "Cannot have 'none' with any other value for 'prompt'"));
 
+        }
+
+        if (!isAuthorizationCodeFlow() && !Util.isNotNullOrEmpty(nonce)) {
+            throw new RedirectedOpenIdProviderException(this, new ErrorResponse(invalid_request, "'nonce' required for 'code' flow"));
         }
 
         if (responseTypes.isEmpty()) {

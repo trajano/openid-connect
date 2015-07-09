@@ -69,18 +69,18 @@ public class DefaultAuthenticationResponseProvider implements AuthenticationResp
      */
     @Override
     public AuthenticationResponse buildAuthenticationResponse(final AuthenticationRequest request,
-            final HttpServletRequest req,
-            final String subject) throws IOException,
+        final HttpServletRequest req,
+        final String subject) throws IOException,
             GeneralSecurityException {
 
         final AuthenticationResponse response = new AuthenticationResponse();
 
         final UriBuilder issuerUri = UriBuilder.fromUri(create(req.getRequestURL()
-                .toString()))
-                .scheme("https")
-                .replacePath(req.getContextPath())
-                .replaceQuery(null)
-                .fragment(null);
+            .toString()))
+            .scheme("https")
+            .replacePath(req.getContextPath())
+            .replaceQuery(null)
+            .fragment(null);
 
         final String code = tokenProvider.createNewToken(subject, issuerUri.build(), request);
 
@@ -109,13 +109,14 @@ public class DefaultAuthenticationResponseProvider implements AuthenticationResp
      */
     @Override
     public Response buildResponse(final String requestJwt,
-            final HttpServletRequest request,
-            final String subject) {
+        final HttpServletRequest request,
+        final String subject) {
 
         try {
             final AuthenticationRequest req = new AuthenticationRequest(requestJwt, keyProvider.getPrivateJwks());
             return buildResponse(req, request, subject);
-        } catch (IOException | GeneralSecurityException e) {
+        } catch (IOException
+                 | GeneralSecurityException e) {
             throw new WebApplicationException(e);
         }
 
@@ -126,29 +127,30 @@ public class DefaultAuthenticationResponseProvider implements AuthenticationResp
      */
     @Override
     public Response buildResponse(final AuthenticationRequest req,
-            final HttpServletRequest request,
-            final String subject,
-            boolean consent) {
+        final HttpServletRequest request,
+        final String subject,
+        boolean consent) {
 
         final AuthenticationResponse response;
         try {
             response = buildAuthenticationResponse(req, request, subject);
-        } catch (IOException | GeneralSecurityException e) {
+        } catch (IOException
+                 | GeneralSecurityException e) {
             throw new WebApplicationException(e);
         }
         final AuthenticationResponseConverter converter = new AuthenticationResponseConverter(response.getRedirectUri(), response);
         if (response.getResponseMode() == ResponseMode.query) {
             return Response.temporaryRedirect(converter.toQueryUri())
-                    .build();
+                .build();
         } else if (response.getResponseMode() == ResponseMode.form_post) {
 
             return Response.ok(converter.toFormPost())
-                    .type(MediaType.TEXT_HTML_TYPE)
-                    .cacheControl(CacheConstants.NO_CACHE)
-                    .build();
+                .type(MediaType.TEXT_HTML_TYPE)
+                .cacheControl(CacheConstants.NO_CACHE)
+                .build();
         } else {
             return Response.temporaryRedirect(converter.toFragmentUri())
-                    .build();
+                .build();
         }
     }
 
@@ -157,8 +159,8 @@ public class DefaultAuthenticationResponseProvider implements AuthenticationResp
      */
     @Override
     public Response buildResponse(final AuthenticationRequest req,
-            final HttpServletRequest request,
-            final String subject) {
+        final HttpServletRequest request,
+        final String subject) {
 
         return buildResponse(req, request, subject, false);
     }
@@ -177,8 +179,8 @@ public class DefaultAuthenticationResponseProvider implements AuthenticationResp
      */
     @Override
     public void doCallback(final HttpServletRequest req,
-            final HttpServletResponse response,
-            final String subject) throws IOException,
+        final HttpServletResponse response,
+        final String subject) throws IOException,
             ServletException {
 
         doConsentCallback(req, response, subject, false);
@@ -197,17 +199,17 @@ public class DefaultAuthenticationResponseProvider implements AuthenticationResp
      * @throws GeneralSecurityException
      */
     private URI getConsentRequestUri(String requestJwt,
-            AuthenticationRequest authReq,
-            HttpServletRequest req,
-            String subject) throws IOException,
+        AuthenticationRequest authReq,
+        HttpServletRequest req,
+        String subject) throws IOException,
             GeneralSecurityException {
 
         Consent consentRequested = new Consent(authenticator.getSubject(req), authReq.getClientId(), authReq.getScopes());
 
         if (tokenProvider.getByConsent(consentRequested) == null) {
             final UriBuilder contextUriBuilder = UriBuilder.fromUri(req.getRequestURL()
-                    .toString())
-                    .replacePath(req.getContextPath());
+                .toString())
+                .replacePath(req.getContextPath());
 
             return authenticator.consent(authReq, requestJwt, req, contextUriBuilder);
         }
@@ -231,9 +233,9 @@ public class DefaultAuthenticationResponseProvider implements AuthenticationResp
 
     @Override
     public Response buildResponse(String requestJwt,
-            HttpServletRequest request,
-            String subject,
-            boolean consent) {
+        HttpServletRequest request,
+        String subject,
+        boolean consent) {
 
         // TODO Auto-generated method stub
         return null;
@@ -241,9 +243,9 @@ public class DefaultAuthenticationResponseProvider implements AuthenticationResp
 
     @Override
     public void doConsentCallback(HttpServletRequest req,
-            HttpServletResponse response,
-            String subject,
-            boolean consent) throws IOException,
+        HttpServletResponse response,
+        String subject,
+        boolean consent) throws IOException,
             ServletException {
 
         String requestJwt = req.getParameter(OpenIdConnectKey.REQUEST);
@@ -261,16 +263,16 @@ public class DefaultAuthenticationResponseProvider implements AuthenticationResp
             final AuthenticationResponseConverter authenticationResponse = new AuthenticationResponseConverter(authResponse.getRedirectUri(), authResponse);
             if (authResponse.getResponseMode() == ResponseMode.query) {
                 response.sendRedirect(authenticationResponse.toQueryUri()
-                        .toASCIIString());
+                    .toASCIIString());
 
             } else if (authResponse.getResponseMode() == ResponseMode.form_post) {
                 final String formPost = authenticationResponse.toFormPost();
                 response.setContentLength(formPost.length());
                 response.getWriter()
-                        .print(formPost);
+                    .print(formPost);
             } else {
                 response.sendRedirect(authenticationResponse.toFragmentUri()
-                        .toASCIIString());
+                    .toASCIIString());
             }
         } catch (final GeneralSecurityException e) {
             throw new ServletException(e);

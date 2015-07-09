@@ -29,11 +29,12 @@ public class RedirectedOpenIdProviderException extends WebApplicationException {
     private static final long serialVersionUID = -8684305650194342408L;
 
     private static Response responseBuilder(final URI redirectUri,
-            final ErrorResponse errorResponse,
-            final String state) {
+        final ErrorResponse errorResponse,
+        final String state,
+        final boolean useFragment) {
 
-        final UriBuilder b = UriBuilder.fromUri(redirectUri)
-                .queryParam(ERROR, errorResponse.getError());
+        UriBuilder b = UriBuilder.fromUri(redirectUri)
+            .queryParam(ERROR, errorResponse.getError());
         if (errorResponse.getErrorDescription() != null) {
             b.queryParam(ERROR_DESCRIPTION, errorResponse.getErrorDescription());
         }
@@ -43,8 +44,13 @@ public class RedirectedOpenIdProviderException extends WebApplicationException {
         if (state != null) {
             b.queryParam(STATE, state);
         }
+        if (useFragment) {
+            b = UriBuilder.fromUri(redirectUri).fragment(b.build().getQuery());
+
+        }
         return Response.temporaryRedirect(b.build())
-                .build();
+            .build();
+
     }
 
     /**
@@ -56,7 +62,12 @@ public class RedirectedOpenIdProviderException extends WebApplicationException {
      */
     public RedirectedOpenIdProviderException(final AuthenticationRequest authenticationRequest, ErrorResponse errorResponse) {
 
-        this(authenticationRequest.getRedirectUri(), errorResponse, authenticationRequest.getState());
+        this(authenticationRequest, errorResponse, !authenticationRequest.isAuthorizationCodeFlow());
+    }
+
+    public RedirectedOpenIdProviderException(final AuthenticationRequest authenticationRequest, ErrorResponse errorResponse, boolean useFragment) {
+
+        this(authenticationRequest.getRedirectUri(), errorResponse, authenticationRequest.getState(), useFragment);
     }
 
     public RedirectedOpenIdProviderException(URI redirectUri, ErrorResponse errorResponse) {
@@ -66,6 +77,11 @@ public class RedirectedOpenIdProviderException extends WebApplicationException {
 
     public RedirectedOpenIdProviderException(URI redirectUri, ErrorResponse errorResponse, String state) {
 
-        super(responseBuilder(redirectUri, errorResponse, state));
+        super(responseBuilder(redirectUri, errorResponse, state, false));
+    }
+
+    public RedirectedOpenIdProviderException(URI redirectUri, ErrorResponse errorResponse, String state, boolean useFragment) {
+
+        super(responseBuilder(redirectUri, errorResponse, state, useFragment));
     }
 }

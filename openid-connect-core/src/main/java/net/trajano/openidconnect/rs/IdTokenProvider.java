@@ -131,6 +131,9 @@ public class IdTokenProvider implements MessageBodyReader<IdToken>, MessageBodyW
         if (idToken.getAtHash() != null) {
             b.add("at_hash", idToken.getAtHash());
         }
+        if (idToken.getCHash() != null) {
+            b.add("c_hash", idToken.getCHash());
+        }
         b.add("iat", idToken.getIat());
         b.add("exp", idToken.getExp());
         b.add("iss", idToken.getIss());
