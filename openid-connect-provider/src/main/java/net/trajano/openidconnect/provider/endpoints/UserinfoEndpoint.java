@@ -85,6 +85,11 @@ public class UserinfoEndpoint {
     public Response op(@Context final HttpServletRequest req) {
 
         final String accessToken = AuthorizationUtil.processBearer(req);
+        if (accessToken == null) {
+            return Response.status(400)
+                    .entity(new ErrorResponse(ErrorCode.access_denied, "unable to retrieve id token"))
+                    .build();
+        }
         IdTokenResponse byAccessToken = tokenProvider.getByAccessToken(accessToken);
         if (byAccessToken == null) {
             return Response.status(400)

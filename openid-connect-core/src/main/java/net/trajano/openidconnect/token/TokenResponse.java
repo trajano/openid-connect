@@ -7,10 +7,12 @@ import java.util.Set;
 
 import javax.xml.bind.annotation.XmlElement;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import net.trajano.openidconnect.core.Scope;
 
+@JsonIgnoreProperties(ignoreUnknown=true)
 public class TokenResponse implements Serializable{
-
     /**
      * 
      */

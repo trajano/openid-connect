@@ -1,6 +1,5 @@
 package net.trajano.openidconnect.auth;
 
-import static net.trajano.openidconnect.core.ErrorCode.access_denied;
 import static net.trajano.openidconnect.core.ErrorCode.invalid_request;
 
 import java.io.IOException;
@@ -27,7 +26,6 @@ import javax.ws.rs.BadRequestException;
 import javax.ws.rs.core.UriBuilder;
 import javax.xml.bind.annotation.XmlTransient;
 
-import net.trajano.openidconnect.core.ErrorCode;
 import net.trajano.openidconnect.core.ErrorResponse;
 import net.trajano.openidconnect.core.OpenIdConnectKey;
 import net.trajano.openidconnect.core.RedirectedOpenIdProviderException;
@@ -292,6 +290,9 @@ public class AuthenticationRequest {
 
     private final Set<Scope> scopes;
 
+    /**
+     * State.
+     */
     private final String state;
 
     private final List<Locale> uiLocales;
