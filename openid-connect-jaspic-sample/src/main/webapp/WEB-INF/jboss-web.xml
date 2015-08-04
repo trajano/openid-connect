@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<jboss-web xmlns="http://www.jboss.com/xml/ns/javaee"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-	<security-domain>jaspi</security-domain>
-	<security-role>
-		<role-name>users</role-name>
-		<principal-name>https://localhost:8443/</principal-name>
-	</security-role>
-</jboss-web>

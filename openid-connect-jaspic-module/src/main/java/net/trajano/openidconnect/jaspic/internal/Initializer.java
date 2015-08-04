@@ -6,7 +6,6 @@ import static net.trajano.openidconnect.core.OpenIdConnectKey.CLIENT_SECRET;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.annotation.ManagedBean;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.security.auth.message.config.AuthConfigFactory;
@@ -25,8 +24,9 @@ import net.trajano.openidconnect.jaspic.OpenIdConnectModuleConfigProviderRemote;
  * module and registers itself as the OAuth provider.
  */
 @WebListener
-@ManagedBean
-public class Initializer implements ServletContextListener {
+@Stateless
+public class Initializer implements
+    ServletContextListener {
 
     @EJB
     private OpenIdConnectModuleConfigProviderRemote config;
@@ -82,7 +82,7 @@ public class Initializer implements ServletContextListener {
      * concatenating the host name, a blank separator character, and the decoded
      * context path corresponding to the web module.
      * </p>
-     * 
+     *
      * <pre>
      * AppContextID ::= hostname blank context-path
      * For example: "java-server /petstore"
@@ -106,7 +106,7 @@ public class Initializer implements ServletContextListener {
 
         return sce.getServletContext()
             .getVirtualServerName() + " "
-                + sce.getServletContext()
-                    .getContextPath();
+            + sce.getServletContext()
+                .getContextPath();
     }
 }

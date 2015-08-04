@@ -5,6 +5,7 @@ import java.net.URI;
 import java.security.GeneralSecurityException;
 
 import javax.ejb.EJB;
+import javax.ejb.Stateless;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
@@ -33,6 +34,7 @@ import net.trajano.openidconnect.token.IdTokenResponse;
 import net.trajano.openidconnect.token.TokenResponse;
 
 @Path("token")
+@Stateless
 @Produces(MediaType.APPLICATION_JSON)
 public class TokenEndpoint {
 

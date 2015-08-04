@@ -1,6 +1,7 @@
 package net.trajano.openidconnect.provider.endpoints;
 
 import javax.ejb.EJB;
+import javax.ejb.Stateless;
 import javax.json.JsonObject;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
@@ -48,7 +49,7 @@ import net.trajano.openidconnect.userinfo.Userinfo;
  * Clients to access the endpoint.
  * </p>
  */
-@Path("profile")
+@Path("profile")@Stateless
 @Produces(MediaType.APPLICATION_JSON)
 public class UserinfoEndpoint {
 

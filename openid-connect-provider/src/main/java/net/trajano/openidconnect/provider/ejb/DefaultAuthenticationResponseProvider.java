@@ -41,17 +41,21 @@ import net.trajano.openidconnect.token.TokenResponse;
  * @author Archimedes Trajano
  */
 @Stateless
-public class DefaultAuthenticationResponseProvider implements AuthenticationResponseProvider {
-
-    private KeyProvider keyProvider;
-
-    private TokenProvider tokenProvider;
+public class DefaultAuthenticationResponseProvider implements
+    AuthenticationResponseProvider {
 
     @EJB
     private Authenticator authenticator;
 
     @EJB
     private ClientManager clientManager;
+
+    private KeyProvider keyProvider;
+
+    @Context
+    javax.ws.rs.ext.Providers providers;
+
+    private TokenProvider tokenProvider;
 
     /**
      * @param responseType
@@ -108,18 +112,11 @@ public class DefaultAuthenticationResponseProvider implements AuthenticationResp
      * {@inheritDoc}
      */
     @Override
-    public Response buildResponse(final String requestJwt,
+    public Response buildResponse(final AuthenticationRequest req,
         final HttpServletRequest request,
         final String subject) {
 
-        try {
-            final AuthenticationRequest req = new AuthenticationRequest(requestJwt, keyProvider.getPrivateJwks());
-            return buildResponse(req, request, subject);
-        } catch (IOException
-                 | GeneralSecurityException e) {
-            throw new WebApplicationException(e);
-        }
-
+        return buildResponse(req, request, subject, false);
     }
 
     /**
@@ -129,13 +126,13 @@ public class DefaultAuthenticationResponseProvider implements AuthenticationResp
     public Response buildResponse(final AuthenticationRequest req,
         final HttpServletRequest request,
         final String subject,
-        boolean consent) {
+        final boolean consent) {
 
         final AuthenticationResponse response;
         try {
             response = buildAuthenticationResponse(req, request, subject);
         } catch (IOException
-                 | GeneralSecurityException e) {
+            | GeneralSecurityException e) {
             throw new WebApplicationException(e);
         }
         final AuthenticationResponseConverter converter = new AuthenticationResponseConverter(response.getRedirectUri(), response);
@@ -158,11 +155,28 @@ public class DefaultAuthenticationResponseProvider implements AuthenticationResp
      * {@inheritDoc}
      */
     @Override
-    public Response buildResponse(final AuthenticationRequest req,
+    public Response buildResponse(final String requestJwt,
         final HttpServletRequest request,
         final String subject) {
 
-        return buildResponse(req, request, subject, false);
+        try {
+            final AuthenticationRequest req = new AuthenticationRequest(requestJwt, keyProvider.getPrivateJwks());
+            return buildResponse(req, request, subject);
+        } catch (IOException
+            | GeneralSecurityException e) {
+            throw new WebApplicationException(e);
+        }
+
+    }
+
+    @Override
+    public Response buildResponse(final String requestJwt,
+        final HttpServletRequest request,
+        final String subject,
+        final boolean consent) {
+
+        // TODO Auto-generated method stub
+        return null;
     }
 
     /**
@@ -187,73 +201,19 @@ public class DefaultAuthenticationResponseProvider implements AuthenticationResp
 
     }
 
-    /**
-     * Gets the consent URI assuming the user has not consented yet.
-     * 
-     * @param requestJwt
-     * @param authReq
-     * @param req
-     * @param subject
-     * @return
-     * @throws IOException
-     * @throws GeneralSecurityException
-     */
-    private URI getConsentRequestUri(String requestJwt,
-        AuthenticationRequest authReq,
-        HttpServletRequest req,
-        String subject) throws IOException,
-            GeneralSecurityException {
-
-        Consent consentRequested = new Consent(authenticator.getSubject(req), authReq.getClientId(), authReq.getScopes());
-
-        if (tokenProvider.getByConsent(consentRequested) == null) {
-            final UriBuilder contextUriBuilder = UriBuilder.fromUri(req.getRequestURL()
-                .toString())
-                .replacePath(req.getContextPath());
-
-            return authenticator.consent(authReq, requestJwt, req, contextUriBuilder);
-        }
-        return null;
-    }
-
-    @EJB
-    public void setKeyProvider(final KeyProvider keyProvider) {
-
-        this.keyProvider = keyProvider;
-    }
-
-    @EJB
-    public void setTokenProvider(final TokenProvider tokenProvider) {
-
-        this.tokenProvider = tokenProvider;
-    }
-
-    @Context
-    javax.ws.rs.ext.Providers providers;
-
     @Override
-    public Response buildResponse(String requestJwt,
-        HttpServletRequest request,
-        String subject,
-        boolean consent) {
-
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public void doConsentCallback(HttpServletRequest req,
-        HttpServletResponse response,
-        String subject,
-        boolean consent) throws IOException,
+    public void doConsentCallback(final HttpServletRequest req,
+        final HttpServletResponse response,
+        final String subject,
+        final boolean consent) throws IOException,
             ServletException {
 
-        String requestJwt = req.getParameter(OpenIdConnectKey.REQUEST);
+        final String requestJwt = req.getParameter(OpenIdConnectKey.REQUEST);
         try {
             final AuthenticationRequest authReq = new AuthenticationRequest(requestJwt, keyProvider.getPrivateJwks());
 
             if (!consent) {
-                URI consentRequestURI = getConsentRequestUri(requestJwt, authReq, req, subject);
+                final URI consentRequestURI = getConsentRequestUri(requestJwt, authReq, req, subject);
                 if (consentRequestURI != null) {
                     response.sendRedirect(consentRequestURI.toASCIIString());
                     return;
@@ -278,6 +238,47 @@ public class DefaultAuthenticationResponseProvider implements AuthenticationResp
             throw new ServletException(e);
         }
 
+    }
+
+    /**
+     * Gets the consent URI assuming the user has not consented yet.
+     *
+     * @param requestJwt
+     * @param authReq
+     * @param req
+     * @param subject
+     * @return
+     * @throws IOException
+     * @throws GeneralSecurityException
+     */
+    private URI getConsentRequestUri(final String requestJwt,
+        final AuthenticationRequest authReq,
+        final HttpServletRequest req,
+        final String subject) throws IOException,
+            GeneralSecurityException {
+
+        final Consent consentRequested = new Consent(authenticator.getSubject(req), authReq.getClientId(), authReq.getScopes());
+
+        if (tokenProvider.getByConsent(consentRequested) == null) {
+            final UriBuilder contextUriBuilder = UriBuilder.fromUri(req.getRequestURL()
+                .toString())
+                .replacePath(req.getContextPath());
+
+            return authenticator.consent(authReq, requestJwt, req, contextUriBuilder);
+        }
+        return null;
+    }
+
+    @EJB
+    public void setKeyProvider(final KeyProvider keyProvider) {
+
+        this.keyProvider = keyProvider;
+    }
+
+    @EJB
+    public void setTokenProvider(final TokenProvider tokenProvider) {
+
+        this.tokenProvider = tokenProvider;
     }
 
 }

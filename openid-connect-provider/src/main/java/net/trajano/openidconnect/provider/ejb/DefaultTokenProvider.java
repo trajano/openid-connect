@@ -16,8 +16,6 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 
 import net.trajano.openidconnect.auth.AuthenticationRequest;
-import net.trajano.openidconnect.core.ErrorCode;
-import net.trajano.openidconnect.core.OpenIdConnectException;
 import net.trajano.openidconnect.core.Scope;
 import net.trajano.openidconnect.crypto.Encoding;
 import net.trajano.openidconnect.crypto.JsonWebAlgorithm;
@@ -35,7 +33,8 @@ import net.trajano.openidconnect.token.TokenResponse;
 import net.trajano.openidconnect.userinfo.Userinfo;
 
 @Stateless
-public class DefaultTokenProvider implements TokenProvider {
+public class DefaultTokenProvider implements
+    TokenProvider {
 
     @EJB
     private KeyProvider keyProvider;
@@ -67,9 +66,9 @@ public class DefaultTokenProvider implements TokenProvider {
      */
     @Override
     public String createNewToken(final String subject,
-            final URI issuer,
-            final AuthenticationRequest req) throws IOException,
-                    GeneralSecurityException {
+        final URI issuer,
+        final AuthenticationRequest req) throws IOException,
+            GeneralSecurityException {
 
         final IdToken idToken = new IdToken();
         idToken.setSub(subject);
@@ -81,11 +80,11 @@ public class DefaultTokenProvider implements TokenProvider {
         idToken.setAcr("0");
 
         if (req.getClaims()
-                .containsKey("id_token")) {
-            Userinfo userinfo = userinfoProvider.getUserinfo(idToken);
-            for (Entry<String, JsonValue> e : req.getClaims()
-                    .getJsonObject("id_token")
-                    .entrySet()) {
+            .containsKey("id_token")) {
+            final Userinfo userinfo = userinfoProvider.getUserinfo(idToken);
+            for (final Entry<String, JsonValue> e : req.getClaims()
+                .getJsonObject("id_token")
+                .entrySet()) {
                 if ("name".equals(e.getKey())) {
                     idToken.setName(userinfo.getName());
                 }
@@ -103,7 +102,7 @@ public class DefaultTokenProvider implements TokenProvider {
 
     @Override
     public IdTokenResponse getByCode(final String code,
-            final boolean deleteAfterRetrieval) {
+        final boolean deleteAfterRetrieval) {
 
         final IdTokenResponse tokenResponse = tokenStorage.getByCode(code);
 
@@ -115,6 +114,7 @@ public class DefaultTokenProvider implements TokenProvider {
             return null;
         }
         if (deleteAfterRetrieval) {
+            tokenStorage.removeMappingForCode(code);
             tokenStorage.markCodeAsUsed(code);
         }
         return tokenResponse;
@@ -127,18 +127,24 @@ public class DefaultTokenProvider implements TokenProvider {
     }
 
     @Override
+    public JsonObject getClaimsByAccessToken(final String accessToken) {
+
+        return tokenStorage.getClaimsByAccessToken(accessToken);
+    }
+
+    @Override
     public IdTokenResponse refreshToken(final String clientId,
-            final String refreshTokenIn,
-            final Set<Scope> scopes,
-            final Integer expiresIn) throws IOException,
-                    GeneralSecurityException {
+        final String refreshTokenIn,
+        final Set<Scope> scopes,
+        final Integer expiresIn) throws IOException,
+            GeneralSecurityException {
 
         final IdTokenResponse idTokenResponse = tokenStorage.removeMappingForRefreshToken(refreshTokenIn);
         if (idTokenResponse == null) {
-            throw new OpenIdConnectException(ErrorCode.access_denied);
+            return null;
         }
         if (!clientId.equals(idTokenResponse.getIdToken(keyProvider.getPrivateJwks())
-                .getAud())) {
+            .getAud())) {
             throw new WebApplicationException();
         }
         if (scopes != null && !scopes.containsAll(scopes)) {
@@ -148,7 +154,7 @@ public class DefaultTokenProvider implements TokenProvider {
             idTokenResponse.setScopes(scopes);
         }
 
-        JsonObject claims = tokenStorage.getClaimsByAccessToken(idTokenResponse.getAccessToken());
+        final JsonObject claims = tokenStorage.getClaimsByAccessToken(idTokenResponse.getAccessToken());
         // remove from map we are getting a new one
         tokenStorage.removeMappingForAccessToken(idTokenResponse.getAccessToken());
         final String newAccessToken = keyProvider.nextEncodedToken();
@@ -171,7 +177,7 @@ public class DefaultTokenProvider implements TokenProvider {
         baos.close();
 
         final JsonWebTokenBuilder jwtBuilder = new JsonWebTokenBuilder().jwk(keyProvider.getPrivateJwks())
-                .payload(baos.toByteArray());
+            .payload(baos.toByteArray());
         idTokenResponse.setEncodedIdToken(jwtBuilder.toString());
 
         tokenStorage.store(idToken, idTokenResponse, claims);
@@ -192,8 +198,8 @@ public class DefaultTokenProvider implements TokenProvider {
      * @throws GeneralSecurityException
      */
     private String store(final IdToken idToken,
-            final AuthenticationRequest req) throws IOException,
-                    GeneralSecurityException {
+        final AuthenticationRequest req) throws IOException,
+            GeneralSecurityException {
 
         final IdTokenResponse response = new IdTokenResponse();
         final String newAccessToken = keyProvider.nextEncodedToken();
@@ -207,26 +213,20 @@ public class DefaultTokenProvider implements TokenProvider {
 
         final String code = keyProvider.nextEncodedToken();
         idToken.setCHash(computeHash(code));
-        
+
         idToken.resetIssueAndExpiration(tokenStorage.getDefaultExpiration());
 
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
         new IdTokenProvider().writeTo(idToken, IdToken.class, IdToken.class, null, MediaType.APPLICATION_JSON_TYPE, null, baos);
         baos.close();
         final JsonWebTokenBuilder jwtBuilder = new JsonWebTokenBuilder().jwk(keyProvider.getPrivateJwks())
-                .alg(JsonWebAlgorithm.RS256)
-                .payload(baos.toByteArray());
+            .alg(JsonWebAlgorithm.RS256)
+            .payload(baos.toByteArray());
         response.setEncodedIdToken(jwtBuilder.toString());
 
         tokenStorage.store(idToken, response, code, req.getClaims());
 
         return code;
-    }
-
-    @Override
-    public JsonObject getClaimsByAccessToken(String accessToken) {
-
-        return tokenStorage.getClaimsByAccessToken(accessToken);
     }
 
 }

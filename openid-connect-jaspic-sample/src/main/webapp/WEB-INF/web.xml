@@ -15,6 +15,8 @@
 			<url-pattern>/*</url-pattern>
 		</web-resource-collection>
 		<auth-constraint>
+			<role-name>https://localhost:9443/</role-name>
+			<role-name>https://localhost:8443/</role-name>
 			<role-name>users</role-name>
 		</auth-constraint>
 		<user-data-constraint>

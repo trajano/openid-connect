@@ -4,6 +4,7 @@ import static java.net.URI.create;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
+import javax.ejb.Stateless;
 import javax.servlet.ServletRegistration;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
@@ -26,6 +27,7 @@ import net.trajano.openidconnect.provider.spi.UserinfoProvider;
 import net.trajano.openidconnect.token.GrantType;
 
 @Path("openid-configuration")
+@Stateless
 public class WellKnownOpenIdConfiguration {
 
     public static final String CODE = "code";

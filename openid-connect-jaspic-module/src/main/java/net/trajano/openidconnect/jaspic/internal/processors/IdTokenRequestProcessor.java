@@ -3,7 +3,6 @@ package net.trajano.openidconnect.jaspic.internal.processors;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 
-import javax.json.Json;
 import javax.security.auth.message.AuthStatus;
 import javax.ws.rs.core.MediaType;
 
@@ -25,12 +24,11 @@ public class IdTokenRequestProcessor implements ValidateRequestProcessor {
 
     @Override
     public AuthStatus validateRequest(final ValidateContext context) throws IOException,
-    GeneralSecurityException {
+        GeneralSecurityException {
 
         context.setContentType(MediaType.APPLICATION_JSON);
-        Json.createWriter(context.getResp()
-                .getOutputStream())
-                .writeObject(context.getIdToken());
+        context.getResp()
+            .getOutputStream().print(context.getIdToken().toString());
         return AuthStatus.SEND_SUCCESS;
     }
 }
