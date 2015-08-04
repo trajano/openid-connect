@@ -16,6 +16,8 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 
 import net.trajano.openidconnect.auth.AuthenticationRequest;
+import net.trajano.openidconnect.core.ErrorCode;
+import net.trajano.openidconnect.core.OpenIdConnectException;
 import net.trajano.openidconnect.core.Scope;
 import net.trajano.openidconnect.crypto.Encoding;
 import net.trajano.openidconnect.crypto.JsonWebAlgorithm;
@@ -132,6 +134,9 @@ public class DefaultTokenProvider implements TokenProvider {
                     GeneralSecurityException {
 
         final IdTokenResponse idTokenResponse = tokenStorage.removeMappingForRefreshToken(refreshTokenIn);
+        if (idTokenResponse == null) {
+            throw new OpenIdConnectException(ErrorCode.access_denied);
+        }
         if (!clientId.equals(idTokenResponse.getIdToken(keyProvider.getPrivateJwks())
                 .getAud())) {
             throw new WebApplicationException();

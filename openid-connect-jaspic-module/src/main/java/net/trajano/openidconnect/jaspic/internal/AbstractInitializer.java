@@ -3,45 +3,34 @@ package net.trajano.openidconnect.jaspic.internal;
 import static net.trajano.openidconnect.core.OpenIdConnectKey.CLIENT_ID;
 import static net.trajano.openidconnect.core.OpenIdConnectKey.CLIENT_SECRET;
 
+import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.annotation.Resource;
 import javax.security.auth.message.config.AuthConfigFactory;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
-import javax.servlet.annotation.WebListener;
 
 import net.trajano.openidconnect.jaspic.OpenIdConnectAuthModule;
 import net.trajano.openidconnect.jaspic.OpenIdConnectModuleConfigProvider;
 
 /**
- * This initializes the OpenID Connector JASPIC module and registers itself as
- * the OAuth provider.
+ * This provides the base implementation for the OpenID JASPIC Module
+ * initializer. It is intended that applications will extend this and register
+ * themselves as a WebListener. This initializes the OpenID Connector JASPIC
+ * module and registers itself as the OAuth provider.
  */
-@WebListener
-public class Initializer implements ServletContextListener {
+public abstract class AbstractInitializer implements ServletContextListener {
 
-    /**
-     * asadmin set-web-env-entry
-     * --name=net.trajano.openidconnect.jaspic/client_id --value=admin
-     * --type=java.lang.String
-     * openid-connect-sample/openid-connect-jaspic-sample-1.0.0-SNAPSHOT.war
-     */
-    @Resource(lookup = "java:global/net.trajano.openidconnect.jaspic/client_id", description = "Client ID")
-    private String clientId;
+    protected abstract String getClientId();
 
-    @Resource(name = "net.trajano.openidconnect.jaspic/client_secret", description = "Client Secret")
-    private String clientSecret;
+    protected abstract String getClientSecret();
 
-    @Resource(name = "net.trajano.openidconnect.jaspic/disable_certificate_checks", description = "Disable certificate checks. (optional, defaults to false)")
-    private String disableCertificateChecks = Boolean.FALSE.toString();
+    protected abstract boolean isCertificateCheckDisabled();
 
-    @Resource(name = "net.trajano.openidconnect.jaspic/issuer_uri", description = "Issuer URI")
-    private String issuerUri;
+    protected abstract String getScope();
 
-    @Resource(name = "net.trajano.openidconnect.jaspic/scope", description = "Scope. (optional, defaults to 'openid profile email')")
-    private String scope = "openid profile email";
+    protected abstract URI getIssuerUri();
 
     /**
      * A String identifier assigned by the {@link AuthConfigFactory} to the
@@ -54,7 +43,7 @@ public class Initializer implements ServletContextListener {
     public void contextDestroyed(final ServletContextEvent sce) {
 
         AuthConfigFactory.getFactory()
-                .removeRegistration(registrationID);
+            .removeRegistration(registrationID);
     }
 
     @Override
@@ -62,16 +51,16 @@ public class Initializer implements ServletContextListener {
 
         final Map<String, String> options = new HashMap<>();
 
-        options.put(CLIENT_ID, clientId);
-        options.put(CLIENT_SECRET, clientSecret);
-        options.put(OpenIdConnectAuthModule.DISABLE_CERTIFICATE_CHECKS_KEY, disableCertificateChecks);
-        options.put(OpenIdConnectAuthModule.ISSUER_URI_KEY, issuerUri);
+        options.put(CLIENT_ID, getClientId());
+        options.put(CLIENT_SECRET, getClientSecret());
+        options.put(OpenIdConnectAuthModule.DISABLE_CERTIFICATE_CHECKS_KEY, String.valueOf(isCertificateCheckDisabled()));
+        options.put(OpenIdConnectAuthModule.ISSUER_URI_KEY, getIssuerUri().toASCIIString());
 
         final String contextPath = sce.getServletContext()
-                .getContextPath();
+            .getContextPath();
         final String rootPath = contextPath + "/";
         options.put("cookie_context", rootPath);
-        options.put("scope", scope);
+        options.put("scope", getScope());
         options.put("redirection_endpoint", contextPath + "/cb");
         options.put("logout_redirection_endpoint", contextPath + "/cblogout");
         options.put("token_uri", contextPath + "/token");
@@ -81,14 +70,14 @@ public class Initializer implements ServletContextListener {
         options.put(OpenIdConnectAuthModule.LOGOUT_URI_KEY, contextPath + "/logout");
 
         registrationID = AuthConfigFactory.getFactory()
-                .registerConfigProvider(new OpenIdConnectModuleConfigProvider(options, null), "HttpServlet", getAppContext(sce), null);
-
+            .registerConfigProvider(new OpenIdConnectModuleConfigProvider(options, null), "HttpServlet", getAppContext(sce), null);
+        Log.fine("registered", registrationID);
     }
 
     /**
      * <p>
      * The application context identifier (that is, the appContext parameter
-     * value) us ed to select the AuthConfigProvider and ServerAuthConfig
+     * value) used to select the AuthConfigProvider and ServerAuthConfig
      * objects for a specific application shall be the String value constructed
      * by concatenating the host name, a blank separator character, and the
      * decoded context path corresponding to the web module.
@@ -116,8 +105,8 @@ public class Initializer implements ServletContextListener {
     private String getAppContext(final ServletContextEvent sce) {
 
         return sce.getServletContext()
-                .getVirtualServerName() + " "
+            .getVirtualServerName() + " "
                 + sce.getServletContext()
-                        .getContextPath();
+                    .getContextPath();
     }
 }

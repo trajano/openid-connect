@@ -542,11 +542,6 @@ public class OpenIdProviderConfiguration {
         idTokenSigningAlgValuesSupported = Arrays.asList(alg);
     }
 
-    public void setIssuer(final String issuer) {
-
-        this.issuer = issuer;
-    }
-
     public void setIssuer(final URI issuer) {
 
         this.issuer = issuer.toASCIIString();

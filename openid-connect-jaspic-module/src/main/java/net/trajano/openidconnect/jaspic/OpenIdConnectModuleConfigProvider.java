@@ -9,12 +9,12 @@ import javax.security.auth.message.config.AuthConfigProvider;
 import javax.security.auth.message.config.ClientAuthConfig;
 import javax.security.auth.message.config.ServerAuthConfig;
 
-import net.trajano.openidconnect.jaspic.internal.Initializer;
+import net.trajano.openidconnect.jaspic.internal.AbstractInitializer;
 import net.trajano.openidconnect.jaspic.internal.OpenIdConnectModuleConfig;
 
 /**
  * This is used to provide the server auth module on the application rather than
- * being globally configured in a container. See {@link Initializer} for an
+ * being globally configured in a container. See {@link AbstractInitializer} for an
  * example of how to register the provider in a
  * {@link javax.servlet.ServletContextListener}.
  */
