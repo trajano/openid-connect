@@ -135,7 +135,7 @@ public class DefaultTokenProvider implements TokenProvider {
 
         final IdTokenResponse idTokenResponse = tokenStorage.removeMappingForRefreshToken(refreshTokenIn);
         if (idTokenResponse == null) {
-            throw new OpenIdConnectException(ErrorCode.access_denied);
+            throw new OpenIdConnectException(ErrorCode.access_denied, "unable to find mapping for token " + refreshTokenIn);
         }
         if (!clientId.equals(idTokenResponse.getIdToken(keyProvider.getPrivateJwks())
                 .getAud())) {
