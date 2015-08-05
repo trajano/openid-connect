@@ -635,6 +635,9 @@ public class OpenIdConnectAuthModule implements ServerAuthModule, ServerAuthCont
                 if (tokenCookie.isExpired() && tokenCookie.getRefreshToken() != null) {
                     final OpenIdProviderConfiguration oidProviderConfig = getOpenIDProviderConfig(req, restClient, moduleOptions);
                     final IdTokenResponse token = getTokenViaRefresh(req, tokenCookie.getRefreshToken(), oidProviderConfig);
+                    if (token == null) {
+                        return null;
+                    }
                     final net.trajano.openidconnect.crypto.JsonWebKeySet webKeys = getWebKeys(oidProviderConfig);
 
                     final JsonObject claimsSet = new JsonWebTokenProcessor(token.getEncodedIdToken()).jwks(webKeys)
