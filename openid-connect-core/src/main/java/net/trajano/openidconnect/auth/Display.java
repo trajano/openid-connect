@@ -1,6 +1,10 @@
 package net.trajano.openidconnect.auth;
 
+import javax.xml.bind.annotation.XmlEnumValue;
+
 public enum Display {
+    @XmlEnumValue("N/A")
+    NOT_AVAILABLE,
     /**
      * The Authorization Server SHOULD display the authentication and
      * consent UI consistent with a full User Agent page view. If the

@@ -2,6 +2,7 @@ package net.trajano.openidconnect.core;
 
 import java.net.URI;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -267,7 +268,8 @@ public class OpenIdProviderConfiguration {
     @XmlElement(name = "service_documentation")
     private URI serviceDocumentation;
 
-    @XmlElement(name = "subject_types_supported", required = true)
+    @XmlElement(name = "subject_types_supported",
+        required = true)
     private Set<SubjectIdentifierType> subjectTypesSupported;
 
     /**
@@ -514,7 +516,11 @@ public class OpenIdProviderConfiguration {
 
     public void setDisplayValuesSupported(final Display... displayValuesSupported) {
 
-        this.displayValuesSupported = Arrays.asList(displayValuesSupported);
+        if (displayValuesSupported == null) {
+            this.displayValuesSupported = Collections.emptyList();
+        } else {
+            this.displayValuesSupported = Arrays.asList(displayValuesSupported);
+        }
     }
 
     public void setEndSessionEndpoint(final URI endSessionEndpoint) {
@@ -524,22 +530,38 @@ public class OpenIdProviderConfiguration {
 
     public void setGrantTypesSupported(final GrantType... grantTypesSupported) {
 
-        this.grantTypesSupported = Arrays.asList(grantTypesSupported);
+        if (grantTypesSupported == null) {
+            this.grantTypesSupported = Collections.emptyList();
+        } else {
+            this.grantTypesSupported = Arrays.asList(grantTypesSupported);
+        }
     }
 
     public void setIdTokenEncryptionAlgValuesSupported(final String... alg) {
 
-        idTokenEncryptionAlgValuesSupported = Arrays.asList(alg);
+        if (alg == null) {
+            idTokenEncryptionAlgValuesSupported = Collections.emptyList();
+        } else {
+            idTokenEncryptionAlgValuesSupported = Arrays.asList(alg);
+        }
     }
 
     public void setIdTokenEncryptionEncValuesSupported(final String... enc) {
 
-        idTokenEncryptionEncValuesSupported = Arrays.asList(enc);
+        if (enc == null) {
+            idTokenEncryptionEncValuesSupported = Collections.emptyList();
+        } else {
+            idTokenEncryptionEncValuesSupported = Arrays.asList(enc);
+        }
     }
 
     public void setIdTokenSigningAlgValuesSupported(final String... alg) {
 
-        idTokenSigningAlgValuesSupported = Arrays.asList(alg);
+        if (alg == null) {
+            idTokenSigningAlgValuesSupported = Collections.emptyList();
+        } else {
+            idTokenSigningAlgValuesSupported = Arrays.asList(alg);
+        }
     }
 
     public void setIssuer(final URI issuer) {
@@ -564,13 +586,20 @@ public class OpenIdProviderConfiguration {
 
     public void setRequestObjectEncryptionEncValuesSupported(final String... enc) {
 
-        requestObjectEncryptionEncValuesSupported = Arrays.asList(enc);
-
+        if (enc == null) {
+            requestObjectEncryptionEncValuesSupported = Collections.emptyList();
+        } else {
+            requestObjectEncryptionEncValuesSupported = Arrays.asList(enc);
+        }
     }
 
     public void setRequestObjectSigningAlgValuesSupported(final String... alg) {
 
-        requestObjectSigningAlgValuesSupported = Arrays.asList(alg);
+        if (alg == null) {
+            requestObjectSigningAlgValuesSupported = Collections.emptyList();
+        } else {
+            requestObjectSigningAlgValuesSupported = Arrays.asList(alg);
+        }
     }
 
     public void setRequestParameterSupported(final boolean requestParameterSupported) {

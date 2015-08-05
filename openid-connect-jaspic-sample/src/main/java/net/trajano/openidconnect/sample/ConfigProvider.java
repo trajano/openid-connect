@@ -57,6 +57,6 @@ public class ConfigProvider implements OpenIdConnectModuleConfigProviderRemote {
     @Override
     public URI getIssuerUri() {
 
-        return URI.create("https://localhost:8181/");
+        return URI.create("https://localhost:8443/");
     }
 }

@@ -25,7 +25,6 @@ import net.trajano.openidconnect.jaspic.OpenIdConnectModuleConfigProviderRemote;
  * module and registers itself as the OAuth provider.
  */
 @WebListener
-@ManagedBean
 public class Initializer implements ServletContextListener {
 
     @EJB
