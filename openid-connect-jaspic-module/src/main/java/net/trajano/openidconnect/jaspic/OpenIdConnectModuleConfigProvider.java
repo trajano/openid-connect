@@ -9,7 +9,6 @@ import javax.security.auth.message.config.AuthConfigProvider;
 import javax.security.auth.message.config.ClientAuthConfig;
 import javax.security.auth.message.config.ServerAuthConfig;
 
-import net.trajano.openidconnect.jaspic.internal.AbstractInitializer;
 import net.trajano.openidconnect.jaspic.internal.OpenIdConnectModuleConfig;
 
 /**

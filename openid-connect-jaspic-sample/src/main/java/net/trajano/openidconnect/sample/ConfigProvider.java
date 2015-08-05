@@ -2,22 +2,24 @@ package net.trajano.openidconnect.sample;
 
 import java.net.URI;
 
-import javax.servlet.annotation.WebListener;
+import javax.ejb.Remote;
+import javax.ejb.Stateless;
 
-import net.trajano.openidconnect.jaspic.internal.AbstractInitializer;
+import net.trajano.openidconnect.jaspic.OpenIdConnectModuleConfigProviderRemote;
 
 /**
  * This initializes the OpenID Connector JASPIC module and registers itself as
  * the OAuth provider.
  */
-@WebListener
-public class Initializer extends AbstractInitializer {
+@Stateless
+@Remote(OpenIdConnectModuleConfigProviderRemote.class)
+public class ConfigProvider implements OpenIdConnectModuleConfigProviderRemote {
 
     /* (non-Javadoc)
      * @see net.trajano.openidconnect.jaspic.internal.AbstractInitializer#getClientId()
      */
     @Override
-    protected String getClientId() {
+    public String getClientId() {
 
         return "sample_client_id";
     }
@@ -26,7 +28,7 @@ public class Initializer extends AbstractInitializer {
      * @see net.trajano.openidconnect.jaspic.internal.AbstractInitializer#getClientSecret()
      */
     @Override
-    protected String getClientSecret() {
+    public String getClientSecret() {
 
         return "sample_client_secret";
     }
@@ -35,7 +37,7 @@ public class Initializer extends AbstractInitializer {
      * @see net.trajano.openidconnect.jaspic.internal.AbstractInitializer#isCertificateCheckDisabled()
      */
     @Override
-    protected boolean isCertificateCheckDisabled() {
+    public boolean isCertificateCheckDisabled() {
 
         return true;
     }
@@ -44,7 +46,7 @@ public class Initializer extends AbstractInitializer {
      * @see net.trajano.openidconnect.jaspic.internal.AbstractInitializer#getScope()
      */
     @Override
-    protected String getScope() {
+    public String getScope() {
 
         return "openid profile email";
     }
@@ -53,8 +55,8 @@ public class Initializer extends AbstractInitializer {
      * @see net.trajano.openidconnect.jaspic.internal.AbstractInitializer#getIssuerUri()
      */
     @Override
-    protected URI getIssuerUri() {
+    public URI getIssuerUri() {
 
-        return URI.create("https://localhost:8443/");
+        return URI.create("https://localhost:8181/");
     }
 }
