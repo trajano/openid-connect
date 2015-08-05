@@ -47,12 +47,15 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.BadRequestException;
+import javax.ws.rs.NotAuthorizedException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
+import javax.ws.rs.client.ResponseProcessingException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.core.NoContentException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 
@@ -91,7 +94,9 @@ import net.trajano.openidconnect.token.IdTokenResponse;
  *
  * @author Archimedes Trajano
  */
-public class OpenIdConnectAuthModule implements ServerAuthModule, ServerAuthContext {
+public class OpenIdConnectAuthModule implements
+    ServerAuthModule,
+    ServerAuthContext {
 
     /**
      * Access token attribute name.
@@ -274,12 +279,11 @@ public class OpenIdConnectAuthModule implements ServerAuthModule, ServerAuthCont
     public Client buildUnsecureRestClient() throws GeneralSecurityException {
 
         final SSLContext context = SSLContext.getInstance("TLSv1");
-        final TrustManager[] trustManagerArray = { NullX509TrustManager.INSTANCE };
+        final TrustManager[] trustManagerArray = {
+            NullX509TrustManager.INSTANCE
+        };
         context.init(null, trustManagerArray, null);
-        return ClientBuilder.newBuilder()
-                .hostnameVerifier(NullHostnameVerifier.INSTANCE)
-                .sslContext(context)
-                .build();
+        return ClientBuilder.newBuilder().hostnameVerifier(NullHostnameVerifier.INSTANCE).sslContext(context).build();
     }
 
     /**
@@ -292,10 +296,9 @@ public class OpenIdConnectAuthModule implements ServerAuthModule, ServerAuthCont
      */
     @Override
     public void cleanSubject(final MessageInfo messageInfo,
-            final Subject subject) throws AuthException {
+        final Subject subject) throws AuthException {
 
-        final Iterator<Principal> i = subject.getPrincipals()
-                .iterator();
+        final Iterator<Principal> i = subject.getPrincipals().iterator();
         while (i.hasNext()) {
             final Principal principal = i.next();
             if (principal instanceof UserPrincipal) {
@@ -315,7 +318,10 @@ public class OpenIdConnectAuthModule implements ServerAuthModule, ServerAuthCont
      */
     private void deleteAuthCookies(final HttpServletResponse resp) {
 
-        for (final String cookieName : new String[] { NET_TRAJANO_AUTH_ID, NET_TRAJANO_AUTH_AGE }) {
+        for (final String cookieName : new String[] {
+            NET_TRAJANO_AUTH_ID,
+            NET_TRAJANO_AUTH_AGE
+        }) {
             final Cookie deleteCookie = new Cookie(cookieName, "");
             deleteCookie.setMaxAge(0);
             deleteCookie.setSecure(true);
@@ -335,7 +341,7 @@ public class OpenIdConnectAuthModule implements ServerAuthModule, ServerAuthCont
      * @throws IOException
      */
     private String getIdToken(final HttpServletRequest req) throws GeneralSecurityException,
-            IOException {
+        IOException {
 
         final Cookie[] cookies = req.getCookies();
         if (cookies == null) {
@@ -348,7 +354,8 @@ public class OpenIdConnectAuthModule implements ServerAuthModule, ServerAuthCont
                 idToken = cookie.getValue();
             } else if (NET_TRAJANO_AUTH_AGE.equals(cookie.getName())) {
                 final String remoteAddr = req.getRemoteAddr();
-                final String cookieAddr = new String(CipherUtil.decrypt(Encoding.base64urlDecode(cookie.getValue()), secret), "US-ASCII");
+                final String cookieAddr = new String(
+                    CipherUtil.decrypt(Encoding.base64urlDecode(cookie.getValue()), secret), "US-ASCII");
                 if (!remoteAddr.equals(cookieAddr)) {
                     throw new AuthException(MessageFormat.format(Log.r("ipaddressMismatch"), remoteAddr, cookieAddr));
                 }
@@ -375,18 +382,16 @@ public class OpenIdConnectAuthModule implements ServerAuthModule, ServerAuthCont
      *             wraps exceptions thrown during processing
      */
     protected OpenIdProviderConfiguration getOpenIDProviderConfig(final HttpServletRequest req,
-            final Client restClient,
-            final Map<String, String> options) throws AuthException {
+        final Client restClient,
+        final Map<String, String> options) throws AuthException {
 
         final String issuerUri = options.get(ISSUER_URI_KEY);
         if (issuerUri == null) {
             Log.severe("missingOption", ISSUER_URI_KEY);
             throw new AuthException(MessageFormat.format(Log.r("missingOption"), ISSUER_URI_KEY));
         }
-        return restClient.target(URI.create(issuerUri)
-                .resolve("/.well-known/openid-configuration"))
-                .request(MediaType.APPLICATION_JSON_TYPE)
-                .get(OpenIdProviderConfiguration.class);
+        return restClient.target(URI.create(issuerUri).resolve("/.well-known/openid-configuration"))
+            .request(MediaType.APPLICATION_JSON_TYPE).get(OpenIdProviderConfiguration.class);
     }
 
     /**
@@ -400,9 +405,7 @@ public class OpenIdConnectAuthModule implements ServerAuthModule, ServerAuthCont
      */
     protected URI getRedirectionEndpointUri(final HttpServletRequest req) {
 
-        return URI.create(req.getRequestURL()
-                .toString())
-                .resolve(redirectionEndpointUri);
+        return URI.create(req.getRequestURL().toString()).resolve(redirectionEndpointUri);
     }
 
     /**
@@ -432,9 +435,8 @@ public class OpenIdConnectAuthModule implements ServerAuthModule, ServerAuthCont
      */
     private String getState(final HttpServletRequest req) {
 
-        final StringBuilder stateBuilder = new StringBuilder(req.getRequestURI()
-                .substring(req.getContextPath()
-                        .length()));
+        final StringBuilder stateBuilder = new StringBuilder(
+            req.getRequestURI().substring(req.getContextPath().length()));
         if (req.getQueryString() != null) {
             stateBuilder.append('?');
             stateBuilder.append(req.getQueryString());
@@ -459,7 +461,10 @@ public class OpenIdConnectAuthModule implements ServerAuthModule, ServerAuthCont
     @Override
     public Class[] getSupportedMessageTypes() {
 
-        return new Class<?>[] { HttpServletRequest.class, HttpServletResponse.class };
+        return new Class<?>[] {
+            HttpServletRequest.class,
+            HttpServletResponse.class
+        };
     }
 
     /**
@@ -469,11 +474,11 @@ public class OpenIdConnectAuthModule implements ServerAuthModule, ServerAuthCont
      *            servlet request
      * @param oidProviderConfig
      *            OpenID provider config
-     * @return token response
+     * @return token response may be <code>null</code> if not available.
      */
     protected IdTokenResponse getTokenViaRefresh(final HttpServletRequest req,
-            final String refreshToken,
-            final OpenIdProviderConfiguration oidProviderConfig) throws IOException {
+        final String refreshToken,
+        final OpenIdProviderConfiguration oidProviderConfig) throws IOException {
 
         final MultivaluedMap<String, String> requestData = new MultivaluedHashMap<>();
         requestData.putSingle(OpenIdConnectKey.REFRESH_TOKEN, refreshToken);
@@ -483,12 +488,10 @@ public class OpenIdConnectAuthModule implements ServerAuthModule, ServerAuthCont
         try {
             final String authorization = "Basic " + Encoding.base64Encode(clientId + ":" + clientSecret);
             final IdTokenResponse authorizationTokenResponse = restClient.target(oidProviderConfig.getTokenEndpoint())
-                    .request(MediaType.APPLICATION_JSON_TYPE)
-                    .header("Authorization", authorization)
-                    .post(Entity.form(requestData), IdTokenResponse.class);
+                .request(MediaType.APPLICATION_JSON_TYPE).header("Authorization", authorization)
+                .post(Entity.form(requestData), IdTokenResponse.class);
             if (Log.isFinestLoggable()) {
-                Log.getInstance()
-                        .finest("authorization token response =  " + authorizationTokenResponse);
+                Log.getInstance().finest("authorization token response =  " + authorizationTokenResponse);
             }
             return authorizationTokenResponse;
         } catch (final BadRequestException e) {
@@ -497,13 +500,18 @@ public class OpenIdConnectAuthModule implements ServerAuthModule, ServerAuthCont
             requestData.putSingle(CLIENT_ID, clientId);
             requestData.putSingle(CLIENT_SECRET, clientSecret);
             final IdTokenResponse authorizationTokenResponse = restClient.target(oidProviderConfig.getTokenEndpoint())
-                    .request(MediaType.APPLICATION_JSON_TYPE)
-                    .post(Entity.form(requestData), IdTokenResponse.class);
+                .request(MediaType.APPLICATION_JSON_TYPE).post(Entity.form(requestData), IdTokenResponse.class);
             if (Log.isFinestLoggable()) {
-                Log.getInstance()
-                        .finest("authorization token response =  " + authorizationTokenResponse);
+                Log.getInstance().finest("authorization token response =  " + authorizationTokenResponse);
             }
             return authorizationTokenResponse;
+        } catch (final ResponseProcessingException e) {
+            if (e.getCause().getClass().equals(NoContentException.class)) {
+                // the response is empty
+                return null;
+            } else {
+                throw e;
+            }
         }
     }
 
@@ -517,11 +525,11 @@ public class OpenIdConnectAuthModule implements ServerAuthModule, ServerAuthCont
      * @throws GeneralSecurityException
      *             wraps exceptions thrown during processing
      */
-    private net.trajano.openidconnect.crypto.JsonWebKeySet getWebKeys(final OpenIdProviderConfiguration config) throws GeneralSecurityException {
+    private net.trajano.openidconnect.crypto.JsonWebKeySet getWebKeys(final OpenIdProviderConfiguration config)
+        throws GeneralSecurityException {
 
-        return restClient.target(config.getJwksUri())
-                .request(MediaType.APPLICATION_JSON_TYPE)
-                .get(net.trajano.openidconnect.crypto.JsonWebKeySet.class);
+        return restClient.target(config.getJwksUri()).request(MediaType.APPLICATION_JSON_TYPE)
+            .get(net.trajano.openidconnect.crypto.JsonWebKeySet.class);
     }
 
     /**
@@ -556,9 +564,9 @@ public class OpenIdConnectAuthModule implements ServerAuthModule, ServerAuthCont
     @SuppressWarnings("unchecked")
     @Override
     public void initialize(final MessagePolicy requestPolicy,
-            final MessagePolicy responsePolicy,
-            final CallbackHandler h,
-            @SuppressWarnings("rawtypes") final Map options) throws AuthException {
+        final MessagePolicy responsePolicy,
+        final CallbackHandler h,
+        @SuppressWarnings("rawtypes") final Map options) throws AuthException {
 
         try {
             moduleOptions = options;
@@ -583,13 +591,13 @@ public class OpenIdConnectAuthModule implements ServerAuthModule, ServerAuthCont
             secret = CipherUtil.buildSecretKey(clientId, clientSecret);
 
             if (restClient == null) {
-                if (moduleOptions.get(DISABLE_CERTIFICATE_CHECKS_KEY) != null && Boolean.valueOf(moduleOptions.get(DISABLE_CERTIFICATE_CHECKS_KEY))) {
+                if (moduleOptions.get(DISABLE_CERTIFICATE_CHECKS_KEY) != null
+                    && Boolean.valueOf(moduleOptions.get(DISABLE_CERTIFICATE_CHECKS_KEY))) {
                     restClient = buildUnsecureRestClient();
                 } else {
                     restClient = ClientBuilder.newClient();
                 }
-                restClient.register(JsonWebKeySetProvider.class)
-                        .register(JsonWebKeyProvider.class);
+                restClient.register(JsonWebKeySetProvider.class).register(JsonWebKeyProvider.class);
 
             }
         } catch (final Exception e) {
@@ -624,8 +632,8 @@ public class OpenIdConnectAuthModule implements ServerAuthModule, ServerAuthCont
      * @return token cookie.
      */
     private TokenCookie processTokenCookie(final Subject subject,
-            final HttpServletRequest req,
-            final HttpServletResponse resp) {
+        final HttpServletRequest req,
+        final HttpServletResponse resp) {
 
         try {
             final String idToken = getIdToken(req);
@@ -633,15 +641,17 @@ public class OpenIdConnectAuthModule implements ServerAuthModule, ServerAuthCont
             if (idToken != null) {
                 tokenCookie = new TokenCookie(idToken, secret);
                 if (tokenCookie.isExpired() && tokenCookie.getRefreshToken() != null) {
-                    final OpenIdProviderConfiguration oidProviderConfig = getOpenIDProviderConfig(req, restClient, moduleOptions);
-                    final IdTokenResponse token = getTokenViaRefresh(req, tokenCookie.getRefreshToken(), oidProviderConfig);
+                    final OpenIdProviderConfiguration oidProviderConfig = getOpenIDProviderConfig(req, restClient,
+                        moduleOptions);
+                    final IdTokenResponse token = getTokenViaRefresh(req, tokenCookie.getRefreshToken(),
+                        oidProviderConfig);
                     if (token == null) {
                         return null;
                     }
                     final net.trajano.openidconnect.crypto.JsonWebKeySet webKeys = getWebKeys(oidProviderConfig);
 
                     final JsonObject claimsSet = new JsonWebTokenProcessor(token.getEncodedIdToken()).jwks(webKeys)
-                            .getJsonPayload();
+                        .getJsonPayload();
 
                     final String iss = googleWorkaround(claimsSet.getString("iss"));
                     final String issuer = googleWorkaround(oidProviderConfig.getIssuer());
@@ -651,18 +661,16 @@ public class OpenIdConnectAuthModule implements ServerAuthModule, ServerAuthCont
                     }
                     updateSubjectPrincipal(subject, claimsSet);
 
-                    if (oidProviderConfig.getUserinfoEndpoint() != null && Pattern.compile("\\bprofile\\b")
-                            .matcher(scope)
-                            .find()) {
+                    if (oidProviderConfig.getUserinfoEndpoint() != null
+                        && Pattern.compile("\\bprofile\\b").matcher(scope).find()) {
                         final Response userInfoResponse = restClient.target(oidProviderConfig.getUserinfoEndpoint())
-                                .request(MediaType.APPLICATION_JSON_TYPE)
-                                .header("Authorization", token.getTokenType() + " " + token.getAccessToken())
-                                .get();
+                            .request(MediaType.APPLICATION_JSON_TYPE)
+                            .header("Authorization", token.getTokenType() + " " + token.getAccessToken()).get();
                         if (userInfoResponse.getStatus() == 200) {
-                            tokenCookie = new TokenCookie(token.getAccessToken(), token.getRefreshToken(), claimsSet, token.getEncodedIdToken(), userInfoResponse.readEntity(JsonObject.class));
+                            tokenCookie = new TokenCookie(token.getAccessToken(), token.getRefreshToken(), claimsSet,
+                                token.getEncodedIdToken(), userInfoResponse.readEntity(JsonObject.class));
                         } else {
-                            Log.getInstance()
-                                    .log(Level.WARNING, "unableToGetProfile");
+                            Log.getInstance().log(Level.WARNING, "unableToGetProfile");
                             tokenCookie = new TokenCookie(claimsSet, token.getEncodedIdToken());
                         }
                     } else {
@@ -695,13 +703,11 @@ public class OpenIdConnectAuthModule implements ServerAuthModule, ServerAuthCont
                 }
             }
             return tokenCookie;
-        } catch (final GeneralSecurityException | IOException e) {
+        } catch (final GeneralSecurityException
+            | IOException e) {
             e.printStackTrace();
-            Log.getInstance()
-                    .log(Level.FINE, "invalidToken", e.getMessage());
-            Log.getInstance()
-                    .throwing(this.getClass()
-                            .getName(), "validateRequest", e);
+            Log.getInstance().log(Level.FINE, "invalidToken", e.getMessage());
+            Log.getInstance().throwing(this.getClass().getName(), "validateRequest", e);
             return null;
         }
     }
@@ -729,13 +735,14 @@ public class OpenIdConnectAuthModule implements ServerAuthModule, ServerAuthCont
      * @throws AuthException
      */
     private AuthStatus redirectToAuthorizationEndpoint(final HttpServletRequest req,
-            final HttpServletResponse resp,
-            final String reason) throws AuthException {
+        final HttpServletResponse resp,
+        final String reason) throws AuthException {
 
         Log.fine("redirecting", reason);
         URI authorizationEndpointUri = null;
         try {
-            final OpenIdProviderConfiguration oidProviderConfig = getOpenIDProviderConfig(req, restClient, moduleOptions);
+            final OpenIdProviderConfiguration oidProviderConfig = getOpenIDProviderConfig(req, restClient,
+                moduleOptions);
 
             final String state = getState(req);
 
@@ -747,32 +754,28 @@ public class OpenIdConnectAuthModule implements ServerAuthModule, ServerAuthCont
             }
 
             final String nonce = nextNonce();
-            final Cookie nonceCookie = new Cookie(NET_TRAJANO_AUTH_NONCE, Encoding.base64urlEncode(CipherUtil.encrypt(nonce.getBytes(), secret)));
+            final Cookie nonceCookie = new Cookie(NET_TRAJANO_AUTH_NONCE,
+                Encoding.base64urlEncode(CipherUtil.encrypt(nonce.getBytes(), secret)));
             nonceCookie.setMaxAge(-1);
             nonceCookie.setPath(requestCookieContext);
             nonceCookie.setHttpOnly(true);
             nonceCookie.setSecure(true);
             resp.addCookie(nonceCookie);
 
-            final URI redirectUri = URI.create(req.getRequestURL()
-                    .toString())
-                    .resolve(moduleOptions.get(REDIRECTION_ENDPOINT_URI_KEY));
+            final URI redirectUri = URI.create(req.getRequestURL().toString())
+                .resolve(moduleOptions.get(REDIRECTION_ENDPOINT_URI_KEY));
 
-            final AuthenticationRequest ab = new AuthenticationRequest.Builder().clientId(clientId)
-                    .scope(scope)
-                    .redirectUri(redirectUri)
-                    .responseType(ResponseType.code)
-                    .state(state)
-                    .nonce(nonce)
-                    .uiLocale(req.getLocales())
-                    .responseMode(responseMode)
-                    .build();
+            final AuthenticationRequest ab = new AuthenticationRequest.Builder().clientId(clientId).scope(scope)
+                .redirectUri(redirectUri).responseType(ResponseType.code).state(state).nonce(nonce)
+                .uiLocale(req.getLocales()).responseMode(responseMode).build();
 
             final UriBuilder b = UriBuilder.fromUri(oidProviderConfig.getAuthorizationEndpoint());
             if (oidProviderConfig.isRequestParameterSupported()) {
 
-                final String kex = JsonWebAlgorithm.getFirstMatchingKexAlgorithm(oidProviderConfig.getRequestObjectEncryptionAlgValuesSupported());
-                final String enc = JsonWebAlgorithm.getFirstMatchingEncAlgorithm(oidProviderConfig.getRequestObjectEncryptionEncValuesSupported());
+                final String kex = JsonWebAlgorithm
+                    .getFirstMatchingKexAlgorithm(oidProviderConfig.getRequestObjectEncryptionAlgValuesSupported());
+                final String enc = JsonWebAlgorithm
+                    .getFirstMatchingEncAlgorithm(oidProviderConfig.getRequestObjectEncryptionEncValuesSupported());
 
                 if (kex == null) {
                     throw new AuthException("no matching kex with provider");
@@ -781,13 +784,9 @@ public class OpenIdConnectAuthModule implements ServerAuthModule, ServerAuthCont
                     throw new AuthException("no matching env with provider");
                 }
 
-                final JsonWebTokenBuilder jwtBuilder = new JsonWebTokenBuilder().alg(kex)
-                        .enc(enc)
-                        .compress(true)
-                        .jwk(getWebKeys(oidProviderConfig))
-                        .payload(ab.toJsonObject());
-                b.queryParam(OpenIdConnectKey.REQUEST, jwtBuilder.build()
-                        .toString());
+                final JsonWebTokenBuilder jwtBuilder = new JsonWebTokenBuilder().alg(kex).enc(enc).compress(true)
+                    .jwk(getWebKeys(oidProviderConfig)).payload(ab.toJsonObject());
+                b.queryParam(OpenIdConnectKey.REQUEST, jwtBuilder.build().toString());
 
             } else {
                 ab.addQueryParams(b);
@@ -801,14 +800,17 @@ public class OpenIdConnectAuthModule implements ServerAuthModule, ServerAuthCont
 
             resp.sendRedirect(authorizationEndpointUri.toASCIIString());
             return AuthStatus.SEND_CONTINUE;
-        } catch (final IOException | GeneralSecurityException e) {
+        } catch (final IOException
+            | GeneralSecurityException e) {
             // Should not happen
-            Log.getInstance()
-                    .log(Level.SEVERE, "sendRedirectException", new Object[] { authorizationEndpointUri, e.getMessage() });
-            Log.getInstance()
-                    .throwing(this.getClass()
-                            .getName(), "redirectToAuthorizationEndpoint", e);
-            throw new AuthException(MessageFormat.format(Log.r("sendRedirectException"), authorizationEndpointUri, e.getMessage()));
+            Log.getInstance().log(Level.SEVERE, "sendRedirectException",
+                new Object[] {
+                    authorizationEndpointUri,
+                    e.getMessage()
+            });
+            Log.getInstance().throwing(this.getClass().getName(), "redirectToAuthorizationEndpoint", e);
+            throw new AuthException(
+                MessageFormat.format(Log.r("sendRedirectException"), authorizationEndpointUri, e.getMessage()));
         }
     }
 
@@ -825,7 +827,7 @@ public class OpenIdConnectAuthModule implements ServerAuthModule, ServerAuthCont
      */
     @Override
     public AuthStatus secureResponse(final MessageInfo messageInfo,
-            final Subject subject) throws AuthException {
+        final Subject subject) throws AuthException {
 
         return AuthStatus.SEND_SUCCESS;
     }
@@ -853,21 +855,25 @@ public class OpenIdConnectAuthModule implements ServerAuthModule, ServerAuthCont
      * @throws GeneralSecurityException
      */
     private void updateSubjectPrincipal(final Subject subject,
-            final JsonObject jwtPayload) throws GeneralSecurityException {
+        final JsonObject jwtPayload)
+            throws GeneralSecurityException {
 
         try {
             final String iss = googleWorkaround(jwtPayload.getString("iss"));
-            handler.handle(new Callback[] { new CallerPrincipalCallback(subject, UriBuilder.fromUri(iss)
-                    .userInfo(jwtPayload.getString("sub"))
-                    .build()
-                    .toASCIIString()), new GroupPrincipalCallback(subject, new String[] { iss }) });
-        } catch (final IOException | UnsupportedCallbackException e) {
+            handler.handle(
+                new Callback[] {
+                    new CallerPrincipalCallback(subject,
+                        UriBuilder.fromUri(iss).userInfo(jwtPayload.getString("sub")).build()
+                            .toASCIIString()),
+                    new GroupPrincipalCallback(subject, new String[] {
+                        iss
+                            })
+            });
+        } catch (final IOException
+            | UnsupportedCallbackException e) {
             // Should not happen
-            Log.getInstance()
-                    .log(Level.SEVERE, "updatePrincipalException", e.getMessage());
-            Log.getInstance()
-                    .throwing(this.getClass()
-                            .getName(), "updateSubjectPrincipal", e);
+            Log.getInstance().log(Level.SEVERE, "updatePrincipalException", e.getMessage());
+            Log.getInstance().throwing(this.getClass().getName(), "updateSubjectPrincipal", e);
             throw new AuthException(MessageFormat.format(Log.r("updatePrincipalException"), e.getMessage()));
         }
     }
@@ -889,8 +895,8 @@ public class OpenIdConnectAuthModule implements ServerAuthModule, ServerAuthCont
      */
     @Override
     public AuthStatus validateRequest(final MessageInfo messageInfo,
-            final Subject clientSubject,
-            final Subject serviceSubject) throws AuthException {
+        final Subject clientSubject,
+        final Subject serviceSubject) throws AuthException {
 
         final HttpServletRequest req = (HttpServletRequest) messageInfo.getRequestMessage();
         final HttpServletResponse resp = (HttpServletResponse) messageInfo.getResponseMessage();
@@ -898,7 +904,8 @@ public class OpenIdConnectAuthModule implements ServerAuthModule, ServerAuthCont
         try {
             final TokenCookie tokenCookie = processTokenCookie(clientSubject, req, resp);
 
-            final ValidateContext context = new ValidateContext(restClient, clientSubject, mandatory, moduleOptions, req, resp, tokenCookie, cookieContext, handler);
+            final ValidateContext context = new ValidateContext(restClient, clientSubject, mandatory, moduleOptions,
+                req, resp, tokenCookie, cookieContext, handler);
 
             final ValidateRequestProcessor requestProcessor = ValidateRequestProcessors.getInstance();
 
@@ -915,14 +922,12 @@ public class OpenIdConnectAuthModule implements ServerAuthModule, ServerAuthCont
                 return redirectToAuthorizationEndpoint(req, resp, "token cookie is missing");
             }
 
-            if (req.isSecure() && isHeadRequest(req) && req.getRequestURI()
-                    .equals(tokenUri)) {
+            if (req.isSecure() && isHeadRequest(req) && req.getRequestURI().equals(tokenUri)) {
                 resp.setContentType(MediaType.APPLICATION_JSON);
                 return AuthStatus.SEND_SUCCESS;
             }
 
-            if (req.getRequestURI()
-                    .equals(userInfoUri) && isHeadRequest(req)) {
+            if (req.getRequestURI().equals(userInfoUri) && isHeadRequest(req)) {
                 resp.setContentType(MediaType.APPLICATION_JSON);
                 return AuthStatus.SEND_SUCCESS;
 
@@ -933,32 +938,25 @@ public class OpenIdConnectAuthModule implements ServerAuthModule, ServerAuthCont
             }
 
             return redirectToAuthorizationEndpoint(req, resp, "request is not valid");
+        } catch (final NotAuthorizedException e) {
+            return redirectToAuthorizationEndpoint(req, resp, "request not authorized");
         } catch (final AuthException e) {
             // Any problems with the data should be caught and force redirect to
             // authorization endpoint.
-            Log.getInstance()
-                    .log(Level.FINE, "validationException", e.getMessage());
-            Log.getInstance()
-                    .throwing(this.getClass()
-                            .getName(), "validateRequest", e);
+            Log.getInstance().log(Level.FINE, "validationException", e.getMessage());
+            Log.getInstance().throwing(this.getClass().getName(), "validateRequest", e);
             return AuthStatus.FAILURE;
         } catch (final IOException e) {
             // Any problems with the data should be caught and force redirect to
             // authorization endpoint.
-            Log.getInstance()
-                    .log(Level.FINE, "validationException", e.getMessage());
-            Log.getInstance()
-                    .throwing(this.getClass()
-                            .getName(), "validateRequest", e);
+            Log.getInstance().log(Level.FINE, "validationException", e.getMessage());
+            Log.getInstance().throwing(this.getClass().getName(), "validateRequest", e);
             return AuthStatus.FAILURE;
         } catch (final GeneralSecurityException e) {
             // Any problems with the data should be caught and force redirect to
             // authorization endpoint.
-            Log.getInstance()
-                    .log(Level.FINE, "validationException", e.getMessage());
-            Log.getInstance()
-                    .throwing(this.getClass()
-                            .getName(), "validateRequest", e);
+            Log.getInstance().log(Level.FINE, "validationException", e.getMessage());
+            Log.getInstance().throwing(this.getClass().getName(), "validateRequest", e);
             return redirectToAuthorizationEndpoint(req, resp, e.getMessage());
         }
     }
