@@ -18,11 +18,11 @@ import java.nio.file.attribute.GroupPrincipal;
 import java.nio.file.attribute.UserPrincipal;
 import java.security.GeneralSecurityException;
 import java.security.Principal;
-import java.security.SecureRandom;
 import java.text.MessageFormat;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
@@ -220,7 +220,7 @@ public class OpenIdConnectAuthModule implements ServerAuthModule, ServerAuthCont
      * Randomizer used for nonce generation. It does not need to be
      * cryptographically secure.
      */
-    private final Random random = new SecureRandom();
+    private final Random random = ThreadLocalRandom.current();
 
     /**
      * Redirection endpoint URI. This is set through "redirection_endpoint"
