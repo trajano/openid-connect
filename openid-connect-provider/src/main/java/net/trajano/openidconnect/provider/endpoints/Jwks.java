@@ -1,6 +1,7 @@
 package net.trajano.openidconnect.provider.endpoints;
 
 import javax.ejb.EJB;
+import javax.ejb.Stateless;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -26,6 +27,7 @@ import net.trajano.openidconnect.provider.spi.KeyProvider;
  * @author Archimedes Trajano
  */
 @Path("jwks")
+@Stateless
 public class Jwks {
 
     private KeyProvider keyProvider;

@@ -16,8 +16,6 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 
 import net.trajano.openidconnect.auth.AuthenticationRequest;
-import net.trajano.openidconnect.core.ErrorCode;
-import net.trajano.openidconnect.core.OpenIdConnectException;
 import net.trajano.openidconnect.core.Scope;
 import net.trajano.openidconnect.crypto.Encoding;
 import net.trajano.openidconnect.crypto.JsonWebAlgorithm;
@@ -107,14 +105,15 @@ public class DefaultTokenProvider implements TokenProvider {
 
         final IdTokenResponse tokenResponse = tokenStorage.getByCode(code);
 
-        if (tokenStorage.isCodeUsed(code)) {
-            // Revoke access tokens since code was used twice.
-            tokenStorage.removeMappingForAccessToken(tokenResponse.getAccessToken());
-            tokenStorage.removeMappingForRefreshToken(tokenResponse.getRefreshToken());
-            tokenStorage.removeMappingForCode(code);
-            return null;
-        }
+//        if (tokenStorage.isCodeUsed(code)) {
+//            // Revoke access tokens since code was used twice.
+//            tokenStorage.removeMappingForAccessToken(tokenResponse.getAccessToken());
+//            tokenStorage.removeMappingForRefreshToken(tokenResponse.getRefreshToken());
+//            tokenStorage.removeMappingForCode(code);
+//            return null;
+//        }
         if (deleteAfterRetrieval) {
+          tokenStorage.removeMappingForCode(code);
             tokenStorage.markCodeAsUsed(code);
         }
         return tokenResponse;

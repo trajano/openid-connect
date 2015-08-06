@@ -53,7 +53,7 @@ public final class Utils {
     public static boolean isNullOrEmpty(final String s) {
 
         return s == null || s.trim()
-                .length() == 0;
+            .length() == 0;
     }
 
     /**
@@ -78,9 +78,9 @@ public final class Utils {
      * @throws GeneralSecurityException
      */
     public static void validateIdToken(final String clientId,
-            final JsonObject idTokenJson,
-            final String nonce,
-            String accessToken) throws GeneralSecurityException {
+        final JsonObject idTokenJson,
+        final String nonce,
+        final String accessToken) throws GeneralSecurityException {
 
         // TODO handle multiple audiences
         if (!clientId.equals(idTokenJson.getString("aud"))) {
@@ -102,7 +102,7 @@ public final class Utils {
             final MessageDigest digest = MessageDigest.getInstance("SHA-256");
             final byte[] digestedBytes = digest.digest(accessToken.getBytes());
             if (!Encoding.base64urlEncode(digestedBytes, 0, 128 / 8)
-                    .equals(idTokenJson.getString("at_hash"))) {
+                .equals(idTokenJson.getString("at_hash"))) {
                 throw new GeneralSecurityException("access token hash mismatch");
             }
         }

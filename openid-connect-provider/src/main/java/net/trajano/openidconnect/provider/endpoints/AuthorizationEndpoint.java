@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.security.GeneralSecurityException;
 
 import javax.ejb.EJB;
+import javax.ejb.Stateless;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -49,6 +50,7 @@ import net.trajano.openidconnect.provider.spi.TokenProvider;
  * @author Archimedes Trajano
  */
 @Path("auth")
+@Stateless
 public class AuthorizationEndpoint {
 
     @EJB
