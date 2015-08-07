@@ -1,0 +1,11 @@
+{
+	"title": "Scope",
+	"javaType": "net.trajano.openidconnect.provider.type.Scope",
+	"type": "string",
+	"enum": ["address",
+	"email",
+	"offline_access",
+	"openid",
+	"phone",
+	"profile"]
+}

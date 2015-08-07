@@ -2,6 +2,10 @@ package net.trajano.openidconnect.provider.endpoints;
 
 import static java.net.URI.create;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -16,15 +20,18 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 
-import net.trajano.openidconnect.auth.ResponseMode;
+import com.google.gson.Gson;
+
 import net.trajano.openidconnect.core.OpenIdProviderConfiguration;
-import net.trajano.openidconnect.core.Scope;
-import net.trajano.openidconnect.core.SubjectIdentifierType;
-import net.trajano.openidconnect.core.TokenEndPointAuthMethod;
 import net.trajano.openidconnect.crypto.JsonWebAlgorithm;
 import net.trajano.openidconnect.provider.spi.KeyProvider;
 import net.trajano.openidconnect.provider.spi.UserinfoProvider;
-import net.trajano.openidconnect.token.GrantType;
+import net.trajano.openidconnect.provider.type.GrantType;
+import net.trajano.openidconnect.provider.type.OpenidProviderMetadata;
+import net.trajano.openidconnect.provider.type.ResponseModesSupported;
+import net.trajano.openidconnect.provider.type.Scope;
+import net.trajano.openidconnect.provider.type.SubjectTypesSupported;
+import net.trajano.openidconnect.provider.type.TokenEndpointAuthMethodsSupported;
 
 @Path("openid-configuration")
 @Stateless
@@ -46,6 +53,8 @@ public class WellKnownOpenIdConfiguration {
      * Authorization endpoint mapping that is built during {@link #init()}
      */
     private String authorizationMapping;
+
+    private String endSessionMapping;
 
     /**
      * JWKS URI mapping that is built during {@link #init()}
@@ -69,6 +78,8 @@ public class WellKnownOpenIdConfiguration {
      */
     private String userinfoMapping;
 
+    private UserinfoProvider userinfoProvider;
+
     /**
      * Determines the endpoints for OAuth2 based on the mappings specified in
      * the {@link ServletRegistration}s.
@@ -90,69 +101,56 @@ public class WellKnownOpenIdConfiguration {
 
     }
 
-    private String endSessionMapping;
-
-    private UserinfoProvider userinfoProvider;
-
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response op(@Context final HttpServletRequest request) {
 
+        final UriBuilder baseUri = UriBuilder.fromUri(create(request.getRequestURL()
+            .toString()))
+            .scheme("https")
+            .replaceQuery(null)
+            .fragment(null);
+
+        final Set<Scope> scopesSupported = new HashSet<>(userinfoProvider.scopesSupported());
+        scopesSupported.add(Scope.OPENID);
+
+        final Set<String> claimsSupported = new HashSet<>(userinfoProvider.claimsSupported());
+        claimsSupported.add("sub");
+        claimsSupported.add("iss");
+        claimsSupported.add("auth_time");
+
+        final OpenidProviderMetadata metaData = new OpenidProviderMetadata()
+            .withIssuer(baseUri.replacePath(request.getContextPath()).build().toASCIIString())
+            .withJwksUri(baseUri.replacePath(request.getContextPath() + jwksMapping).build())
+            .withAuthorizationEndpoint(baseUri.replacePath(request.getContextPath() + authorizationMapping).build())
+            .withRevocationEndpoint(baseUri.replacePath(request.getContextPath() + revocationMapping).build())
+            .withTokenEndpoint(baseUri.replacePath(request.getContextPath() + tokenMapping).build())
+            .withUserinfoEndpoint(baseUri.replacePath(request.getContextPath() + userinfoMapping).build())
+            .withEndSessionEndpoint(baseUri.replacePath(request.getContextPath() + endSessionMapping).build())
+            .withScopesSupported(scopesSupported)
+            .withClaimsSupported(claimsSupported)
+            .withResponseTypesSupported(new HashSet<>(Arrays.asList(CODE, ID_TOKEN, ID_TOKEN_TOKEN, CODE_ID_TOKEN, CODE_TOKEN, CODE_ID_TOKEN_TOKEN)))
+            .withRequestParameterSupported(true)
+            .withGrantTypesSupported(new HashSet<>(Arrays.asList(GrantType.AUTHORIZATION_CODE, GrantType.IMPLICIT)))
+            .withRequestUriParameterSupported(false)
+            .withSubjectTypesSupported(new HashSet<>(Arrays.asList(SubjectTypesSupported.PUBLIC)))
+            .withTokenEndpointAuthMethodsSupported(new HashSet<>(Arrays.asList(TokenEndpointAuthMethodsSupported.CLIENT_SECRET_BASIC, TokenEndpointAuthMethodsSupported.CLIENT_SECRET_POST)))
+            .withResponseModesSupported(new HashSet<>(Arrays.asList(ResponseModesSupported.FRAGMENT, ResponseModesSupported.QUERY, ResponseModesSupported.FORM_POST)));
+
         final OpenIdProviderConfiguration openIdConfiguration = new OpenIdProviderConfiguration();
 
-        final UriBuilder baseUri = UriBuilder.fromUri(create(request.getRequestURL()
-                .toString()))
-                .scheme("https")
-                .replaceQuery(null)
-                .fragment(null);
-        openIdConfiguration.setIssuer(baseUri.replacePath(request.getContextPath())
-                .build());
-        openIdConfiguration.setJwksUri(baseUri.replacePath(request.getContextPath() + jwksMapping)
-                .build());
-        openIdConfiguration.setAuthorizationEndpoint(baseUri.replacePath(request.getContextPath() + authorizationMapping)
-                .build());
-        openIdConfiguration.setRevocationEndpoint(baseUri.replacePath(request.getContextPath() + revocationMapping)
-                .build());
-        openIdConfiguration.setTokenEndpoint(baseUri.replacePath(request.getContextPath() + tokenMapping)
-                .build());
-        openIdConfiguration.setEndSessionEndpoint(baseUri.replacePath(request.getContextPath() + endSessionMapping)
-                .build());
-        openIdConfiguration.setUserinfoEndpoint(baseUri.replacePath(request.getContextPath() + userinfoMapping)
-                .build());
-
-        final Scope[] scopesSupported = userinfoProvider.scopesSupported();
-        final Scope[] scopes = new Scope[scopesSupported.length + 1];
-        System.arraycopy(scopesSupported, 0, scopes, 1, scopesSupported.length);
-        scopes[0] = Scope.openid;
-        openIdConfiguration.setScopesSupported(scopes);
-
-        final String[] claimsSupported = userinfoProvider.claimsSupported();
-        final String[] claims = new String[claimsSupported.length + 3];
-        claims[0] = "sub";
-        claims[1] = "iss";
-        claims[2] = "auth_time";
-        System.arraycopy(claimsSupported, 0, claims, 3, claimsSupported.length);
-        openIdConfiguration.setClaimsSupported(claims);
-
-        openIdConfiguration.setResponseTypesSupported(CODE, ID_TOKEN, ID_TOKEN_TOKEN, CODE_ID_TOKEN, CODE_TOKEN, CODE_ID_TOKEN_TOKEN);
-        openIdConfiguration.setRequestParameterSupported(true);
-        openIdConfiguration.setGrantTypesSupported(GrantType.authorization_code, GrantType.implicit);
-        openIdConfiguration.setRequestUriParameterSupported(false);
-        openIdConfiguration.setSubjectTypesSupported(SubjectIdentifierType.PUBLIC);
-        openIdConfiguration.setTokenEndpointAuthMethodsSupported(TokenEndPointAuthMethod.client_secret_basic, TokenEndPointAuthMethod.client_secret_post);
         openIdConfiguration.setIdTokenSigningAlgValuesSupported(JsonWebAlgorithm.getSigAlgorithms());
         openIdConfiguration.setRequestObjectEncryptionAlgValuesSupported(JsonWebAlgorithm.getKexAlgorithms());
         openIdConfiguration.setRequestObjectEncryptionEncValuesSupported(JsonWebAlgorithm.getEncAlgorithms());
-        openIdConfiguration.setResponseModesSupported(ResponseMode.fragment, ResponseMode.query, ResponseMode.form_post);
 
         final CacheControl cacheControl = new CacheControl();
         cacheControl.setPrivate(false);
         cacheControl.setMaxAge(86400);
 
-        return Response.ok(openIdConfiguration)
-                .cacheControl(cacheControl)
-                .tag(keyProvider.getSecretKeyId())
-                .build();
+        return Response.ok(new Gson().toJson(metaData))
+            .cacheControl(cacheControl)
+            .tag(keyProvider.getSecretKeyId())
+            .build();
 
     }
 

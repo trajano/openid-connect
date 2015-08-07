@@ -1,0 +1,8 @@
+{
+	"title": "Grant Type",
+	"javaType": "net.trajano.openidconnect.provider.type.GrantType",
+	"type": "string",
+	"enum": ["authorization_code",
+	"implicit",
+	"refresh_token"]
+}
