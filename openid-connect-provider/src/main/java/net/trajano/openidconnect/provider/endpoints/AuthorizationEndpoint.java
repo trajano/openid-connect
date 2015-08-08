@@ -18,7 +18,6 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
-import javax.ws.rs.core.UriInfo;
 
 import net.trajano.openidconnect.auth.AuthenticationRequest;
 import net.trajano.openidconnect.auth.Prompt;
@@ -68,9 +67,6 @@ public class AuthorizationEndpoint {
     @EJB
     private TokenProvider tp;
 
-    @Context
-    private UriInfo uriInfo;
-
     /**
      * <a href=
      * "https://localhost:8181/V1/auth?client_id=angelstone-client-id&scope=openid&state=170894&redirect_uri=https://www.getpostman.com/oauth2/callback&response_type=code"
@@ -103,7 +99,7 @@ public class AuthorizationEndpoint {
      * per Section 13.1. If using the HTTP POST method, the request parameters
      * are serialized using Form Serialization, per Section 13.2.
      * </p>
-     * 
+     *
      * @return JAX-RS Response
      * @throws GeneralSecurityException
      * @throws IOException
@@ -141,8 +137,7 @@ public class AuthorizationEndpoint {
             reqJwt = b.toString();
         }
 
-        final UriBuilder contextUriBuilder = uriInfo.getBaseUriBuilder()
-            .replacePath(req.getContextPath());
+        final UriBuilder contextUriBuilder = UriBuilder.fromPath(req.getContextPath() + "/");
         if (!authenticated) {
 
             return Response.temporaryRedirect(authenticator.authenticate(authenticationRequest, reqJwt, req, contextUriBuilder))

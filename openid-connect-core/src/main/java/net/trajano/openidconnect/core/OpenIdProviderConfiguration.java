@@ -140,6 +140,7 @@ public class OpenIdProviderConfiguration {
      * <p>
      * In order to support Google, this is left as a string rather than a URI.
      */
+    @XmlElement(name = "issuer")
     private String issuer;
 
     /**
@@ -314,6 +315,9 @@ public class OpenIdProviderConfiguration {
     @XmlElement(name = "userinfo_signing_alg_values_supported")
     private Set<String> userinfoSigningAlgValuesSupported;
 
+    public OpenIdProviderConfiguration() {
+    }
+
     public Set<String> getAcrValuesSupported() {
 
         return acrValuesSupported;
@@ -397,6 +401,11 @@ public class OpenIdProviderConfiguration {
     public List<String> getRequestObjectSigningAlgValuesSupported() {
 
         return requestObjectSigningAlgValuesSupported;
+    }
+
+    public List<ResponseMode> getResponseModesSupported() {
+
+        return responseModesSupported;
     }
 
     public List<String> getResponseTypesSupported() {
@@ -617,6 +626,11 @@ public class OpenIdProviderConfiguration {
         this.requireRequestUriRegistration = requireRequestUriRegistration;
     }
 
+    public void setResponseModesSupported(final ResponseMode... responseModesSupported) {
+
+        this.responseModesSupported = Arrays.asList(responseModesSupported);
+    }
+
     public void setResponseTypesSupported(final String... responseTypesSupported) {
 
         this.responseTypesSupported = Arrays.asList(responseTypesSupported);
@@ -637,7 +651,7 @@ public class OpenIdProviderConfiguration {
         this.serviceDocumentation = serviceDocumentation;
     }
 
-    public void setSubjectTypesSupported(SubjectIdentifierType... subjectTypesSupported) {
+    public void setSubjectTypesSupported(final SubjectIdentifierType... subjectTypesSupported) {
 
         this.subjectTypesSupported = new HashSet<>(Arrays.asList(subjectTypesSupported));
     }
@@ -680,16 +694,6 @@ public class OpenIdProviderConfiguration {
     public void setUserinfoSigningAlgValuesSupported(final Set<String> userinfoSigningAlgValuesSupported) {
 
         this.userinfoSigningAlgValuesSupported = userinfoSigningAlgValuesSupported;
-    }
-
-    public List<ResponseMode> getResponseModesSupported() {
-
-        return responseModesSupported;
-    }
-
-    public void setResponseModesSupported(ResponseMode... responseModesSupported) {
-
-        this.responseModesSupported = Arrays.asList(responseModesSupported);
     }
 
 }

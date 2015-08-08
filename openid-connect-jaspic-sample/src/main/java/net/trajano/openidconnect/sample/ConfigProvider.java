@@ -1,5 +1,7 @@
 package net.trajano.openidconnect.sample;
 
+import java.io.IOException;
+import java.net.ServerSocket;
 import java.net.URI;
 
 import javax.ejb.Remote;
@@ -13,10 +15,14 @@ import net.trajano.openidconnect.jaspic.OpenIdConnectModuleConfigProviderRemote;
  */
 @Stateless
 @Remote(OpenIdConnectModuleConfigProviderRemote.class)
-public class ConfigProvider implements OpenIdConnectModuleConfigProviderRemote {
+public class ConfigProvider implements
+    OpenIdConnectModuleConfigProviderRemote {
 
-    /* (non-Javadoc)
-     * @see net.trajano.openidconnect.jaspic.internal.AbstractInitializer#getClientId()
+    /*
+     * (non-Javadoc)
+     * @see
+     * net.trajano.openidconnect.jaspic.internal.AbstractInitializer#getClientId
+     * ()
      */
     @Override
     public String getClientId() {
@@ -24,8 +30,10 @@ public class ConfigProvider implements OpenIdConnectModuleConfigProviderRemote {
         return "sample_client_id";
     }
 
-    /* (non-Javadoc)
-     * @see net.trajano.openidconnect.jaspic.internal.AbstractInitializer#getClientSecret()
+    /*
+     * (non-Javadoc)
+     * @see net.trajano.openidconnect.jaspic.internal.AbstractInitializer#
+     * getClientSecret()
      */
     @Override
     public String getClientSecret() {
@@ -33,17 +41,31 @@ public class ConfigProvider implements OpenIdConnectModuleConfigProviderRemote {
         return "sample_client_secret";
     }
 
-    /* (non-Javadoc)
-     * @see net.trajano.openidconnect.jaspic.internal.AbstractInitializer#isCertificateCheckDisabled()
+    /*
+     * (non-Javadoc)
+     * @see net.trajano.openidconnect.jaspic.internal.AbstractInitializer#
+     * getIssuerUri()
      */
     @Override
-    public boolean isCertificateCheckDisabled() {
+    public URI getIssuerUri() {
 
-        return true;
+        try (ServerSocket s = new ServerSocket(8181)) {
+
+        } catch (final IOException e) {
+            return URI.create("https://localhost:8181");
+        }
+        try (ServerSocket s = new ServerSocket(9443)) {
+
+        } catch (final IOException e) {
+            return URI.create("https://localhost:9443");
+        }
+        throw new RuntimeException("unable to determine server port");
     }
 
-    /* (non-Javadoc)
-     * @see net.trajano.openidconnect.jaspic.internal.AbstractInitializer#getScope()
+    /*
+     * (non-Javadoc)
+     * @see
+     * net.trajano.openidconnect.jaspic.internal.AbstractInitializer#getScope()
      */
     @Override
     public String getScope() {
@@ -51,12 +73,14 @@ public class ConfigProvider implements OpenIdConnectModuleConfigProviderRemote {
         return "openid profile email";
     }
 
-    /* (non-Javadoc)
-     * @see net.trajano.openidconnect.jaspic.internal.AbstractInitializer#getIssuerUri()
+    /*
+     * (non-Javadoc)
+     * @see net.trajano.openidconnect.jaspic.internal.AbstractInitializer#
+     * isCertificateCheckDisabled()
      */
     @Override
-    public URI getIssuerUri() {
+    public boolean isCertificateCheckDisabled() {
 
-        return URI.create("https://localhost:9443/");
+        return true;
     }
 }
