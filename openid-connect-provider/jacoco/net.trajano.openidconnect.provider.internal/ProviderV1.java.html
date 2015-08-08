@@ -6,8 +6,6 @@ import java.util.Set;
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
 
-import org.eclipse.persistence.jaxb.rs.MOXyJsonProvider;
-
 import net.trajano.openidconnect.provider.endpoints.AuthorizationEndpoint;
 import net.trajano.openidconnect.provider.endpoints.EndSessionEndpoint;
 import net.trajano.openidconnect.provider.endpoints.Jwks;
@@ -18,22 +16,21 @@ import net.trajano.openidconnect.rs.JsonWebKeyProvider;
 import net.trajano.openidconnect.rs.JsonWebKeySetProvider;
 
 @ApplicationPath(&quot;V1&quot;)
-<span class="nc" id="L21">public class ProviderV1 extends Application {</span>
+<span class="nc" id="L19">public class ProviderV1 extends Application {</span>
 
     @Override
     public Set&lt;Class&lt;?&gt;&gt; getClasses() {
 
-<span class="nc" id="L26">        final Set&lt;Class&lt;?&gt;&gt; classes = new HashSet&lt;&gt;();</span>
-<span class="nc" id="L27">        classes.add(MOXyJsonProvider.class);</span>
-<span class="nc" id="L28">        classes.add(AuthorizationEndpoint.class);</span>
-<span class="nc" id="L29">        classes.add(EndSessionEndpoint.class);</span>
-<span class="nc" id="L30">        classes.add(IdTokenProvider.class);</span>
-<span class="nc" id="L31">        classes.add(Jwks.class);</span>
-<span class="nc" id="L32">        classes.add(JsonWebKeyProvider.class);</span>
-<span class="nc" id="L33">        classes.add(JsonWebKeySetProvider.class);</span>
-<span class="nc" id="L34">        classes.add(TokenEndpoint.class);</span>
-<span class="nc" id="L35">        classes.add(UserinfoEndpoint.class);</span>
-<span class="nc" id="L36">        return classes;</span>
+<span class="nc" id="L24">        final Set&lt;Class&lt;?&gt;&gt; classes = new HashSet&lt;&gt;();</span>
+<span class="nc" id="L25">        classes.add(AuthorizationEndpoint.class);</span>
+<span class="nc" id="L26">        classes.add(EndSessionEndpoint.class);</span>
+<span class="nc" id="L27">        classes.add(IdTokenProvider.class);</span>
+<span class="nc" id="L28">        classes.add(Jwks.class);</span>
+<span class="nc" id="L29">        classes.add(JsonWebKeyProvider.class);</span>
+<span class="nc" id="L30">        classes.add(JsonWebKeySetProvider.class);</span>
+<span class="nc" id="L31">        classes.add(TokenEndpoint.class);</span>
+<span class="nc" id="L32">        classes.add(UserinfoEndpoint.class);</span>
+<span class="nc" id="L33">        return classes;</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span></div></body></html>

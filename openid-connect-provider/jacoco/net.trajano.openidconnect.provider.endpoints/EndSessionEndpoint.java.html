@@ -80,8 +80,8 @@ import net.trajano.openidconnect.token.IdToken;
                     GeneralSecurityException {
 
 <span class="nc" id="L82">        final HttpSession session = req.getSession(false);</span>
-<span class="nc bnc" id="L83" title="All 4 branches missed.">        if (session == null || !session.getAttribute(&quot;nonce&quot;)</span>
-                .equals(nonce)) {
+<span class="nc bnc" id="L83" title="All 2 branches missed.">        if (session == null || !session.getAttribute(&quot;nonce&quot;)</span>
+<span class="nc bnc" id="L84" title="All 2 branches missed.">                .equals(nonce)) {</span>
 <span class="nc" id="L85">            throw new OpenIdConnectException(ErrorCode.access_denied);</span>
         }
 
@@ -92,9 +92,9 @@ import net.trajano.openidconnect.token.IdToken;
 <span class="nc" id="L92">            session.invalidate();</span>
         }
 <span class="nc" id="L94">        return Response.temporaryRedirect(UriBuilder.fromUri(postLogoutRedirectUri)</span>
-                .queryParam(OpenIdConnectKey.STATE, state)
-                .build())
-                .build();
+<span class="nc" id="L95">                .queryParam(OpenIdConnectKey.STATE, state)</span>
+<span class="nc" id="L96">                .build())</span>
+<span class="nc" id="L97">                .build();</span>
 
     }
 
@@ -183,13 +183,13 @@ import net.trajano.openidconnect.token.IdToken;
 
 <span class="nc" id="L184">        final HttpSession session = req.getSession(false);</span>
 <span class="nc bnc" id="L185" title="All 4 branches missed.">        if (session != null &amp;&amp; authenticator.isAuthenticated(req)) {</span>
-<span class="nc bnc" id="L186" title="All 2 branches missed.">            if (!authenticator.getSubject(req)</span>
-                    .equals(idToken.getSub())) {
+<span class="nc" id="L186">            if (!authenticator.getSubject(req)</span>
+<span class="nc bnc" id="L187" title="All 2 branches missed.">                    .equals(idToken.getSub())) {</span>
 <span class="nc" id="L188">                throw new OpenIdConnectException(ErrorCode.access_denied);</span>
             }
 <span class="nc" id="L190">            final UriBuilder uriBuilder = UriBuilder.fromUri(req.getRequestURL()</span>
-                    .toString())
-                    .replacePath(req.getContextPath());
+<span class="nc" id="L191">                    .toString())</span>
+<span class="nc" id="L192">                    .replacePath(req.getContextPath());</span>
 
 <span class="nc" id="L194">            session.setAttribute(&quot;post_logout_redirect_uri&quot;, postLogoutRedirectUri);</span>
 <span class="nc bnc" id="L195" title="All 2 branches missed.">            if (idToken != null) {</span>
@@ -200,14 +200,14 @@ import net.trajano.openidconnect.token.IdToken;
 <span class="nc" id="L200">            session.setAttribute(&quot;nonce&quot;, nonce);</span>
 
 <span class="nc" id="L202">            return Response.temporaryRedirect(authenticator.logout(nonce, idToken, state, postLogoutRedirectUri, req, uriBuilder))</span>
-                    .build();
+<span class="nc" id="L203">                    .build();</span>
         }
         // If the user is not authenticated, it just goes back to the post
         // redirect URI.
 <span class="nc" id="L207">        return Response.temporaryRedirect(UriBuilder.fromUri(postLogoutRedirectUri)</span>
-                .queryParam(OpenIdConnectKey.STATE, state)
-                .build())
-                .build();
+<span class="nc" id="L208">                .queryParam(OpenIdConnectKey.STATE, state)</span>
+<span class="nc" id="L209">                .build())</span>
+<span class="nc" id="L210">                .build();</span>
 
     }
 }

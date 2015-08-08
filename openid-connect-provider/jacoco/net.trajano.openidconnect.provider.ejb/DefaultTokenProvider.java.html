@@ -78,12 +78,12 @@ import net.trajano.openidconnect.userinfo.Userinfo;
 <span class="nc" id="L78">        idToken.setIss(issuer.toASCIIString());</span>
 <span class="nc" id="L79">        idToken.setAcr(&quot;0&quot;);</span>
 
-<span class="nc bnc" id="L81" title="All 2 branches missed.">        if (req.getClaims()</span>
-                .containsKey(&quot;id_token&quot;)) {
+<span class="nc" id="L81">        if (req.getClaims()</span>
+<span class="nc bnc" id="L82" title="All 2 branches missed.">                .containsKey(&quot;id_token&quot;)) {</span>
 <span class="nc" id="L83">            Userinfo userinfo = userinfoProvider.getUserinfo(idToken);</span>
 <span class="nc bnc" id="L84" title="All 2 branches missed.">            for (Entry&lt;String, JsonValue&gt; e : req.getClaims()</span>
-                    .getJsonObject(&quot;id_token&quot;)
-                    .entrySet()) {
+<span class="nc" id="L85">                    .getJsonObject(&quot;id_token&quot;)</span>
+<span class="nc" id="L86">                    .entrySet()) {</span>
 <span class="nc bnc" id="L87" title="All 2 branches missed.">                if (&quot;name&quot;.equals(e.getKey())) {</span>
 <span class="nc" id="L88">                    idToken.setName(userinfo.getName());</span>
                 }
@@ -105,23 +105,24 @@ import net.trajano.openidconnect.userinfo.Userinfo;
 
 <span class="nc" id="L106">        final IdTokenResponse tokenResponse = tokenStorage.getByCode(code);</span>
 
-<span class="nc bnc" id="L108" title="All 2 branches missed.">        if (tokenStorage.isCodeUsed(code)) {</span>
-            // Revoke access tokens since code was used twice.
-<span class="nc" id="L110">            tokenStorage.removeMappingForAccessToken(tokenResponse.getAccessToken());</span>
-<span class="nc" id="L111">            tokenStorage.removeMappingForRefreshToken(tokenResponse.getRefreshToken());</span>
-<span class="nc" id="L112">            tokenStorage.removeMappingForCode(code);</span>
-<span class="nc" id="L113">            return null;</span>
-        }
+//        if (tokenStorage.isCodeUsed(code)) {
+//            // Revoke access tokens since code was used twice.
+//            tokenStorage.removeMappingForAccessToken(tokenResponse.getAccessToken());
+//            tokenStorage.removeMappingForRefreshToken(tokenResponse.getRefreshToken());
+//            tokenStorage.removeMappingForCode(code);
+//            return null;
+//        }
 <span class="nc bnc" id="L115" title="All 2 branches missed.">        if (deleteAfterRetrieval) {</span>
-<span class="nc" id="L116">            tokenStorage.markCodeAsUsed(code);</span>
+<span class="nc" id="L116">          tokenStorage.removeMappingForCode(code);</span>
+<span class="nc" id="L117">            tokenStorage.markCodeAsUsed(code);</span>
         }
-<span class="nc" id="L118">        return tokenResponse;</span>
+<span class="nc" id="L119">        return tokenResponse;</span>
     }
 
     @Override
     public IdTokenResponse getByConsent(final Consent consent) {
 
-<span class="nc" id="L124">        return tokenStorage.getByConsent(consent);</span>
+<span class="nc" id="L125">        return tokenStorage.getByConsent(consent);</span>
     }
 
     @Override
@@ -131,47 +132,50 @@ import net.trajano.openidconnect.userinfo.Userinfo;
             final Integer expiresIn) throws IOException,
                     GeneralSecurityException {
 
-<span class="nc" id="L134">        final IdTokenResponse idTokenResponse = tokenStorage.removeMappingForRefreshToken(refreshTokenIn);</span>
-<span class="nc bnc" id="L135" title="All 2 branches missed.">        if (!clientId.equals(idTokenResponse.getIdToken(keyProvider.getPrivateJwks())</span>
-                .getAud())) {
-<span class="nc" id="L137">            throw new WebApplicationException();</span>
+<span class="nc" id="L135">        final IdTokenResponse idTokenResponse = tokenStorage.removeMappingForRefreshToken(refreshTokenIn);</span>
+<span class="nc bnc" id="L136" title="All 2 branches missed.">        if (idTokenResponse == null) {</span>
+<span class="nc" id="L137">            return null;</span>
         }
-<span class="nc bnc" id="L139" title="All 4 branches missed.">        if (scopes != null &amp;&amp; !scopes.containsAll(scopes)) {</span>
-<span class="nc" id="L140">            throw new WebApplicationException();</span>
+<span class="nc bnc" id="L139" title="All 2 branches missed.">        if (!clientId.equals(idTokenResponse.getIdToken(keyProvider.getPrivateJwks())</span>
+<span class="nc" id="L140">                .getAud())) {</span>
+<span class="nc" id="L141">            throw new WebApplicationException();</span>
         }
-<span class="nc bnc" id="L142" title="All 4 branches missed.">        if (scopes != null &amp;&amp; scopes.containsAll(scopes)) {</span>
-<span class="nc" id="L143">            idTokenResponse.setScopes(scopes);</span>
+<span class="nc bnc" id="L143" title="All 4 branches missed.">        if (scopes != null &amp;&amp; !scopes.containsAll(scopes)) {</span>
+<span class="nc" id="L144">            throw new WebApplicationException();</span>
+        }
+<span class="nc bnc" id="L146" title="All 4 branches missed.">        if (scopes != null &amp;&amp; scopes.containsAll(scopes)) {</span>
+<span class="nc" id="L147">            idTokenResponse.setScopes(scopes);</span>
         }
 
-<span class="nc" id="L146">        JsonObject claims = tokenStorage.getClaimsByAccessToken(idTokenResponse.getAccessToken());</span>
+<span class="nc" id="L150">        JsonObject claims = tokenStorage.getClaimsByAccessToken(idTokenResponse.getAccessToken());</span>
         // remove from map we are getting a new one
-<span class="nc" id="L148">        tokenStorage.removeMappingForAccessToken(idTokenResponse.getAccessToken());</span>
-<span class="nc" id="L149">        final String newAccessToken = keyProvider.nextEncodedToken();</span>
-<span class="nc" id="L150">        final String newRefreshToken = keyProvider.nextEncodedToken();</span>
+<span class="nc" id="L152">        tokenStorage.removeMappingForAccessToken(idTokenResponse.getAccessToken());</span>
+<span class="nc" id="L153">        final String newAccessToken = keyProvider.nextEncodedToken();</span>
+<span class="nc" id="L154">        final String newRefreshToken = keyProvider.nextEncodedToken();</span>
 
-<span class="nc" id="L152">        idTokenResponse.setAccessToken(newAccessToken);</span>
-<span class="nc" id="L153">        idTokenResponse.setRefreshToken(newRefreshToken);</span>
-<span class="nc" id="L154">        final IdToken idToken = idTokenResponse.getIdToken(keyProvider.getJwks());</span>
+<span class="nc" id="L156">        idTokenResponse.setAccessToken(newAccessToken);</span>
+<span class="nc" id="L157">        idTokenResponse.setRefreshToken(newRefreshToken);</span>
+<span class="nc" id="L158">        final IdToken idToken = idTokenResponse.getIdToken(keyProvider.getJwks());</span>
 
-<span class="nc bnc" id="L156" title="All 2 branches missed.">        if (expiresIn != null) {</span>
-<span class="nc" id="L157">            idToken.resetIssueAndExpiration(tokenStorage.getExpiration(expiresIn));</span>
+<span class="nc bnc" id="L160" title="All 2 branches missed.">        if (expiresIn != null) {</span>
+<span class="nc" id="L161">            idToken.resetIssueAndExpiration(tokenStorage.getExpiration(expiresIn));</span>
         } else {
-<span class="nc" id="L159">            idToken.resetIssueAndExpiration(tokenStorage.getDefaultExpiration());</span>
+<span class="nc" id="L163">            idToken.resetIssueAndExpiration(tokenStorage.getDefaultExpiration());</span>
         }
 
-<span class="nc" id="L162">        idToken.setAtHash(computeHash(newAccessToken));</span>
+<span class="nc" id="L166">        idToken.setAtHash(computeHash(newAccessToken));</span>
 
-<span class="nc" id="L164">        final ByteArrayOutputStream baos = new ByteArrayOutputStream();</span>
-<span class="nc" id="L165">        new IdTokenProvider().writeTo(idToken, IdToken.class, IdToken.class, null, MediaType.APPLICATION_JSON_TYPE, null, baos);</span>
-<span class="nc" id="L166">        baos.close();</span>
+<span class="nc" id="L168">        final ByteArrayOutputStream baos = new ByteArrayOutputStream();</span>
+<span class="nc" id="L169">        new IdTokenProvider().writeTo(idToken, IdToken.class, IdToken.class, null, MediaType.APPLICATION_JSON_TYPE, null, baos);</span>
+<span class="nc" id="L170">        baos.close();</span>
 
-<span class="nc" id="L168">        final JsonWebTokenBuilder jwtBuilder = new JsonWebTokenBuilder().jwk(keyProvider.getPrivateJwks())</span>
-                .payload(baos.toByteArray());
-<span class="nc" id="L170">        idTokenResponse.setEncodedIdToken(jwtBuilder.toString());</span>
+<span class="nc" id="L172">        final JsonWebTokenBuilder jwtBuilder = new JsonWebTokenBuilder().jwk(keyProvider.getPrivateJwks())</span>
+<span class="nc" id="L173">                .payload(baos.toByteArray());</span>
+<span class="nc" id="L174">        idTokenResponse.setEncodedIdToken(jwtBuilder.toString());</span>
 
-<span class="nc" id="L172">        tokenStorage.store(idToken, idTokenResponse, claims);</span>
+<span class="nc" id="L176">        tokenStorage.store(idToken, idTokenResponse, claims);</span>
 
-<span class="nc" id="L174">        return idTokenResponse;</span>
+<span class="nc" id="L178">        return idTokenResponse;</span>
     }
 
     /**
@@ -190,35 +194,38 @@ import net.trajano.openidconnect.userinfo.Userinfo;
             final AuthenticationRequest req) throws IOException,
                     GeneralSecurityException {
 
-<span class="nc" id="L193">        final IdTokenResponse response = new IdTokenResponse();</span>
-<span class="nc" id="L194">        final String newAccessToken = keyProvider.nextEncodedToken();</span>
-<span class="nc" id="L195">        response.setAccessToken(newAccessToken);</span>
-<span class="nc" id="L196">        response.setRefreshToken(keyProvider.nextEncodedToken());</span>
-<span class="nc" id="L197">        response.setExpiresIn(tokenStorage.getDefaultExpiration());</span>
-<span class="nc" id="L198">        response.setScopes(req.getScopes());</span>
-<span class="nc" id="L199">        response.setTokenType(TokenResponse.BEARER);</span>
+<span class="nc" id="L197">        final IdTokenResponse response = new IdTokenResponse();</span>
+<span class="nc" id="L198">        final String newAccessToken = keyProvider.nextEncodedToken();</span>
+<span class="nc" id="L199">        response.setAccessToken(newAccessToken);</span>
+<span class="nc" id="L200">        response.setRefreshToken(keyProvider.nextEncodedToken());</span>
+<span class="nc" id="L201">        response.setExpiresIn(tokenStorage.getDefaultExpiration());</span>
+<span class="nc" id="L202">        response.setScopes(req.getScopes());</span>
+<span class="nc" id="L203">        response.setTokenType(TokenResponse.BEARER);</span>
 
-<span class="nc" id="L201">        idToken.setAtHash(computeHash(newAccessToken));</span>
-<span class="nc" id="L202">        idToken.resetIssueAndExpiration(tokenStorage.getDefaultExpiration());</span>
+<span class="nc" id="L205">        idToken.setAtHash(computeHash(newAccessToken));</span>
 
-<span class="nc" id="L204">        final ByteArrayOutputStream baos = new ByteArrayOutputStream();</span>
-<span class="nc" id="L205">        new IdTokenProvider().writeTo(idToken, IdToken.class, IdToken.class, null, MediaType.APPLICATION_JSON_TYPE, null, baos);</span>
-<span class="nc" id="L206">        baos.close();</span>
-<span class="nc" id="L207">        final JsonWebTokenBuilder jwtBuilder = new JsonWebTokenBuilder().jwk(keyProvider.getPrivateJwks())</span>
-                .alg(JsonWebAlgorithm.RS256)
-                .payload(baos.toByteArray());
-<span class="nc" id="L210">        response.setEncodedIdToken(jwtBuilder.toString());</span>
+<span class="nc" id="L207">        final String code = keyProvider.nextEncodedToken();</span>
+<span class="nc" id="L208">        idToken.setCHash(computeHash(code));</span>
+        
+<span class="nc" id="L210">        idToken.resetIssueAndExpiration(tokenStorage.getDefaultExpiration());</span>
 
-<span class="nc" id="L212">        final String code = keyProvider.nextEncodedToken();</span>
-<span class="nc" id="L213">        tokenStorage.store(idToken, response, code, req.getClaims());</span>
+<span class="nc" id="L212">        final ByteArrayOutputStream baos = new ByteArrayOutputStream();</span>
+<span class="nc" id="L213">        new IdTokenProvider().writeTo(idToken, IdToken.class, IdToken.class, null, MediaType.APPLICATION_JSON_TYPE, null, baos);</span>
+<span class="nc" id="L214">        baos.close();</span>
+<span class="nc" id="L215">        final JsonWebTokenBuilder jwtBuilder = new JsonWebTokenBuilder().jwk(keyProvider.getPrivateJwks())</span>
+<span class="nc" id="L216">                .alg(JsonWebAlgorithm.RS256)</span>
+<span class="nc" id="L217">                .payload(baos.toByteArray());</span>
+<span class="nc" id="L218">        response.setEncodedIdToken(jwtBuilder.toString());</span>
 
-<span class="nc" id="L215">        return code;</span>
+<span class="nc" id="L220">        tokenStorage.store(idToken, response, code, req.getClaims());</span>
+
+<span class="nc" id="L222">        return code;</span>
     }
 
     @Override
     public JsonObject getClaimsByAccessToken(String accessToken) {
 
-<span class="nc" id="L221">        return tokenStorage.getClaimsByAccessToken(accessToken);</span>
+<span class="nc" id="L228">        return tokenStorage.getClaimsByAccessToken(accessToken);</span>
     }
 
 }

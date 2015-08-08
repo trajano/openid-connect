@@ -4,6 +4,7 @@ import static java.net.URI.create;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
+import javax.ejb.Stateless;
 import javax.servlet.ServletRegistration;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
@@ -26,7 +27,8 @@ import net.trajano.openidconnect.provider.spi.UserinfoProvider;
 import net.trajano.openidconnect.token.GrantType;
 
 @Path(&quot;openid-configuration&quot;)
-<span class="nc" id="L29">public class WellKnownOpenIdConfiguration {</span>
+@Stateless
+<span class="nc" id="L31">public class WellKnownOpenIdConfiguration {</span>
 
     public static final String CODE = &quot;code&quot;;
 
@@ -75,18 +77,18 @@ import net.trajano.openidconnect.token.GrantType;
     public void init() {
 
         // eventually allow for multiple for now hard code.
-<span class="nc" id="L78">        String applicationPath = &quot;V1&quot;;</span>
-<span class="nc bnc" id="L79" title="All 2 branches missed.">        if (!applicationPath.startsWith(&quot;/&quot;)) {</span>
-<span class="nc" id="L80">            applicationPath = &quot;/&quot; + applicationPath;</span>
+<span class="nc" id="L80">        String applicationPath = &quot;V1&quot;;</span>
+<span class="nc bnc" id="L81" title="All 2 branches missed.">        if (!applicationPath.startsWith(&quot;/&quot;)) {</span>
+<span class="nc" id="L82">            applicationPath = &quot;/&quot; + applicationPath;</span>
         }
-<span class="nc" id="L82">        jwksMapping = applicationPath + &quot;/jwks&quot;;</span>
-<span class="nc" id="L83">        authorizationMapping = applicationPath + &quot;/auth&quot;;</span>
-<span class="nc" id="L84">        tokenMapping = applicationPath + &quot;/token&quot;;</span>
-<span class="nc" id="L85">        userinfoMapping = applicationPath + &quot;/profile&quot;;</span>
-<span class="nc" id="L86">        revocationMapping = applicationPath + &quot;/revocation&quot;;</span>
-<span class="nc" id="L87">        endSessionMapping = applicationPath + &quot;/end&quot;;</span>
+<span class="nc" id="L84">        jwksMapping = applicationPath + &quot;/jwks&quot;;</span>
+<span class="nc" id="L85">        authorizationMapping = applicationPath + &quot;/auth&quot;;</span>
+<span class="nc" id="L86">        tokenMapping = applicationPath + &quot;/token&quot;;</span>
+<span class="nc" id="L87">        userinfoMapping = applicationPath + &quot;/profile&quot;;</span>
+<span class="nc" id="L88">        revocationMapping = applicationPath + &quot;/revocation&quot;;</span>
+<span class="nc" id="L89">        endSessionMapping = applicationPath + &quot;/end&quot;;</span>
 
-<span class="nc" id="L89">    }</span>
+<span class="nc" id="L91">    }</span>
 
     private String endSessionMapping;
 
@@ -96,75 +98,75 @@ import net.trajano.openidconnect.token.GrantType;
     @Produces(MediaType.APPLICATION_JSON)
     public Response op(@Context final HttpServletRequest request) {
 
-<span class="nc" id="L99">        final OpenIdProviderConfiguration openIdConfiguration = new OpenIdProviderConfiguration();</span>
+<span class="nc" id="L101">        final OpenIdProviderConfiguration openIdConfiguration = new OpenIdProviderConfiguration();</span>
 
-<span class="nc" id="L101">        final UriBuilder baseUri = UriBuilder.fromUri(create(request.getRequestURL()</span>
-                .toString()))
-                .scheme(&quot;https&quot;)
-                .replaceQuery(null)
-                .fragment(null);
-<span class="nc" id="L106">        openIdConfiguration.setIssuer(baseUri.replacePath(request.getContextPath())</span>
-                .build());
-<span class="nc" id="L108">        openIdConfiguration.setJwksUri(baseUri.replacePath(request.getContextPath() + jwksMapping)</span>
-                .build());
-<span class="nc" id="L110">        openIdConfiguration.setAuthorizationEndpoint(baseUri.replacePath(request.getContextPath() + authorizationMapping)</span>
-                .build());
-<span class="nc" id="L112">        openIdConfiguration.setRevocationEndpoint(baseUri.replacePath(request.getContextPath() + revocationMapping)</span>
-                .build());
-<span class="nc" id="L114">        openIdConfiguration.setTokenEndpoint(baseUri.replacePath(request.getContextPath() + tokenMapping)</span>
-                .build());
-<span class="nc" id="L116">        openIdConfiguration.setEndSessionEndpoint(baseUri.replacePath(request.getContextPath() + endSessionMapping)</span>
-                .build());
-<span class="nc" id="L118">        openIdConfiguration.setUserinfoEndpoint(baseUri.replacePath(request.getContextPath() + userinfoMapping)</span>
-                .build());
+<span class="nc" id="L103">        final UriBuilder baseUri = UriBuilder.fromUri(create(request.getRequestURL()</span>
+<span class="nc" id="L104">                .toString()))</span>
+<span class="nc" id="L105">                .scheme(&quot;https&quot;)</span>
+<span class="nc" id="L106">                .replaceQuery(null)</span>
+<span class="nc" id="L107">                .fragment(null);</span>
+<span class="nc" id="L108">        openIdConfiguration.setIssuer(baseUri.replacePath(request.getContextPath())</span>
+<span class="nc" id="L109">                .build());</span>
+<span class="nc" id="L110">        openIdConfiguration.setJwksUri(baseUri.replacePath(request.getContextPath() + jwksMapping)</span>
+<span class="nc" id="L111">                .build());</span>
+<span class="nc" id="L112">        openIdConfiguration.setAuthorizationEndpoint(baseUri.replacePath(request.getContextPath() + authorizationMapping)</span>
+<span class="nc" id="L113">                .build());</span>
+<span class="nc" id="L114">        openIdConfiguration.setRevocationEndpoint(baseUri.replacePath(request.getContextPath() + revocationMapping)</span>
+<span class="nc" id="L115">                .build());</span>
+<span class="nc" id="L116">        openIdConfiguration.setTokenEndpoint(baseUri.replacePath(request.getContextPath() + tokenMapping)</span>
+<span class="nc" id="L117">                .build());</span>
+<span class="nc" id="L118">        openIdConfiguration.setEndSessionEndpoint(baseUri.replacePath(request.getContextPath() + endSessionMapping)</span>
+<span class="nc" id="L119">                .build());</span>
+<span class="nc" id="L120">        openIdConfiguration.setUserinfoEndpoint(baseUri.replacePath(request.getContextPath() + userinfoMapping)</span>
+<span class="nc" id="L121">                .build());</span>
 
-<span class="nc" id="L121">        final Scope[] scopesSupported = userinfoProvider.scopesSupported();</span>
-<span class="nc" id="L122">        final Scope[] scopes = new Scope[scopesSupported.length + 1];</span>
-<span class="nc" id="L123">        System.arraycopy(scopesSupported, 0, scopes, 1, scopesSupported.length);</span>
-<span class="nc" id="L124">        scopes[0] = Scope.openid;</span>
-<span class="nc" id="L125">        openIdConfiguration.setScopesSupported(scopes);</span>
+<span class="nc" id="L123">        final Scope[] scopesSupported = userinfoProvider.scopesSupported();</span>
+<span class="nc" id="L124">        final Scope[] scopes = new Scope[scopesSupported.length + 1];</span>
+<span class="nc" id="L125">        System.arraycopy(scopesSupported, 0, scopes, 1, scopesSupported.length);</span>
+<span class="nc" id="L126">        scopes[0] = Scope.openid;</span>
+<span class="nc" id="L127">        openIdConfiguration.setScopesSupported(scopes);</span>
 
-<span class="nc" id="L127">        final String[] claimsSupported = userinfoProvider.claimsSupported();</span>
-<span class="nc" id="L128">        final String[] claims = new String[claimsSupported.length + 3];</span>
-<span class="nc" id="L129">        claims[0] = &quot;sub&quot;;</span>
-<span class="nc" id="L130">        claims[1] = &quot;iss&quot;;</span>
-<span class="nc" id="L131">        claims[2] = &quot;auth_time&quot;;</span>
-<span class="nc" id="L132">        System.arraycopy(claimsSupported, 0, claims, 3, claimsSupported.length);</span>
-<span class="nc" id="L133">        openIdConfiguration.setClaimsSupported(claims);</span>
+<span class="nc" id="L129">        final String[] claimsSupported = userinfoProvider.claimsSupported();</span>
+<span class="nc" id="L130">        final String[] claims = new String[claimsSupported.length + 3];</span>
+<span class="nc" id="L131">        claims[0] = &quot;sub&quot;;</span>
+<span class="nc" id="L132">        claims[1] = &quot;iss&quot;;</span>
+<span class="nc" id="L133">        claims[2] = &quot;auth_time&quot;;</span>
+<span class="nc" id="L134">        System.arraycopy(claimsSupported, 0, claims, 3, claimsSupported.length);</span>
+<span class="nc" id="L135">        openIdConfiguration.setClaimsSupported(claims);</span>
 
-<span class="nc" id="L135">        openIdConfiguration.setResponseTypesSupported(CODE, ID_TOKEN, ID_TOKEN_TOKEN, CODE_ID_TOKEN, CODE_TOKEN, CODE_ID_TOKEN_TOKEN);</span>
-<span class="nc" id="L136">        openIdConfiguration.setRequestParameterSupported(true);</span>
-<span class="nc" id="L137">        openIdConfiguration.setGrantTypesSupported(GrantType.authorization_code, GrantType.implicit);</span>
-<span class="nc" id="L138">        openIdConfiguration.setRequestUriParameterSupported(false);</span>
-<span class="nc" id="L139">        openIdConfiguration.setSubjectTypesSupported(SubjectIdentifierType.PUBLIC);</span>
-<span class="nc" id="L140">        openIdConfiguration.setTokenEndpointAuthMethodsSupported(TokenEndPointAuthMethod.client_secret_basic, TokenEndPointAuthMethod.client_secret_post);</span>
-<span class="nc" id="L141">        openIdConfiguration.setIdTokenSigningAlgValuesSupported(JsonWebAlgorithm.getSigAlgorithms());</span>
-<span class="nc" id="L142">        openIdConfiguration.setRequestObjectEncryptionAlgValuesSupported(JsonWebAlgorithm.getKexAlgorithms());</span>
-<span class="nc" id="L143">        openIdConfiguration.setRequestObjectEncryptionEncValuesSupported(JsonWebAlgorithm.getEncAlgorithms());</span>
-<span class="nc" id="L144">        openIdConfiguration.setResponseModesSupported(ResponseMode.fragment, ResponseMode.query, ResponseMode.form_post);</span>
+<span class="nc" id="L137">        openIdConfiguration.setResponseTypesSupported(CODE, ID_TOKEN, ID_TOKEN_TOKEN, CODE_ID_TOKEN, CODE_TOKEN, CODE_ID_TOKEN_TOKEN);</span>
+<span class="nc" id="L138">        openIdConfiguration.setRequestParameterSupported(true);</span>
+<span class="nc" id="L139">        openIdConfiguration.setGrantTypesSupported(GrantType.authorization_code, GrantType.implicit);</span>
+<span class="nc" id="L140">        openIdConfiguration.setRequestUriParameterSupported(false);</span>
+<span class="nc" id="L141">        openIdConfiguration.setSubjectTypesSupported(SubjectIdentifierType.PUBLIC);</span>
+<span class="nc" id="L142">        openIdConfiguration.setTokenEndpointAuthMethodsSupported(TokenEndPointAuthMethod.client_secret_basic, TokenEndPointAuthMethod.client_secret_post);</span>
+<span class="nc" id="L143">        openIdConfiguration.setIdTokenSigningAlgValuesSupported(JsonWebAlgorithm.getSigAlgorithms());</span>
+<span class="nc" id="L144">        openIdConfiguration.setRequestObjectEncryptionAlgValuesSupported(JsonWebAlgorithm.getKexAlgorithms());</span>
+<span class="nc" id="L145">        openIdConfiguration.setRequestObjectEncryptionEncValuesSupported(JsonWebAlgorithm.getEncAlgorithms());</span>
+<span class="nc" id="L146">        openIdConfiguration.setResponseModesSupported(ResponseMode.fragment, ResponseMode.query, ResponseMode.form_post);</span>
 
-<span class="nc" id="L146">        final CacheControl cacheControl = new CacheControl();</span>
-<span class="nc" id="L147">        cacheControl.setPrivate(false);</span>
-<span class="nc" id="L148">        cacheControl.setMaxAge(86400);</span>
+<span class="nc" id="L148">        final CacheControl cacheControl = new CacheControl();</span>
+<span class="nc" id="L149">        cacheControl.setPrivate(false);</span>
+<span class="nc" id="L150">        cacheControl.setMaxAge(86400);</span>
 
-<span class="nc" id="L150">        return Response.ok(openIdConfiguration)</span>
-                .cacheControl(cacheControl)
-                .tag(keyProvider.getSecretKeyId())
-                .build();
+<span class="nc" id="L152">        return Response.ok(openIdConfiguration)</span>
+<span class="nc" id="L153">                .cacheControl(cacheControl)</span>
+<span class="nc" id="L154">                .tag(keyProvider.getSecretKeyId())</span>
+<span class="nc" id="L155">                .build();</span>
 
     }
 
     @EJB
     public void setKeyProvider(final KeyProvider keyProvider) {
 
-<span class="nc" id="L160">        this.keyProvider = keyProvider;</span>
-<span class="nc" id="L161">    }</span>
+<span class="nc" id="L162">        this.keyProvider = keyProvider;</span>
+<span class="nc" id="L163">    }</span>
 
     @EJB
     public void setUserinfoProvider(final UserinfoProvider userinfoProvider) {
 
-<span class="nc" id="L166">        this.userinfoProvider = userinfoProvider;</span>
-<span class="nc" id="L167">    }</span>
+<span class="nc" id="L168">        this.userinfoProvider = userinfoProvider;</span>
+<span class="nc" id="L169">    }</span>
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span></div></body></html>

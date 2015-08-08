@@ -15,11 +15,11 @@ public class FormPostBuilder {
     static {
         try {
 <span class="fc" id="L17">            InputStream templateStream = Thread.currentThread()</span>
-                    .getContextClassLoader()
-                    .getResourceAsStream(&quot;META-INF/form_post.html&quot;);
+<span class="fc" id="L18">                    .getContextClassLoader()</span>
+<span class="fc" id="L19">                    .getResourceAsStream(&quot;META-INF/form_post.html&quot;);</span>
 <span class="fc" id="L20">            Scanner scanner = new Scanner(templateStream);</span>
 <span class="fc" id="L21">            TEMPLATE = scanner.useDelimiter(&quot;\\A&quot;)</span>
-                    .next();
+<span class="fc" id="L22">                    .next();</span>
 <span class="fc" id="L23">            scanner.close();</span>
 <span class="fc" id="L24">            templateStream.close();</span>
 <span class="nc" id="L25">        } catch (IOException e) {</span>

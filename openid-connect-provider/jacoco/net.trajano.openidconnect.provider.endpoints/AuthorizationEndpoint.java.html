@@ -5,9 +5,11 @@ import static net.trajano.openidconnect.core.ErrorCode.invalid_grant;
 import static net.trajano.openidconnect.core.ErrorCode.login_required;
 
 import java.io.IOException;
+import java.net.URI;
 import java.security.GeneralSecurityException;
 
 import javax.ejb.EJB;
+import javax.ejb.Stateless;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -17,7 +19,6 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
-import javax.ws.rs.core.UriInfo;
 
 import net.trajano.openidconnect.auth.AuthenticationRequest;
 import net.trajano.openidconnect.auth.Prompt;
@@ -49,7 +50,8 @@ import net.trajano.openidconnect.provider.spi.TokenProvider;
  * @author Archimedes Trajano
  */
 @Path(&quot;auth&quot;)
-<span class="nc" id="L52">public class AuthorizationEndpoint {</span>
+@Stateless
+<span class="nc" id="L54">public class AuthorizationEndpoint {</span>
 
     @EJB
     private AuthenticationResponseProvider arp;
@@ -60,14 +62,8 @@ import net.trajano.openidconnect.provider.spi.TokenProvider;
 
     private KeyProvider keyProvider;
 
-    @Context
-    private javax.ws.rs.ext.Providers providers;
-
     @EJB
     private TokenProvider tp;
-
-    @Context
-    private UriInfo uriInfo;
 
     /**
      * &lt;a href=
@@ -84,7 +80,7 @@ import net.trajano.openidconnect.provider.spi.TokenProvider;
     public Response getOp(@Context final HttpServletRequest req) throws IOException,
         GeneralSecurityException {
 
-<span class="nc" id="L87">        return op(req);</span>
+<span class="nc" id="L83">        return op(req);</span>
     }
 
     /**
@@ -101,7 +97,7 @@ import net.trajano.openidconnect.provider.spi.TokenProvider;
      * per Section 13.1. If using the HTTP POST method, the request parameters
      * are serialized using Form Serialization, per Section 13.2.
      * &lt;/p&gt;
-     * 
+     *
      * @return JAX-RS Response
      * @throws GeneralSecurityException
      * @throws IOException
@@ -111,48 +107,50 @@ import net.trajano.openidconnect.provider.spi.TokenProvider;
     public Response op(@Context final HttpServletRequest req) throws IOException,
         GeneralSecurityException {
 
-<span class="nc" id="L114">        final AuthenticationRequest authenticationRequest = new AuthenticationRequest(req, keyProvider.getPrivateJwks());</span>
+<span class="nc" id="L110">        final AuthenticationRequest authenticationRequest = new AuthenticationRequest(req, keyProvider.getPrivateJwks());</span>
 
-<span class="nc bnc" id="L116" title="All 2 branches missed.">        if (!clientManager.isRedirectUriValidForClient(authenticationRequest.getClientId(), authenticationRequest.getRedirectUri())) {</span>
-<span class="nc" id="L117">            throw new OpenIdConnectException(invalid_grant, &quot;redirect URI is not supported for the client&quot;);</span>
+<span class="nc bnc" id="L112" title="All 2 branches missed.">        if (!clientManager.isRedirectUriValidForClient(authenticationRequest.getClientId(), authenticationRequest.getRedirectUri())) {</span>
+<span class="nc" id="L113">            throw new OpenIdConnectException(invalid_grant, &quot;redirect URI is not supported for the client&quot;);</span>
         }
 
-<span class="nc" id="L120">        final boolean authenticated = authenticator.isAuthenticated(req);</span>
+<span class="nc" id="L116">        final boolean authenticated = authenticator.isAuthenticated(req);</span>
 
-<span class="nc bnc" id="L122" title="All 4 branches missed.">        if (!authenticated &amp;&amp; authenticationRequest.getPrompts()</span>
-            .contains(Prompt.none)) {
-<span class="nc" id="L124">            throw new RedirectedOpenIdProviderException(authenticationRequest, new ErrorResponse(login_required));</span>
+<span class="nc bnc" id="L118" title="All 2 branches missed.">        if (!authenticated &amp;&amp; authenticationRequest.getPrompts()</span>
+<span class="nc bnc" id="L119" title="All 2 branches missed.">            .contains(Prompt.none)) {</span>
+<span class="nc" id="L120">            throw new RedirectedOpenIdProviderException(authenticationRequest, new ErrorResponse(login_required));</span>
         }
 
-<span class="nc" id="L127">        final Consent consent = new Consent(authenticator.getSubject(req), authenticationRequest.getClientId(), authenticationRequest.getScopes());</span>
+<span class="nc" id="L123">        final Consent consent = new Consent(authenticator.getSubject(req), authenticationRequest.getClientId(), authenticationRequest.getScopes());</span>
 
-<span class="nc bnc" id="L129" title="All 4 branches missed.">        final boolean consented = clientManager.isImplicitConsent(authenticationRequest.getClientId()) || tp.getByConsent(consent) != null;</span>
-<span class="nc bnc" id="L130" title="All 4 branches missed.">        if (!consented &amp;&amp; authenticationRequest.getPrompts()</span>
-            .contains(Prompt.none)) {
-<span class="nc" id="L132">            throw new RedirectedOpenIdProviderException(authenticationRequest, new ErrorResponse(consent_required));</span>
+<span class="nc bnc" id="L125" title="All 4 branches missed.">        final boolean consented = clientManager.isImplicitConsent(authenticationRequest.getClientId()) || tp.getByConsent(consent) != null;</span>
+<span class="nc bnc" id="L126" title="All 2 branches missed.">        if (!consented &amp;&amp; authenticationRequest.getPrompts()</span>
+<span class="nc bnc" id="L127" title="All 2 branches missed.">            .contains(Prompt.none)) {</span>
+<span class="nc" id="L128">            throw new RedirectedOpenIdProviderException(authenticationRequest, new ErrorResponse(consent_required));</span>
         }
 
-<span class="nc" id="L135">        String reqJwt = req.getParameter(OpenIdConnectKey.REQUEST);</span>
-<span class="nc bnc" id="L136" title="All 2 branches missed.">        if (reqJwt == null) {</span>
-<span class="nc" id="L137">            final JsonWebTokenBuilder b = new JsonWebTokenBuilder().payload(authenticationRequest.toJsonObject())</span>
-                .compress(true);
-<span class="nc" id="L139">            reqJwt = b.toString();</span>
+<span class="nc" id="L131">        String reqJwt = req.getParameter(OpenIdConnectKey.REQUEST);</span>
+<span class="nc bnc" id="L132" title="All 2 branches missed.">        if (reqJwt == null) {</span>
+<span class="nc" id="L133">            final JsonWebTokenBuilder b = new JsonWebTokenBuilder().payload(authenticationRequest.toJsonObject())</span>
+<span class="nc" id="L134">                .compress(true);</span>
+<span class="nc" id="L135">            reqJwt = b.toString();</span>
         }
 
-<span class="nc" id="L142">        final UriBuilder contextUriBuilder = uriInfo.getBaseUriBuilder()</span>
-            .replacePath(req.getContextPath());
-<span class="nc bnc" id="L144" title="All 2 branches missed.">        if (!authenticated) {</span>
+<span class="nc" id="L138">        final UriBuilder contextUriBuilder = UriBuilder.fromPath(req.getServletContext().getContextPath() + &quot;/&quot;);</span>
+<span class="nc bnc" id="L139" title="All 2 branches missed.">        if (!authenticated) {</span>
 
-<span class="nc" id="L146">            return Response.temporaryRedirect(authenticator.authenticate(authenticationRequest, reqJwt, req, contextUriBuilder))</span>
-                .build();
+            // Workaround for WebSphere Liberty as Response.temporaryRedirect will treat URIs that do not have a scheme as relative.
+<span class="nc" id="L142">            final URI targetUri = authenticator.authenticate(authenticationRequest, reqJwt, req, contextUriBuilder);</span>
+<span class="nc" id="L143">            return Response.temporaryRedirect(URI.create(req.getRequestURL().toString()).resolve(targetUri))</span>
+<span class="nc" id="L144">                .build();</span>
 
-<span class="nc bnc" id="L149" title="All 2 branches missed.">        } else if (!consented) {</span>
+<span class="nc bnc" id="L146" title="All 2 branches missed.">        } else if (!consented) {</span>
 
-<span class="nc" id="L151">            return Response.temporaryRedirect(authenticator.consent(authenticationRequest, reqJwt, req, contextUriBuilder))</span>
-                .build();
+<span class="nc" id="L148">            final URI targetUri = authenticator.consent(authenticationRequest, reqJwt, req, contextUriBuilder);</span>
+<span class="nc" id="L149">            return Response.temporaryRedirect(URI.create(req.getRequestURL().toString()).resolve(targetUri))</span>
+<span class="nc" id="L150">                .build();</span>
         } else {
 
-<span class="nc" id="L155">            return arp.buildResponse(reqJwt, req, authenticator.getSubject(req));</span>
+<span class="nc" id="L153">            return arp.buildResponse(reqJwt, req, authenticator.getSubject(req));</span>
         }
 
     }
@@ -160,20 +158,20 @@ import net.trajano.openidconnect.provider.spi.TokenProvider;
     @EJB
     public void setAuthenticator(final Authenticator authenticator) {
 
-<span class="nc" id="L163">        this.authenticator = authenticator;</span>
-<span class="nc" id="L164">    }</span>
+<span class="nc" id="L161">        this.authenticator = authenticator;</span>
+<span class="nc" id="L162">    }</span>
 
     @EJB
     public void setClientManager(final ClientManager clientManager) {
 
-<span class="nc" id="L169">        this.clientManager = clientManager;</span>
-<span class="nc" id="L170">    }</span>
+<span class="nc" id="L167">        this.clientManager = clientManager;</span>
+<span class="nc" id="L168">    }</span>
 
     @EJB
     public void setKeyProvider(final KeyProvider keyProvider) {
 
-<span class="nc" id="L175">        this.keyProvider = keyProvider;</span>
-<span class="nc" id="L176">    }</span>
+<span class="nc" id="L173">        this.keyProvider = keyProvider;</span>
+<span class="nc" id="L174">    }</span>
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span></div></body></html>

@@ -69,18 +69,18 @@ import net.trajano.openidconnect.token.TokenResponse;
      */
     @Override
     public AuthenticationResponse buildAuthenticationResponse(final AuthenticationRequest request,
-            final HttpServletRequest req,
-            final String subject) throws IOException,
+        final HttpServletRequest req,
+        final String subject) throws IOException,
             GeneralSecurityException {
 
 <span class="nc" id="L76">        final AuthenticationResponse response = new AuthenticationResponse();</span>
 
 <span class="nc" id="L78">        final UriBuilder issuerUri = UriBuilder.fromUri(create(req.getRequestURL()</span>
-                .toString()))
-                .scheme(&quot;https&quot;)
-                .replacePath(req.getContextPath())
-                .replaceQuery(null)
-                .fragment(null);
+<span class="nc" id="L79">            .toString()))</span>
+<span class="nc" id="L80">            .scheme(&quot;https&quot;)</span>
+<span class="nc" id="L81">            .replacePath(req.getContextPath())</span>
+<span class="nc" id="L82">            .replaceQuery(null)</span>
+<span class="nc" id="L83">            .fragment(null);</span>
 
 <span class="nc" id="L85">        final String code = tokenProvider.createNewToken(subject, issuerUri.build(), request);</span>
 
@@ -109,14 +109,15 @@ import net.trajano.openidconnect.token.TokenResponse;
      */
     @Override
     public Response buildResponse(final String requestJwt,
-            final HttpServletRequest request,
-            final String subject) {
+        final HttpServletRequest request,
+        final String subject) {
 
         try {
 <span class="nc" id="L116">            final AuthenticationRequest req = new AuthenticationRequest(requestJwt, keyProvider.getPrivateJwks());</span>
 <span class="nc" id="L117">            return buildResponse(req, request, subject);</span>
-<span class="nc" id="L118">        } catch (IOException | GeneralSecurityException e) {</span>
-<span class="nc" id="L119">            throw new WebApplicationException(e);</span>
+<span class="nc" id="L118">        } catch (IOException</span>
+                 | GeneralSecurityException e) {
+<span class="nc" id="L120">            throw new WebApplicationException(e);</span>
         }
 
     }
@@ -126,29 +127,30 @@ import net.trajano.openidconnect.token.TokenResponse;
      */
     @Override
     public Response buildResponse(final AuthenticationRequest req,
-            final HttpServletRequest request,
-            final String subject,
-            boolean consent) {
+        final HttpServletRequest request,
+        final String subject,
+        boolean consent) {
 
         final AuthenticationResponse response;
         try {
-<span class="nc" id="L135">            response = buildAuthenticationResponse(req, request, subject);</span>
-<span class="nc" id="L136">        } catch (IOException | GeneralSecurityException e) {</span>
-<span class="nc" id="L137">            throw new WebApplicationException(e);</span>
-<span class="nc" id="L138">        }</span>
-<span class="nc" id="L139">        final AuthenticationResponseConverter converter = new AuthenticationResponseConverter(response.getRedirectUri(), response);</span>
-<span class="nc bnc" id="L140" title="All 2 branches missed.">        if (response.getResponseMode() == ResponseMode.query) {</span>
-<span class="nc" id="L141">            return Response.temporaryRedirect(converter.toQueryUri())</span>
-                    .build();
-<span class="nc bnc" id="L143" title="All 2 branches missed.">        } else if (response.getResponseMode() == ResponseMode.form_post) {</span>
+<span class="nc" id="L136">            response = buildAuthenticationResponse(req, request, subject);</span>
+<span class="nc" id="L137">        } catch (IOException</span>
+                 | GeneralSecurityException e) {
+<span class="nc" id="L139">            throw new WebApplicationException(e);</span>
+<span class="nc" id="L140">        }</span>
+<span class="nc" id="L141">        final AuthenticationResponseConverter converter = new AuthenticationResponseConverter(response.getRedirectUri(), response);</span>
+<span class="nc bnc" id="L142" title="All 2 branches missed.">        if (response.getResponseMode() == ResponseMode.query) {</span>
+<span class="nc" id="L143">            return Response.temporaryRedirect(converter.toQueryUri())</span>
+<span class="nc" id="L144">                .build();</span>
+<span class="nc bnc" id="L145" title="All 2 branches missed.">        } else if (response.getResponseMode() == ResponseMode.form_post) {</span>
 
-<span class="nc" id="L145">            return Response.ok(converter.toFormPost())</span>
-                    .type(MediaType.TEXT_HTML_TYPE)
-                    .cacheControl(CacheConstants.NO_CACHE)
-                    .build();
+<span class="nc" id="L147">            return Response.ok(converter.toFormPost())</span>
+<span class="nc" id="L148">                .type(MediaType.TEXT_HTML_TYPE)</span>
+<span class="nc" id="L149">                .cacheControl(CacheConstants.NO_CACHE)</span>
+<span class="nc" id="L150">                .build();</span>
         } else {
-<span class="nc" id="L150">            return Response.temporaryRedirect(converter.toFragmentUri())</span>
-                    .build();
+<span class="nc" id="L152">            return Response.temporaryRedirect(converter.toFragmentUri())</span>
+<span class="nc" id="L153">                .build();</span>
         }
     }
 
@@ -157,10 +159,10 @@ import net.trajano.openidconnect.token.TokenResponse;
      */
     @Override
     public Response buildResponse(final AuthenticationRequest req,
-            final HttpServletRequest request,
-            final String subject) {
+        final HttpServletRequest request,
+        final String subject) {
 
-<span class="nc" id="L163">        return buildResponse(req, request, subject, false);</span>
+<span class="nc" id="L165">        return buildResponse(req, request, subject, false);</span>
     }
 
     /**
@@ -177,13 +179,13 @@ import net.trajano.openidconnect.token.TokenResponse;
      */
     @Override
     public void doCallback(final HttpServletRequest req,
-            final HttpServletResponse response,
-            final String subject) throws IOException,
+        final HttpServletResponse response,
+        final String subject) throws IOException,
             ServletException {
 
-<span class="nc" id="L184">        doConsentCallback(req, response, subject, false);</span>
+<span class="nc" id="L186">        doConsentCallback(req, response, subject, false);</span>
 
-<span class="nc" id="L186">    }</span>
+<span class="nc" id="L188">    }</span>
 
     /**
      * Gets the consent URI assuming the user has not consented yet.
@@ -197,86 +199,86 @@ import net.trajano.openidconnect.token.TokenResponse;
      * @throws GeneralSecurityException
      */
     private URI getConsentRequestUri(String requestJwt,
-            AuthenticationRequest authReq,
-            HttpServletRequest req,
-            String subject) throws IOException,
+        AuthenticationRequest authReq,
+        HttpServletRequest req,
+        String subject) throws IOException,
             GeneralSecurityException {
 
-<span class="nc" id="L205">        Consent consentRequested = new Consent(authenticator.getSubject(req), authReq.getClientId(), authReq.getScopes());</span>
+<span class="nc" id="L207">        Consent consentRequested = new Consent(authenticator.getSubject(req), authReq.getClientId(), authReq.getScopes());</span>
 
-<span class="nc bnc" id="L207" title="All 2 branches missed.">        if (tokenProvider.getByConsent(consentRequested) == null) {</span>
-<span class="nc" id="L208">            final UriBuilder contextUriBuilder = UriBuilder.fromUri(req.getRequestURL()</span>
-                    .toString())
-                    .replacePath(req.getContextPath());
+<span class="nc bnc" id="L209" title="All 2 branches missed.">        if (tokenProvider.getByConsent(consentRequested) == null) {</span>
+<span class="nc" id="L210">            final UriBuilder contextUriBuilder = UriBuilder.fromUri(req.getRequestURL()</span>
+<span class="nc" id="L211">                .toString())</span>
+<span class="nc" id="L212">                .replacePath(req.getContextPath());</span>
 
-<span class="nc" id="L212">            return authenticator.consent(authReq, requestJwt, req, contextUriBuilder);</span>
+<span class="nc" id="L214">            return authenticator.consent(authReq, requestJwt, req, contextUriBuilder);</span>
         }
-<span class="nc" id="L214">        return null;</span>
+<span class="nc" id="L216">        return null;</span>
     }
 
     @EJB
     public void setKeyProvider(final KeyProvider keyProvider) {
 
-<span class="nc" id="L220">        this.keyProvider = keyProvider;</span>
-<span class="nc" id="L221">    }</span>
+<span class="nc" id="L222">        this.keyProvider = keyProvider;</span>
+<span class="nc" id="L223">    }</span>
 
     @EJB
     public void setTokenProvider(final TokenProvider tokenProvider) {
 
-<span class="nc" id="L226">        this.tokenProvider = tokenProvider;</span>
-<span class="nc" id="L227">    }</span>
+<span class="nc" id="L228">        this.tokenProvider = tokenProvider;</span>
+<span class="nc" id="L229">    }</span>
 
     @Context
     javax.ws.rs.ext.Providers providers;
 
     @Override
     public Response buildResponse(String requestJwt,
-            HttpServletRequest request,
-            String subject,
-            boolean consent) {
+        HttpServletRequest request,
+        String subject,
+        boolean consent) {
 
         // TODO Auto-generated method stub
-<span class="nc" id="L239">        return null;</span>
+<span class="nc" id="L241">        return null;</span>
     }
 
     @Override
     public void doConsentCallback(HttpServletRequest req,
-            HttpServletResponse response,
-            String subject,
-            boolean consent) throws IOException,
+        HttpServletResponse response,
+        String subject,
+        boolean consent) throws IOException,
             ServletException {
 
-<span class="nc" id="L249">        String requestJwt = req.getParameter(OpenIdConnectKey.REQUEST);</span>
+<span class="nc" id="L251">        String requestJwt = req.getParameter(OpenIdConnectKey.REQUEST);</span>
         try {
-<span class="nc" id="L251">            final AuthenticationRequest authReq = new AuthenticationRequest(requestJwt, keyProvider.getPrivateJwks());</span>
+<span class="nc" id="L253">            final AuthenticationRequest authReq = new AuthenticationRequest(requestJwt, keyProvider.getPrivateJwks());</span>
 
-<span class="nc bnc" id="L253" title="All 2 branches missed.">            if (!consent) {</span>
-<span class="nc" id="L254">                URI consentRequestURI = getConsentRequestUri(requestJwt, authReq, req, subject);</span>
-<span class="nc bnc" id="L255" title="All 2 branches missed.">                if (consentRequestURI != null) {</span>
-<span class="nc" id="L256">                    response.sendRedirect(consentRequestURI.toASCIIString());</span>
-<span class="nc" id="L257">                    return;</span>
+<span class="nc bnc" id="L255" title="All 2 branches missed.">            if (!consent) {</span>
+<span class="nc" id="L256">                URI consentRequestURI = getConsentRequestUri(requestJwt, authReq, req, subject);</span>
+<span class="nc bnc" id="L257" title="All 2 branches missed.">                if (consentRequestURI != null) {</span>
+<span class="nc" id="L258">                    response.sendRedirect(consentRequestURI.toASCIIString());</span>
+<span class="nc" id="L259">                    return;</span>
                 }
             }
-<span class="nc" id="L260">            final AuthenticationResponse authResponse = buildAuthenticationResponse(authReq, req, subject);</span>
-<span class="nc" id="L261">            final AuthenticationResponseConverter authenticationResponse = new AuthenticationResponseConverter(authResponse.getRedirectUri(), authResponse);</span>
-<span class="nc bnc" id="L262" title="All 2 branches missed.">            if (authResponse.getResponseMode() == ResponseMode.query) {</span>
-<span class="nc" id="L263">                response.sendRedirect(authenticationResponse.toQueryUri()</span>
-                        .toASCIIString());
+<span class="nc" id="L262">            final AuthenticationResponse authResponse = buildAuthenticationResponse(authReq, req, subject);</span>
+<span class="nc" id="L263">            final AuthenticationResponseConverter authenticationResponse = new AuthenticationResponseConverter(authResponse.getRedirectUri(), authResponse);</span>
+<span class="nc bnc" id="L264" title="All 2 branches missed.">            if (authResponse.getResponseMode() == ResponseMode.query) {</span>
+<span class="nc" id="L265">                response.sendRedirect(authenticationResponse.toQueryUri()</span>
+<span class="nc" id="L266">                    .toASCIIString());</span>
 
-<span class="nc bnc" id="L266" title="All 2 branches missed.">            } else if (authResponse.getResponseMode() == ResponseMode.form_post) {</span>
-<span class="nc" id="L267">                final String formPost = authenticationResponse.toFormPost();</span>
-<span class="nc" id="L268">                response.setContentLength(formPost.length());</span>
-<span class="nc" id="L269">                response.getWriter()</span>
-                        .print(formPost);
-<span class="nc" id="L271">            } else {</span>
-<span class="nc" id="L272">                response.sendRedirect(authenticationResponse.toFragmentUri()</span>
-                        .toASCIIString());
+<span class="nc bnc" id="L268" title="All 2 branches missed.">            } else if (authResponse.getResponseMode() == ResponseMode.form_post) {</span>
+<span class="nc" id="L269">                final String formPost = authenticationResponse.toFormPost();</span>
+<span class="nc" id="L270">                response.setContentLength(formPost.length());</span>
+<span class="nc" id="L271">                response.getWriter()</span>
+<span class="nc" id="L272">                    .print(formPost);</span>
+<span class="nc" id="L273">            } else {</span>
+<span class="nc" id="L274">                response.sendRedirect(authenticationResponse.toFragmentUri()</span>
+<span class="nc" id="L275">                    .toASCIIString());</span>
             }
-<span class="nc" id="L275">        } catch (final GeneralSecurityException e) {</span>
-<span class="nc" id="L276">            throw new ServletException(e);</span>
-<span class="nc" id="L277">        }</span>
+<span class="nc" id="L277">        } catch (final GeneralSecurityException e) {</span>
+<span class="nc" id="L278">            throw new ServletException(e);</span>
+<span class="nc" id="L279">        }</span>
 
-<span class="nc" id="L279">    }</span>
+<span class="nc" id="L281">    }</span>
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span></div></body></html>

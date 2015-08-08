@@ -5,6 +5,7 @@ import java.net.URI;
 import java.security.GeneralSecurityException;
 
 import javax.ejb.EJB;
+import javax.ejb.Stateless;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
@@ -33,8 +34,9 @@ import net.trajano.openidconnect.token.IdTokenResponse;
 import net.trajano.openidconnect.token.TokenResponse;
 
 @Path(&quot;token&quot;)
+@Stateless
 @Produces(MediaType.APPLICATION_JSON)
-<span class="nc" id="L37">public class TokenEndpoint {</span>
+<span class="nc" id="L39">public class TokenEndpoint {</span>
 
     @EJB
     private ClientManager cm;
@@ -53,7 +55,7 @@ import net.trajano.openidconnect.token.TokenResponse;
             @Context final HttpServletRequest req) throws IOException,
                     GeneralSecurityException {
 
-<span class="nc" id="L56">        return op(grantType, code, refreshToken, redirectUri, req);</span>
+<span class="nc" id="L58">        return op(grantType, code, refreshToken, redirectUri, req);</span>
     }
 
     @POST
@@ -65,28 +67,28 @@ import net.trajano.openidconnect.token.TokenResponse;
             @Context final HttpServletRequest req) throws IOException,
                     GeneralSecurityException {
 
-<span class="nc" id="L68">        final ClientCredentials cred = AuthorizationUtil.processBasicOrQuery(req);</span>
+<span class="nc" id="L70">        final ClientCredentials cred = AuthorizationUtil.processBasicOrQuery(req);</span>
 
-<span class="nc bnc" id="L70" title="All 2 branches missed.">        if (grantType == GrantType.authorization_code) {</span>
-<span class="nc" id="L71">            final IdTokenResponse responseToken = tp.getByCode(code, true);</span>
-<span class="nc bnc" id="L72" title="All 2 branches missed.">            if (responseToken == null) {</span>
-<span class="nc" id="L73">                return Response.ok(new ErrorResponse(ErrorCode.access_denied, &quot;unable to obtain response token&quot;))</span>
-                        .status(Status.BAD_REQUEST)
-                        .build();
+<span class="nc bnc" id="L72" title="All 2 branches missed.">        if (grantType == GrantType.authorization_code) {</span>
+<span class="nc" id="L73">            final IdTokenResponse responseToken = tp.getByCode(code, true);</span>
+<span class="nc bnc" id="L74" title="All 2 branches missed.">            if (responseToken == null) {</span>
+<span class="nc" id="L75">                return Response.ok(new ErrorResponse(ErrorCode.access_denied, &quot;unable to obtain response token&quot;))</span>
+<span class="nc" id="L76">                        .status(Status.BAD_REQUEST)</span>
+<span class="nc" id="L77">                        .build();</span>
             }
-<span class="nc bnc" id="L77" title="All 2 branches missed.">            if (!responseToken.getIdToken(kp.getJwks())</span>
-                    .getAud()
-                    .equals(cred.getClientId())) {
-<span class="nc" id="L80">                throw new WebApplicationException();</span>
+<span class="nc" id="L79">            if (!responseToken.getIdToken(kp.getJwks())</span>
+<span class="nc" id="L80">                    .getAud()</span>
+<span class="nc bnc" id="L81" title="All 2 branches missed.">                    .equals(cred.getClientId())) {</span>
+<span class="nc" id="L82">                throw new WebApplicationException();</span>
             }
-<span class="nc" id="L82">            return Response.ok(responseToken)</span>
-                    .build();
-<span class="nc bnc" id="L84" title="All 2 branches missed.">        } else if (grantType == GrantType.refresh_token) {</span>
-<span class="nc" id="L85">            final TokenResponse responseToken = tp.refreshToken(cred.getClientId(), refreshToken, null, null);</span>
-<span class="nc" id="L86">            return Response.ok(responseToken)</span>
-                    .build();
+<span class="nc" id="L84">            return Response.ok(responseToken)</span>
+<span class="nc" id="L85">                    .build();</span>
+<span class="nc bnc" id="L86" title="All 2 branches missed.">        } else if (grantType == GrantType.refresh_token) {</span>
+<span class="nc" id="L87">            final TokenResponse responseToken = tp.refreshToken(cred.getClientId(), refreshToken, null, null);</span>
+<span class="nc" id="L88">            return Response.ok(responseToken)</span>
+<span class="nc" id="L89">                    .build();</span>
         } else {
-<span class="nc" id="L89">            throw new OpenIdConnectException(ErrorCode.invalid_grant);</span>
+<span class="nc" id="L91">            throw new OpenIdConnectException(ErrorCode.invalid_grant);</span>
         }
 
     }
