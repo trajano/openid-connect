@@ -135,7 +135,7 @@ public class ValidateContext {
             GeneralSecurityException {
 
 <span class="nc" id="L137">        return new JsonWebTokenProcessor(tokenCookie.getIdTokenJwt()).signatureCheck(false)</span>
-                .getJsonPayload();
+<span class="nc" id="L138">                .getJsonPayload();</span>
     }
 
     public synchronized OpenIdProviderConfiguration getOpenIDProviderConfig() {
@@ -149,9 +149,9 @@ public class ValidateContext {
                 // ISSUER_URI_KEY));
             }
 <span class="fc" id="L151">            oidConfig = client.target(URI.create(issuerUri)</span>
-                    .resolve(&quot;/.well-known/openid-configuration&quot;))
-                    .request(MediaType.APPLICATION_JSON_TYPE)
-                    .get(OpenIdProviderConfiguration.class);
+<span class="fc" id="L152">                    .resolve(&quot;/.well-known/openid-configuration&quot;))</span>
+<span class="fc" id="L153">                    .request(MediaType.APPLICATION_JSON_TYPE)</span>
+<span class="fc" id="L154">                    .get(OpenIdProviderConfiguration.class);</span>
 
         }
 <span class="fc" id="L157">        return oidConfig;</span>
@@ -194,8 +194,8 @@ public class ValidateContext {
     public URI getUri(final String key) {
 
 <span class="fc" id="L196">        return URI.create(req.getRequestURL()</span>
-                .toString())
-                .resolve(options.get(key));
+<span class="fc" id="L197">                .toString())</span>
+<span class="fc" id="L198">                .resolve(options.get(key));</span>
 
     }
 
@@ -237,7 +237,7 @@ public class ValidateContext {
     public boolean isRequestUri(final String key) {
 
 <span class="fc" id="L239">        return req.getRequestURI()</span>
-                .equals(options.get(key));
+<span class="fc" id="L240">                .equals(options.get(key));</span>
     }
 
     public boolean isSecure() {
@@ -269,7 +269,7 @@ public class ValidateContext {
             IOException {
 
 <span class="fc" id="L271">        final Cookie ageCookie = new Cookie(OpenIdConnectAuthModule.NET_TRAJANO_AUTH_AGE, Encoding.base64urlEncode(CipherUtil.encrypt(req.getRemoteAddr()</span>
-                .getBytes(CharSets.US_ASCII), secret)));
+<span class="fc" id="L272">                .getBytes(CharSets.US_ASCII), secret)));</span>
 <span class="pc bpc" id="L273" title="1 of 2 branches missed.">        if (isNullOrEmpty(req.getParameter(&quot;expires_in&quot;))) {</span>
 <span class="fc" id="L274">            ageCookie.setMaxAge(3600);</span>
 

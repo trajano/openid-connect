@@ -29,7 +29,7 @@ import net.trajano.openidconnect.jaspic.internal.ValidateRequestProcessor;
     public boolean canValidateRequest(final ValidateContext context) {
 
 <span class="pc bpc" id="L31" title="4 of 6 branches missed.">        return context.isSecure() &amp;&amp; context.isRequestUri(&quot;logout_redirection_endpoint&quot;) &amp;&amp; !isNullOrEmpty(context.getReq()</span>
-                .getParameter(STATE));
+<span class="nc" id="L32">                .getParameter(STATE));</span>
     }
 
     @Override

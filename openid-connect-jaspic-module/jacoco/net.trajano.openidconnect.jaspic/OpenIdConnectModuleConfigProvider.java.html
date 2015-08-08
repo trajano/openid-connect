@@ -9,12 +9,11 @@ import javax.security.auth.message.config.AuthConfigProvider;
 import javax.security.auth.message.config.ClientAuthConfig;
 import javax.security.auth.message.config.ServerAuthConfig;
 
-import net.trajano.openidconnect.jaspic.internal.Initializer;
 import net.trajano.openidconnect.jaspic.internal.OpenIdConnectModuleConfig;
 
 /**
  * This is used to provide the server auth module on the application rather than
- * being globally configured in a container. See {@link Initializer} for an
+ * being globally configured in a container. See {@link AbstractInitializer} for an
  * example of how to register the provider in a
  * {@link javax.servlet.ServletContextListener}.
  */
@@ -43,11 +42,11 @@ public class OpenIdConnectModuleConfigProvider implements AuthConfigProvider {
      * @param authConfigFactory
      *            configuration factory
      */
-<span class="nc" id="L46">    public OpenIdConnectModuleConfigProvider(final Map&lt;String, String&gt; options, final AuthConfigFactory authConfigFactory) {</span>
+<span class="nc" id="L45">    public OpenIdConnectModuleConfigProvider(final Map&lt;String, String&gt; options, final AuthConfigFactory authConfigFactory) {</span>
 
-<span class="nc" id="L48">        this.authConfigFactory = authConfigFactory;</span>
-<span class="nc" id="L49">        this.options = options;</span>
-<span class="nc" id="L50">    }</span>
+<span class="nc" id="L47">        this.authConfigFactory = authConfigFactory;</span>
+<span class="nc" id="L48">        this.options = options;</span>
+<span class="nc" id="L49">    }</span>
 
     /**
      * There is no client side module.
@@ -58,7 +57,7 @@ public class OpenIdConnectModuleConfigProvider implements AuthConfigProvider {
     public ClientAuthConfig getClientAuthConfig(final String layer,
             final String appContext,
             final CallbackHandler handler) throws AuthException {
-<span class="nc" id="L61">        return null;</span>
+<span class="nc" id="L60">        return null;</span>
     }
 
     /**
@@ -68,7 +67,7 @@ public class OpenIdConnectModuleConfigProvider implements AuthConfigProvider {
     public ServerAuthConfig getServerAuthConfig(final String layer,
             final String appContext,
             final CallbackHandler handler) throws AuthException {
-<span class="nc" id="L71">        return new OpenIdConnectModuleConfig(options, layer, appContext, handler);</span>
+<span class="nc" id="L70">        return new OpenIdConnectModuleConfig(options, layer, appContext, handler);</span>
     }
 
     /**
@@ -77,7 +76,7 @@ public class OpenIdConnectModuleConfigProvider implements AuthConfigProvider {
     @Override
     public void refresh() {
         // does nothing
-<span class="nc" id="L80">    }</span>
+<span class="nc" id="L79">    }</span>
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span></div></body></html>

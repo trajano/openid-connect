@@ -169,7 +169,7 @@ public class OpenIdConnectModuleConfig implements ServerAuthConfig {
     public String getAuthContextID(final MessageInfo messageInfo) {
 
 <span class="nc" id="L171">        final Object isMandatory = messageInfo.getMap()</span>
-                .get(JAVAX_SECURITY_AUTH_MESSAGE_MESSAGE_POLICY_IS_MANDATORY);
+<span class="nc" id="L172">                .get(JAVAX_SECURITY_AUTH_MESSAGE_MESSAGE_POLICY_IS_MANDATORY);</span>
 <span class="nc bnc" id="L173" title="All 6 branches missed.">        if (isMandatory != null &amp;&amp; isMandatory instanceof String &amp;&amp; Boolean.valueOf((String) isMandatory)) {</span>
 <span class="nc" id="L174">            return messageInfo.toString();</span>
         }

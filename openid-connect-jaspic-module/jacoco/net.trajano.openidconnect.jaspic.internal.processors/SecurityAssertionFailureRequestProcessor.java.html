@@ -27,7 +27,7 @@ import net.trajano.openidconnect.jaspic.internal.ValidateRequestProcessor;
     public AuthStatus validateRequest(final ValidateContext context) throws IOException {
 
 <span class="nc" id="L29">        context.getResp()</span>
-                .sendError(HttpURLConnection.HTTP_FORBIDDEN, Log.r(&quot;SSLReq&quot;));
+<span class="nc" id="L30">                .sendError(HttpURLConnection.HTTP_FORBIDDEN, Log.r(&quot;SSLReq&quot;));</span>
 <span class="nc" id="L31">        return AuthStatus.SEND_FAILURE;</span>
     }
 }

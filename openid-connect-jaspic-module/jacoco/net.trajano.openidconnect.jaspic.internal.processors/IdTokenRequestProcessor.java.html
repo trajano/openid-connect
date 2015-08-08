@@ -3,7 +3,6 @@
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 
-import javax.json.Json;
 import javax.security.auth.message.AuthStatus;
 import javax.ws.rs.core.MediaType;
 
@@ -11,27 +10,26 @@ import net.trajano.openidconnect.jaspic.OpenIdConnectAuthModule;
 import net.trajano.openidconnect.jaspic.internal.ValidateContext;
 import net.trajano.openidconnect.jaspic.internal.ValidateRequestProcessor;
 
-<span class="fc" id="L14">public class IdTokenRequestProcessor implements ValidateRequestProcessor {</span>
+<span class="fc" id="L13">public class IdTokenRequestProcessor implements ValidateRequestProcessor {</span>
 
     @Override
     public boolean canValidateRequest(final ValidateContext context) {
 
-<span class="pc bpc" id="L19" title="1 of 2 branches missed.">        if (!context.hasTokenCookie()) {</span>
-<span class="fc" id="L20">            return false;</span>
+<span class="pc bpc" id="L18" title="1 of 2 branches missed.">        if (!context.hasTokenCookie()) {</span>
+<span class="fc" id="L19">            return false;</span>
         }
 
-<span class="nc bnc" id="L23" title="All 6 branches missed.">        return context.isSecure() &amp;&amp; context.isGetRequest() &amp;&amp; context.isRequestUri(OpenIdConnectAuthModule.TOKEN_URI_KEY);</span>
+<span class="nc bnc" id="L22" title="All 6 branches missed.">        return context.isSecure() &amp;&amp; context.isGetRequest() &amp;&amp; context.isRequestUri(OpenIdConnectAuthModule.TOKEN_URI_KEY);</span>
     }
 
     @Override
     public AuthStatus validateRequest(final ValidateContext context) throws IOException,
-    GeneralSecurityException {
+        GeneralSecurityException {
 
-<span class="nc" id="L30">        context.setContentType(MediaType.APPLICATION_JSON);</span>
-<span class="nc" id="L31">        Json.createWriter(context.getResp()</span>
-                .getOutputStream())
-                .writeObject(context.getIdToken());
-<span class="nc" id="L34">        return AuthStatus.SEND_SUCCESS;</span>
+<span class="nc" id="L29">        context.setContentType(MediaType.APPLICATION_JSON);</span>
+<span class="nc" id="L30">        context.getResp()</span>
+<span class="nc" id="L31">            .getOutputStream().print(context.getIdToken().toString());</span>
+<span class="nc" id="L32">        return AuthStatus.SEND_SUCCESS;</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span></div></body></html>

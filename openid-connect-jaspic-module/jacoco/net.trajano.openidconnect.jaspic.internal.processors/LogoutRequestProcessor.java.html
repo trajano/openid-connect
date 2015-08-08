@@ -39,28 +39,28 @@ import net.trajano.openidconnect.jaspic.internal.ValidateRequestProcessor;
             GeneralSecurityException {
 
 <span class="nc" id="L41">        String idTokenHint = context.getTokenCookie()</span>
-                .getIdTokenJwt();
+<span class="nc" id="L42">                .getIdTokenJwt();</span>
 <span class="nc" id="L43">        context.deleteAuthCookies();</span>
 <span class="nc" id="L44">        final OpenIdProviderConfiguration oidProviderConfig = context.getOpenIDProviderConfig();</span>
 
 <span class="nc" id="L46">        String contextPath = UriBuilder.fromUri(context.getReq()</span>
-                .getRequestURL()
-                .toString())
-                .replacePath(context.getReq()
-                        .getContextPath())
-                .build()
-                .toASCIIString();
+<span class="nc" id="L47">                .getRequestURL()</span>
+<span class="nc" id="L48">                .toString())</span>
+<span class="nc" id="L49">                .replacePath(context.getReq()</span>
+<span class="nc" id="L50">                        .getContextPath())</span>
+<span class="nc" id="L51">                .build()</span>
+<span class="nc" id="L52">                .toASCIIString();</span>
 <span class="nc" id="L53">        final String referrer = context.getReq()</span>
-                .getHeader(&quot;Referer&quot;);
+<span class="nc" id="L54">                .getHeader(&quot;Referer&quot;);</span>
         final String state;
 <span class="nc bnc" id="L56" title="All 2 branches missed.">        if (referrer.startsWith(contextPath)) {</span>
 
 <span class="nc" id="L58">            final StringBuilder stateBuilder = new StringBuilder(referrer.substring(contextPath.length()));</span>
-<span class="nc bnc" id="L59" title="All 2 branches missed.">            if (context.getReq()</span>
-                    .getQueryString() != null) {
+<span class="nc" id="L59">            if (context.getReq()</span>
+<span class="nc bnc" id="L60" title="All 2 branches missed.">                    .getQueryString() != null) {</span>
 <span class="nc" id="L61">                stateBuilder.append('?');</span>
 <span class="nc" id="L62">                stateBuilder.append(context.getReq()</span>
-                        .getQueryString());
+<span class="nc" id="L63">                        .getQueryString());</span>
             }
 <span class="nc" id="L65">            state = Encoding.base64urlEncode(stateBuilder.toString());</span>
 <span class="nc" id="L66">        } else {</span>
@@ -72,16 +72,16 @@ import net.trajano.openidconnect.jaspic.internal.ValidateRequestProcessor;
 
 <span class="nc bnc" id="L73" title="All 2 branches missed.">        if (oidProviderConfig.getEndSessionEndpoint() != null) {</span>
 <span class="nc" id="L74">            UriBuilder b = UriBuilder.fromUri(oidProviderConfig.getEndSessionEndpoint())</span>
-                    .queryParam(&quot;post_logout_redirect_uri&quot;, redirectUri)
-                    .queryParam(&quot;id_token_hint&quot;, idTokenHint)
-                    .queryParam(&quot;state&quot;, state);
+<span class="nc" id="L75">                    .queryParam(&quot;post_logout_redirect_uri&quot;, redirectUri)</span>
+<span class="nc" id="L76">                    .queryParam(&quot;id_token_hint&quot;, idTokenHint)</span>
+<span class="nc" id="L77">                    .queryParam(&quot;state&quot;, state);</span>
 <span class="nc" id="L78">            context.getResp()</span>
-                    .sendRedirect(b.build()
-                            .toASCIIString());
+<span class="nc" id="L79">                    .sendRedirect(b.build()</span>
+<span class="nc" id="L80">                            .toASCIIString());</span>
 <span class="nc" id="L81">        } else {</span>
 <span class="nc" id="L82">            context.getResp()</span>
-                    .sendRedirect(context.getReq()
-                            .getServletContext() + &quot;/&quot;);
+<span class="nc" id="L83">                    .sendRedirect(context.getReq()</span>
+<span class="nc" id="L84">                            .getServletContext() + &quot;/&quot;);</span>
         }
 <span class="nc" id="L86">        return AuthStatus.SEND_SUCCESS;</span>
     }

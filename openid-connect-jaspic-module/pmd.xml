@@ -1,60 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
-<pmd version="5.2.3" timestamp="2015-07-08T08:57:09.088">
-<file name="/var/lib/jenkins/jobs/openid-connect/workspace/target/checkout/openid-connect-jaspic-module/src/main/java/net/trajano/openidconnect/jaspic/OpenIdConnectAuthModule.java">
-<violation beginline="577" endline="577" begincolumn="61" endcolumn="90" rule="UnnecessaryFullyQualifiedName" ruleset="Import Statements" package="net.trajano.openidconnect.jaspic" class="OpenIdConnectAuthModule" method="initialize" externalInfoUrl="http://pmd.sourceforge.net/pmd-5.2.3/pmd-java/rules/java/imports.html#UnnecessaryFullyQualifiedName" priority="4">
+<pmd version="5.2.3" timestamp="2015-08-08T14:16:22.124">
+<file name="/Users/trajano/Projects/openid-connect/openid-connect-jaspic-module/src/main/java/net/trajano/openidconnect/jaspic/OpenIdConnectAuthModule.java">
+<violation beginline="585" endline="585" begincolumn="61" endcolumn="90" rule="UnnecessaryFullyQualifiedName" ruleset="Import Statements" package="net.trajano.openidconnect.jaspic" class="OpenIdConnectAuthModule" method="initialize" externalInfoUrl="http://pmd.sourceforge.net/pmd-5.2.3/pmd-java/rules/java/imports.html#UnnecessaryFullyQualifiedName" priority="4">
 Unnecessary use of fully qualified name 'OpenIdConnectKey.RESPONSE_MODE' due to existing import 'net.trajano.openidconnect.core.OpenIdConnectKey'
 </violation>
-<violation beginline="696" endline="696" begincolumn="13" endcolumn="31" rule="AvoidPrintStackTrace" ruleset="Java Logging" package="net.trajano.openidconnect.jaspic" class="OpenIdConnectAuthModule" method="processTokenCookie" externalInfoUrl="http://pmd.sourceforge.net/pmd-5.2.3/pmd-java/rules/java/logging-java.html#AvoidPrintStackTrace" priority="3">
+<violation beginline="708" endline="708" begincolumn="13" endcolumn="31" rule="AvoidPrintStackTrace" ruleset="Java Logging" package="net.trajano.openidconnect.jaspic" class="OpenIdConnectAuthModule" method="processTokenCookie" externalInfoUrl="http://pmd.sourceforge.net/pmd-5.2.3/pmd-java/rules/java/logging-java.html#AvoidPrintStackTrace" priority="3">
 Avoid printStackTrace(); use a logger call instead.
 </violation>
-<violation beginline="772" endline="772" begincolumn="17" endcolumn="146" rule="PrematureDeclaration" ruleset="Optimization" package="net.trajano.openidconnect.jaspic" class="OpenIdConnectAuthModule" method="redirectToAuthorizationEndpoint" variable="enc" externalInfoUrl="http://pmd.sourceforge.net/pmd-5.2.3/pmd-java/rules/java/optimizations.html#PrematureDeclaration" priority="3">
+<violation beginline="777" endline="778" begincolumn="17" endcolumn="115" rule="PrematureDeclaration" ruleset="Optimization" package="net.trajano.openidconnect.jaspic" class="OpenIdConnectAuthModule" method="redirectToAuthorizationEndpoint" variable="enc" externalInfoUrl="http://pmd.sourceforge.net/pmd-5.2.3/pmd-java/rules/java/optimizations.html#PrematureDeclaration" priority="3">
 Avoid declaring a variable if it is unreferenced before a possible exit point.
 </violation>
 </file>
-<file name="/var/lib/jenkins/jobs/openid-connect/workspace/target/checkout/openid-connect-jaspic-module/src/main/java/net/trajano/openidconnect/jaspic/internal/Initializer.java">
-<violation beginline="63" endline="63" begincolumn="15" endcolumn="33" rule="UseConcurrentHashMap" ruleset="Controversial" package="net.trajano.openidconnect.jaspic.internal" class="Initializer" method="contextInitialized" externalInfoUrl="http://pmd.sourceforge.net/pmd-5.2.3/pmd-java/rules/java/controversial.html#UseConcurrentHashMap" priority="3">
+<file name="/Users/trajano/Projects/openid-connect/openid-connect-jaspic-module/src/main/java/net/trajano/openidconnect/jaspic/internal/Initializer.java">
+<violation beginline="51" endline="51" begincolumn="15" endcolumn="33" rule="UseConcurrentHashMap" ruleset="Controversial" package="net.trajano.openidconnect.jaspic.internal" class="Initializer" method="contextInitialized" externalInfoUrl="http://pmd.sourceforge.net/pmd-5.2.3/pmd-java/rules/java/controversial.html#UseConcurrentHashMap" priority="3">
 If you run in Java5 or newer and have concurrent access, you should use the ConcurrentHashMap implementation
 </violation>
 </file>
-<file name="/var/lib/jenkins/jobs/openid-connect/workspace/target/checkout/openid-connect-jaspic-module/src/main/java/net/trajano/openidconnect/jaspic/internal/TokenCookie.java">
+<file name="/Users/trajano/Projects/openid-connect/openid-connect-jaspic-module/src/main/java/net/trajano/openidconnect/jaspic/internal/TokenCookie.java">
 <violation beginline="63" endline="63" begincolumn="50" endcolumn="66" rule="MethodArgumentCouldBeFinal" ruleset="Optimization" package="net.trajano.openidconnect.jaspic.internal" class="TokenCookie" method="TokenCookie" variable="idTokenJwt" externalInfoUrl="http://pmd.sourceforge.net/pmd-5.2.3/pmd-java/rules/java/optimizations.html#MethodArgumentCouldBeFinal" priority="3">
 Parameter 'idTokenJwt' is not assigned and could be declared final
 </violation>
 </file>
-<file name="/var/lib/jenkins/jobs/openid-connect/workspace/target/checkout/openid-connect-jaspic-module/src/main/java/net/trajano/openidconnect/jaspic/internal/Utils.java">
-<violation beginline="83" endline="83" begincolumn="13" endcolumn="30" rule="MethodArgumentCouldBeFinal" ruleset="Optimization" package="net.trajano.openidconnect.jaspic.internal" class="Utils" method="validateIdToken" variable="accessToken" externalInfoUrl="http://pmd.sourceforge.net/pmd-5.2.3/pmd-java/rules/java/optimizations.html#MethodArgumentCouldBeFinal" priority="3">
-Parameter 'accessToken' is not assigned and could be declared final
-</violation>
-</file>
-<file name="/var/lib/jenkins/jobs/openid-connect/workspace/target/checkout/openid-connect-jaspic-module/src/main/java/net/trajano/openidconnect/jaspic/internal/ValidateContext.java">
+<file name="/Users/trajano/Projects/openid-connect/openid-connect-jaspic-module/src/main/java/net/trajano/openidconnect/jaspic/internal/ValidateContext.java">
 <violation beginline="145" endline="150" begincolumn="36" endcolumn="13" rule="EmptyIfStmt" ruleset="Empty Code" package="net.trajano.openidconnect.jaspic.internal" class="ValidateContext" method="getOpenIDProviderConfig" externalInfoUrl="http://pmd.sourceforge.net/pmd-5.2.3/pmd-java/rules/java/empty.html#EmptyIfStmt" priority="3">
 Avoid empty if statements
 </violation>
 </file>
-<file name="/var/lib/jenkins/jobs/openid-connect/workspace/target/checkout/openid-connect-jaspic-module/src/main/java/net/trajano/openidconnect/jaspic/internal/processors/CallbackRequestProcessor.java">
-<violation beginline="96" endline="96" begincolumn="93" endcolumn="118" rule="UnnecessaryFullyQualifiedName" ruleset="Import Statements" package="net.trajano.openidconnect.jaspic.internal.processors" class="CallbackRequestProcessor" method="getToken" externalInfoUrl="http://pmd.sourceforge.net/pmd-5.2.3/pmd-java/rules/java/imports.html#UnnecessaryFullyQualifiedName" priority="4">
+<file name="/Users/trajano/Projects/openid-connect/openid-connect-jaspic-module/src/main/java/net/trajano/openidconnect/jaspic/internal/processors/CallbackRequestProcessor.java">
+<violation beginline="97" endline="97" begincolumn="93" endcolumn="118" rule="UnnecessaryFullyQualifiedName" ruleset="Import Statements" package="net.trajano.openidconnect.jaspic.internal.processors" class="CallbackRequestProcessor" method="getToken" externalInfoUrl="http://pmd.sourceforge.net/pmd-5.2.3/pmd-java/rules/java/imports.html#UnnecessaryFullyQualifiedName" priority="4">
 Unnecessary use of fully qualified name 'OpenIdConnectKey.CLIENT_ID' due to existing import 'net.trajano.openidconnect.core.OpenIdConnectKey'
 </violation>
-<violation beginline="96" endline="96" begincolumn="147" endcolumn="176" rule="UnnecessaryFullyQualifiedName" ruleset="Import Statements" package="net.trajano.openidconnect.jaspic.internal.processors" class="CallbackRequestProcessor" method="getToken" externalInfoUrl="http://pmd.sourceforge.net/pmd-5.2.3/pmd-java/rules/java/imports.html#UnnecessaryFullyQualifiedName" priority="4">
+<violation beginline="97" endline="97" begincolumn="147" endcolumn="176" rule="UnnecessaryFullyQualifiedName" ruleset="Import Statements" package="net.trajano.openidconnect.jaspic.internal.processors" class="CallbackRequestProcessor" method="getToken" externalInfoUrl="http://pmd.sourceforge.net/pmd-5.2.3/pmd-java/rules/java/imports.html#UnnecessaryFullyQualifiedName" priority="4">
 Unnecessary use of fully qualified name 'OpenIdConnectKey.CLIENT_SECRET' due to existing import 'net.trajano.openidconnect.core.OpenIdConnectKey'
 </violation>
-<violation beginline="109" endline="109" begincolumn="64" endcolumn="89" rule="UnnecessaryFullyQualifiedName" ruleset="Import Statements" package="net.trajano.openidconnect.jaspic.internal.processors" class="CallbackRequestProcessor" method="getToken" externalInfoUrl="http://pmd.sourceforge.net/pmd-5.2.3/pmd-java/rules/java/imports.html#UnnecessaryFullyQualifiedName" priority="4">
+<violation beginline="110" endline="110" begincolumn="64" endcolumn="89" rule="UnnecessaryFullyQualifiedName" ruleset="Import Statements" package="net.trajano.openidconnect.jaspic.internal.processors" class="CallbackRequestProcessor" method="getToken" externalInfoUrl="http://pmd.sourceforge.net/pmd-5.2.3/pmd-java/rules/java/imports.html#UnnecessaryFullyQualifiedName" priority="4">
 Unnecessary use of fully qualified name 'OpenIdConnectKey.CLIENT_ID' due to existing import 'net.trajano.openidconnect.core.OpenIdConnectKey'
 </violation>
-<violation beginline="110" endline="110" begincolumn="68" endcolumn="97" rule="UnnecessaryFullyQualifiedName" ruleset="Import Statements" package="net.trajano.openidconnect.jaspic.internal.processors" class="CallbackRequestProcessor" method="getToken" externalInfoUrl="http://pmd.sourceforge.net/pmd-5.2.3/pmd-java/rules/java/imports.html#UnnecessaryFullyQualifiedName" priority="4">
+<violation beginline="111" endline="111" begincolumn="68" endcolumn="97" rule="UnnecessaryFullyQualifiedName" ruleset="Import Statements" package="net.trajano.openidconnect.jaspic.internal.processors" class="CallbackRequestProcessor" method="getToken" externalInfoUrl="http://pmd.sourceforge.net/pmd-5.2.3/pmd-java/rules/java/imports.html#UnnecessaryFullyQualifiedName" priority="4">
 Unnecessary use of fully qualified name 'OpenIdConnectKey.CLIENT_SECRET' due to existing import 'net.trajano.openidconnect.core.OpenIdConnectKey'
 </violation>
-<violation beginline="193" endline="193" begincolumn="48" endcolumn="68" rule="UnnecessaryFullyQualifiedName" ruleset="Import Statements" package="net.trajano.openidconnect.jaspic.internal.processors" class="CallbackRequestProcessor" method="validateRequest" externalInfoUrl="http://pmd.sourceforge.net/pmd-5.2.3/pmd-java/rules/java/imports.html#UnnecessaryFullyQualifiedName" priority="4">
+<violation beginline="200" endline="200" begincolumn="48" endcolumn="68" rule="UnnecessaryFullyQualifiedName" ruleset="Import Statements" package="net.trajano.openidconnect.jaspic.internal.processors" class="CallbackRequestProcessor" method="validateRequest" externalInfoUrl="http://pmd.sourceforge.net/pmd-5.2.3/pmd-java/rules/java/imports.html#UnnecessaryFullyQualifiedName" priority="4">
 Unnecessary use of fully qualified name 'OpenIdConnectKey.CODE' due to existing import 'net.trajano.openidconnect.core.OpenIdConnectKey'
 </violation>
-<violation beginline="194" endline="194" begincolumn="31" endcolumn="51" rule="UnnecessaryFullyQualifiedName" ruleset="Import Statements" package="net.trajano.openidconnect.jaspic.internal.processors" class="CallbackRequestProcessor" method="validateRequest" externalInfoUrl="http://pmd.sourceforge.net/pmd-5.2.3/pmd-java/rules/java/imports.html#UnnecessaryFullyQualifiedName" priority="4">
+<violation beginline="201" endline="201" begincolumn="27" endcolumn="47" rule="UnnecessaryFullyQualifiedName" ruleset="Import Statements" package="net.trajano.openidconnect.jaspic.internal.processors" class="CallbackRequestProcessor" method="validateRequest" externalInfoUrl="http://pmd.sourceforge.net/pmd-5.2.3/pmd-java/rules/java/imports.html#UnnecessaryFullyQualifiedName" priority="4">
 Unnecessary use of fully qualified name 'OpenIdConnectKey.CODE' due to existing import 'net.trajano.openidconnect.core.OpenIdConnectKey'
 </violation>
-<violation beginline="195" endline="195" begincolumn="15" endcolumn="60" rule="UnnecessaryFullyQualifiedName" ruleset="Import Statements" package="net.trajano.openidconnect.jaspic.internal.processors" class="CallbackRequestProcessor" method="validateRequest" externalInfoUrl="http://pmd.sourceforge.net/pmd-5.2.3/pmd-java/rules/java/imports.html#UnnecessaryFullyQualifiedName" priority="4">
+<violation beginline="202" endline="202" begincolumn="15" endcolumn="60" rule="UnnecessaryFullyQualifiedName" ruleset="Import Statements" package="net.trajano.openidconnect.jaspic.internal.processors" class="CallbackRequestProcessor" method="validateRequest" externalInfoUrl="http://pmd.sourceforge.net/pmd-5.2.3/pmd-java/rules/java/imports.html#UnnecessaryFullyQualifiedName" priority="4">
 Unnecessary use of fully qualified name 'net.trajano.openidconnect.crypto.JsonWebKeySet' due to existing import 'net.trajano.openidconnect.crypto.JsonWebKeySet'
 </violation>
 </file>
-<file name="/var/lib/jenkins/jobs/openid-connect/workspace/target/checkout/openid-connect-jaspic-module/src/main/java/net/trajano/openidconnect/jaspic/internal/processors/LogoutRequestProcessor.java">
+<file name="/Users/trajano/Projects/openid-connect/openid-connect-jaspic-module/src/main/java/net/trajano/openidconnect/jaspic/internal/processors/LogoutRequestProcessor.java">
 <violation beginline="41" endline="42" begincolumn="9" endcolumn="32" rule="LocalVariableCouldBeFinal" ruleset="Optimization" package="net.trajano.openidconnect.jaspic.internal.processors" class="LogoutRequestProcessor" method="validateRequest" variable="idTokenHint" externalInfoUrl="http://pmd.sourceforge.net/pmd-5.2.3/pmd-java/rules/java/optimizations.html#LocalVariableCouldBeFinal" priority="3">
 Local variable 'idTokenHint' could be declared final
 </violation>
@@ -68,7 +63,7 @@ There is log block not surrounded by if
 Local variable 'b' could be declared final
 </violation>
 </file>
-<file name="/var/lib/jenkins/jobs/openid-connect/workspace/target/checkout/openid-connect-jaspic-module/src/main/java/net/trajano/openidconnect/jaspic/internal/processors/SecurityAssertionFailureRequestProcessor.java">
+<file name="/Users/trajano/Projects/openid-connect/openid-connect-jaspic-module/src/main/java/net/trajano/openidconnect/jaspic/internal/processors/SecurityAssertionFailureRequestProcessor.java">
 <violation beginline="23" endline="23" begincolumn="88" endcolumn="139" rule="UnnecessaryParentheses" ruleset="Controversial" package="net.trajano.openidconnect.jaspic.internal.processors" class="SecurityAssertionFailureRequestProcessor" method="canValidateRequest" externalInfoUrl="http://pmd.sourceforge.net/pmd-5.2.3/pmd-java/rules/java/controversial.html#UnnecessaryParentheses" priority="3">
 This statement may have some unnecessary parentheses
 </violation>

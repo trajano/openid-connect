@@ -20,8 +20,8 @@ import net.trajano.openidconnect.jaspic.internal.ValidateRequestProcessor;
 <span class="pc bpc" id="L20" title="3 of 4 branches missed.">        if (!context.isMandatory() &amp;&amp; !context.isSecure()) {</span>
 <span class="nc" id="L21">            return true;</span>
         }
-<span class="pc bpc" id="L23" title="4 of 6 branches missed.">        if (!context.isMandatory() || context.hasTokenCookie() &amp;&amp; !context.getTokenCookie()</span>
-                .isExpired()) {
+<span class="pc bpc" id="L23" title="2 of 4 branches missed.">        if (!context.isMandatory() || context.hasTokenCookie() &amp;&amp; !context.getTokenCookie()</span>
+<span class="nc bnc" id="L24" title="All 2 branches missed.">                .isExpired()) {</span>
 <span class="nc" id="L25">            return true;</span>
         }
 <span class="fc" id="L27">        return false;</span>
