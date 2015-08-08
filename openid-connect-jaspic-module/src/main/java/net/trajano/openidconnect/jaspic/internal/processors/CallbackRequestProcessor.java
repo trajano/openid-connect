@@ -47,7 +47,8 @@ import net.trajano.openidconnect.jaspic.internal.ValidateRequestProcessor;
 import net.trajano.openidconnect.token.GrantType;
 import net.trajano.openidconnect.token.IdTokenResponse;
 
-public class CallbackRequestProcessor implements ValidateRequestProcessor {
+public class CallbackRequestProcessor implements
+    ValidateRequestProcessor {
 
     /**
      * https prefix.
@@ -67,7 +68,7 @@ public class CallbackRequestProcessor implements ValidateRequestProcessor {
     public boolean canValidateRequest(final ValidateContext context) {
 
         return context.isSecure() && context.isRequestUri(OpenIdConnectAuthModule.REDIRECTION_ENDPOINT_URI_KEY) && !isNullOrEmpty(context.getReq()
-                .getParameter(CODE)) && !isNullOrEmpty(context.getReq()
+            .getParameter(CODE)) && !isNullOrEmpty(context.getReq()
                 .getParameter(STATE));
 
     }
@@ -82,23 +83,23 @@ public class CallbackRequestProcessor implements ValidateRequestProcessor {
      * @return token response
      */
     private IdTokenResponse getToken(final String grantKey,
-            final String grant,
-            final GrantType grantType,
-            final ValidateContext context) throws IOException {
+        final String grant,
+        final GrantType grantType,
+        final ValidateContext context) throws IOException {
 
         final MultivaluedMap<String, String> requestData = new MultivaluedHashMap<>();
         requestData.putSingle(grantKey, grant);
         requestData.putSingle(GRANT_TYPE, grantType.name());
         requestData.putSingle(REDIRECT_URI, context.getUri(OpenIdConnectAuthModule.REDIRECTION_ENDPOINT_URI_KEY)
-                .toASCIIString());
+            .toASCIIString());
 
         try {
             final String authorization = "Basic " + Encoding.base64Encode(context.getOption(OpenIdConnectKey.CLIENT_ID) + ":" + context.getOption(OpenIdConnectKey.CLIENT_SECRET));
             final IdTokenResponse authorizationTokenResponse = context.target(context.getOpenIDProviderConfig()
-                    .getTokenEndpoint())
-                    .request(MediaType.APPLICATION_JSON_TYPE)
-                    .header("Authorization", authorization)
-                    .post(Entity.form(requestData), IdTokenResponse.class);
+                .getTokenEndpoint())
+                .request(MediaType.APPLICATION_JSON_TYPE)
+                .header("Authorization", authorization)
+                .post(Entity.form(requestData), IdTokenResponse.class);
             if (LOG.isLoggable(Level.FINEST)) {
                 LOG.finest("authorization token response =  " + authorizationTokenResponse);
             }
@@ -109,9 +110,9 @@ public class CallbackRequestProcessor implements ValidateRequestProcessor {
             requestData.putSingle(CLIENT_ID, context.getOption(OpenIdConnectKey.CLIENT_ID));
             requestData.putSingle(CLIENT_SECRET, context.getOption(OpenIdConnectKey.CLIENT_SECRET));
             final IdTokenResponse authorizationTokenResponse = context.target(context.getOpenIDProviderConfig()
-                    .getTokenEndpoint())
-                    .request(MediaType.APPLICATION_JSON_TYPE)
-                    .post(Entity.form(requestData), IdTokenResponse.class);
+                .getTokenEndpoint())
+                .request(MediaType.APPLICATION_JSON_TYPE)
+                .post(Entity.form(requestData), IdTokenResponse.class);
             if (LOG.isLoggable(Level.FINEST)) {
                 LOG.finest("authorization token response =  " + authorizationTokenResponse);
             }
@@ -132,9 +133,9 @@ public class CallbackRequestProcessor implements ValidateRequestProcessor {
     private JsonWebKeySet getWebKeys(final ValidateContext context) throws GeneralSecurityException {
 
         return context.target(context.getOpenIDProviderConfig()
-                .getJwksUri())
-                .request(MediaType.APPLICATION_JSON_TYPE)
-                .get(JsonWebKeySet.class);
+            .getJwksUri())
+            .request(MediaType.APPLICATION_JSON_TYPE)
+            .get(JsonWebKeySet.class);
     }
 
     /**
@@ -166,37 +167,43 @@ public class CallbackRequestProcessor implements ValidateRequestProcessor {
      * @throws GeneralSecurityException
      */
     private void updateSubjectPrincipal(final Subject subject,
-            final JsonObject jwtPayload,
-            final ValidateContext context) throws GeneralSecurityException {
+        final JsonObject jwtPayload,
+        final ValidateContext context) throws GeneralSecurityException {
 
         try {
             final String iss = googleWorkaround(jwtPayload.getString("iss"));
             context.getHandler()
-                    .handle(new Callback[] { new CallerPrincipalCallback(subject, UriBuilder.fromUri(iss)
-                            .userInfo(jwtPayload.getString("sub"))
-                            .build()
-                            .toASCIIString()), new GroupPrincipalCallback(subject, new String[] { iss }) });
-        } catch (final IOException | UnsupportedCallbackException e) {
+                .handle(new Callback[] {
+                    new CallerPrincipalCallback(subject, UriBuilder.fromUri(iss)
+                        .userInfo(jwtPayload.getString("sub"))
+                        .build()
+                        .toASCIIString()),
+                    new GroupPrincipalCallback(subject, new String[] {
+                        iss
+                            })
+            });
+        } catch (final IOException
+            | UnsupportedCallbackException e) {
             // Should not happen
             LOG.log(Level.SEVERE, "updatePrincipalException", e.getMessage());
             LOG.throwing(this.getClass()
-                    .getName(), "updateSubjectPrincipal", e);
+                .getName(), "updateSubjectPrincipal", e);
             throw new AuthException(MessageFormat.format(Log.r("updatePrincipalException"), e.getMessage()));
         }
     }
 
     @Override
     public AuthStatus validateRequest(final ValidateContext context) throws IOException,
-            GeneralSecurityException {
+        GeneralSecurityException {
 
         final OpenIdProviderConfiguration oidProviderConfig = context.getOpenIDProviderConfig();
         final IdTokenResponse token = getToken(OpenIdConnectKey.CODE, context.getReq()
-                .getParameter(OpenIdConnectKey.CODE), GrantType.authorization_code, context);
+            .getParameter(OpenIdConnectKey.CODE), GrantType.authorization_code, context);
         final net.trajano.openidconnect.crypto.JsonWebKeySet webKeys = getWebKeys(context);
 
         LOG.log(Level.FINEST, "tokenValue", token);
         final JsonObject claimsSet = new JsonWebTokenProcessor(token.getEncodedIdToken()).jwks(webKeys)
-                .getJsonPayload();
+            .getJsonPayload();
 
         final String nonceCookie = context.getCookie(OpenIdConnectAuthModule.NET_TRAJANO_AUTH_NONCE);
         final String nonce;
@@ -213,19 +220,22 @@ public class CallbackRequestProcessor implements ValidateRequestProcessor {
         final String iss = googleWorkaround(claimsSet.getString("iss"));
         final String issuer = googleWorkaround(oidProviderConfig.getIssuer());
         if (!iss.equals(issuer)) {
-            LOG.log(Level.SEVERE, "issuerMismatch", new Object[] { iss, issuer });
+            LOG.log(Level.SEVERE, "issuerMismatch", new Object[] {
+                iss,
+                issuer
+            });
             throw new GeneralSecurityException(MessageFormat.format(Log.r("issuerMismatch"), iss, issuer));
         }
         updateSubjectPrincipal(context.getClientSubject(), claimsSet, context);
 
         final TokenCookie tokenCookie;
         if (oidProviderConfig.getUserinfoEndpoint() != null && Pattern.compile("\\bprofile\\b")
-                .matcher(context.getOption(OpenIdConnectKey.SCOPE))
-                .find()) {
+            .matcher(context.getOption(OpenIdConnectKey.SCOPE))
+            .find()) {
             final Response userInfoResponse = context.target(oidProviderConfig.getUserinfoEndpoint())
-                    .request(MediaType.APPLICATION_JSON_TYPE)
-                    .header("Authorization", token.getTokenType() + " " + token.getAccessToken())
-                    .get();
+                .request(MediaType.APPLICATION_JSON_TYPE)
+                .header("Authorization", token.getTokenType() + " " + token.getAccessToken())
+                .get();
             if (userInfoResponse.getStatus() == 200) {
                 tokenCookie = new TokenCookie(token.getAccessToken(), token.getRefreshToken(), claimsSet, token.getEncodedIdToken(), userInfoResponse.readEntity(JsonObject.class));
             } else {

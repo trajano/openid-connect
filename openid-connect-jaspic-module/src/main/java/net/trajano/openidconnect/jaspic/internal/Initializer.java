@@ -70,8 +70,7 @@ public class Initializer implements
 
         registrationID = AuthConfigFactory.getFactory()
             .registerConfigProvider(new OpenIdConnectModuleConfigProvider(options, null), "HttpServlet", getAppContext(sce), null);
-        Log.severe("registered", registrationID, options);
-        Log.fine("registered", registrationID);
+        Log.fine("registered", registrationID, options);
     }
 
     /**
