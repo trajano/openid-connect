@@ -5,6 +5,7 @@ import static net.trajano.openidconnect.core.ErrorCode.invalid_grant;
 import static net.trajano.openidconnect.core.ErrorCode.login_required;
 
 import java.io.IOException;
+import java.net.URI;
 import java.security.GeneralSecurityException;
 
 import javax.ejb.EJB;
@@ -60,9 +61,6 @@ public class AuthorizationEndpoint {
     private ClientManager clientManager;
 
     private KeyProvider keyProvider;
-
-    @Context
-    private javax.ws.rs.ext.Providers providers;
 
     @EJB
     private TokenProvider tp;
@@ -137,15 +135,18 @@ public class AuthorizationEndpoint {
             reqJwt = b.toString();
         }
 
-        final UriBuilder contextUriBuilder = UriBuilder.fromPath(req.getContextPath() + "/");
+        final UriBuilder contextUriBuilder = UriBuilder.fromPath(req.getServletContext().getContextPath() + "/");
         if (!authenticated) {
 
-            return Response.temporaryRedirect(authenticator.authenticate(authenticationRequest, reqJwt, req, contextUriBuilder))
+            // Workaround for WebSphere Liberty as Response.temporaryRedirect will treat URIs that do not have a scheme as relative.
+            final URI targetUri = authenticator.authenticate(authenticationRequest, reqJwt, req, contextUriBuilder);
+            return Response.temporaryRedirect(URI.create(req.getRequestURL().toString()).resolve(targetUri))
                 .build();
 
         } else if (!consented) {
 
-            return Response.temporaryRedirect(authenticator.consent(authenticationRequest, reqJwt, req, contextUriBuilder))
+            final URI targetUri = authenticator.consent(authenticationRequest, reqJwt, req, contextUriBuilder);
+            return Response.temporaryRedirect(URI.create(req.getRequestURL().toString()).resolve(targetUri))
                 .build();
         } else {
 
