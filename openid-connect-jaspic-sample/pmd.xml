@@ -1,3 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<pmd version="5.2.3" timestamp="2015-07-08T09:12:34.591">
+<pmd version="5.2.3" timestamp="2015-08-08T14:17:41.802">
+<file name="/Users/trajano/Projects/openid-connect/openid-connect-jaspic-sample/src/main/java/net/trajano/openidconnect/sample/ConfigProvider.java">
+<violation beginline="52" endline="54" begincolumn="55" endcolumn="9" rule="EmptyTryBlock" ruleset="Empty Code" package="net.trajano.openidconnect.sample" class="ConfigProvider" method="getIssuerUri" externalInfoUrl="http://pmd.sourceforge.net/pmd-5.2.3/pmd-java/rules/java/empty.html#EmptyTryBlock" priority="3">
+Avoid empty try blocks
+</violation>
+<violation beginline="57" endline="59" begincolumn="55" endcolumn="9" rule="EmptyTryBlock" ruleset="Empty Code" package="net.trajano.openidconnect.sample" class="ConfigProvider" method="getIssuerUri" externalInfoUrl="http://pmd.sourceforge.net/pmd-5.2.3/pmd-java/rules/java/empty.html#EmptyTryBlock" priority="3">
+Avoid empty try blocks
+</violation>
+</file>
 </pmd>
