@@ -10,7 +10,8 @@ import net.trajano.openidconnect.jaspic.OpenIdConnectAuthModule;
 import net.trajano.openidconnect.jaspic.internal.ValidateContext;
 import net.trajano.openidconnect.jaspic.internal.ValidateRequestProcessor;
 
-public class IdTokenRequestProcessor implements ValidateRequestProcessor {
+public class IdTokenRequestProcessor implements
+    ValidateRequestProcessor {
 
     @Override
     public boolean canValidateRequest(final ValidateContext context) {
@@ -22,6 +23,13 @@ public class IdTokenRequestProcessor implements ValidateRequestProcessor {
         return context.isSecure() && context.isGetRequest() && context.isRequestUri(OpenIdConnectAuthModule.TOKEN_URI_KEY);
     }
 
+    /**
+     * {@inheritDoc}. Although this really should return AuthStatus.SEND_SUCCESS
+     * based on the spec, to make it work with WebSphere Liberty it returns
+     * {@link AuthStatus#SEND_CONTINUE}.
+     *
+     * @return {@link AuthStatus#SEND_CONTINUE}
+     */
     @Override
     public AuthStatus validateRequest(final ValidateContext context) throws IOException,
         GeneralSecurityException {
@@ -29,6 +37,6 @@ public class IdTokenRequestProcessor implements ValidateRequestProcessor {
         context.setContentType(MediaType.APPLICATION_JSON);
         context.getResp()
             .getOutputStream().print(context.getIdToken().toString());
-        return AuthStatus.SEND_SUCCESS;
+        return AuthStatus.SEND_CONTINUE;
     }
 }
