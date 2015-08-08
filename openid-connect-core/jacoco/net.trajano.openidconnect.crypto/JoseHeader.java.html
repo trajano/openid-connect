@@ -264,7 +264,7 @@ public class JoseHeader {
 <span class="fc" id="L264">    public JoseHeader(final String jsonString) {</span>
 
 <span class="fc" id="L266">        final JsonObject json = Json.createReader(new StringReader(jsonString))</span>
-                .readObject();
+<span class="fc" id="L267">                .readObject();</span>
 <span class="fc" id="L268">        Util.populateWithJson(this, json);</span>
 <span class="fc" id="L269">    }</span>
 
@@ -405,7 +405,7 @@ public class JoseHeader {
     public String toString() {
 
 <span class="fc" id="L407">        return Util.convertToJson(this)</span>
-                .toString();
+<span class="fc" id="L408">                .toString();</span>
     }
 
     /**
@@ -416,7 +416,7 @@ public class JoseHeader {
     public byte[] getEncoded() {
 
 <span class="fc" id="L418">        return Encoding.base64urlEncode(toString())</span>
-                .getBytes(CharSets.US_ASCII);
+<span class="fc" id="L419">                .getBytes(CharSets.US_ASCII);</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span></div></body></html>

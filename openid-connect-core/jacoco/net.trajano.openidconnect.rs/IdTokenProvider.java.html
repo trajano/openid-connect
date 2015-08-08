@@ -66,7 +66,7 @@ import net.trajano.openidconnect.token.IdToken;
             final InputStream is) throws IOException {
 
 <span class="nc" id="L68">        final JsonObject obj = Json.createReader(is)</span>
-                .readObject();
+<span class="nc" id="L69">                .readObject();</span>
 <span class="nc" id="L70">        final IdToken idToken = new IdToken();</span>
 <span class="nc bnc" id="L71" title="All 2 branches missed.">        if (obj.containsKey(&quot;acr&quot;)) {</span>
 <span class="nc" id="L72">            idToken.setAcr(obj.getString(&quot;acr&quot;));</span>
@@ -131,19 +131,22 @@ import net.trajano.openidconnect.token.IdToken;
 <span class="nc bnc" id="L131" title="All 2 branches missed.">        if (idToken.getAtHash() != null) {</span>
 <span class="nc" id="L132">            b.add(&quot;at_hash&quot;, idToken.getAtHash());</span>
         }
-<span class="nc" id="L134">        b.add(&quot;iat&quot;, idToken.getIat());</span>
-<span class="nc" id="L135">        b.add(&quot;exp&quot;, idToken.getExp());</span>
-<span class="nc" id="L136">        b.add(&quot;iss&quot;, idToken.getIss());</span>
-<span class="nc bnc" id="L137" title="All 2 branches missed.">        if (idToken.getNonce() != null) {</span>
-<span class="nc" id="L138">            b.add(&quot;nonce&quot;, idToken.getNonce());</span>
+<span class="nc bnc" id="L134" title="All 2 branches missed.">        if (idToken.getCHash() != null) {</span>
+<span class="nc" id="L135">            b.add(&quot;c_hash&quot;, idToken.getCHash());</span>
         }
-<span class="nc" id="L140">        b.add(&quot;sub&quot;, idToken.getSub());</span>
+<span class="nc" id="L137">        b.add(&quot;iat&quot;, idToken.getIat());</span>
+<span class="nc" id="L138">        b.add(&quot;exp&quot;, idToken.getExp());</span>
+<span class="nc" id="L139">        b.add(&quot;iss&quot;, idToken.getIss());</span>
+<span class="nc bnc" id="L140" title="All 2 branches missed.">        if (idToken.getNonce() != null) {</span>
+<span class="nc" id="L141">            b.add(&quot;nonce&quot;, idToken.getNonce());</span>
+        }
+<span class="nc" id="L143">        b.add(&quot;sub&quot;, idToken.getSub());</span>
 
-<span class="nc" id="L142">        final JsonWriter w = Json.createWriter(os);</span>
-<span class="nc" id="L143">        w.writeObject(b.build());</span>
-<span class="nc" id="L144">        w.close();</span>
+<span class="nc" id="L145">        final JsonWriter w = Json.createWriter(os);</span>
+<span class="nc" id="L146">        w.writeObject(b.build());</span>
+<span class="nc" id="L147">        w.close();</span>
 
-<span class="nc" id="L146">    }</span>
+<span class="nc" id="L149">    }</span>
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span></div></body></html>

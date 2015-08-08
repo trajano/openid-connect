@@ -91,6 +91,9 @@ import net.trajano.openidconnect.userinfo.Userinfo;
     @XmlElement(name = &quot;at_hash&quot;)
     private String atHash;
 
+    @XmlElement(name = &quot;c_hash&quot;)
+    private String cHash;
+
     /**
      * REQUIRED. Audience(s) that this ID Token is intended for. It MUST contain
      * the OAuth 2.0 client_id of the Relying Party as an audience value. It MAY
@@ -180,37 +183,37 @@ import net.trajano.openidconnect.userinfo.Userinfo;
 
     public String getAcr() {
 
-<span class="nc" id="L183">        return acr;</span>
+<span class="nc" id="L186">        return acr;</span>
     }
 
     public String[] getAmr() {
 
-<span class="nc" id="L188">        return amr;</span>
+<span class="nc" id="L191">        return amr;</span>
     }
 
     public String getAtHash() {
 
-<span class="nc" id="L193">        return atHash;</span>
+<span class="nc" id="L196">        return atHash;</span>
     }
 
     public String getAud() {
 
-<span class="nc" id="L198">        return aud;</span>
+<span class="nc" id="L201">        return aud;</span>
     }
 
     public long getAuthTime() {
 
-<span class="nc" id="L203">        return authTime;</span>
+<span class="nc" id="L206">        return authTime;</span>
     }
 
     public String getAzp() {
 
-<span class="nc" id="L208">        return azp;</span>
+<span class="nc" id="L211">        return azp;</span>
     }
 
     public long getExp() {
 
-<span class="fc" id="L213">        return exp;</span>
+<span class="fc" id="L216">        return exp;</span>
     }
 
     /**
@@ -220,17 +223,17 @@ import net.trajano.openidconnect.userinfo.Userinfo;
      */
     public Date getExpiration() {
 
-<span class="nc" id="L223">        return new Date(exp * 1000L);</span>
+<span class="nc" id="L226">        return new Date(exp * 1000L);</span>
     }
 
     public long getIat() {
 
-<span class="fc" id="L228">        return iat;</span>
+<span class="fc" id="L231">        return iat;</span>
     }
 
     public String getIss() {
 
-<span class="nc" id="L233">        return iss;</span>
+<span class="nc" id="L236">        return iss;</span>
     }
 
     /**
@@ -240,17 +243,18 @@ import net.trajano.openidconnect.userinfo.Userinfo;
      */
     public Date getIssuedOn() {
 
-<span class="nc" id="L243">        return new Date(iat * 1000L);</span>
+<span class="nc" id="L246">        return new Date(iat * 1000L);</span>
     }
 
     public String getNonce() {
 
-<span class="nc" id="L248">        return nonce;</span>
+<span class="nc" id="L251">        return nonce;</span>
     }
 
+    @Override
     public String getSub() {
 
-<span class="nc" id="L253">        return sub;</span>
+<span class="nc" id="L257">        return sub;</span>
     }
 
     /**
@@ -260,7 +264,7 @@ import net.trajano.openidconnect.userinfo.Userinfo;
      */
     public boolean isExpired() {
 
-<span class="nc bnc" id="L263" title="All 2 branches missed.">        return System.currentTimeMillis() / 1000 &gt; exp;</span>
+<span class="nc bnc" id="L267" title="All 2 branches missed.">        return System.currentTimeMillis() / 1000 &gt; exp;</span>
     }
 
     /**
@@ -272,63 +276,81 @@ import net.trajano.openidconnect.userinfo.Userinfo;
 
     public void resetIssueAndExpiration(final int expirationInSeconds) {
 
-<span class="fc" id="L275">        iat = System.currentTimeMillis() / 1000;</span>
-<span class="fc" id="L276">        exp = iat + expirationInSeconds;</span>
-<span class="fc" id="L277">    }</span>
+<span class="fc" id="L279">        iat = System.currentTimeMillis() / 1000;</span>
+<span class="fc" id="L280">        exp = iat + expirationInSeconds;</span>
+<span class="fc" id="L281">    }</span>
 
     public void setAcr(final String acr) {
 
-<span class="nc" id="L281">        this.acr = acr;</span>
-<span class="nc" id="L282">    }</span>
+<span class="nc" id="L285">        this.acr = acr;</span>
+<span class="nc" id="L286">    }</span>
 
     public void setAmr(final String[] amr) {
 
-<span class="nc" id="L286">        this.amr = amr;</span>
-<span class="nc" id="L287">    }</span>
+<span class="nc" id="L290">        this.amr = amr;</span>
+<span class="nc" id="L291">    }</span>
 
     public void setAtHash(final String atHash) {
 
-<span class="nc" id="L291">        this.atHash = atHash;</span>
-<span class="nc" id="L292">    }</span>
+<span class="nc" id="L295">        this.atHash = atHash;</span>
+<span class="nc" id="L296">    }</span>
 
     public void setAud(final String aud) {
 
-<span class="nc" id="L296">        this.aud = aud;</span>
-<span class="nc" id="L297">    }</span>
+<span class="nc" id="L300">        this.aud = aud;</span>
+<span class="nc" id="L301">    }</span>
 
     public void setAuthTime(final long authTime) {
 
-<span class="nc" id="L301">        this.authTime = authTime;</span>
-<span class="nc" id="L302">    }</span>
+<span class="nc" id="L305">        this.authTime = authTime;</span>
+<span class="nc" id="L306">    }</span>
 
     public void setAzp(final String azp) {
 
-<span class="nc" id="L306">        this.azp = azp;</span>
-<span class="nc" id="L307">    }</span>
+<span class="nc" id="L310">        this.azp = azp;</span>
+<span class="nc" id="L311">    }</span>
 
     public void setExp(final long exp) {
 
-<span class="nc" id="L311">        this.exp = exp;</span>
-<span class="nc" id="L312">    }</span>
+<span class="nc" id="L315">        this.exp = exp;</span>
+<span class="nc" id="L316">    }</span>
 
     public void setIat(final long iat) {
 
-<span class="nc" id="L316">        this.iat = iat;</span>
-<span class="nc" id="L317">    }</span>
+<span class="nc" id="L320">        this.iat = iat;</span>
+<span class="nc" id="L321">    }</span>
 
     public void setIss(final String iss) {
 
-<span class="nc" id="L321">        this.iss = iss;</span>
-<span class="nc" id="L322">    }</span>
+<span class="nc" id="L325">        this.iss = iss;</span>
+<span class="nc" id="L326">    }</span>
 
     public void setNonce(final String nonce) {
 
-<span class="nc" id="L326">        this.nonce = nonce;</span>
-<span class="nc" id="L327">    }</span>
+<span class="nc" id="L330">        this.nonce = nonce;</span>
+<span class="nc" id="L331">    }</span>
 
+    @Override
     public void setSub(final String sub) {
 
-<span class="nc" id="L331">        this.sub = sub;</span>
-<span class="nc" id="L332">    }</span>
+<span class="nc" id="L336">        this.sub = sub;</span>
+<span class="nc" id="L337">    }</span>
+
+    public String getCHash() {
+
+<span class="nc" id="L341">        return cHash;</span>
+    }
+
+    /**
+     * Sets the code hash value.
+     * 
+     * @param cHash
+     *            code hash
+     */
+    public void setCHash(String cHash) {
+
+<span class="nc" id="L352">        this.cHash = cHash;</span>
+
+<span class="nc" id="L354">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span></div></body></html>

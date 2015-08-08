@@ -86,7 +86,7 @@ import javax.json.JsonObjectBuilder;
 
 <span class="nc" id="L87">        final KeyFactory keyFactory = KeyFactory.getInstance(&quot;EC&quot;);</span>
 <span class="nc" id="L88">        final ECParameterSpec ecParameterSpec = NamedEllipticCurve.valueOf(crv)</span>
-                .toECParameterSpec();
+<span class="nc" id="L89">                .toECParameterSpec();</span>
 <span class="nc" id="L90">        final ECPublicKeySpec keySpec = new ECPublicKeySpec(new ECPoint(Encoding.base64urlDecodeUint(x), Encoding.base64urlDecodeUint(y)), ecParameterSpec);</span>
 <span class="nc" id="L91">        return keyFactory.generatePublic(keySpec);</span>
     }
@@ -96,7 +96,7 @@ import javax.json.JsonObjectBuilder;
 
 <span class="nc" id="L97">        final KeyFactory keyFactory = KeyFactory.getInstance(&quot;EC&quot;);</span>
 <span class="nc" id="L98">        final ECParameterSpec ecParameterSpec = NamedEllipticCurve.valueOf(crv)</span>
-                .toECParameterSpec();
+<span class="nc" id="L99">                .toECParameterSpec();</span>
 <span class="nc bnc" id="L100" title="All 2 branches missed.">        if (getUse() == KeyUse.sig) {</span>
 <span class="nc" id="L101">            final ECPublicKeySpec keySpec = new ECPublicKeySpec(new ECPoint(Encoding.base64urlDecodeUint(x), Encoding.base64urlDecodeUint(y)), ecParameterSpec);</span>
 <span class="nc" id="L102">            return keyFactory.generatePublic(keySpec);</span>

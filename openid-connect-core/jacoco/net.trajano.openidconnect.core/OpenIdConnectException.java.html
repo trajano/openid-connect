@@ -38,9 +38,9 @@ public class OpenIdConnectException extends BadRequestException {
     public OpenIdConnectException(final ErrorResponse errorResponse) {
 
 <span class="nc" id="L40">        super(Response.ok(errorResponse)</span>
-                .type(MediaType.APPLICATION_JSON)
-                .status(Status.BAD_REQUEST)
-                .build());
+<span class="nc" id="L41">                .type(MediaType.APPLICATION_JSON)</span>
+<span class="nc" id="L42">                .status(Status.BAD_REQUEST)</span>
+<span class="nc" id="L43">                .build());</span>
 <span class="nc" id="L44">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span></div></body></html>

@@ -48,7 +48,7 @@ import net.trajano.openidconnect.crypto.RsaWebKey;
             final Annotation[] annotations,
             final MediaType mediaType) {
 
-<span class="fc bfc" id="L51" title="All 4 branches covered.">        return JsonWebKey.class.isAssignableFrom(type) &amp;&amp; MediaType.APPLICATION_JSON_TYPE.isCompatible(mediaType);</span>
+<span class="pc bpc" id="L51" title="1 of 4 branches missed.">        return JsonWebKey.class.isAssignableFrom(type) &amp;&amp; MediaType.APPLICATION_JSON_TYPE.isCompatible(mediaType);</span>
     }
 
     @Override
@@ -70,7 +70,7 @@ import net.trajano.openidconnect.crypto.RsaWebKey;
             WebApplicationException {
 
 <span class="fc" id="L72">        final JsonObject keyObject = Json.createReader(inputStream)</span>
-                .readObject();
+<span class="fc" id="L73">                .readObject();</span>
 
 <span class="fc bfc" id="L75" title="All 2 branches covered.">        final String kid = keyObject.containsKey(&quot;kid&quot;) ? keyObject.getString(&quot;kid&quot;) : null;</span>
 <span class="fc" id="L76">        final KeyType kty = KeyType.valueOf(keyObject.getString(&quot;kty&quot;));</span>

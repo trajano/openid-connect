@@ -7,10 +7,12 @@ import java.util.Set;
 
 import javax.xml.bind.annotation.XmlElement;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import net.trajano.openidconnect.core.Scope;
 
-<span class="nc" id="L12">public class TokenResponse implements Serializable{</span>
-
+@JsonIgnoreProperties(ignoreUnknown=true)
+<span class="nc" id="L15">public class TokenResponse implements Serializable{</span>
     /**
      * 
      */
@@ -18,33 +20,33 @@ import net.trajano.openidconnect.core.Scope;
 
     public String getAccessToken() {
 
-<span class="nc" id="L21">        return accessToken;</span>
+<span class="nc" id="L23">        return accessToken;</span>
     }
 
     public void setAccessToken(String accessToken) {
 
-<span class="nc" id="L26">        this.accessToken = accessToken;</span>
-<span class="nc" id="L27">    }</span>
+<span class="nc" id="L28">        this.accessToken = accessToken;</span>
+<span class="nc" id="L29">    }</span>
 
     public int getExpiresIn() {
 
-<span class="nc" id="L31">        return expiresIn;</span>
+<span class="nc" id="L33">        return expiresIn;</span>
     }
 
     public void setExpiresIn(int expiresIn) {
 
-<span class="nc" id="L36">        this.expiresIn = expiresIn;</span>
-<span class="nc" id="L37">    }</span>
+<span class="nc" id="L38">        this.expiresIn = expiresIn;</span>
+<span class="nc" id="L39">    }</span>
 
     public String getRefreshToken() {
 
-<span class="nc" id="L41">        return refreshToken;</span>
+<span class="nc" id="L43">        return refreshToken;</span>
     }
 
     public void setRefreshToken(String refreshToken) {
 
-<span class="nc" id="L46">        this.refreshToken = refreshToken;</span>
-<span class="nc" id="L47">    }</span>
+<span class="nc" id="L48">        this.refreshToken = refreshToken;</span>
+<span class="nc" id="L49">    }</span>
 
     public static final String BEARER = &quot;Bearer&quot;;
 
@@ -69,8 +71,8 @@ import net.trajano.openidconnect.core.Scope;
 
     public void setScope(final String scope) {
 
-<span class="nc" id="L72">        this.scope = scope;</span>
-<span class="nc" id="L73">    }</span>
+<span class="nc" id="L74">        this.scope = scope;</span>
+<span class="nc" id="L75">    }</span>
 
 
     /**
@@ -81,40 +83,40 @@ import net.trajano.openidconnect.core.Scope;
 
     public String getScope() {
 
-<span class="nc" id="L84">        return scope;</span>
+<span class="nc" id="L86">        return scope;</span>
     }
 
     public void setTokenType(final String tokenType) {
 
-<span class="nc" id="L89">        this.tokenType = tokenType;</span>
-<span class="nc" id="L90">    }</span>
+<span class="nc" id="L91">        this.tokenType = tokenType;</span>
+<span class="nc" id="L92">    }</span>
 
     public void setScopes(Set&lt;Scope&gt; scopes) {
 
-<span class="nc" id="L94">        StringBuilder b = new StringBuilder();</span>
-<span class="nc" id="L95">        Iterator&lt;Scope&gt; i = scopes.iterator();</span>
-<span class="nc" id="L96">        b.append(i.next());</span>
-<span class="nc bnc" id="L97" title="All 2 branches missed.">        while (i.hasNext()) {</span>
-<span class="nc" id="L98">            b.append(' ');</span>
-<span class="nc" id="L99">            b.append(i.next());</span>
+<span class="nc" id="L96">        StringBuilder b = new StringBuilder();</span>
+<span class="nc" id="L97">        Iterator&lt;Scope&gt; i = scopes.iterator();</span>
+<span class="nc" id="L98">        b.append(i.next());</span>
+<span class="nc bnc" id="L99" title="All 2 branches missed.">        while (i.hasNext()) {</span>
+<span class="nc" id="L100">            b.append(' ');</span>
+<span class="nc" id="L101">            b.append(i.next());</span>
         }
-<span class="nc" id="L101">        scope = b.toString();</span>
+<span class="nc" id="L103">        scope = b.toString();</span>
 
-<span class="nc" id="L103">    }</span>
+<span class="nc" id="L105">    }</span>
 
     public Set&lt;Scope&gt; getScopes() {
 
-<span class="nc" id="L107">        Set&lt;Scope&gt; scopes = new HashSet&lt;&gt;();</span>
-<span class="nc bnc" id="L108" title="All 2 branches missed.">        for (final String scopePart : scope.split(&quot;\\s&quot;)) {</span>
-<span class="nc" id="L109">            scopes.add(Scope.valueOf(scopePart));</span>
+<span class="nc" id="L109">        Set&lt;Scope&gt; scopes = new HashSet&lt;&gt;();</span>
+<span class="nc bnc" id="L110" title="All 2 branches missed.">        for (final String scopePart : scope.split(&quot;\\s&quot;)) {</span>
+<span class="nc" id="L111">            scopes.add(Scope.valueOf(scopePart));</span>
         }
-<span class="nc" id="L111">        return scopes;</span>
+<span class="nc" id="L113">        return scopes;</span>
 
     }
 
     public String getTokenType() {
 
-<span class="nc" id="L117">        return tokenType;</span>
+<span class="nc" id="L119">        return tokenType;</span>
     }
 
     /**
@@ -130,7 +132,7 @@ import net.trajano.openidconnect.core.Scope;
      * specification.
      * &lt;/p&gt;
      */
-<span class="nc" id="L133">    @XmlElement(name = &quot;token_type&quot;, required = true)</span>
+<span class="nc" id="L135">    @XmlElement(name = &quot;token_type&quot;, required = true)</span>
     private String tokenType = BEARER;
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span></div></body></html>

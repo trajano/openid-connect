@@ -50,12 +50,12 @@ import javax.xml.bind.annotation.XmlTransient;
 <span class="fc bfc" id="L50" title="All 2 branches covered.">                if (value == null) {</span>
 <span class="fc" id="L51">                    continue;</span>
                 }
-<span class="pc bpc" id="L53" title="1 of 2 branches missed.">                if (field.getType()</span>
-                    .isEnum()) {
+<span class="fc" id="L53">                if (field.getType()</span>
+<span class="pc bpc" id="L54" title="1 of 2 branches missed.">                    .isEnum()) {</span>
 <span class="nc" id="L55">                    final String enumValue = ((Enum&lt;?&gt;) value).name();</span>
 <span class="nc" id="L56">                    final XmlEnumValue xmlEnumValue = ((Enum&lt;?&gt;) value).getDeclaringClass()</span>
-                        .getField(enumValue)
-                        .getAnnotation(XmlEnumValue.class);
+<span class="nc" id="L57">                        .getField(enumValue)</span>
+<span class="nc" id="L58">                        .getAnnotation(XmlEnumValue.class);</span>
 <span class="nc bnc" id="L59" title="All 4 branches missed.">                    if (xmlEnumValue != null &amp;&amp; xmlEnumValue.value() != null) {</span>
 <span class="nc" id="L60">                        b.add(name, xmlEnumValue.value());</span>
                     } else {
@@ -152,8 +152,8 @@ import javax.xml.bind.annotation.XmlTransient;
 
     public static final boolean isNotNullOrEmpty(final String s) {
 
-<span class="pc bpc" id="L155" title="1 of 4 branches missed.">        return s != null &amp;&amp; !s.trim()</span>
-            .isEmpty();
+<span class="fc bfc" id="L155" title="All 2 branches covered.">        return s != null &amp;&amp; !s.trim()</span>
+<span class="pc bpc" id="L156" title="1 of 2 branches missed.">            .isEmpty();</span>
     }
 
     public static String join(final Iterable&lt;String&gt; values) {
@@ -184,8 +184,8 @@ import javax.xml.bind.annotation.XmlTransient;
 <span class="fc" id="L184">        final Class&lt;?&gt; objClass = obj.getClass();</span>
 <span class="fc" id="L185">        final Map&lt;String, Field&gt; fieldMap = new HashMap&lt;&gt;();</span>
 <span class="fc bfc" id="L186" title="All 2 branches covered.">        for (final Field field : objClass.getDeclaredFields()) {</span>
-<span class="pc bpc" id="L187" title="1 of 4 branches missed.">            if (!field.getType()</span>
-                .isEnum() &amp;&amp; !SUPPORTED_CLASSES.contains(field.getType())) {
+<span class="fc" id="L187">            if (!field.getType()</span>
+<span class="pc bpc" id="L188" title="1 of 4 branches missed.">                .isEnum() &amp;&amp; !SUPPORTED_CLASSES.contains(field.getType())) {</span>
 <span class="fc" id="L189">                continue;</span>
             }
 <span class="fc" id="L191">            final XmlElement xmlElement = field.getAnnotation(XmlElement.class);</span>
@@ -197,11 +197,11 @@ import javax.xml.bind.annotation.XmlTransient;
         }
         try {
 <span class="fc bfc" id="L199" title="All 2 branches covered.">            for (final Entry&lt;String, JsonValue&gt; entry : json.entrySet()) {</span>
-<span class="pc bpc" id="L200" title="1 of 2 branches missed.">                if (entry.getValue()</span>
-                    .getValueType() == ValueType.OBJECT) {
+<span class="fc" id="L200">                if (entry.getValue()</span>
+<span class="pc bpc" id="L201" title="1 of 2 branches missed.">                    .getValueType() == ValueType.OBJECT) {</span>
 <span class="nc" id="L202">                    continue;</span>
-<span class="pc bpc" id="L203" title="1 of 2 branches missed.">                } else if (entry.getValue()</span>
-                    .getValueType() == ValueType.NULL) {
+<span class="fc" id="L203">                } else if (entry.getValue()</span>
+<span class="pc bpc" id="L204" title="1 of 2 branches missed.">                    .getValueType() == ValueType.NULL) {</span>
 <span class="nc" id="L205">                    continue;</span>
                 }
 <span class="fc" id="L207">                final Field field = fieldMap.get(entry.getKey());</span>
@@ -209,11 +209,11 @@ import javax.xml.bind.annotation.XmlTransient;
 <span class="fc" id="L209">                    field.setAccessible(true);</span>
 <span class="pc bpc" id="L210" title="1 of 2 branches missed.">                    if (field.getType() == URI.class) {</span>
 <span class="nc" id="L211">                        field.set(obj, URI.create(((JsonString) entry.getValue()).getString()));</span>
-<span class="pc bpc" id="L212" title="3 of 4 branches missed.">                    } else if (field.getType() == Boolean.class &amp;&amp; entry.getValue()</span>
-                        .getValueType() == ValueType.TRUE) {
+<span class="pc bpc" id="L212" title="1 of 2 branches missed.">                    } else if (field.getType() == Boolean.class &amp;&amp; entry.getValue()</span>
+<span class="nc bnc" id="L213" title="All 2 branches missed.">                        .getValueType() == ValueType.TRUE) {</span>
 <span class="nc" id="L214">                        field.set(obj, true);</span>
-<span class="pc bpc" id="L215" title="3 of 4 branches missed.">                    } else if (field.getType() == Boolean.class &amp;&amp; entry.getValue()</span>
-                        .getValueType() == ValueType.FALSE) {
+<span class="pc bpc" id="L215" title="1 of 2 branches missed.">                    } else if (field.getType() == Boolean.class &amp;&amp; entry.getValue()</span>
+<span class="nc bnc" id="L216" title="All 2 branches missed.">                        .getValueType() == ValueType.FALSE) {</span>
 <span class="nc" id="L217">                        field.set(obj, false);</span>
 <span class="pc bpc" id="L218" title="1 of 2 branches missed.">                    } else if (field.getType() == String.class) {</span>
 <span class="fc" id="L219">                        field.set(obj, ((JsonString) entry.getValue()).getString());</span>
@@ -223,8 +223,8 @@ import javax.xml.bind.annotation.XmlTransient;
 <span class="nc" id="L223">                        field.set(obj, ((JsonNumber) entry.getValue()).bigIntegerValueExact());</span>
 <span class="nc bnc" id="L224" title="All 2 branches missed.">                    } else if (field.getType() == Long.class) {</span>
 <span class="nc" id="L225">                        field.set(obj, ((JsonNumber) entry.getValue()).longValueExact());</span>
-<span class="nc bnc" id="L226" title="All 2 branches missed.">                    } else if (field.getType()</span>
-                        .isEnum()) {
+<span class="nc" id="L226">                    } else if (field.getType()</span>
+<span class="nc bnc" id="L227" title="All 2 branches missed.">                        .isEnum()) {</span>
 <span class="nc" id="L228">                        field.set(obj, valueOf((Class&lt;? extends Enum&gt;) field.getType(), ((JsonString) entry.getValue()).getString()));</span>
                     }
                 }
@@ -291,7 +291,7 @@ import javax.xml.bind.annotation.XmlTransient;
 <span class="nc" id="L291">        final Class&lt;E&gt; enumType = value.getDeclaringClass();</span>
         try {
 <span class="nc" id="L293">            final XmlEnumValue xmlEnumValue = enumType.getField(value.name())</span>
-                .getAnnotation(XmlEnumValue.class);
+<span class="nc" id="L294">                .getAnnotation(XmlEnumValue.class);</span>
 <span class="nc bnc" id="L295" title="All 4 branches missed.">            if (xmlEnumValue != null &amp;&amp; xmlEnumValue.value() != null) {</span>
 <span class="nc" id="L296">                return xmlEnumValue.value();</span>
             } else {
@@ -323,7 +323,7 @@ import javax.xml.bind.annotation.XmlTransient;
 <span class="pc bpc" id="L323" title="1 of 2 branches missed.">            for (final E e : enumType.getEnumConstants()) {</span>
 <span class="fc" id="L324">                String ename = e.name();</span>
 <span class="fc" id="L325">                final XmlEnumValue xmlEnumValue = enumType.getField(ename)</span>
-                    .getAnnotation(XmlEnumValue.class);
+<span class="fc" id="L326">                    .getAnnotation(XmlEnumValue.class);</span>
 <span class="pc bpc" id="L327" title="3 of 4 branches missed.">                if (xmlEnumValue != null &amp;&amp; xmlEnumValue.value() != null) {</span>
 <span class="nc" id="L328">                    ename = xmlEnumValue.value();</span>
                 }

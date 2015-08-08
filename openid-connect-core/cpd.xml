@@ -2,9 +2,9 @@
 <pmd-cpd>
    <duplication lines="58" tokens="214">
       <file line="24"
-            path="/var/lib/jenkins/jobs/openid-connect/workspace/target/checkout/openid-connect-core/src/main/java/net/trajano/openidconnect/rs/AuthenticationRequestJsonProvider.java"/>
+            path="/Users/trajano/Projects/openid-connect/openid-connect-core/src/main/java/net/trajano/openidconnect/rs/AuthenticationRequestJsonProvider.java"/>
       <file line="24"
-            path="/var/lib/jenkins/jobs/openid-connect/workspace/target/checkout/openid-connect-core/src/main/java/net/trajano/openidconnect/rs/AuthenticationRequestUriProvider.java"/>
+            path="/Users/trajano/Projects/openid-connect/openid-connect-core/src/main/java/net/trajano/openidconnect/rs/AuthenticationRequestUriProvider.java"/>
       <codefragment><![CDATA[public class AuthenticationRequestJsonProvider implements MessageBodyReader<AuthenticationRequest>, MessageBodyWriter<AuthenticationRequest> {
 
     @Override
@@ -66,9 +66,9 @@
    </duplication>
    <duplication lines="19" tokens="102">
       <file line="279"
-            path="/var/lib/jenkins/jobs/openid-connect/workspace/target/checkout/openid-connect-core/src/main/java/net/trajano/openidconnect/internal/JcaJsonWebTokenCrypto.java"/>
+            path="/Users/trajano/Projects/openid-connect/openid-connect-core/src/main/java/net/trajano/openidconnect/internal/JcaJsonWebTokenCrypto.java"/>
       <file line="320"
-            path="/var/lib/jenkins/jobs/openid-connect/workspace/target/checkout/openid-connect-core/src/main/java/net/trajano/openidconnect/internal/JcaJsonWebTokenCrypto.java"/>
+            path="/Users/trajano/Projects/openid-connect/openid-connect-core/src/main/java/net/trajano/openidconnect/internal/JcaJsonWebTokenCrypto.java"/>
       <codefragment><![CDATA[        final SecretKey contentEncryptionKey = new SecretKeySpec(encryptionKey,
             "AES");
 

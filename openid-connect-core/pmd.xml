@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<pmd version="5.2.3" timestamp="2015-07-08T08:53:53.107">
-<file name="/var/lib/jenkins/jobs/openid-connect/workspace/target/checkout/openid-connect-core/src/main/java/net/trajano/openidconnect/auth/AuthenticationRequest.java">
+<pmd version="5.2.3" timestamp="2015-08-08T14:04:02.560">
+<file name="/Users/trajano/Projects/openid-connect/openid-connect-core/src/main/java/net/trajano/openidconnect/auth/AuthenticationRequest.java">
 <violation beginline="54" endline="54" begincolumn="23" endcolumn="41" rule="UseConcurrentHashMap" ruleset="Controversial" package="net.trajano.openidconnect.auth" class="AuthenticationRequest$Builder" externalInfoUrl="http://pmd.sourceforge.net/pmd-5.2.3/pmd-java/rules/java/controversial.html#UseConcurrentHashMap" priority="3">
 If you run in Java5 or newer and have concurrent access, you should use the ConcurrentHashMap implementation
 </violation>
@@ -11,7 +11,7 @@ If you run in Java5 or newer and have concurrent access, you should use the Conc
 If you run in Java5 or newer and have concurrent access, you should use the ConcurrentHashMap implementation
 </violation>
 </file>
-<file name="/var/lib/jenkins/jobs/openid-connect/workspace/target/checkout/openid-connect-core/src/main/java/net/trajano/openidconnect/auth/AuthenticationResponse.java">
+<file name="/Users/trajano/Projects/openid-connect/openid-connect-core/src/main/java/net/trajano/openidconnect/auth/AuthenticationResponse.java">
 <violation beginline="30" endline="30" begincolumn="32" endcolumn="46" rule="MethodArgumentCouldBeFinal" ruleset="Optimization" package="net.trajano.openidconnect.auth" class="AuthenticationResponse" method="setRedirectUri" variable="redirectUri" externalInfoUrl="http://pmd.sourceforge.net/pmd-5.2.3/pmd-java/rules/java/optimizations.html#MethodArgumentCouldBeFinal" priority="3">
 Parameter 'redirectUri' is not assigned and could be declared final
 </violation>
@@ -19,35 +19,50 @@ Parameter 'redirectUri' is not assigned and could be declared final
 Parameter 'responseMode' is not assigned and could be declared final
 </violation>
 </file>
-<file name="/var/lib/jenkins/jobs/openid-connect/workspace/target/checkout/openid-connect-core/src/main/java/net/trajano/openidconnect/core/OpenIdProviderConfiguration.java">
-<violation beginline="616" endline="616" begincolumn="42" endcolumn="87" rule="MethodArgumentCouldBeFinal" ruleset="Optimization" package="net.trajano.openidconnect.core" class="OpenIdProviderConfiguration" method="setSubjectTypesSupported" variable="subjectTypesSupported" externalInfoUrl="http://pmd.sourceforge.net/pmd-5.2.3/pmd-java/rules/java/optimizations.html#MethodArgumentCouldBeFinal" priority="3">
-Parameter 'subjectTypesSupported' is not assigned and could be declared final
-</violation>
-<violation beginline="666" endline="666" begincolumn="43" endcolumn="80" rule="MethodArgumentCouldBeFinal" ruleset="Optimization" package="net.trajano.openidconnect.core" class="OpenIdProviderConfiguration" method="setResponseModesSupported" variable="responseModesSupported" externalInfoUrl="http://pmd.sourceforge.net/pmd-5.2.3/pmd-java/rules/java/optimizations.html#MethodArgumentCouldBeFinal" priority="3">
-Parameter 'responseModesSupported' is not assigned and could be declared final
+<file name="/Users/trajano/Projects/openid-connect/openid-connect-core/src/main/java/net/trajano/openidconnect/core/OpenIdProviderConfiguration.java">
+<violation beginline="318" endline="319" begincolumn="12" endcolumn="5" rule="UnnecessaryConstructor" ruleset="Controversial" package="net.trajano.openidconnect.core" class="OpenIdProviderConfiguration" method="OpenIdProviderConfiguration" externalInfoUrl="http://pmd.sourceforge.net/pmd-5.2.3/pmd-java/rules/java/controversial.html#UnnecessaryConstructor" priority="3">
+Avoid unnecessary constructors - the compiler will generate these for you
 </violation>
 </file>
-<file name="/var/lib/jenkins/jobs/openid-connect/workspace/target/checkout/openid-connect-core/src/main/java/net/trajano/openidconnect/core/RedirectedOpenIdProviderException.java">
-<violation beginline="57" endline="57" begincolumn="97" endcolumn="123" rule="MethodArgumentCouldBeFinal" ruleset="Optimization" package="net.trajano.openidconnect.core" class="RedirectedOpenIdProviderException" method="RedirectedOpenIdProviderException" variable="errorResponse" externalInfoUrl="http://pmd.sourceforge.net/pmd-5.2.3/pmd-java/rules/java/optimizations.html#MethodArgumentCouldBeFinal" priority="3">
+<file name="/Users/trajano/Projects/openid-connect/openid-connect-core/src/main/java/net/trajano/openidconnect/core/RedirectedOpenIdProviderException.java">
+<violation beginline="63" endline="63" begincolumn="97" endcolumn="123" rule="MethodArgumentCouldBeFinal" ruleset="Optimization" package="net.trajano.openidconnect.core" class="RedirectedOpenIdProviderException" method="RedirectedOpenIdProviderException" variable="errorResponse" externalInfoUrl="http://pmd.sourceforge.net/pmd-5.2.3/pmd-java/rules/java/optimizations.html#MethodArgumentCouldBeFinal" priority="3">
 Parameter 'errorResponse' is not assigned and could be declared final
 </violation>
-<violation beginline="62" endline="62" begincolumn="63" endcolumn="89" rule="MethodArgumentCouldBeFinal" ruleset="Optimization" package="net.trajano.openidconnect.core" class="RedirectedOpenIdProviderException" method="RedirectedOpenIdProviderException" variable="errorResponse" externalInfoUrl="http://pmd.sourceforge.net/pmd-5.2.3/pmd-java/rules/java/optimizations.html#MethodArgumentCouldBeFinal" priority="3">
+<violation beginline="68" endline="68" begincolumn="97" endcolumn="123" rule="MethodArgumentCouldBeFinal" ruleset="Optimization" package="net.trajano.openidconnect.core" class="RedirectedOpenIdProviderException" method="RedirectedOpenIdProviderException" variable="errorResponse" externalInfoUrl="http://pmd.sourceforge.net/pmd-5.2.3/pmd-java/rules/java/optimizations.html#MethodArgumentCouldBeFinal" priority="3">
 Parameter 'errorResponse' is not assigned and could be declared final
 </violation>
-<violation beginline="62" endline="62" begincolumn="46" endcolumn="60" rule="MethodArgumentCouldBeFinal" ruleset="Optimization" package="net.trajano.openidconnect.core" class="RedirectedOpenIdProviderException" method="RedirectedOpenIdProviderException" variable="redirectUri" externalInfoUrl="http://pmd.sourceforge.net/pmd-5.2.3/pmd-java/rules/java/optimizations.html#MethodArgumentCouldBeFinal" priority="3">
+<violation beginline="68" endline="68" begincolumn="126" endcolumn="144" rule="MethodArgumentCouldBeFinal" ruleset="Optimization" package="net.trajano.openidconnect.core" class="RedirectedOpenIdProviderException" method="RedirectedOpenIdProviderException" variable="useFragment" externalInfoUrl="http://pmd.sourceforge.net/pmd-5.2.3/pmd-java/rules/java/optimizations.html#MethodArgumentCouldBeFinal" priority="3">
+Parameter 'useFragment' is not assigned and could be declared final
+</violation>
+<violation beginline="73" endline="73" begincolumn="63" endcolumn="89" rule="MethodArgumentCouldBeFinal" ruleset="Optimization" package="net.trajano.openidconnect.core" class="RedirectedOpenIdProviderException" method="RedirectedOpenIdProviderException" variable="errorResponse" externalInfoUrl="http://pmd.sourceforge.net/pmd-5.2.3/pmd-java/rules/java/optimizations.html#MethodArgumentCouldBeFinal" priority="3">
+Parameter 'errorResponse' is not assigned and could be declared final
+</violation>
+<violation beginline="73" endline="73" begincolumn="46" endcolumn="60" rule="MethodArgumentCouldBeFinal" ruleset="Optimization" package="net.trajano.openidconnect.core" class="RedirectedOpenIdProviderException" method="RedirectedOpenIdProviderException" variable="redirectUri" externalInfoUrl="http://pmd.sourceforge.net/pmd-5.2.3/pmd-java/rules/java/optimizations.html#MethodArgumentCouldBeFinal" priority="3">
 Parameter 'redirectUri' is not assigned and could be declared final
 </violation>
-<violation beginline="67" endline="67" begincolumn="63" endcolumn="89" rule="MethodArgumentCouldBeFinal" ruleset="Optimization" package="net.trajano.openidconnect.core" class="RedirectedOpenIdProviderException" method="RedirectedOpenIdProviderException" variable="errorResponse" externalInfoUrl="http://pmd.sourceforge.net/pmd-5.2.3/pmd-java/rules/java/optimizations.html#MethodArgumentCouldBeFinal" priority="3">
+<violation beginline="78" endline="78" begincolumn="63" endcolumn="89" rule="MethodArgumentCouldBeFinal" ruleset="Optimization" package="net.trajano.openidconnect.core" class="RedirectedOpenIdProviderException" method="RedirectedOpenIdProviderException" variable="errorResponse" externalInfoUrl="http://pmd.sourceforge.net/pmd-5.2.3/pmd-java/rules/java/optimizations.html#MethodArgumentCouldBeFinal" priority="3">
 Parameter 'errorResponse' is not assigned and could be declared final
 </violation>
-<violation beginline="67" endline="67" begincolumn="46" endcolumn="60" rule="MethodArgumentCouldBeFinal" ruleset="Optimization" package="net.trajano.openidconnect.core" class="RedirectedOpenIdProviderException" method="RedirectedOpenIdProviderException" variable="redirectUri" externalInfoUrl="http://pmd.sourceforge.net/pmd-5.2.3/pmd-java/rules/java/optimizations.html#MethodArgumentCouldBeFinal" priority="3">
+<violation beginline="78" endline="78" begincolumn="46" endcolumn="60" rule="MethodArgumentCouldBeFinal" ruleset="Optimization" package="net.trajano.openidconnect.core" class="RedirectedOpenIdProviderException" method="RedirectedOpenIdProviderException" variable="redirectUri" externalInfoUrl="http://pmd.sourceforge.net/pmd-5.2.3/pmd-java/rules/java/optimizations.html#MethodArgumentCouldBeFinal" priority="3">
 Parameter 'redirectUri' is not assigned and could be declared final
 </violation>
-<violation beginline="67" endline="67" begincolumn="92" endcolumn="103" rule="MethodArgumentCouldBeFinal" ruleset="Optimization" package="net.trajano.openidconnect.core" class="RedirectedOpenIdProviderException" method="RedirectedOpenIdProviderException" variable="state" externalInfoUrl="http://pmd.sourceforge.net/pmd-5.2.3/pmd-java/rules/java/optimizations.html#MethodArgumentCouldBeFinal" priority="3">
+<violation beginline="78" endline="78" begincolumn="92" endcolumn="103" rule="MethodArgumentCouldBeFinal" ruleset="Optimization" package="net.trajano.openidconnect.core" class="RedirectedOpenIdProviderException" method="RedirectedOpenIdProviderException" variable="state" externalInfoUrl="http://pmd.sourceforge.net/pmd-5.2.3/pmd-java/rules/java/optimizations.html#MethodArgumentCouldBeFinal" priority="3">
 Parameter 'state' is not assigned and could be declared final
 </violation>
+<violation beginline="83" endline="83" begincolumn="63" endcolumn="89" rule="MethodArgumentCouldBeFinal" ruleset="Optimization" package="net.trajano.openidconnect.core" class="RedirectedOpenIdProviderException" method="RedirectedOpenIdProviderException" variable="errorResponse" externalInfoUrl="http://pmd.sourceforge.net/pmd-5.2.3/pmd-java/rules/java/optimizations.html#MethodArgumentCouldBeFinal" priority="3">
+Parameter 'errorResponse' is not assigned and could be declared final
+</violation>
+<violation beginline="83" endline="83" begincolumn="46" endcolumn="60" rule="MethodArgumentCouldBeFinal" ruleset="Optimization" package="net.trajano.openidconnect.core" class="RedirectedOpenIdProviderException" method="RedirectedOpenIdProviderException" variable="redirectUri" externalInfoUrl="http://pmd.sourceforge.net/pmd-5.2.3/pmd-java/rules/java/optimizations.html#MethodArgumentCouldBeFinal" priority="3">
+Parameter 'redirectUri' is not assigned and could be declared final
+</violation>
+<violation beginline="83" endline="83" begincolumn="92" endcolumn="103" rule="MethodArgumentCouldBeFinal" ruleset="Optimization" package="net.trajano.openidconnect.core" class="RedirectedOpenIdProviderException" method="RedirectedOpenIdProviderException" variable="state" externalInfoUrl="http://pmd.sourceforge.net/pmd-5.2.3/pmd-java/rules/java/optimizations.html#MethodArgumentCouldBeFinal" priority="3">
+Parameter 'state' is not assigned and could be declared final
+</violation>
+<violation beginline="83" endline="83" begincolumn="106" endcolumn="124" rule="MethodArgumentCouldBeFinal" ruleset="Optimization" package="net.trajano.openidconnect.core" class="RedirectedOpenIdProviderException" method="RedirectedOpenIdProviderException" variable="useFragment" externalInfoUrl="http://pmd.sourceforge.net/pmd-5.2.3/pmd-java/rules/java/optimizations.html#MethodArgumentCouldBeFinal" priority="3">
+Parameter 'useFragment' is not assigned and could be declared final
+</violation>
 </file>
-<file name="/var/lib/jenkins/jobs/openid-connect/workspace/target/checkout/openid-connect-core/src/main/java/net/trajano/openidconnect/crypto/JoseHeader.java">
+<file name="/Users/trajano/Projects/openid-connect/openid-connect-core/src/main/java/net/trajano/openidconnect/crypto/JoseHeader.java">
 <violation beginline="278" endline="278" begincolumn="9" endcolumn="20" rule="MethodReturnsInternalArray" ruleset="Security Code Guidelines" package="net.trajano.openidconnect.crypto" class="JoseHeader" method="getCrit" externalInfoUrl="http://pmd.sourceforge.net/pmd-5.2.3/pmd-java/rules/java/sunsecure.html#MethodReturnsInternalArray" priority="3">
 Returning 'crit' may expose an internal array.
 </violation>
@@ -55,24 +70,24 @@ Returning 'crit' may expose an internal array.
 The user-supplied array 'crit' is stored directly.
 </violation>
 </file>
-<file name="/var/lib/jenkins/jobs/openid-connect/workspace/target/checkout/openid-connect-core/src/main/java/net/trajano/openidconnect/crypto/JsonWebAlgorithm.java">
-<violation beginline="144" endline="144" begincolumn="19" endcolumn="46" rule="UseConcurrentHashMap" ruleset="Controversial" package="net.trajano.openidconnect.crypto" class="JsonWebAlgorithm" externalInfoUrl="http://pmd.sourceforge.net/pmd-5.2.3/pmd-java/rules/java/controversial.html#UseConcurrentHashMap" priority="3">
+<file name="/Users/trajano/Projects/openid-connect/openid-connect-core/src/main/java/net/trajano/openidconnect/crypto/JsonWebAlgorithm.java">
+<violation beginline="145" endline="145" begincolumn="17" endcolumn="44" rule="UseConcurrentHashMap" ruleset="Controversial" package="net.trajano.openidconnect.crypto" class="JsonWebAlgorithm" externalInfoUrl="http://pmd.sourceforge.net/pmd-5.2.3/pmd-java/rules/java/controversial.html#UseConcurrentHashMap" priority="3">
 If you run in Java5 or newer and have concurrent access, you should use the ConcurrentHashMap implementation
 </violation>
-<violation beginline="149" endline="149" begincolumn="19" endcolumn="38" rule="UseConcurrentHashMap" ruleset="Controversial" package="net.trajano.openidconnect.crypto" class="JsonWebAlgorithm" externalInfoUrl="http://pmd.sourceforge.net/pmd-5.2.3/pmd-java/rules/java/controversial.html#UseConcurrentHashMap" priority="3">
+<violation beginline="150" endline="150" begincolumn="17" endcolumn="36" rule="UseConcurrentHashMap" ruleset="Controversial" package="net.trajano.openidconnect.crypto" class="JsonWebAlgorithm" externalInfoUrl="http://pmd.sourceforge.net/pmd-5.2.3/pmd-java/rules/java/controversial.html#UseConcurrentHashMap" priority="3">
 If you run in Java5 or newer and have concurrent access, you should use the ConcurrentHashMap implementation
 </violation>
-<violation beginline="154" endline="154" begincolumn="19" endcolumn="37" rule="UseConcurrentHashMap" ruleset="Controversial" package="net.trajano.openidconnect.crypto" class="JsonWebAlgorithm" externalInfoUrl="http://pmd.sourceforge.net/pmd-5.2.3/pmd-java/rules/java/controversial.html#UseConcurrentHashMap" priority="3">
+<violation beginline="155" endline="155" begincolumn="17" endcolumn="35" rule="UseConcurrentHashMap" ruleset="Controversial" package="net.trajano.openidconnect.crypto" class="JsonWebAlgorithm" externalInfoUrl="http://pmd.sourceforge.net/pmd-5.2.3/pmd-java/rules/java/controversial.html#UseConcurrentHashMap" priority="3">
 If you run in Java5 or newer and have concurrent access, you should use the ConcurrentHashMap implementation
 </violation>
-<violation beginline="159" endline="159" begincolumn="19" endcolumn="37" rule="UseConcurrentHashMap" ruleset="Controversial" package="net.trajano.openidconnect.crypto" class="JsonWebAlgorithm" externalInfoUrl="http://pmd.sourceforge.net/pmd-5.2.3/pmd-java/rules/java/controversial.html#UseConcurrentHashMap" priority="3">
+<violation beginline="160" endline="160" begincolumn="17" endcolumn="35" rule="UseConcurrentHashMap" ruleset="Controversial" package="net.trajano.openidconnect.crypto" class="JsonWebAlgorithm" externalInfoUrl="http://pmd.sourceforge.net/pmd-5.2.3/pmd-java/rules/java/controversial.html#UseConcurrentHashMap" priority="3">
 If you run in Java5 or newer and have concurrent access, you should use the ConcurrentHashMap implementation
 </violation>
-<violation beginline="164" endline="164" begincolumn="19" endcolumn="38" rule="UseConcurrentHashMap" ruleset="Controversial" package="net.trajano.openidconnect.crypto" class="JsonWebAlgorithm" externalInfoUrl="http://pmd.sourceforge.net/pmd-5.2.3/pmd-java/rules/java/controversial.html#UseConcurrentHashMap" priority="3">
+<violation beginline="165" endline="165" begincolumn="17" endcolumn="36" rule="UseConcurrentHashMap" ruleset="Controversial" package="net.trajano.openidconnect.crypto" class="JsonWebAlgorithm" externalInfoUrl="http://pmd.sourceforge.net/pmd-5.2.3/pmd-java/rules/java/controversial.html#UseConcurrentHashMap" priority="3">
 If you run in Java5 or newer and have concurrent access, you should use the ConcurrentHashMap implementation
 </violation>
 </file>
-<file name="/var/lib/jenkins/jobs/openid-connect/workspace/target/checkout/openid-connect-core/src/main/java/net/trajano/openidconnect/crypto/JsonWebKeySet.java">
+<file name="/Users/trajano/Projects/openid-connect/openid-connect-core/src/main/java/net/trajano/openidconnect/crypto/JsonWebKeySet.java">
 <violation beginline="17" endline="17" begincolumn="19" endcolumn="41" rule="UseConcurrentHashMap" ruleset="Controversial" package="net.trajano.openidconnect.crypto" class="JsonWebKeySet" externalInfoUrl="http://pmd.sourceforge.net/pmd-5.2.3/pmd-java/rules/java/controversial.html#UseConcurrentHashMap" priority="3">
 If you run in Java5 or newer and have concurrent access, you should use the ConcurrentHashMap implementation
 </violation>
@@ -86,7 +101,7 @@ Parameter 'kid' is not assigned and could be declared final
 Parameter 'kid' is not assigned and could be declared final
 </violation>
 </file>
-<file name="/var/lib/jenkins/jobs/openid-connect/workspace/target/checkout/openid-connect-core/src/main/java/net/trajano/openidconnect/crypto/JsonWebToken.java">
+<file name="/Users/trajano/Projects/openid-connect/openid-connect-core/src/main/java/net/trajano/openidconnect/crypto/JsonWebToken.java">
 <violation beginline="107" endline="107" begincolumn="54" endcolumn="76" rule="ArrayIsStoredDirectly" ruleset="Security Code Guidelines" package="net.trajano.openidconnect.crypto" class="JsonWebToken" method="JsonWebToken" variable="payloads" externalInfoUrl="http://pmd.sourceforge.net/pmd-5.2.3/pmd-java/rules/java/sunsecure.html#ArrayIsStoredDirectly" priority="3">
 The user-supplied array 'payloads' is stored directly.
 </violation>
@@ -94,7 +109,7 @@ The user-supplied array 'payloads' is stored directly.
 Returning 'payloads' may expose an internal array.
 </violation>
 </file>
-<file name="/var/lib/jenkins/jobs/openid-connect/workspace/target/checkout/openid-connect-core/src/main/java/net/trajano/openidconnect/crypto/JsonWebTokenBuilder.java">
+<file name="/Users/trajano/Projects/openid-connect/openid-connect-core/src/main/java/net/trajano/openidconnect/crypto/JsonWebTokenBuilder.java">
 <violation beginline="161" endline="161" begincolumn="40" endcolumn="64" rule="ArrayIsStoredDirectly" ruleset="Security Code Guidelines" package="net.trajano.openidconnect.crypto" class="JsonWebTokenBuilder" method="payload" variable="payloadBytes" externalInfoUrl="http://pmd.sourceforge.net/pmd-5.2.3/pmd-java/rules/java/sunsecure.html#ArrayIsStoredDirectly" priority="3">
 The user-supplied array 'payloadBytes' is stored directly.
 </violation>
@@ -108,7 +123,7 @@ Parameter 'type' is not assigned and could be declared final
 Local variable 'writer' could be declared final
 </violation>
 </file>
-<file name="/var/lib/jenkins/jobs/openid-connect/workspace/target/checkout/openid-connect-core/src/main/java/net/trajano/openidconnect/crypto/JsonWebTokenProcessor.java">
+<file name="/Users/trajano/Projects/openid-connect/openid-connect-core/src/main/java/net/trajano/openidconnect/crypto/JsonWebTokenProcessor.java">
 <violation beginline="20" endline="20" begincolumn="21" endcolumn="43" rule="RedundantFieldInitializer" ruleset="Optimization" package="net.trajano.openidconnect.crypto" class="JsonWebTokenProcessor" variable="allowJwkToBeSet" externalInfoUrl="http://pmd.sourceforge.net/pmd-5.2.3/pmd-java/rules/java/optimizations.html#RedundantFieldInitializer" priority="3">
 Avoid using redundant field initializer for 'allowJwkToBeSet'
 </violation>
@@ -125,7 +140,7 @@ Avoid using redundant field initializer for 'kid'
 Parameter 'b' is not assigned and could be declared final
 </violation>
 </file>
-<file name="/var/lib/jenkins/jobs/openid-connect/workspace/target/checkout/openid-connect-core/src/main/java/net/trajano/openidconnect/crypto/NamedEllipticCurve.java">
+<file name="/Users/trajano/Projects/openid-connect/openid-connect-core/src/main/java/net/trajano/openidconnect/crypto/NamedEllipticCurve.java">
 <violation beginline="80" endline="80" begincolumn="37" endcolumn="48" rule="MethodArgumentCouldBeFinal" ruleset="Optimization" package="net.trajano.openidconnect.crypto" method="validate" variable="b" externalInfoUrl="http://pmd.sourceforge.net/pmd-5.2.3/pmd-java/rules/java/optimizations.html#MethodArgumentCouldBeFinal" priority="3">
 Parameter 'b' is not assigned and could be declared final
 </violation>
@@ -142,7 +157,7 @@ This statement may have some unnecessary parentheses
 This statement may have some unnecessary parentheses
 </violation>
 </file>
-<file name="/var/lib/jenkins/jobs/openid-connect/workspace/target/checkout/openid-connect-core/src/main/java/net/trajano/openidconnect/crypto/OctWebKey.java">
+<file name="/Users/trajano/Projects/openid-connect/openid-connect-core/src/main/java/net/trajano/openidconnect/crypto/OctWebKey.java">
 <violation beginline="14" endline="18" begincolumn="12" endcolumn="5" rule="CallSuperInConstructor" ruleset="Controversial" package="net.trajano.openidconnect.crypto" class="OctWebKey" method="OctWebKey" externalInfoUrl="http://pmd.sourceforge.net/pmd-5.2.3/pmd-java/rules/java/controversial.html#CallSuperInConstructor" priority="3">
 It is a good practice to call super() in a constructor
 </violation>
@@ -162,7 +177,7 @@ Parameter 'k' is not assigned and could be declared final
 Parameter 'keyBuilder' is not assigned and could be declared final
 </violation>
 </file>
-<file name="/var/lib/jenkins/jobs/openid-connect/workspace/target/checkout/openid-connect-core/src/main/java/net/trajano/openidconnect/crypto/RsaWebKey.java">
+<file name="/Users/trajano/Projects/openid-connect/openid-connect-core/src/main/java/net/trajano/openidconnect/crypto/RsaWebKey.java">
 <violation beginline="19" endline="22" begincolumn="12" endcolumn="5" rule="CallSuperInConstructor" ruleset="Controversial" package="net.trajano.openidconnect.crypto" class="RsaWebKey" method="RsaWebKey" externalInfoUrl="http://pmd.sourceforge.net/pmd-5.2.3/pmd-java/rules/java/controversial.html#CallSuperInConstructor" priority="3">
 It is a good practice to call super() in a constructor
 </violation>
@@ -230,7 +245,7 @@ Parameter 'qi' is not assigned and could be declared final
 Parameter 'keyBuilder' is not assigned and could be declared final
 </violation>
 </file>
-<file name="/var/lib/jenkins/jobs/openid-connect/workspace/target/checkout/openid-connect-core/src/main/java/net/trajano/openidconnect/internal/JcaJsonWebTokenCrypto.java">
+<file name="/Users/trajano/Projects/openid-connect/openid-connect-core/src/main/java/net/trajano/openidconnect/internal/JcaJsonWebTokenCrypto.java">
 <violation beginline="51" endline="51" begincolumn="37" endcolumn="53" rule="MethodArgumentCouldBeFinal" ruleset="Optimization" package="net.trajano.openidconnect.internal" class="JcaJsonWebTokenCrypto" method="buildJWSPayload" variable="header" externalInfoUrl="http://pmd.sourceforge.net/pmd-5.2.3/pmd-java/rules/java/optimizations.html#MethodArgumentCouldBeFinal" priority="3">
 Parameter 'header' is not assigned and could be declared final
 </violation>
@@ -322,7 +337,7 @@ Local variable 'mac' could be declared final
 Local variable 'macValue' could be declared final
 </violation>
 </file>
-<file name="/var/lib/jenkins/jobs/openid-connect/workspace/target/checkout/openid-connect-core/src/main/java/net/trajano/openidconnect/internal/Util.java">
+<file name="/Users/trajano/Projects/openid-connect/openid-connect-core/src/main/java/net/trajano/openidconnect/internal/Util.java">
 <violation beginline="185" endline="185" begincolumn="15" endcolumn="32" rule="UseConcurrentHashMap" ruleset="Controversial" package="net.trajano.openidconnect.internal" class="Util" externalInfoUrl="http://pmd.sourceforge.net/pmd-5.2.3/pmd-java/rules/java/controversial.html#UseConcurrentHashMap" priority="3">
 If you run in Java5 or newer and have concurrent access, you should use the ConcurrentHashMap implementation
 </violation>
@@ -333,7 +348,7 @@ Avoid prefixing parameters by in, out or inOut. Uses Javadoc to document this be
 Avoid prefixing parameters by in, out or inOut. Uses Javadoc to document this behavior.
 </violation>
 </file>
-<file name="/var/lib/jenkins/jobs/openid-connect/workspace/target/checkout/openid-connect-core/src/main/java/net/trajano/openidconnect/rs/AuthenticationRequestJsonProvider.java">
+<file name="/Users/trajano/Projects/openid-connect/openid-connect-core/src/main/java/net/trajano/openidconnect/rs/AuthenticationRequestJsonProvider.java">
 <violation beginline="27" endline="27" begincolumn="25" endcolumn="50" rule="MethodArgumentCouldBeFinal" ruleset="Optimization" package="net.trajano.openidconnect.rs" class="AuthenticationRequestJsonProvider" method="getSize" variable="arg0" externalInfoUrl="http://pmd.sourceforge.net/pmd-5.2.3/pmd-java/rules/java/optimizations.html#MethodArgumentCouldBeFinal" priority="3">
 Parameter 'arg0' is not assigned and could be declared final
 </violation>
@@ -413,7 +428,7 @@ Parameter 'arg4' is not assigned and could be declared final
 Parameter 'arg5' is not assigned and could be declared final
 </violation>
 </file>
-<file name="/var/lib/jenkins/jobs/openid-connect/workspace/target/checkout/openid-connect-core/src/main/java/net/trajano/openidconnect/rs/AuthenticationRequestUriProvider.java">
+<file name="/Users/trajano/Projects/openid-connect/openid-connect-core/src/main/java/net/trajano/openidconnect/rs/AuthenticationRequestUriProvider.java">
 <violation beginline="27" endline="27" begincolumn="25" endcolumn="50" rule="MethodArgumentCouldBeFinal" ruleset="Optimization" package="net.trajano.openidconnect.rs" class="AuthenticationRequestUriProvider" method="getSize" variable="arg0" externalInfoUrl="http://pmd.sourceforge.net/pmd-5.2.3/pmd-java/rules/java/optimizations.html#MethodArgumentCouldBeFinal" priority="3">
 Parameter 'arg0' is not assigned and could be declared final
 </violation>
@@ -493,7 +508,7 @@ Parameter 'arg4' is not assigned and could be declared final
 Parameter 'arg5' is not assigned and could be declared final
 </violation>
 </file>
-<file name="/var/lib/jenkins/jobs/openid-connect/workspace/target/checkout/openid-connect-core/src/main/java/net/trajano/openidconnect/rs/JsonWebKeyProvider.java">
+<file name="/Users/trajano/Projects/openid-connect/openid-connect-core/src/main/java/net/trajano/openidconnect/rs/JsonWebKeyProvider.java">
 <violation beginline="82" endline="83" begincolumn="13" endcolumn="38" rule="IfStmtsMustUseBraces" ruleset="Braces" package="net.trajano.openidconnect.rs" class="JsonWebKeyProvider" method="readFrom" externalInfoUrl="http://pmd.sourceforge.net/pmd-5.2.3/pmd-java/rules/java/braces.html#IfStmtsMustUseBraces" priority="3">
 Avoid using if statements without curly braces
 </violation>
@@ -528,7 +543,7 @@ Local variable 'keyBuilder' could be declared final
 Local variable 'w' could be declared final
 </violation>
 </file>
-<file name="/var/lib/jenkins/jobs/openid-connect/workspace/target/checkout/openid-connect-core/src/main/java/net/trajano/openidconnect/rs/JsonWebTokenProvider.java">
+<file name="/Users/trajano/Projects/openid-connect/openid-connect-core/src/main/java/net/trajano/openidconnect/rs/JsonWebTokenProvider.java">
 <violation beginline="58" endline="58" begincolumn="25" endcolumn="40" rule="MethodArgumentCouldBeFinal" ruleset="Optimization" package="net.trajano.openidconnect.rs" class="JsonWebTokenProvider" method="writeTo" variable="jwt" externalInfoUrl="http://pmd.sourceforge.net/pmd-5.2.3/pmd-java/rules/java/optimizations.html#MethodArgumentCouldBeFinal" priority="3">
 Parameter 'jwt' is not assigned and could be declared final
 </violation>
@@ -569,20 +584,23 @@ Parameter 'arg4' is not assigned and could be declared final
 Parameter 'inputStream' is not assigned and could be declared final
 </violation>
 </file>
-<file name="/var/lib/jenkins/jobs/openid-connect/workspace/target/checkout/openid-connect-core/src/main/java/net/trajano/openidconnect/token/IdToken.java">
-<violation beginline="188" endline="188" begincolumn="9" endcolumn="19" rule="MethodReturnsInternalArray" ruleset="Security Code Guidelines" package="net.trajano.openidconnect.token" class="IdToken" method="getAmr" externalInfoUrl="http://pmd.sourceforge.net/pmd-5.2.3/pmd-java/rules/java/sunsecure.html#MethodReturnsInternalArray" priority="3">
+<file name="/Users/trajano/Projects/openid-connect/openid-connect-core/src/main/java/net/trajano/openidconnect/token/IdToken.java">
+<violation beginline="191" endline="191" begincolumn="9" endcolumn="19" rule="MethodReturnsInternalArray" ruleset="Security Code Guidelines" package="net.trajano.openidconnect.token" class="IdToken" method="getAmr" externalInfoUrl="http://pmd.sourceforge.net/pmd-5.2.3/pmd-java/rules/java/sunsecure.html#MethodReturnsInternalArray" priority="3">
 Returning 'amr' may expose an internal array.
 </violation>
-<violation beginline="284" endline="284" begincolumn="24" endcolumn="41" rule="ArrayIsStoredDirectly" ruleset="Security Code Guidelines" package="net.trajano.openidconnect.token" class="IdToken" method="setAmr" variable="amr" externalInfoUrl="http://pmd.sourceforge.net/pmd-5.2.3/pmd-java/rules/java/sunsecure.html#ArrayIsStoredDirectly" priority="3">
+<violation beginline="288" endline="288" begincolumn="24" endcolumn="41" rule="ArrayIsStoredDirectly" ruleset="Security Code Guidelines" package="net.trajano.openidconnect.token" class="IdToken" method="setAmr" variable="amr" externalInfoUrl="http://pmd.sourceforge.net/pmd-5.2.3/pmd-java/rules/java/sunsecure.html#ArrayIsStoredDirectly" priority="3">
 The user-supplied array 'amr' is stored directly.
 </violation>
+<violation beginline="350" endline="350" begincolumn="26" endcolumn="37" rule="MethodArgumentCouldBeFinal" ruleset="Optimization" package="net.trajano.openidconnect.token" class="IdToken" method="setCHash" variable="cHash" externalInfoUrl="http://pmd.sourceforge.net/pmd-5.2.3/pmd-java/rules/java/optimizations.html#MethodArgumentCouldBeFinal" priority="3">
+Parameter 'cHash' is not assigned and could be declared final
+</violation>
 </file>
-<file name="/var/lib/jenkins/jobs/openid-connect/workspace/target/checkout/openid-connect-core/src/main/java/net/trajano/openidconnect/token/IdTokenResponse.java">
+<file name="/Users/trajano/Projects/openid-connect/openid-connect-core/src/main/java/net/trajano/openidconnect/token/IdTokenResponse.java">
 <violation beginline="78" endline="78" begincolumn="45" endcolumn="76" rule="MethodArgumentCouldBeFinal" ruleset="Optimization" package="net.trajano.openidconnect.token" class="IdTokenResponse" method="setUsedUpAuthenticationCode" variable="usedUpAuthenticationCode" externalInfoUrl="http://pmd.sourceforge.net/pmd-5.2.3/pmd-java/rules/java/optimizations.html#MethodArgumentCouldBeFinal" priority="3">
 Parameter 'usedUpAuthenticationCode' is not assigned and could be declared final
 </violation>
 </file>
-<file name="/var/lib/jenkins/jobs/openid-connect/workspace/target/checkout/openid-connect-core/src/main/java/net/trajano/openidconnect/token/InvalidClientException.java">
+<file name="/Users/trajano/Projects/openid-connect/openid-connect-core/src/main/java/net/trajano/openidconnect/token/InvalidClientException.java">
 <violation beginline="22" endline="22" begincolumn="35" endcolumn="45" rule="MethodArgumentCouldBeFinal" ruleset="Optimization" package="net.trajano.openidconnect.token" class="InvalidClientException" method="InvalidClientException" variable="type" externalInfoUrl="http://pmd.sourceforge.net/pmd-5.2.3/pmd-java/rules/java/optimizations.html#MethodArgumentCouldBeFinal" priority="3">
 Parameter 'type' is not assigned and could be declared final
 </violation>
@@ -614,26 +632,26 @@ Parameter 'errorUri' is not assigned and could be declared final
 Local variable 'b' could be declared final
 </violation>
 </file>
-<file name="/var/lib/jenkins/jobs/openid-connect/workspace/target/checkout/openid-connect-core/src/main/java/net/trajano/openidconnect/token/TokenResponse.java">
-<violation beginline="24" endline="24" begincolumn="32" endcolumn="49" rule="MethodArgumentCouldBeFinal" ruleset="Optimization" package="net.trajano.openidconnect.token" class="TokenResponse" method="setAccessToken" variable="accessToken" externalInfoUrl="http://pmd.sourceforge.net/pmd-5.2.3/pmd-java/rules/java/optimizations.html#MethodArgumentCouldBeFinal" priority="3">
+<file name="/Users/trajano/Projects/openid-connect/openid-connect-core/src/main/java/net/trajano/openidconnect/token/TokenResponse.java">
+<violation beginline="26" endline="26" begincolumn="32" endcolumn="49" rule="MethodArgumentCouldBeFinal" ruleset="Optimization" package="net.trajano.openidconnect.token" class="TokenResponse" method="setAccessToken" variable="accessToken" externalInfoUrl="http://pmd.sourceforge.net/pmd-5.2.3/pmd-java/rules/java/optimizations.html#MethodArgumentCouldBeFinal" priority="3">
 Parameter 'accessToken' is not assigned and could be declared final
 </violation>
-<violation beginline="34" endline="34" begincolumn="30" endcolumn="42" rule="MethodArgumentCouldBeFinal" ruleset="Optimization" package="net.trajano.openidconnect.token" class="TokenResponse" method="setExpiresIn" variable="expiresIn" externalInfoUrl="http://pmd.sourceforge.net/pmd-5.2.3/pmd-java/rules/java/optimizations.html#MethodArgumentCouldBeFinal" priority="3">
+<violation beginline="36" endline="36" begincolumn="30" endcolumn="42" rule="MethodArgumentCouldBeFinal" ruleset="Optimization" package="net.trajano.openidconnect.token" class="TokenResponse" method="setExpiresIn" variable="expiresIn" externalInfoUrl="http://pmd.sourceforge.net/pmd-5.2.3/pmd-java/rules/java/optimizations.html#MethodArgumentCouldBeFinal" priority="3">
 Parameter 'expiresIn' is not assigned and could be declared final
 </violation>
-<violation beginline="44" endline="44" begincolumn="33" endcolumn="51" rule="MethodArgumentCouldBeFinal" ruleset="Optimization" package="net.trajano.openidconnect.token" class="TokenResponse" method="setRefreshToken" variable="refreshToken" externalInfoUrl="http://pmd.sourceforge.net/pmd-5.2.3/pmd-java/rules/java/optimizations.html#MethodArgumentCouldBeFinal" priority="3">
+<violation beginline="46" endline="46" begincolumn="33" endcolumn="51" rule="MethodArgumentCouldBeFinal" ruleset="Optimization" package="net.trajano.openidconnect.token" class="TokenResponse" method="setRefreshToken" variable="refreshToken" externalInfoUrl="http://pmd.sourceforge.net/pmd-5.2.3/pmd-java/rules/java/optimizations.html#MethodArgumentCouldBeFinal" priority="3">
 Parameter 'refreshToken' is not assigned and could be declared final
 </violation>
-<violation beginline="92" endline="92" begincolumn="27" endcolumn="43" rule="MethodArgumentCouldBeFinal" ruleset="Optimization" package="net.trajano.openidconnect.token" class="TokenResponse" method="setScopes" variable="scopes" externalInfoUrl="http://pmd.sourceforge.net/pmd-5.2.3/pmd-java/rules/java/optimizations.html#MethodArgumentCouldBeFinal" priority="3">
+<violation beginline="94" endline="94" begincolumn="27" endcolumn="43" rule="MethodArgumentCouldBeFinal" ruleset="Optimization" package="net.trajano.openidconnect.token" class="TokenResponse" method="setScopes" variable="scopes" externalInfoUrl="http://pmd.sourceforge.net/pmd-5.2.3/pmd-java/rules/java/optimizations.html#MethodArgumentCouldBeFinal" priority="3">
 Parameter 'scopes' is not assigned and could be declared final
 </violation>
-<violation beginline="94" endline="94" begincolumn="9" endcolumn="45" rule="LocalVariableCouldBeFinal" ruleset="Optimization" package="net.trajano.openidconnect.token" class="TokenResponse" method="setScopes" variable="b" externalInfoUrl="http://pmd.sourceforge.net/pmd-5.2.3/pmd-java/rules/java/optimizations.html#LocalVariableCouldBeFinal" priority="3">
+<violation beginline="96" endline="96" begincolumn="9" endcolumn="45" rule="LocalVariableCouldBeFinal" ruleset="Optimization" package="net.trajano.openidconnect.token" class="TokenResponse" method="setScopes" variable="b" externalInfoUrl="http://pmd.sourceforge.net/pmd-5.2.3/pmd-java/rules/java/optimizations.html#LocalVariableCouldBeFinal" priority="3">
 Local variable 'b' could be declared final
 </violation>
-<violation beginline="95" endline="95" begincolumn="9" endcolumn="45" rule="LocalVariableCouldBeFinal" ruleset="Optimization" package="net.trajano.openidconnect.token" class="TokenResponse" method="setScopes" variable="i" externalInfoUrl="http://pmd.sourceforge.net/pmd-5.2.3/pmd-java/rules/java/optimizations.html#LocalVariableCouldBeFinal" priority="3">
+<violation beginline="97" endline="97" begincolumn="9" endcolumn="45" rule="LocalVariableCouldBeFinal" ruleset="Optimization" package="net.trajano.openidconnect.token" class="TokenResponse" method="setScopes" variable="i" externalInfoUrl="http://pmd.sourceforge.net/pmd-5.2.3/pmd-java/rules/java/optimizations.html#LocalVariableCouldBeFinal" priority="3">
 Local variable 'i' could be declared final
 </violation>
-<violation beginline="107" endline="107" begincolumn="9" endcolumn="43" rule="LocalVariableCouldBeFinal" ruleset="Optimization" package="net.trajano.openidconnect.token" class="TokenResponse" method="getScopes" variable="scopes" externalInfoUrl="http://pmd.sourceforge.net/pmd-5.2.3/pmd-java/rules/java/optimizations.html#LocalVariableCouldBeFinal" priority="3">
+<violation beginline="109" endline="109" begincolumn="9" endcolumn="43" rule="LocalVariableCouldBeFinal" ruleset="Optimization" package="net.trajano.openidconnect.token" class="TokenResponse" method="getScopes" variable="scopes" externalInfoUrl="http://pmd.sourceforge.net/pmd-5.2.3/pmd-java/rules/java/optimizations.html#LocalVariableCouldBeFinal" priority="3">
 Local variable 'scopes' could be declared final
 </violation>
 </file>

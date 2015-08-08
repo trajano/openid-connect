@@ -113,12 +113,12 @@ public class AuthenticationRequest {
 
 <span class="nc bnc" id="L114" title="All 2 branches missed.">            if (locales != null) {</span>
 <span class="nc" id="L115">                final StringBuilder b = new StringBuilder(locales.nextElement()</span>
-                    .toLanguageTag());
+<span class="nc" id="L116">                    .toLanguageTag());</span>
 
 <span class="nc bnc" id="L118" title="All 2 branches missed.">                while (locales.hasMoreElements()) {</span>
 <span class="nc" id="L119">                    b.append(' ');</span>
 <span class="nc" id="L120">                    b.append(locales.nextElement()</span>
-                        .toLanguageTag());
+<span class="nc" id="L121">                        .toLanguageTag());</span>
                 }
 <span class="nc" id="L123">                requestMap.put(OpenIdConnectKey.UI_LOCALES, b.toString());</span>
             }
@@ -218,18 +218,18 @@ public class AuthenticationRequest {
         final String requestObjectValue;
 <span class="pc bpc" id="L219" title="1 of 4 branches missed.">        if (requestObject == null || !requestObject.containsKey(key)) {</span>
 <span class="fc" id="L220">            requestObjectValue = null;</span>
-<span class="fc bfc" id="L221" title="All 2 branches covered.">        } else if (requestObject.get(key)</span>
-            .getValueType() == ValueType.STRING) {
+<span class="fc" id="L221">        } else if (requestObject.get(key)</span>
+<span class="fc bfc" id="L222" title="All 2 branches covered.">            .getValueType() == ValueType.STRING) {</span>
 <span class="fc" id="L223">            requestObjectValue = requestObject.getString(key);</span>
-<span class="pc bpc" id="L224" title="1 of 2 branches missed.">        } else if (requestObject.get(key)</span>
-            .getValueType() == ValueType.NUMBER) {
+<span class="fc" id="L224">        } else if (requestObject.get(key)</span>
+<span class="pc bpc" id="L225" title="1 of 2 branches missed.">            .getValueType() == ValueType.NUMBER) {</span>
 <span class="fc" id="L226">            requestObjectValue = requestObject.getJsonNumber(key)</span>
-                .bigIntegerValueExact()
-                .toString();
-<span class="nc bnc" id="L229" title="All 2 branches missed.">        } else if (requestObject.get(key)</span>
-            .getValueType() == ValueType.OBJECT) {
+<span class="fc" id="L227">                .bigIntegerValueExact()</span>
+<span class="fc" id="L228">                .toString();</span>
+<span class="nc" id="L229">        } else if (requestObject.get(key)</span>
+<span class="nc bnc" id="L230" title="All 2 branches missed.">            .getValueType() == ValueType.OBJECT) {</span>
 <span class="nc" id="L231">            requestObjectValue = requestObject.getJsonObject(key)</span>
-                .toString();
+<span class="nc" id="L232">                .toString();</span>
         } else {
 <span class="nc" id="L234">            requestObjectValue = null;</span>
         }
@@ -290,110 +290,113 @@ public class AuthenticationRequest {
 
     private final Set&lt;Scope&gt; scopes;
 
+    /**
+     * State.
+     */
     private final String state;
 
     private final List&lt;Locale&gt; uiLocales;
 
     public AuthenticationRequest(final HttpServletRequest req, final JsonWebKeySet privateJwks) throws IOException, GeneralSecurityException {
 
-<span class="fc" id="L299">        this(buildRequestMap(req, privateJwks));</span>
-<span class="fc" id="L300">    }</span>
+<span class="fc" id="L302">        this(buildRequestMap(req, privateJwks));</span>
+<span class="fc" id="L303">    }</span>
 
-<span class="fc" id="L302">    private AuthenticationRequest(final Map&lt;String, String&gt; requestMap) throws IOException, GeneralSecurityException {</span>
+<span class="fc" id="L305">    private AuthenticationRequest(final Map&lt;String, String&gt; requestMap) throws IOException, GeneralSecurityException {</span>
 
-<span class="fc" id="L304">        this.requestMap = requestMap;</span>
-<span class="pc bpc" id="L305" title="1 of 2 branches missed.">        if (requestMap.containsKey(OpenIdConnectKey.ACR_VALUES)) {</span>
-<span class="nc" id="L306">            acrValues = Util.splitToList(requestMap.get(OpenIdConnectKey.ACR_VALUES));</span>
+<span class="fc" id="L307">        this.requestMap = requestMap;</span>
+<span class="pc bpc" id="L308" title="1 of 2 branches missed.">        if (requestMap.containsKey(OpenIdConnectKey.ACR_VALUES)) {</span>
+<span class="nc" id="L309">            acrValues = Util.splitToList(requestMap.get(OpenIdConnectKey.ACR_VALUES));</span>
         } else {
-<span class="fc" id="L308">            acrValues = null;</span>
+<span class="fc" id="L311">            acrValues = null;</span>
         }
-<span class="pc bpc" id="L310" title="1 of 2 branches missed.">        if (requestMap.containsKey(OpenIdConnectKey.CLIENT_ID)) {</span>
-<span class="fc" id="L311">            clientId = requestMap.get(OpenIdConnectKey.CLIENT_ID);</span>
+<span class="pc bpc" id="L313" title="1 of 2 branches missed.">        if (requestMap.containsKey(OpenIdConnectKey.CLIENT_ID)) {</span>
+<span class="fc" id="L314">            clientId = requestMap.get(OpenIdConnectKey.CLIENT_ID);</span>
         } else {
-<span class="nc" id="L313">            clientId = null;</span>
+<span class="nc" id="L316">            clientId = null;</span>
         }
-<span class="pc bpc" id="L315" title="1 of 2 branches missed.">        if (requestMap.containsKey(OpenIdConnectKey.CLAIMS)) {</span>
-<span class="nc" id="L316">            claims = Json.createReader(new StringReader(requestMap.get(OpenIdConnectKey.CLAIMS)))</span>
-                .readObject();
+<span class="pc bpc" id="L318" title="1 of 2 branches missed.">        if (requestMap.containsKey(OpenIdConnectKey.CLAIMS)) {</span>
+<span class="nc" id="L319">            claims = Json.createReader(new StringReader(requestMap.get(OpenIdConnectKey.CLAIMS)))</span>
+<span class="nc" id="L320">                .readObject();</span>
         } else {
-<span class="fc" id="L319">            claims = Json.createObjectBuilder()</span>
-                .build();
+<span class="fc" id="L322">            claims = Json.createObjectBuilder()</span>
+<span class="fc" id="L323">                .build();</span>
         }
-<span class="pc bpc" id="L322" title="1 of 2 branches missed.">        if (requestMap.containsKey(OpenIdConnectKey.DISPLAY)) {</span>
-<span class="nc" id="L323">            display = Util.valueOf(Display.class, requestMap.get(OpenIdConnectKey.DISPLAY));</span>
+<span class="pc bpc" id="L325" title="1 of 2 branches missed.">        if (requestMap.containsKey(OpenIdConnectKey.DISPLAY)) {</span>
+<span class="nc" id="L326">            display = Util.valueOf(Display.class, requestMap.get(OpenIdConnectKey.DISPLAY));</span>
         } else {
-<span class="fc" id="L325">            display = null;</span>
-        }
-
-<span class="pc bpc" id="L328" title="1 of 2 branches missed.">        if (requestMap.containsKey(OpenIdConnectKey.ID_TOKEN_HINT)) {</span>
-<span class="nc" id="L329">            idTokenHint = requestMap.get(OpenIdConnectKey.ID_TOKEN_HINT);</span>
-        } else {
-<span class="fc" id="L331">            idTokenHint = null;</span>
+<span class="fc" id="L328">            display = null;</span>
         }
 
-<span class="pc bpc" id="L334" title="1 of 2 branches missed.">        if (requestMap.containsKey(OpenIdConnectKey.LOGIN_HINT)) {</span>
-<span class="nc" id="L335">            loginHint = requestMap.get(OpenIdConnectKey.LOGIN_HINT);</span>
+<span class="pc bpc" id="L331" title="1 of 2 branches missed.">        if (requestMap.containsKey(OpenIdConnectKey.ID_TOKEN_HINT)) {</span>
+<span class="nc" id="L332">            idTokenHint = requestMap.get(OpenIdConnectKey.ID_TOKEN_HINT);</span>
         } else {
-<span class="fc" id="L337">            loginHint = null;</span>
+<span class="fc" id="L334">            idTokenHint = null;</span>
         }
 
-<span class="pc bpc" id="L340" title="1 of 2 branches missed.">        if (requestMap.containsKey(OpenIdConnectKey.MAX_AGE)) {</span>
-<span class="fc" id="L341">            maxAge = Integer.valueOf(requestMap.get(OpenIdConnectKey.MAX_AGE));</span>
+<span class="pc bpc" id="L337" title="1 of 2 branches missed.">        if (requestMap.containsKey(OpenIdConnectKey.LOGIN_HINT)) {</span>
+<span class="nc" id="L338">            loginHint = requestMap.get(OpenIdConnectKey.LOGIN_HINT);</span>
         } else {
-<span class="nc" id="L343">            maxAge = null;</span>
+<span class="fc" id="L340">            loginHint = null;</span>
         }
 
-<span class="pc bpc" id="L346" title="1 of 2 branches missed.">        if (requestMap.containsKey(OpenIdConnectKey.NONCE)) {</span>
-<span class="nc" id="L347">            nonce = requestMap.get(OpenIdConnectKey.NONCE);</span>
+<span class="pc bpc" id="L343" title="1 of 2 branches missed.">        if (requestMap.containsKey(OpenIdConnectKey.MAX_AGE)) {</span>
+<span class="fc" id="L344">            maxAge = Integer.valueOf(requestMap.get(OpenIdConnectKey.MAX_AGE));</span>
         } else {
-<span class="fc" id="L349">            nonce = null;</span>
+<span class="nc" id="L346">            maxAge = null;</span>
         }
 
-<span class="pc bpc" id="L352" title="1 of 2 branches missed.">        if (requestMap.containsKey(OpenIdConnectKey.PROMPT)) {</span>
-<span class="nc" id="L353">            prompts = Util.splitToSet(Prompt.class, requestMap.get(OpenIdConnectKey.PROMPT));</span>
+<span class="pc bpc" id="L349" title="1 of 2 branches missed.">        if (requestMap.containsKey(OpenIdConnectKey.NONCE)) {</span>
+<span class="nc" id="L350">            nonce = requestMap.get(OpenIdConnectKey.NONCE);</span>
         } else {
-<span class="fc" id="L355">            prompts = Collections.emptySet();</span>
+<span class="fc" id="L352">            nonce = null;</span>
         }
 
-<span class="pc bpc" id="L358" title="1 of 2 branches missed.">        if (requestMap.containsKey(OpenIdConnectKey.REDIRECT_URI)) {</span>
-<span class="fc" id="L359">            redirectUri = URI.create(requestMap.get(OpenIdConnectKey.REDIRECT_URI));</span>
+<span class="pc bpc" id="L355" title="1 of 2 branches missed.">        if (requestMap.containsKey(OpenIdConnectKey.PROMPT)) {</span>
+<span class="nc" id="L356">            prompts = Util.splitToSet(Prompt.class, requestMap.get(OpenIdConnectKey.PROMPT));</span>
         } else {
-<span class="nc" id="L361">            redirectUri = null;</span>
+<span class="fc" id="L358">            prompts = Collections.emptySet();</span>
         }
 
-<span class="pc bpc" id="L364" title="1 of 2 branches missed.">        if (requestMap.containsKey(OpenIdConnectKey.RESPONSE_TYPE)) {</span>
-<span class="fc" id="L365">            responseTypes = Util.splitToSet(ResponseType.class, requestMap.get(OpenIdConnectKey.RESPONSE_TYPE));</span>
+<span class="pc bpc" id="L361" title="1 of 2 branches missed.">        if (requestMap.containsKey(OpenIdConnectKey.REDIRECT_URI)) {</span>
+<span class="fc" id="L362">            redirectUri = URI.create(requestMap.get(OpenIdConnectKey.REDIRECT_URI));</span>
         } else {
-<span class="nc" id="L367">            responseTypes = Collections.emptySet();</span>
-        }
-<span class="fc" id="L369">        codeOnlyResponseType = responseTypes.equals(Collections.singleton(ResponseType.code));</span>
-
-<span class="pc bpc" id="L371" title="1 of 2 branches missed.">        if (requestMap.containsKey(OpenIdConnectKey.RESPONSE_MODE)) {</span>
-<span class="nc" id="L372">            responseMode = Util.valueOf(ResponseMode.class, requestMap.get(OpenIdConnectKey.RESPONSE_MODE));</span>
-        } else {
-<span class="fc" id="L374">            responseMode = getDefaultResponseMode();</span>
+<span class="nc" id="L364">            redirectUri = null;</span>
         }
 
-<span class="pc bpc" id="L377" title="1 of 2 branches missed.">        if (requestMap.containsKey(OpenIdConnectKey.SCOPE)) {</span>
-<span class="fc" id="L378">            scopes = Util.splitToSet(Scope.class, requestMap.get(OpenIdConnectKey.SCOPE));</span>
+<span class="pc bpc" id="L367" title="1 of 2 branches missed.">        if (requestMap.containsKey(OpenIdConnectKey.RESPONSE_TYPE)) {</span>
+<span class="fc" id="L368">            responseTypes = Util.splitToSet(ResponseType.class, requestMap.get(OpenIdConnectKey.RESPONSE_TYPE));</span>
         } else {
-<span class="nc" id="L380">            scopes = null;</span>
+<span class="nc" id="L370">            responseTypes = Collections.emptySet();</span>
+        }
+<span class="fc" id="L372">        codeOnlyResponseType = responseTypes.equals(Collections.singleton(ResponseType.code));</span>
+
+<span class="pc bpc" id="L374" title="1 of 2 branches missed.">        if (requestMap.containsKey(OpenIdConnectKey.RESPONSE_MODE)) {</span>
+<span class="nc" id="L375">            responseMode = Util.valueOf(ResponseMode.class, requestMap.get(OpenIdConnectKey.RESPONSE_MODE));</span>
+        } else {
+<span class="fc" id="L377">            responseMode = getDefaultResponseMode();</span>
         }
 
-<span class="pc bpc" id="L383" title="1 of 2 branches missed.">        if (requestMap.containsKey(OpenIdConnectKey.STATE)) {</span>
-<span class="nc" id="L384">            state = requestMap.get(OpenIdConnectKey.STATE);</span>
+<span class="pc bpc" id="L380" title="1 of 2 branches missed.">        if (requestMap.containsKey(OpenIdConnectKey.SCOPE)) {</span>
+<span class="fc" id="L381">            scopes = Util.splitToSet(Scope.class, requestMap.get(OpenIdConnectKey.SCOPE));</span>
         } else {
-<span class="fc" id="L386">            state = null;</span>
+<span class="nc" id="L383">            scopes = null;</span>
         }
 
-<span class="pc bpc" id="L389" title="1 of 2 branches missed.">        if (requestMap.containsKey(OpenIdConnectKey.UI_LOCALES)) {</span>
-<span class="nc" id="L390">            uiLocales = Util.splitToLocaleList(requestMap.get(OpenIdConnectKey.UI_LOCALES));</span>
+<span class="pc bpc" id="L386" title="1 of 2 branches missed.">        if (requestMap.containsKey(OpenIdConnectKey.STATE)) {</span>
+<span class="nc" id="L387">            state = requestMap.get(OpenIdConnectKey.STATE);</span>
         } else {
-<span class="fc" id="L392">            uiLocales = null;</span>
+<span class="fc" id="L389">            state = null;</span>
         }
 
-<span class="fc" id="L395">        validate();</span>
-<span class="fc" id="L396">    }</span>
+<span class="pc bpc" id="L392" title="1 of 2 branches missed.">        if (requestMap.containsKey(OpenIdConnectKey.UI_LOCALES)) {</span>
+<span class="nc" id="L393">            uiLocales = Util.splitToLocaleList(requestMap.get(OpenIdConnectKey.UI_LOCALES));</span>
+        } else {
+<span class="fc" id="L395">            uiLocales = null;</span>
+        }
+
+<span class="fc" id="L398">        validate();</span>
+<span class="fc" id="L399">    }</span>
 
     /**
      * Constructs the authentication request using the Request JWT.
@@ -407,34 +410,34 @@ public class AuthenticationRequest {
      */
     public AuthenticationRequest(final String requestJwt, final JsonWebKeySet privateJwks) throws IOException, GeneralSecurityException {
 
-<span class="nc" id="L410">        this(buildRequestMap(requestJwt, privateJwks));</span>
-<span class="nc" id="L411">    }</span>
+<span class="nc" id="L413">        this(buildRequestMap(requestJwt, privateJwks));</span>
+<span class="nc" id="L414">    }</span>
 
     public void addQueryParams(final UriBuilder b) {
 
-<span class="nc bnc" id="L415" title="All 2 branches missed.">        for (final Entry&lt;String, String&gt; entry : requestMap.entrySet()) {</span>
-<span class="nc" id="L416">            b.queryParam(entry.getKey(), entry.getValue());</span>
-<span class="nc" id="L417">        }</span>
-<span class="nc" id="L418">    }</span>
+<span class="nc bnc" id="L418" title="All 2 branches missed.">        for (final Entry&lt;String, String&gt; entry : requestMap.entrySet()) {</span>
+<span class="nc" id="L419">            b.queryParam(entry.getKey(), entry.getValue());</span>
+<span class="nc" id="L420">        }</span>
+<span class="nc" id="L421">    }</span>
 
     public boolean containsResponseType(final ResponseType responseType) {
 
-<span class="nc" id="L422">        return responseTypes.contains(responseType);</span>
+<span class="nc" id="L425">        return responseTypes.contains(responseType);</span>
     }
 
     public List&lt;String&gt; getAcrValues() {
 
-<span class="nc" id="L427">        return acrValues;</span>
+<span class="nc" id="L430">        return acrValues;</span>
     }
 
     public JsonObject getClaims() {
 
-<span class="nc" id="L432">        return claims;</span>
+<span class="nc" id="L435">        return claims;</span>
     }
 
     public String getClientId() {
 
-<span class="fc" id="L437">        return clientId;</span>
+<span class="fc" id="L440">        return clientId;</span>
     }
 
     /**
@@ -447,69 +450,69 @@ public class AuthenticationRequest {
      */
     private ResponseMode getDefaultResponseMode() {
 
-<span class="pc bpc" id="L450" title="1 of 2 branches missed.">        if (codeOnlyResponseType) {</span>
-<span class="fc" id="L451">            return ResponseMode.query;</span>
+<span class="pc bpc" id="L453" title="1 of 2 branches missed.">        if (codeOnlyResponseType) {</span>
+<span class="fc" id="L454">            return ResponseMode.query;</span>
         } else {
-<span class="nc" id="L453">            return ResponseMode.fragment;</span>
+<span class="nc" id="L456">            return ResponseMode.fragment;</span>
         }
 
     }
 
     public Display getDisplay() {
 
-<span class="nc" id="L460">        return display;</span>
+<span class="nc" id="L463">        return display;</span>
     }
 
     public String getIdTokenHint() {
 
-<span class="nc" id="L465">        return idTokenHint;</span>
+<span class="nc" id="L468">        return idTokenHint;</span>
     }
 
     public String getLoginHint() {
 
-<span class="nc" id="L470">        return loginHint;</span>
+<span class="nc" id="L473">        return loginHint;</span>
     }
 
     public Integer getMaxAge() {
 
-<span class="nc" id="L475">        return maxAge;</span>
+<span class="nc" id="L478">        return maxAge;</span>
     }
 
     public String getNonce() {
 
-<span class="nc" id="L480">        return nonce;</span>
+<span class="nc" id="L483">        return nonce;</span>
     }
 
     public Set&lt;Prompt&gt; getPrompts() {
 
-<span class="nc" id="L485">        return prompts;</span>
+<span class="nc" id="L488">        return prompts;</span>
     }
 
     public URI getRedirectUri() {
 
-<span class="nc" id="L490">        return redirectUri;</span>
+<span class="nc" id="L493">        return redirectUri;</span>
     }
 
     public ResponseMode getResponseMode() {
 
-<span class="nc" id="L495">        return responseMode;</span>
+<span class="nc" id="L498">        return responseMode;</span>
     }
 
     public String getResponseType() {
 
-<span class="nc" id="L500">        final StringBuilder b = new StringBuilder();</span>
-<span class="nc" id="L501">        final Iterator&lt;ResponseType&gt; i = responseTypes.iterator();</span>
-<span class="nc" id="L502">        b.append(i.next());</span>
-<span class="nc bnc" id="L503" title="All 2 branches missed.">        while (i.hasNext()) {</span>
-<span class="nc" id="L504">            b.append(' ');</span>
-<span class="nc" id="L505">            b.append(i.next());</span>
+<span class="nc" id="L503">        final StringBuilder b = new StringBuilder();</span>
+<span class="nc" id="L504">        final Iterator&lt;ResponseType&gt; i = responseTypes.iterator();</span>
+<span class="nc" id="L505">        b.append(i.next());</span>
+<span class="nc bnc" id="L506" title="All 2 branches missed.">        while (i.hasNext()) {</span>
+<span class="nc" id="L507">            b.append(' ');</span>
+<span class="nc" id="L508">            b.append(i.next());</span>
         }
-<span class="nc" id="L507">        return b.toString();</span>
+<span class="nc" id="L510">        return b.toString();</span>
     }
 
     public Set&lt;ResponseType&gt; getResponseTypes() {
 
-<span class="nc" id="L512">        return responseTypes;</span>
+<span class="nc" id="L515">        return responseTypes;</span>
     }
 
     /**
@@ -519,29 +522,29 @@ public class AuthenticationRequest {
      */
     public String getScope() {
 
-<span class="nc" id="L522">        final StringBuilder b = new StringBuilder();</span>
-<span class="nc" id="L523">        final Iterator&lt;Scope&gt; i = scopes.iterator();</span>
-<span class="nc" id="L524">        b.append(i.next());</span>
-<span class="nc bnc" id="L525" title="All 2 branches missed.">        while (i.hasNext()) {</span>
-<span class="nc" id="L526">            b.append(' ');</span>
-<span class="nc" id="L527">            b.append(i.next());</span>
+<span class="nc" id="L525">        final StringBuilder b = new StringBuilder();</span>
+<span class="nc" id="L526">        final Iterator&lt;Scope&gt; i = scopes.iterator();</span>
+<span class="nc" id="L527">        b.append(i.next());</span>
+<span class="nc bnc" id="L528" title="All 2 branches missed.">        while (i.hasNext()) {</span>
+<span class="nc" id="L529">            b.append(' ');</span>
+<span class="nc" id="L530">            b.append(i.next());</span>
         }
-<span class="nc" id="L529">        return b.toString();</span>
+<span class="nc" id="L532">        return b.toString();</span>
     }
 
     public Set&lt;Scope&gt; getScopes() {
 
-<span class="fc" id="L534">        return scopes;</span>
+<span class="fc" id="L537">        return scopes;</span>
     }
 
     public String getState() {
 
-<span class="nc" id="L539">        return state;</span>
+<span class="nc" id="L542">        return state;</span>
     }
 
     public List&lt;Locale&gt; getUiLocales() {
 
-<span class="nc" id="L544">        return uiLocales;</span>
+<span class="nc" id="L547">        return uiLocales;</span>
     }
 
     /**
@@ -553,15 +556,15 @@ public class AuthenticationRequest {
      */
     public boolean isAuthorizationCodeFlow() {
 
-<span class="nc" id="L556">        return codeOnlyResponseType;</span>
+<span class="fc" id="L559">        return codeOnlyResponseType;</span>
     }
 
     public boolean isDefaultResponseMode() {
 
-<span class="nc bnc" id="L561" title="All 2 branches missed.">        if (codeOnlyResponseType) {</span>
-<span class="nc bnc" id="L562" title="All 2 branches missed.">            return ResponseMode.query == responseMode;</span>
+<span class="nc bnc" id="L564" title="All 2 branches missed.">        if (codeOnlyResponseType) {</span>
+<span class="nc bnc" id="L565" title="All 2 branches missed.">            return ResponseMode.query == responseMode;</span>
         } else {
-<span class="nc bnc" id="L564" title="All 2 branches missed.">            return ResponseMode.fragment == responseMode;</span>
+<span class="nc bnc" id="L567" title="All 2 branches missed.">            return ResponseMode.fragment == responseMode;</span>
         }
     }
 
@@ -578,51 +581,51 @@ public class AuthenticationRequest {
      */
     public boolean isImplicitFlow() {
 
-<span class="nc bnc" id="L581" title="All 2 branches missed.">        return !responseTypes.contains(ResponseType.code);</span>
+<span class="nc bnc" id="L584" title="All 2 branches missed.">        return !responseTypes.contains(ResponseType.code);</span>
     }
 
     public JsonObject toJsonObject() {
 
-<span class="nc" id="L586">        final JsonObjectBuilder b = Json.createObjectBuilder();</span>
-<span class="nc" id="L587">        b.add(OpenIdConnectKey.CLIENT_ID, clientId);</span>
-<span class="nc" id="L588">        b.add(OpenIdConnectKey.REDIRECT_URI, redirectUri.toASCIIString());</span>
-<span class="nc bnc" id="L589" title="All 2 branches missed.">        if (display != null) {</span>
-<span class="nc" id="L590">            b.add(OpenIdConnectKey.DISPLAY, Util.toString(display));</span>
+<span class="nc" id="L589">        final JsonObjectBuilder b = Json.createObjectBuilder();</span>
+<span class="nc" id="L590">        b.add(OpenIdConnectKey.CLIENT_ID, clientId);</span>
+<span class="nc" id="L591">        b.add(OpenIdConnectKey.REDIRECT_URI, redirectUri.toASCIIString());</span>
+<span class="nc bnc" id="L592" title="All 2 branches missed.">        if (display != null) {</span>
+<span class="nc" id="L593">            b.add(OpenIdConnectKey.DISPLAY, Util.toString(display));</span>
         }
-<span class="nc bnc" id="L592" title="All 2 branches missed.">        if (idTokenHint != null) {</span>
-<span class="nc" id="L593">            b.add(OpenIdConnectKey.ID_TOKEN_HINT, idTokenHint);</span>
+<span class="nc bnc" id="L595" title="All 2 branches missed.">        if (idTokenHint != null) {</span>
+<span class="nc" id="L596">            b.add(OpenIdConnectKey.ID_TOKEN_HINT, idTokenHint);</span>
         }
-<span class="nc bnc" id="L595" title="All 2 branches missed.">        if (loginHint != null) {</span>
-<span class="nc" id="L596">            b.add(OpenIdConnectKey.LOGIN_HINT, loginHint);</span>
+<span class="nc bnc" id="L598" title="All 2 branches missed.">        if (loginHint != null) {</span>
+<span class="nc" id="L599">            b.add(OpenIdConnectKey.LOGIN_HINT, loginHint);</span>
         }
-<span class="nc bnc" id="L598" title="All 2 branches missed.">        if (maxAge != null) {</span>
-<span class="nc" id="L599">            b.add(OpenIdConnectKey.MAX_AGE, maxAge);</span>
+<span class="nc bnc" id="L601" title="All 2 branches missed.">        if (maxAge != null) {</span>
+<span class="nc" id="L602">            b.add(OpenIdConnectKey.MAX_AGE, maxAge);</span>
         }
-<span class="nc bnc" id="L601" title="All 2 branches missed.">        if (claims != null) {</span>
-<span class="nc" id="L602">            b.add(OpenIdConnectKey.CLAIMS, claims);</span>
+<span class="nc bnc" id="L604" title="All 2 branches missed.">        if (claims != null) {</span>
+<span class="nc" id="L605">            b.add(OpenIdConnectKey.CLAIMS, claims);</span>
         }
-<span class="nc bnc" id="L604" title="All 2 branches missed.">        if (nonce != null) {</span>
-<span class="nc" id="L605">            b.add(OpenIdConnectKey.NONCE, nonce);</span>
+<span class="nc bnc" id="L607" title="All 2 branches missed.">        if (nonce != null) {</span>
+<span class="nc" id="L608">            b.add(OpenIdConnectKey.NONCE, nonce);</span>
         }
-<span class="nc bnc" id="L607" title="All 2 branches missed.">        if (responseMode != null) {</span>
-<span class="nc" id="L608">            b.add(OpenIdConnectKey.RESPONSE_MODE, Util.toString(responseMode));</span>
+<span class="nc bnc" id="L610" title="All 2 branches missed.">        if (responseMode != null) {</span>
+<span class="nc" id="L611">            b.add(OpenIdConnectKey.RESPONSE_MODE, Util.toString(responseMode));</span>
         }
-<span class="nc bnc" id="L610" title="All 2 branches missed.">        if (responseTypes != null) {</span>
-<span class="nc" id="L611">            b.add(OpenIdConnectKey.RESPONSE_TYPE, Util.toString(responseTypes));</span>
+<span class="nc bnc" id="L613" title="All 2 branches missed.">        if (responseTypes != null) {</span>
+<span class="nc" id="L614">            b.add(OpenIdConnectKey.RESPONSE_TYPE, Util.toString(responseTypes));</span>
         }
-<span class="nc bnc" id="L613" title="All 2 branches missed.">        if (scopes != null) {</span>
-<span class="nc" id="L614">            b.add(OpenIdConnectKey.SCOPE, Util.toString(scopes));</span>
+<span class="nc bnc" id="L616" title="All 2 branches missed.">        if (scopes != null) {</span>
+<span class="nc" id="L617">            b.add(OpenIdConnectKey.SCOPE, Util.toString(scopes));</span>
         }
-<span class="nc bnc" id="L616" title="All 2 branches missed.">        if (state != null) {</span>
-<span class="nc" id="L617">            b.add(OpenIdConnectKey.STATE, state);</span>
+<span class="nc bnc" id="L619" title="All 2 branches missed.">        if (state != null) {</span>
+<span class="nc" id="L620">            b.add(OpenIdConnectKey.STATE, state);</span>
         }
-<span class="nc bnc" id="L619" title="All 2 branches missed.">        if (acrValues != null) {</span>
-<span class="nc" id="L620">            b.add(OpenIdConnectKey.ACR_VALUES, Util.join(acrValues));</span>
+<span class="nc bnc" id="L622" title="All 2 branches missed.">        if (acrValues != null) {</span>
+<span class="nc" id="L623">            b.add(OpenIdConnectKey.ACR_VALUES, Util.join(acrValues));</span>
         }
-<span class="nc bnc" id="L622" title="All 2 branches missed.">        if (uiLocales != null) {</span>
-<span class="nc" id="L623">            b.add(OpenIdConnectKey.UI_LOCALES, Util.toLocaleString(uiLocales));</span>
+<span class="nc bnc" id="L625" title="All 2 branches missed.">        if (uiLocales != null) {</span>
+<span class="nc" id="L626">            b.add(OpenIdConnectKey.UI_LOCALES, Util.toLocaleString(uiLocales));</span>
         }
-<span class="nc" id="L625">        return b.build();</span>
+<span class="nc" id="L628">        return b.build();</span>
     }
 
     /**
@@ -630,41 +633,48 @@ public class AuthenticationRequest {
      */
     private void validate() {
 
-<span class="pc bpc" id="L633" title="1 of 2 branches missed.">        if (redirectUri == null) {</span>
-<span class="nc" id="L634">            throw new BadRequestException(&quot;the request must contain the 'redirect_uri'&quot;);</span>
+<span class="pc bpc" id="L636" title="1 of 2 branches missed.">        if (responseTypes.isEmpty()) {</span>
+<span class="nc" id="L637">            throw new RedirectedOpenIdProviderException(this, new ErrorResponse(invalid_request, &quot;the request must contain the 'response_types'&quot;), false);</span>
+        }
+<span class="pc bpc" id="L639" title="1 of 2 branches missed.">        if (redirectUri == null) {</span>
+<span class="nc" id="L640">            throw new BadRequestException(&quot;the request must contain the 'redirect_uri'&quot;);</span>
         }
 
-<span class="pc bpc" id="L637" title="1 of 2 branches missed.">        if (clientId == null) {</span>
-<span class="nc" id="L638">            throw new RedirectedOpenIdProviderException(this, new ErrorResponse(invalid_request, &quot;the request must contain the 'client_id'&quot;));</span>
+<span class="pc bpc" id="L643" title="1 of 2 branches missed.">        if (clientId == null) {</span>
+<span class="nc" id="L644">            throw new RedirectedOpenIdProviderException(this, new ErrorResponse(invalid_request, &quot;the request must contain the 'client_id'&quot;));</span>
         }
 
-<span class="pc bpc" id="L641" title="1 of 2 branches missed.">        if (!scopes.contains(Scope.openid)) {</span>
-<span class="nc" id="L642">            throw new RedirectedOpenIdProviderException(this, new ErrorResponse(invalid_request, &quot;the request must contain the 'openid' scope value&quot;));</span>
+<span class="pc bpc" id="L647" title="1 of 2 branches missed.">        if (!scopes.contains(Scope.openid)) {</span>
+<span class="nc" id="L648">            throw new RedirectedOpenIdProviderException(this, new ErrorResponse(invalid_request, &quot;the request must contain the 'openid' scope value&quot;));</span>
         }
 
-<span class="pc bpc" id="L645" title="3 of 4 branches missed.">        if (prompts.contains(Prompt.none) &amp;&amp; prompts.size() != 1) {</span>
+<span class="pc bpc" id="L651" title="3 of 4 branches missed.">        if (prompts.contains(Prompt.none) &amp;&amp; prompts.size() != 1) {</span>
 
-<span class="nc" id="L647">            throw new RedirectedOpenIdProviderException(this, new ErrorResponse(invalid_request, &quot;Cannot have 'none' with any other value for 'prompt'&quot;));</span>
-
-        }
-
-<span class="pc bpc" id="L651" title="1 of 2 branches missed.">        if (responseTypes.isEmpty()) {</span>
-
-<span class="nc" id="L653">            throw new RedirectedOpenIdProviderException(this, new ErrorResponse(invalid_request, &quot;the request must contain the 'response_type'&quot;));</span>
+<span class="nc" id="L653">            throw new RedirectedOpenIdProviderException(this, new ErrorResponse(invalid_request, &quot;Cannot have 'none' with any other value for 'prompt'&quot;));</span>
 
         }
 
-<span class="pc bpc" id="L657" title="3 of 4 branches missed.">        if (responseTypes.contains(ResponseType.none) &amp;&amp; responseTypes.size() != 1) {</span>
+<span class="pc bpc" id="L657" title="3 of 4 branches missed.">        if (!isAuthorizationCodeFlow() &amp;&amp; !Util.isNotNullOrEmpty(nonce)) {</span>
+<span class="nc" id="L658">            throw new RedirectedOpenIdProviderException(this, new ErrorResponse(invalid_request, &quot;'nonce' required for 'code' flow&quot;));</span>
+        }
 
-<span class="nc" id="L659">            throw new RedirectedOpenIdProviderException(this, new ErrorResponse(invalid_request, &quot;Cannot have 'none' with any other value for 'response_type'&quot;));</span>
+<span class="pc bpc" id="L661" title="1 of 2 branches missed.">        if (responseTypes.isEmpty()) {</span>
+
+<span class="nc" id="L663">            throw new RedirectedOpenIdProviderException(this, new ErrorResponse(invalid_request, &quot;the request must contain the 'response_type'&quot;));</span>
 
         }
 
-<span class="pc bpc" id="L663" title="2 of 4 branches missed.">        if (responseMode == ResponseMode.query &amp;&amp; !codeOnlyResponseType) {</span>
+<span class="pc bpc" id="L667" title="3 of 4 branches missed.">        if (responseTypes.contains(ResponseType.none) &amp;&amp; responseTypes.size() != 1) {</span>
 
-<span class="nc" id="L665">            throw new RedirectedOpenIdProviderException(this, new ErrorResponse(invalid_request, &quot;Invalid response mode for the response type requested.&quot;));</span>
+<span class="nc" id="L669">            throw new RedirectedOpenIdProviderException(this, new ErrorResponse(invalid_request, &quot;Cannot have 'none' with any other value for 'response_type'&quot;));</span>
 
         }
-<span class="fc" id="L668">    }</span>
+
+<span class="pc bpc" id="L673" title="2 of 4 branches missed.">        if (responseMode == ResponseMode.query &amp;&amp; !codeOnlyResponseType) {</span>
+
+<span class="nc" id="L675">            throw new RedirectedOpenIdProviderException(this, new ErrorResponse(invalid_request, &quot;Invalid response mode for the response type requested.&quot;));</span>
+
+        }
+<span class="fc" id="L678">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span></div></body></html>

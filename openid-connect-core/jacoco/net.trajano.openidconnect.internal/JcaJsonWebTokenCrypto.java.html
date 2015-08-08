@@ -65,7 +65,7 @@ import net.trajano.openidconnect.crypto.JsonWebTokenCrypto;
 <span class="fc" id="L65">            payloads[1] = mac.doFinal();</span>
 <span class="fc" id="L66">        } else {</span>
 <span class="nc" id="L67">            final Signature signature = Signature.getInstance(JsonWebAlgorithm</span>
-                .toJca(header.getAlg()));
+<span class="nc" id="L68">                .toJca(header.getAlg()));</span>
 <span class="nc" id="L69">            signature.initSign((PrivateKey) jwk.toJcaKey());</span>
 <span class="nc" id="L70">            signature.update(header.getEncoded());</span>
 <span class="nc" id="L71">            signature.update((byte) '.');</span>
@@ -108,7 +108,7 @@ import net.trajano.openidconnect.crypto.JsonWebTokenCrypto;
 <span class="fc" id="L108">        ByteArrayOutputStream cekStream = new ByteArrayOutputStream();</span>
 
 <span class="fc" id="L110">        final Cipher cekCipher = Cipher.getInstance(JsonWebAlgorithm</span>
-            .toJca(joseHeader.getAlg()));
+<span class="fc" id="L111">            .toJca(joseHeader.getAlg()));</span>
 <span class="fc" id="L112">        cekCipher.init(Cipher.ENCRYPT_MODE, jwk.toJcaPublicKey());</span>
 <span class="fc" id="L113">        CipherOutputStream os = new CipherOutputStream(cekStream, cekCipher);</span>
 <span class="fc" id="L114">        os.write(macKey.getEncoded());</span>
@@ -119,13 +119,13 @@ import net.trajano.openidconnect.crypto.JsonWebTokenCrypto;
 <span class="fc" id="L119">        payloads[0] = encryptedCek;</span>
 
 <span class="fc" id="L121">        final byte[] iv = new byte[JsonWebAlgorithm.getIvLen(joseHeader</span>
-            .getEnc())];
+<span class="fc" id="L122">            .getEnc())];</span>
 <span class="fc" id="L123">        random.nextBytes(iv);</span>
 <span class="fc" id="L124">        payloads[1] = iv;</span>
 
 <span class="fc" id="L126">        final int authenticationTagBits = 128;</span>
 <span class="fc" id="L127">        final Cipher contentCipher = Cipher.getInstance(JsonWebAlgorithm</span>
-            .toJca(joseHeader.getEnc()));
+<span class="fc" id="L128">            .toJca(joseHeader.getEnc()));</span>
 
 <span class="fc" id="L130">        final byte[] aad = joseHeader.getEncoded();</span>
 <span class="pc bpc" id="L131" title="1 of 2 branches missed.">        if (JsonWebAlgorithm.isGcm(joseHeader.getEnc())) {</span>
@@ -162,20 +162,20 @@ import net.trajano.openidconnect.crypto.JsonWebTokenCrypto;
 <span class="fc" id="L162">        final byte[] cek = secretKey.getEncoded();</span>
 
 <span class="fc" id="L164">        final Cipher cekCipher = Cipher.getInstance(JsonWebAlgorithm</span>
-            .toJca(joseHeader.getAlg()));
+<span class="fc" id="L165">            .toJca(joseHeader.getAlg()));</span>
 <span class="fc" id="L166">        cekCipher.init(Cipher.ENCRYPT_MODE, jwk.toJcaPublicKey());</span>
 <span class="fc" id="L167">        final byte[] encryptedCek = cekCipher.doFinal(cek);</span>
 
 <span class="fc" id="L169">        payloads[0] = encryptedCek;</span>
 
 <span class="fc" id="L171">        final byte[] iv = new byte[JsonWebAlgorithm.getIvLen(joseHeader</span>
-            .getEnc())];
+<span class="fc" id="L172">            .getEnc())];</span>
 <span class="fc" id="L173">        random.nextBytes(iv);</span>
 <span class="fc" id="L174">        payloads[1] = iv;</span>
 
 <span class="fc" id="L176">        final int authenticationTagBits = 128;</span>
 <span class="fc" id="L177">        final Cipher contentCipher = Cipher.getInstance(JsonWebAlgorithm</span>
-            .toJca(joseHeader.getEnc()));
+<span class="fc" id="L178">            .toJca(joseHeader.getEnc()));</span>
 
 <span class="pc bpc" id="L180" title="1 of 2 branches missed.">        if (JsonWebAlgorithm.isGcm(joseHeader.getEnc())) {</span>
 <span class="nc" id="L181">            final GCMParameterSpec spec = new GCMParameterSpec(</span>
@@ -188,7 +188,7 @@ import net.trajano.openidconnect.crypto.JsonWebTokenCrypto;
         }
 
 <span class="fc" id="L190">        final ByteBuffer cipherTextAndAuthenticationTag = ByteBuffer</span>
-            .wrap(contentCipher.doFinal(payloadBytes));
+<span class="fc" id="L191">            .wrap(contentCipher.doFinal(payloadBytes));</span>
 
 <span class="fc" id="L193">        payloads[2] = new byte[cipherTextAndAuthenticationTag.capacity()</span>
                 - authenticationTagBits / 8];
@@ -252,7 +252,7 @@ import net.trajano.openidconnect.crypto.JsonWebTokenCrypto;
 <span class="fc" id="L252">        final String enc = jsonWebToken.getEnc();</span>
 
 <span class="fc" id="L254">        final Cipher encryptionKeyCipher = Cipher.getInstance(JsonWebAlgorithm</span>
-            .toJca(jsonWebToken.getAlg()));
+<span class="fc" id="L255">            .toJca(jsonWebToken.getAlg()));</span>
 <span class="fc" id="L256">        encryptionKeyCipher.init(Cipher.DECRYPT_MODE, privateKey);</span>
 
 <span class="fc" id="L258">        final byte[] decryptedKey = encryptionKeyCipher.doFinal(encryptedKey);</span>
@@ -280,7 +280,7 @@ import net.trajano.openidconnect.crypto.JsonWebTokenCrypto;
             &quot;AES&quot;);
 
 <span class="fc" id="L282">        final Cipher contentCipher = Cipher.getInstance(JsonWebAlgorithm</span>
-            .toJca(enc));
+<span class="fc" id="L283">            .toJca(enc));</span>
 
 <span class="pc bpc" id="L285" title="1 of 2 branches missed.">        if (JsonWebAlgorithm.isGcm(enc)) {</span>
 <span class="nc" id="L286">            final GCMParameterSpec spec = new GCMParameterSpec(</span>
@@ -319,7 +319,7 @@ import net.trajano.openidconnect.crypto.JsonWebTokenCrypto;
 <span class="fc" id="L319">        final SecretKey contentEncryptionKey = new SecretKeySpec(encryptionKey,</span>
             macLength, keyLength, &quot;AES&quot;);
 <span class="fc" id="L321">        final Cipher contentCipher = Cipher.getInstance(JsonWebAlgorithm</span>
-            .toJca(enc));
+<span class="fc" id="L322">            .toJca(enc));</span>
 
 <span class="pc bpc" id="L324" title="1 of 2 branches missed.">        if (JsonWebAlgorithm.isGcm(enc)) {</span>
 <span class="nc" id="L325">            final GCMParameterSpec spec = new GCMParameterSpec(</span>
@@ -385,7 +385,7 @@ import net.trajano.openidconnect.crypto.JsonWebTokenCrypto;
 <span class="fc" id="L385">            mac.update(jsonWebToken.getJoseHeaderEncoded().getBytes());</span>
 <span class="fc" id="L386">            mac.update((byte) '.');</span>
 <span class="fc" id="L387">            byte[] macValue = mac.doFinal(Encoding.base64urlEncode(</span>
-                jsonWebToken.getPayload(0)).getBytes());
+<span class="fc" id="L388">                jsonWebToken.getPayload(0)).getBytes());</span>
 <span class="pc bpc" id="L389" title="1 of 2 branches missed.">            if (!MessageDigest.isEqual(macValue, jsonWebToken.getPayload(1))) {</span>
 <span class="nc" id="L390">                throw new SignatureException(&quot;signature verification failed&quot;);</span>
             }
@@ -393,7 +393,7 @@ import net.trajano.openidconnect.crypto.JsonWebTokenCrypto;
 <span class="nc" id="L393">            final PublicKey signingKey = (PublicKey) jwk.toJcaPublicKey();</span>
 
 <span class="nc" id="L395">            final Signature signature = Signature.getInstance(JsonWebAlgorithm</span>
-                .toJca(alg));
+<span class="nc" id="L396">                .toJca(alg));</span>
 
 <span class="nc" id="L398">            final byte[] jwtSignatureBytes = jsonWebToken.getPayload(1);</span>
 
@@ -401,7 +401,7 @@ import net.trajano.openidconnect.crypto.JsonWebTokenCrypto;
 <span class="nc" id="L401">            signature.update(jsonWebToken.getJoseHeaderEncoded().getBytes());</span>
 <span class="nc" id="L402">            signature.update((byte) '.');</span>
 <span class="nc" id="L403">            signature.update(Encoding.base64urlEncode(</span>
-                jsonWebToken.getPayload(0)).getBytes());
+<span class="nc" id="L404">                jsonWebToken.getPayload(0)).getBytes());</span>
 <span class="nc bnc" id="L405" title="All 2 branches missed.">            if (!signature.verify(jwtSignatureBytes)) {</span>
 <span class="nc" id="L406">                throw new SignatureException(&quot;signature verification failed&quot;);</span>
             }
