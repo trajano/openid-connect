@@ -7,9 +7,11 @@ import java.net.URI;
 import java.security.GeneralSecurityException;
 
 import javax.ejb.EJB;
+import javax.ejb.Stateless;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.constraints.NotNull;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -44,6 +46,7 @@ import net.trajano.openidconnect.token.IdToken;
  * @author Archimedes
  */
 @Path("end")
+@Stateless
 @Produces(MediaType.APPLICATION_JSON)
 public class EndSessionEndpoint {
 
@@ -74,14 +77,15 @@ public class EndSessionEndpoint {
      */
     @POST
     @Path("confirm")
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     public Response confirm(@NotNull @FormParam("nonce") final String nonce,
-            @NotNull @FormParam("logout") final boolean logout,
-            @Context final HttpServletRequest req) throws IOException,
-                    GeneralSecurityException {
+        @NotNull @FormParam("logout") final boolean logout,
+        @Context final HttpServletRequest req) throws IOException,
+            GeneralSecurityException {
 
         final HttpSession session = req.getSession(false);
         if (session == null || !session.getAttribute("nonce")
-                .equals(nonce)) {
+            .equals(nonce)) {
             throw new OpenIdConnectException(ErrorCode.access_denied);
         }
 
@@ -92,9 +96,9 @@ public class EndSessionEndpoint {
             session.invalidate();
         }
         return Response.temporaryRedirect(UriBuilder.fromUri(postLogoutRedirectUri)
-                .queryParam(OpenIdConnectKey.STATE, state)
-                .build())
-                .build();
+            .queryParam(OpenIdConnectKey.STATE, state)
+            .build())
+            .build();
 
     }
 
@@ -117,10 +121,10 @@ public class EndSessionEndpoint {
      */
     @GET
     public Response getOp(@QueryParam("post_logout_redirect_uri") final URI postLogoutRedirectUri,
-            @QueryParam(OpenIdConnectKey.ID_TOKEN_HINT) final String idTokenHint,
-            @QueryParam(OpenIdConnectKey.STATE) final String state,
-            @Context final HttpServletRequest req) throws IOException,
-                    GeneralSecurityException {
+        @QueryParam(OpenIdConnectKey.ID_TOKEN_HINT) final String idTokenHint,
+        @QueryParam(OpenIdConnectKey.STATE) final String state,
+        @Context final HttpServletRequest req) throws IOException,
+            GeneralSecurityException {
 
         return op(postLogoutRedirectUri, idTokenHint, state, req);
     }
@@ -162,10 +166,10 @@ public class EndSessionEndpoint {
      */
     @POST
     public Response op(@FormParam("post_logout_redirect_uri") final URI postLogoutRedirectUri,
-            @FormParam(OpenIdConnectKey.ID_TOKEN_HINT) final String idTokenHint,
-            @FormParam(OpenIdConnectKey.STATE) final String state,
-            @Context final HttpServletRequest req) throws IOException,
-                    GeneralSecurityException {
+        @FormParam(OpenIdConnectKey.ID_TOKEN_HINT) final String idTokenHint,
+        @FormParam(OpenIdConnectKey.STATE) final String state,
+        @Context final HttpServletRequest req) throws IOException,
+            GeneralSecurityException {
 
         IdToken idToken = null;
         if (idTokenHint != null) {
@@ -184,12 +188,12 @@ public class EndSessionEndpoint {
         final HttpSession session = req.getSession(false);
         if (session != null && authenticator.isAuthenticated(req)) {
             if (!authenticator.getSubject(req)
-                    .equals(idToken.getSub())) {
+                .equals(idToken.getSub())) {
                 throw new OpenIdConnectException(ErrorCode.access_denied);
             }
             final UriBuilder uriBuilder = UriBuilder.fromUri(req.getRequestURL()
-                    .toString())
-                    .replacePath(req.getContextPath());
+                .toString())
+                .replacePath(req.getContextPath());
 
             session.setAttribute("post_logout_redirect_uri", postLogoutRedirectUri);
             if (idToken != null) {
@@ -200,14 +204,14 @@ public class EndSessionEndpoint {
             session.setAttribute("nonce", nonce);
 
             return Response.temporaryRedirect(authenticator.logout(nonce, idToken, state, postLogoutRedirectUri, req, uriBuilder))
-                    .build();
+                .build();
         }
         // If the user is not authenticated, it just goes back to the post
         // redirect URI.
         return Response.temporaryRedirect(UriBuilder.fromUri(postLogoutRedirectUri)
-                .queryParam(OpenIdConnectKey.STATE, state)
-                .build())
-                .build();
+            .queryParam(OpenIdConnectKey.STATE, state)
+            .build())
+            .build();
 
     }
 }

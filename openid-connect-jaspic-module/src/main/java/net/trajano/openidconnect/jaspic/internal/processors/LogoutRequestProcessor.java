@@ -5,6 +5,7 @@ import java.net.URI;
 import java.security.GeneralSecurityException;
 
 import javax.security.auth.message.AuthStatus;
+import javax.servlet.ServletException;
 import javax.ws.rs.core.UriBuilder;
 
 import net.trajano.openidconnect.core.OpenIdProviderConfiguration;
@@ -14,7 +15,8 @@ import net.trajano.openidconnect.jaspic.internal.Log;
 import net.trajano.openidconnect.jaspic.internal.ValidateContext;
 import net.trajano.openidconnect.jaspic.internal.ValidateRequestProcessor;
 
-public class LogoutRequestProcessor implements ValidateRequestProcessor {
+public class LogoutRequestProcessor implements
+    ValidateRequestProcessor {
 
     /**
      * Encoded value for the context root state.
@@ -36,31 +38,31 @@ public class LogoutRequestProcessor implements ValidateRequestProcessor {
 
     @Override
     public AuthStatus validateRequest(final ValidateContext context) throws IOException,
-            GeneralSecurityException {
+        GeneralSecurityException {
 
-        String idTokenHint = context.getTokenCookie()
-                .getIdTokenJwt();
+        final String idTokenHint = context.getTokenCookie()
+            .getIdTokenJwt();
         context.deleteAuthCookies();
         final OpenIdProviderConfiguration oidProviderConfig = context.getOpenIDProviderConfig();
 
-        String contextPath = UriBuilder.fromUri(context.getReq()
-                .getRequestURL()
-                .toString())
-                .replacePath(context.getReq()
-                        .getContextPath())
-                .build()
-                .toASCIIString();
+        final String contextPath = UriBuilder.fromUri(context.getReq()
+            .getRequestURL()
+            .toString())
+            .replacePath(context.getReq()
+                .getContextPath())
+            .build()
+            .toASCIIString();
         final String referrer = context.getReq()
-                .getHeader("Referer");
+            .getHeader("Referer");
         final String state;
         if (referrer.startsWith(contextPath)) {
 
             final StringBuilder stateBuilder = new StringBuilder(referrer.substring(contextPath.length()));
             if (context.getReq()
-                    .getQueryString() != null) {
+                .getQueryString() != null) {
                 stateBuilder.append('?');
                 stateBuilder.append(context.getReq()
-                        .getQueryString());
+                    .getQueryString());
             }
             state = Encoding.base64urlEncode(stateBuilder.toString());
         } else {
@@ -71,19 +73,27 @@ public class LogoutRequestProcessor implements ValidateRequestProcessor {
         final URI redirectUri = context.getUri("logout_redirection_endpoint");
 
         if (oidProviderConfig.getEndSessionEndpoint() != null) {
-            UriBuilder b = UriBuilder.fromUri(oidProviderConfig.getEndSessionEndpoint())
-                    .queryParam("post_logout_redirect_uri", redirectUri)
-                    .queryParam("id_token_hint", idTokenHint)
-                    .queryParam("state", state);
+            final UriBuilder b = UriBuilder.fromUri(oidProviderConfig.getEndSessionEndpoint())
+                .queryParam("post_logout_redirect_uri", redirectUri)
+                .queryParam("id_token_hint", idTokenHint)
+                .queryParam("state", state);
             context.getResp()
-                    .sendRedirect(b.build()
-                            .toASCIIString());
+                .sendRedirect(b.build()
+                    .toASCIIString());
         } else {
             context.getResp()
-                    .sendRedirect(context.getReq()
-                            .getServletContext() + "/");
+                .sendRedirect(context.getReq()
+                    .getServletContext() + "/");
         }
-        return AuthStatus.SEND_SUCCESS;
+        if (context.getReq().getSession(false) != null) {
+            context.getReq().getSession(false).invalidate();
+        }
+        try {
+            context.getReq().logout();
+        } catch (final ServletException e) {
+            throw new GeneralSecurityException(e);
+        }
+        return AuthStatus.SEND_CONTINUE;
     }
 
 }
