@@ -25,9 +25,9 @@ under the License.
     <language>en-us</language>
     <copyright>&#169;2012 - 2015 Trajano</copyright>
     <item>
-      <title>File: 117,
-             Errors: 9,
-             Warnings: 1000,
+      <title>File: 119,
+             Errors: 8,
+             Warnings: 1025,
              Infos: 0
       </title>
             <link>http://site.trajano.net/trajano/openid-connect//checkstyle.html</link>
@@ -46,111 +46,13 @@ under the License.
           <tbody>
                           <tr>
                 <td>
-                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.crypto.OctWebKey.java">net/trajano/openidconnect/crypto/OctWebKey.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  15
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.crypto.EcWebKey.java">net/trajano/openidconnect/crypto/EcWebKey.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  4
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.crypto.KeyType.java">net/trajano/openidconnect/crypto/KeyType.java</a>
+                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.crypto.KeyUse.java">net/trajano/openidconnect/crypto/KeyUse.java</a>
                 </td>
                 <td>
                   0
                 </td>
                 <td>
                   1
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.provider.endpoints.WellKnownOpenIdConfiguration.java">net/trajano/openidconnect/provider/endpoints/WellKnownOpenIdConfiguration.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  16
-                </td>
-                <td>
-                  1
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.token.TokenResponse.java">net/trajano/openidconnect/token/TokenResponse.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  17
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.provider.sample.ConsentServlet.java">net/trajano/openidconnect/provider/sample/ConsentServlet.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  18
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.provider.endpoints.Jwks.java">net/trajano/openidconnect/provider/endpoints/Jwks.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  2
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.jaspic.internal.TokenCookie.java">net/trajano/openidconnect/jaspic/internal/TokenCookie.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  9
                 </td>
                 <td>
                   0
@@ -172,27 +74,13 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.rs.AuthenticationRequestUriProvider.java">net/trajano/openidconnect/rs/AuthenticationRequestUriProvider.java</a>
+                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.provider.endpoints.AuthorizationEndpoint.java">net/trajano/openidconnect/provider/endpoints/AuthorizationEndpoint.java</a>
                 </td>
                 <td>
                   0
                 </td>
                 <td>
-                  53
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.provider.internal.FormPostBuilder.java">net/trajano/openidconnect/provider/internal/FormPostBuilder.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  18
+                  7
                 </td>
                 <td>
                   0
@@ -200,377 +88,13 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.provider.internal.CacheConstants.java">net/trajano/openidconnect/provider/internal/CacheConstants.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  4
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.rs.package-info.java">net/trajano/openidconnect/rs/package-info.java</a>
+                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#META-INF.JaspicMessages.properties">META-INF/JaspicMessages.properties</a>
                 </td>
                 <td>
                   0
                 </td>
                 <td>
                   1
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.auth.ResponseMode.java">net/trajano/openidconnect/auth/ResponseMode.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  1
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.jaspic.internal.processors.PostLogoutCallbackRequestProcessor.java">net/trajano/openidconnect/jaspic/internal/processors/PostLogoutCallbackRequestProcessor.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  1
-                </td>
-                <td>
-                  1
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.provider.internal.ProviderV1.java">net/trajano/openidconnect/provider/internal/ProviderV1.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  1
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.internal.Log.java">net/trajano/openidconnect/internal/Log.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  5
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.provider.internal.ProviderWellKnown.java">net/trajano/openidconnect/provider/internal/ProviderWellKnown.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  1
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.provider.spi.UserinfoProvider.java">net/trajano/openidconnect/provider/spi/UserinfoProvider.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  3
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.rs.JsonWebTokenProvider.java">net/trajano/openidconnect/rs/JsonWebTokenProvider.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  28
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.core.TokenEndPointAuthMethod.java">net/trajano/openidconnect/core/TokenEndPointAuthMethod.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  5
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.provider.endpoints.package-info.java">net/trajano/openidconnect/provider/endpoints/package-info.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  1
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.crypto.NamedEllipticCurve.java">net/trajano/openidconnect/crypto/NamedEllipticCurve.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  15
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.provider.spi.TokenStorage.java">net/trajano/openidconnect/provider/spi/TokenStorage.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  10
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.crypto.JsonWebKey.java">net/trajano/openidconnect/crypto/JsonWebKey.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  5
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.jaspic.package-info.java">net/trajano/openidconnect/jaspic/package-info.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  1
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.jaspic.internal.processors.IdTokenRequestProcessor.java">net/trajano/openidconnect/jaspic/internal/processors/IdTokenRequestProcessor.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  1
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.rs.JsonWebKeyProvider.java">net/trajano/openidconnect/rs/JsonWebKeyProvider.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  12
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.rs.OpenIdConnect.java">net/trajano/openidconnect/rs/OpenIdConnect.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  2
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.crypto.JoseHeader.java">net/trajano/openidconnect/crypto/JoseHeader.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  6
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.provider.sample.LoginServlet.java">net/trajano/openidconnect/provider/sample/LoginServlet.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  9
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.crypto.Encoding.java">net/trajano/openidconnect/crypto/Encoding.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  8
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.jaspic.internal.processors.CallbackRequestProcessor.java">net/trajano/openidconnect/jaspic/internal/processors/CallbackRequestProcessor.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  11
-                </td>
-                <td>
-                  1
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.auth.package-info.java">net/trajano/openidconnect/auth/package-info.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  2
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#META-INF.Messages.properties">META-INF/Messages.properties</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.provider.package-info.java">net/trajano/openidconnect/provider/package-info.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  1
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.auth.Prompt.java">net/trajano/openidconnect/auth/Prompt.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  2
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.provider.endpoints.EndSessionEndpoint.java">net/trajano/openidconnect/provider/endpoints/EndSessionEndpoint.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  14
                 </td>
                 <td>
                   0
@@ -592,13 +116,13 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.core.OpenIdProviderConfiguration.java">net/trajano/openidconnect/core/OpenIdProviderConfiguration.java</a>
+                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.crypto.JsonWebAlgorithm.java">net/trajano/openidconnect/crypto/JsonWebAlgorithm.java</a>
                 </td>
                 <td>
                   0
                 </td>
                 <td>
-                  15
+                  31
                 </td>
                 <td>
                   0
@@ -606,7 +130,35 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.crypto.JsonWebToken.java">net/trajano/openidconnect/crypto/JsonWebToken.java</a>
+                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.jaspic.OpenIdConnectModuleConfigProvider.java">net/trajano/openidconnect/jaspic/OpenIdConnectModuleConfigProvider.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.crypto.JsonWebTokenProcessor.java">net/trajano/openidconnect/crypto/JsonWebTokenProcessor.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  23
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.provider.ejb.DefaultKeyProvider.java">net/trajano/openidconnect/provider/ejb/DefaultKeyProvider.java</a>
                 </td>
                 <td>
                   0
@@ -620,21 +172,7 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.core.ErrorResponse.java">net/trajano/openidconnect/core/ErrorResponse.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  4
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.internal.package-info.java">net/trajano/openidconnect/internal/package-info.java</a>
+                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.auth.AuthenticationRequestValidator.java">net/trajano/openidconnect/auth/AuthenticationRequestValidator.java</a>
                 </td>
                 <td>
                   0
@@ -648,21 +186,7 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.jaspic.internal.Initializer.java">net/trajano/openidconnect/jaspic/internal/Initializer.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  7
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.token.IdTokenValidator.java">net/trajano/openidconnect/token/IdTokenValidator.java</a>
+                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.core.Scope.java">net/trajano/openidconnect/core/Scope.java</a>
                 </td>
                 <td>
                   0
@@ -676,13 +200,27 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.auth.ResponseType.java">net/trajano/openidconnect/auth/ResponseType.java</a>
+                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.core.SubjectIdentifierType.java">net/trajano/openidconnect/core/SubjectIdentifierType.java</a>
                 </td>
                 <td>
                   0
                 </td>
                 <td>
-                  5
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.crypto.JoseHeader.java">net/trajano/openidconnect/crypto/JoseHeader.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  6
                 </td>
                 <td>
                   0
@@ -704,13 +242,13 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.provider.spi.package-info.java">net/trajano/openidconnect/provider/spi/package-info.java</a>
+                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.crypto.NamedEllipticCurve.java">net/trajano/openidconnect/crypto/NamedEllipticCurve.java</a>
                 </td>
                 <td>
                   0
                 </td>
                 <td>
-                  1
+                  15
                 </td>
                 <td>
                   0
@@ -718,13 +256,55 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.core.SubjectIdentifierType.java">net/trajano/openidconnect/core/SubjectIdentifierType.java</a>
+                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.sample.ConfigProvider.java">net/trajano/openidconnect/sample/ConfigProvider.java</a>
                 </td>
                 <td>
                   0
                 </td>
                 <td>
+                  2
+                </td>
+                <td>
                   0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.auth.AuthenticationResponse.java">net/trajano/openidconnect/auth/AuthenticationResponse.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  15
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.provider.ejb.DefaultTokenProvider.java">net/trajano/openidconnect/provider/ejb/DefaultTokenProvider.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  11
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.provider.spi.AuthenticationResponseProvider.java">net/trajano/openidconnect/provider/spi/AuthenticationResponseProvider.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  8
                 </td>
                 <td>
                   0
@@ -760,49 +340,7 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.provider.endpoints.UserinfoEndpoint.java">net/trajano/openidconnect/provider/endpoints/UserinfoEndpoint.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  15
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.crypto.JsonWebAlgorithm.java">net/trajano/openidconnect/crypto/JsonWebAlgorithm.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  31
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.provider.spi.ClientManager.java">net/trajano/openidconnect/provider/spi/ClientManager.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  4
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.auth.AuthenticationRequestValidator.java">net/trajano/openidconnect/auth/AuthenticationRequestValidator.java</a>
+                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.provider.package-info.java">net/trajano/openidconnect/provider/package-info.java</a>
                 </td>
                 <td>
                   0
@@ -816,27 +354,13 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.jaspic.internal.processors.SecurityAssertionPassedRequestProcessor.java">net/trajano/openidconnect/jaspic/internal/processors/SecurityAssertionPassedRequestProcessor.java</a>
+                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.core.RedirectedOpenIdProviderException.java">net/trajano/openidconnect/core/RedirectedOpenIdProviderException.java</a>
                 </td>
                 <td>
                   0
                 </td>
                 <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#META-INF.JaspicMessages.properties">META-INF/JaspicMessages.properties</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
+                  31
                 </td>
                 <td>
                   0
@@ -844,77 +368,7 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.internal.Util.java">net/trajano/openidconnect/internal/Util.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  32
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.jaspic.internal.ValidateContext.java">net/trajano/openidconnect/jaspic/internal/ValidateContext.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  32
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.crypto.RsaWebKey.java">net/trajano/openidconnect/crypto/RsaWebKey.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  22
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.jaspic.internal.processors.SecurityAssertionFailureRequestProcessor.java">net/trajano/openidconnect/jaspic/internal/processors/SecurityAssertionFailureRequestProcessor.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.rs.AuthenticationRequestJsonProvider.java">net/trajano/openidconnect/rs/AuthenticationRequestJsonProvider.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  53
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.jaspic.internal.package-info.java">net/trajano/openidconnect/jaspic/internal/package-info.java</a>
+                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.provider.spi.package-info.java">net/trajano/openidconnect/provider/spi/package-info.java</a>
                 </td>
                 <td>
                   0
@@ -942,13 +396,13 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.provider.spi.Consent.java">net/trajano/openidconnect/provider/spi/Consent.java</a>
+                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.jaspic.internal.processors.package-info.java">net/trajano/openidconnect/jaspic/internal/processors/package-info.java</a>
                 </td>
                 <td>
                   0
                 </td>
                 <td>
-                  5
+                  1
                 </td>
                 <td>
                   0
@@ -956,7 +410,35 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.provider.endpoints.AuthorizationEndpoint.java">net/trajano/openidconnect/provider/endpoints/AuthorizationEndpoint.java</a>
+                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.rs.AuthenticationRequestJsonProvider.java">net/trajano/openidconnect/rs/AuthenticationRequestJsonProvider.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  53
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.jaspic.internal.ValidateRequestProcessors.java">net/trajano/openidconnect/jaspic/internal/ValidateRequestProcessors.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  3
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.jaspic.internal.TokenCookie.java">net/trajano/openidconnect/jaspic/internal/TokenCookie.java</a>
                 </td>
                 <td>
                   0
@@ -970,13 +452,13 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.rs.JwtMediaType.java">net/trajano/openidconnect/rs/JwtMediaType.java</a>
+                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.token.TokenRequestParam.java">net/trajano/openidconnect/token/TokenRequestParam.java</a>
                 </td>
                 <td>
                   0
                 </td>
                 <td>
-                  2
+                  1
                 </td>
                 <td>
                   0
@@ -984,13 +466,125 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.provider.endpoints.TokenEndpoint.java">net/trajano/openidconnect/provider/endpoints/TokenEndpoint.java</a>
+                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.crypto.EcWebKey.java">net/trajano/openidconnect/crypto/EcWebKey.java</a>
                 </td>
                 <td>
                   0
                 </td>
                 <td>
-                  6
+                  4
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.provider.internal.FormPostBuilder.java">net/trajano/openidconnect/provider/internal/FormPostBuilder.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  18
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.crypto.KeyType.java">net/trajano/openidconnect/crypto/KeyType.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  1
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.jaspic.internal.package-info.java">net/trajano/openidconnect/jaspic/internal/package-info.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  1
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.rs.JsonWebKeyProvider.java">net/trajano/openidconnect/rs/JsonWebKeyProvider.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  12
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.crypto.Encoding.java">net/trajano/openidconnect/crypto/Encoding.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  8
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.token.IdTokenResponse.java">net/trajano/openidconnect/token/IdTokenResponse.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  4
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.rs.package-info.java">net/trajano/openidconnect/rs/package-info.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  1
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.core.ErrorResponse.java">net/trajano/openidconnect/core/ErrorResponse.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  4
                 </td>
                 <td>
                   0
@@ -1012,7 +606,469 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.crypto.KeyUse.java">net/trajano/openidconnect/crypto/KeyUse.java</a>
+                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.provider.endpoints.Jwks.java">net/trajano/openidconnect/provider/endpoints/Jwks.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  2
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.provider.spi.Authenticator.java">net/trajano/openidconnect/provider/spi/Authenticator.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  12
+                </td>
+                <td>
+                  3
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.core.OpenIdConnectKey.java">net/trajano/openidconnect/core/OpenIdConnectKey.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  8
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.auth.ResponseType.java">net/trajano/openidconnect/auth/ResponseType.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  5
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.jaspic.internal.Utils.java">net/trajano/openidconnect/jaspic/internal/Utils.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  2
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.jaspic.internal.CipherUtil.java">net/trajano/openidconnect/jaspic/internal/CipherUtil.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.provider.sample.LoginServlet.java">net/trajano/openidconnect/provider/sample/LoginServlet.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  9
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.core.OpenIdConnectException.java">net/trajano/openidconnect/core/OpenIdConnectException.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  4
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.crypto.JsonWebTokenCrypto.java">net/trajano/openidconnect/crypto/JsonWebTokenCrypto.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  5
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.token.package-info.java">net/trajano/openidconnect/token/package-info.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  1
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.jaspic.internal.processors.UserInfoRequestProcessor.java">net/trajano/openidconnect/jaspic/internal/processors/UserInfoRequestProcessor.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  1
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.provider.sample.package-info.java">net/trajano/openidconnect/provider/sample/package-info.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.jaspic.internal.processors.PostLogoutCallbackRequestProcessor.java">net/trajano/openidconnect/jaspic/internal/processors/PostLogoutCallbackRequestProcessor.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  1
+                </td>
+                <td>
+                  1
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.rs.JwtMediaType.java">net/trajano/openidconnect/rs/JwtMediaType.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  2
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.jaspic.internal.processors.CallbackRequestProcessor.java">net/trajano/openidconnect/jaspic/internal/processors/CallbackRequestProcessor.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  11
+                </td>
+                <td>
+                  1
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.crypto.RsaWebKey.java">net/trajano/openidconnect/crypto/RsaWebKey.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  22
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.rs.OpenIdConnect.java">net/trajano/openidconnect/rs/OpenIdConnect.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  2
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.jaspic.OpenIdConnectModuleConfigProviderRemote.java">net/trajano/openidconnect/jaspic/OpenIdConnectModuleConfigProviderRemote.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  5
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.provider.endpoints.WellKnownOpenIdConfiguration.java">net/trajano/openidconnect/provider/endpoints/WellKnownOpenIdConfiguration.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  16
+                </td>
+                <td>
+                  1
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.provider.spi.TokenProvider.java">net/trajano/openidconnect/provider/spi/TokenProvider.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  9
+                </td>
+                <td>
+                  1
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.auth.AuthenticationRequest.java">net/trajano/openidconnect/auth/AuthenticationRequest.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  37
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.provider.internal.AuthorizationUtil.java">net/trajano/openidconnect/provider/internal/AuthorizationUtil.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  8
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.crypto.JsonWebToken.java">net/trajano/openidconnect/crypto/JsonWebToken.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  5
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.rs.JsonWebKeySetProvider.java">net/trajano/openidconnect/rs/JsonWebKeySetProvider.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  2
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.jaspic.internal.processors.LogoutGotoRequestProcessor.java">net/trajano/openidconnect/jaspic/internal/processors/LogoutGotoRequestProcessor.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  1
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.auth.package-info.java">net/trajano/openidconnect/auth/package-info.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  2
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.token.IdTokenValidator.java">net/trajano/openidconnect/token/IdTokenValidator.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.internal.JcaJsonWebTokenCrypto.java">net/trajano/openidconnect/internal/JcaJsonWebTokenCrypto.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  61
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.provider.endpoints.TokenEndpoint.java">net/trajano/openidconnect/provider/endpoints/TokenEndpoint.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  6
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.core.package-info.java">net/trajano/openidconnect/core/package-info.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.internal.package-info.java">net/trajano/openidconnect/internal/package-info.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  1
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.provider.endpoints.EndSessionEndpoint.java">net/trajano/openidconnect/provider/endpoints/EndSessionEndpoint.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  14
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.auth.Prompt.java">net/trajano/openidconnect/auth/Prompt.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  2
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.jaspic.internal.processors.IdTokenRequestProcessor.java">net/trajano/openidconnect/jaspic/internal/processors/IdTokenRequestProcessor.java</a>
                 </td>
                 <td>
                   0
@@ -1040,97 +1096,27 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.token.package-info.java">net/trajano/openidconnect/token/package-info.java</a>
+                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.provider.sample.ConsentServlet.java">net/trajano/openidconnect/provider/sample/ConsentServlet.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  18
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.auth.ResponseMode.java">net/trajano/openidconnect/auth/ResponseMode.java</a>
                 </td>
                 <td>
                   0
                 </td>
                 <td>
                   1
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.provider.sample.AcceptAllClientManager.java">net/trajano/openidconnect/provider/sample/AcceptAllClientManager.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  32
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.crypto.JsonWebTokenCrypto.java">net/trajano/openidconnect/crypto/JsonWebTokenCrypto.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  5
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.jaspic.internal.Log.java">net/trajano/openidconnect/jaspic/internal/Log.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  6
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.jaspic.internal.Utils.java">net/trajano/openidconnect/jaspic/internal/Utils.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  4
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.auth.AuthenticationRequest.java">net/trajano/openidconnect/auth/AuthenticationRequest.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  38
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.core.OpenIdConnectException.java">net/trajano/openidconnect/core/OpenIdConnectException.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  4
                 </td>
                 <td>
                   0
@@ -1152,21 +1138,7 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.jaspic.OpenIdConnectModuleConfigProvider.java">net/trajano/openidconnect/jaspic/OpenIdConnectModuleConfigProvider.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  1
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.jaspic.internal.processors.package-info.java">net/trajano/openidconnect/jaspic/internal/processors/package-info.java</a>
+                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.jaspic.package-info.java">net/trajano/openidconnect/jaspic/package-info.java</a>
                 </td>
                 <td>
                   0
@@ -1180,7 +1152,7 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.jaspic.internal.CipherUtil.java">net/trajano/openidconnect/jaspic/internal/CipherUtil.java</a>
+                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.jaspic.internal.NullHostnameVerifier.java">net/trajano/openidconnect/jaspic/internal/NullHostnameVerifier.java</a>
                 </td>
                 <td>
                   0
@@ -1194,13 +1166,125 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.jaspic.OpenIdConnectAuthModule.java">net/trajano/openidconnect/jaspic/OpenIdConnectAuthModule.java</a>
+                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.provider.internal.ClientCredentials.java">net/trajano/openidconnect/provider/internal/ClientCredentials.java</a>
                 </td>
                 <td>
                   0
                 </td>
                 <td>
-                  8
+                  4
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.jaspic.internal.ValidateContext.java">net/trajano/openidconnect/jaspic/internal/ValidateContext.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  32
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.provider.spi.TokenStorage.java">net/trajano/openidconnect/provider/spi/TokenStorage.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  10
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.jaspic.internal.Initializer.java">net/trajano/openidconnect/jaspic/internal/Initializer.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  3
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.provider.spi.ClientManager.java">net/trajano/openidconnect/provider/spi/ClientManager.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  4
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.provider.internal.CacheConstants.java">net/trajano/openidconnect/provider/internal/CacheConstants.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  3
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.provider.internal.ProviderV1.java">net/trajano/openidconnect/provider/internal/ProviderV1.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  1
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.provider.internal.ProviderWellKnown.java">net/trajano/openidconnect/provider/internal/ProviderWellKnown.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  1
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.jaspic.internal.processors.SecurityAssertionFailureRequestProcessor.java">net/trajano/openidconnect/jaspic/internal/processors/SecurityAssertionFailureRequestProcessor.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
                 </td>
                 <td>
                   0
@@ -1214,7 +1298,7 @@ under the License.
                   0
                 </td>
                 <td>
-                  15
+                  16
                 </td>
                 <td>
                   0
@@ -1222,7 +1306,105 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.jaspic.internal.NullHostnameVerifier.java">net/trajano/openidconnect/jaspic/internal/NullHostnameVerifier.java</a>
+                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.rs.AuthenticationRequestUriProvider.java">net/trajano/openidconnect/rs/AuthenticationRequestUriProvider.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  53
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#META-INF.Messages.properties">META-INF/Messages.properties</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.provider.endpoints.package-info.java">net/trajano/openidconnect/provider/endpoints/package-info.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  1
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.internal.CharSets.java">net/trajano/openidconnect/internal/CharSets.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  4
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.provider.spi.KeyProvider.java">net/trajano/openidconnect/provider/spi/KeyProvider.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  3
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.provider.sample.AcceptAllClientManager.java">net/trajano/openidconnect/provider/sample/AcceptAllClientManager.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  32
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.core.TokenEndPointAuthMethod.java">net/trajano/openidconnect/core/TokenEndPointAuthMethod.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  5
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.core.ErrorCode.java">net/trajano/openidconnect/core/ErrorCode.java</a>
                 </td>
                 <td>
                   0
@@ -1250,7 +1432,21 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.provider.ejb.DefaultKeyProvider.java">net/trajano/openidconnect/provider/ejb/DefaultKeyProvider.java</a>
+                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.jaspic.internal.Log.java">net/trajano/openidconnect/jaspic/internal/Log.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  6
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.provider.spi.Consent.java">net/trajano/openidconnect/provider/spi/Consent.java</a>
                 </td>
                 <td>
                   0
@@ -1264,41 +1460,13 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.token.TokenRequestParam.java">net/trajano/openidconnect/token/TokenRequestParam.java</a>
+                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.provider.spi.UserinfoProvider.java">net/trajano/openidconnect/provider/spi/UserinfoProvider.java</a>
                 </td>
                 <td>
                   0
                 </td>
                 <td>
-                  1
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.provider.spi.TokenProvider.java">net/trajano/openidconnect/provider/spi/TokenProvider.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  9
-                </td>
-                <td>
-                  1
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.provider.ejb.DefaultAuthenticationResponseProvider.java">net/trajano/openidconnect/provider/ejb/DefaultAuthenticationResponseProvider.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  42
+                  3
                 </td>
                 <td>
                   0
@@ -1320,7 +1488,63 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.core.package-info.java">net/trajano/openidconnect/core/package-info.java</a>
+                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.jaspic.OpenIdConnectAuthModule.java">net/trajano/openidconnect/jaspic/OpenIdConnectAuthModule.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  8
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.rs.JsonWebTokenProvider.java">net/trajano/openidconnect/rs/JsonWebTokenProvider.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  28
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.provider.ejb.DefaultAuthenticationResponseProvider.java">net/trajano/openidconnect/provider/ejb/DefaultAuthenticationResponseProvider.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  43
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.crypto.JsonWebKey.java">net/trajano/openidconnect/crypto/JsonWebKey.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  5
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.jaspic.internal.NullX509TrustManager.java">net/trajano/openidconnect/jaspic/internal/NullX509TrustManager.java</a>
                 </td>
                 <td>
                   0
@@ -1348,245 +1572,7 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.provider.spi.KeyProvider.java">net/trajano/openidconnect/provider/spi/KeyProvider.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  3
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.internal.JcaJsonWebTokenCrypto.java">net/trajano/openidconnect/internal/JcaJsonWebTokenCrypto.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  61
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.internal.CharSets.java">net/trajano/openidconnect/internal/CharSets.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  4
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.token.IdToken.java">net/trajano/openidconnect/token/IdToken.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  2
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.jaspic.internal.processors.UserInfoRequestProcessor.java">net/trajano/openidconnect/jaspic/internal/processors/UserInfoRequestProcessor.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  1
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.core.RedirectedOpenIdProviderException.java">net/trajano/openidconnect/core/RedirectedOpenIdProviderException.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  17
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.provider.sample.package-info.java">net/trajano/openidconnect/provider/sample/package-info.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.auth.AuthenticationResponse.java">net/trajano/openidconnect/auth/AuthenticationResponse.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  15
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
                   <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.auth.Display.java">net/trajano/openidconnect/auth/Display.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  2
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.token.IdTokenResponse.java">net/trajano/openidconnect/token/IdTokenResponse.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  4
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.core.OpenIdConnectKey.java">net/trajano/openidconnect/core/OpenIdConnectKey.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  8
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.provider.spi.Authenticator.java">net/trajano/openidconnect/provider/spi/Authenticator.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  12
-                </td>
-                <td>
-                  3
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.core.Scope.java">net/trajano/openidconnect/core/Scope.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.provider.ejb.DefaultTokenProvider.java">net/trajano/openidconnect/provider/ejb/DefaultTokenProvider.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  11
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.core.ErrorCode.java">net/trajano/openidconnect/core/ErrorCode.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.crypto.JsonWebTokenProcessor.java">net/trajano/openidconnect/crypto/JsonWebTokenProcessor.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  23
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.jaspic.internal.processors.LogoutGotoRequestProcessor.java">net/trajano/openidconnect/jaspic/internal/processors/LogoutGotoRequestProcessor.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  1
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.jaspic.internal.ValidateRequestProcessors.java">net/trajano/openidconnect/jaspic/internal/ValidateRequestProcessors.java</a>
                 </td>
                 <td>
                   0
@@ -1614,7 +1600,77 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.jaspic.internal.NullX509TrustManager.java">net/trajano/openidconnect/jaspic/internal/NullX509TrustManager.java</a>
+                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.token.IdToken.java">net/trajano/openidconnect/token/IdToken.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  6
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.token.TokenResponse.java">net/trajano/openidconnect/token/TokenResponse.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  19
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.provider.endpoints.UserinfoEndpoint.java">net/trajano/openidconnect/provider/endpoints/UserinfoEndpoint.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  15
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.core.OpenIdProviderConfiguration.java">net/trajano/openidconnect/core/OpenIdProviderConfiguration.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  19
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.internal.Log.java">net/trajano/openidconnect/internal/Log.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  5
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.jaspic.internal.processors.SecurityAssertionPassedRequestProcessor.java">net/trajano/openidconnect/jaspic/internal/processors/SecurityAssertionPassedRequestProcessor.java</a>
                 </td>
                 <td>
                   0
@@ -1628,27 +1684,13 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.provider.spi.AuthenticationResponseProvider.java">net/trajano/openidconnect/provider/spi/AuthenticationResponseProvider.java</a>
+                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.internal.Util.java">net/trajano/openidconnect/internal/Util.java</a>
                 </td>
                 <td>
                   0
                 </td>
                 <td>
-                  8
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.provider.internal.AuthorizationUtil.java">net/trajano/openidconnect/provider/internal/AuthorizationUtil.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  8
+                  32
                 </td>
                 <td>
                   0
@@ -1656,27 +1698,13 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.rs.JsonWebKeySetProvider.java">net/trajano/openidconnect/rs/JsonWebKeySetProvider.java</a>
+                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.crypto.OctWebKey.java">net/trajano/openidconnect/crypto/OctWebKey.java</a>
                 </td>
                 <td>
                   0
                 </td>
                 <td>
-                  2
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="http://site.trajano.net/trajano/openid-connect//checkstyle.html#net.trajano.openidconnect.provider.internal.ClientCredentials.java">net/trajano/openidconnect/provider/internal/ClientCredentials.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  4
+                  15
                 </td>
                 <td>
                   0

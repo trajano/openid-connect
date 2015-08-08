@@ -61,7 +61,7 @@
 <a class="jxr_linenumber" name="L53" href="#L53">53</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">boolean</strong> isNullOrEmpty(<strong class="jxr_keyword">final</strong> String s) {
 <a class="jxr_linenumber" name="L54" href="#L54">54</a>  
 <a class="jxr_linenumber" name="L55" href="#L55">55</a>          <strong class="jxr_keyword">return</strong> s == <strong class="jxr_keyword">null</strong> || s.trim()
-<a class="jxr_linenumber" name="L56" href="#L56">56</a>                  .length() == 0;
+<a class="jxr_linenumber" name="L56" href="#L56">56</a>              .length() == 0;
 <a class="jxr_linenumber" name="L57" href="#L57">57</a>      }
 <a class="jxr_linenumber" name="L58" href="#L58">58</a>  
 <a class="jxr_linenumber" name="L59" href="#L59">59</a>      <em class="jxr_javadoccomment">/**</em>
@@ -86,9 +86,9 @@
 <a class="jxr_linenumber" name="L78" href="#L78">78</a>  <em class="jxr_javadoccomment">     * @throws GeneralSecurityException</em>
 <a class="jxr_linenumber" name="L79" href="#L79">79</a>  <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="L80" href="#L80">80</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">void</strong> validateIdToken(<strong class="jxr_keyword">final</strong> String clientId,
-<a class="jxr_linenumber" name="L81" href="#L81">81</a>              <strong class="jxr_keyword">final</strong> JsonObject idTokenJson,
-<a class="jxr_linenumber" name="L82" href="#L82">82</a>              <strong class="jxr_keyword">final</strong> String nonce,
-<a class="jxr_linenumber" name="L83" href="#L83">83</a>              String accessToken) <strong class="jxr_keyword">throws</strong> GeneralSecurityException {
+<a class="jxr_linenumber" name="L81" href="#L81">81</a>          <strong class="jxr_keyword">final</strong> JsonObject idTokenJson,
+<a class="jxr_linenumber" name="L82" href="#L82">82</a>          <strong class="jxr_keyword">final</strong> String nonce,
+<a class="jxr_linenumber" name="L83" href="#L83">83</a>          <strong class="jxr_keyword">final</strong> String accessToken) <strong class="jxr_keyword">throws</strong> GeneralSecurityException {
 <a class="jxr_linenumber" name="L84" href="#L84">84</a>  
 <a class="jxr_linenumber" name="L85" href="#L85">85</a>          <em class="jxr_comment">// TODO handle multiple audiences</em>
 <a class="jxr_linenumber" name="L86" href="#L86">86</a>          <strong class="jxr_keyword">if</strong> (!clientId.equals(idTokenJson.getString(<span class="jxr_string">"aud"</span>))) {
@@ -110,7 +110,7 @@
 <a class="jxr_linenumber" name="L102" href="#L102">102</a>             <strong class="jxr_keyword">final</strong> MessageDigest digest = MessageDigest.getInstance(<span class="jxr_string">"SHA-256"</span>);
 <a class="jxr_linenumber" name="L103" href="#L103">103</a>             <strong class="jxr_keyword">final</strong> byte[] digestedBytes = digest.digest(accessToken.getBytes());
 <a class="jxr_linenumber" name="L104" href="#L104">104</a>             <strong class="jxr_keyword">if</strong> (!Encoding.base64urlEncode(digestedBytes, 0, 128 / 8)
-<a class="jxr_linenumber" name="L105" href="#L105">105</a>                     .equals(idTokenJson.getString(<span class="jxr_string">"at_hash"</span>))) {
+<a class="jxr_linenumber" name="L105" href="#L105">105</a>                 .equals(idTokenJson.getString(<span class="jxr_string">"at_hash"</span>))) {
 <a class="jxr_linenumber" name="L106" href="#L106">106</a>                 <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> GeneralSecurityException(<span class="jxr_string">"access token hash mismatch"</span>);
 <a class="jxr_linenumber" name="L107" href="#L107">107</a>             }
 <a class="jxr_linenumber" name="L108" href="#L108">108</a>         }
