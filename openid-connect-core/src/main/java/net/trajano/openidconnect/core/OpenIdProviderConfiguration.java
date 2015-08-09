@@ -9,6 +9,7 @@ import java.util.Locale;
 import java.util.Set;
 
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlEnumValue;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import net.trajano.openidconnect.auth.Display;
@@ -269,9 +270,14 @@ public class OpenIdProviderConfiguration {
     @XmlElement(name = "service_documentation")
     private URI serviceDocumentation;
 
+    /**
+     * Subject types supported uses a reserved keyword <code>public</code> which
+     * causes issues with rendering on application servers that do not support
+     * JSON binding with JAXB annotations. So {@link String} is used.
+     */
     @XmlElement(name = "subject_types_supported",
         required = true)
-    private Set<SubjectIdentifierType> subjectTypesSupported;
+    private Set<String> subjectTypesSupported;
 
     /**
      * URL of the OP's OAuth 2.0 Token Endpoint [OpenID.Core]. This is REQUIRED
@@ -428,7 +434,7 @@ public class OpenIdProviderConfiguration {
         return serviceDocumentation;
     }
 
-    public Set<SubjectIdentifierType> getSubjectTypesSupported() {
+    public Set<String> getSubjectTypesSupported() {
 
         return subjectTypesSupported;
     }
@@ -653,7 +659,15 @@ public class OpenIdProviderConfiguration {
 
     public void setSubjectTypesSupported(final SubjectIdentifierType... subjectTypesSupported) {
 
-        this.subjectTypesSupported = new HashSet<>(Arrays.asList(subjectTypesSupported));
+        this.subjectTypesSupported = new HashSet<>(subjectTypesSupported.length);
+        for (final SubjectIdentifierType subjectType : subjectTypesSupported) {
+            try {
+                this.subjectTypesSupported.add(subjectType.getClass().getField(((Enum<SubjectIdentifierType>) subjectType).name()).getAnnotation(XmlEnumValue.class).value());
+            } catch (NoSuchFieldException
+                | SecurityException e) {
+                throw new IllegalArgumentException(e);
+            }
+        }
     }
 
     public void setTokenEndpoint(final URI tokenEndpoint) {
