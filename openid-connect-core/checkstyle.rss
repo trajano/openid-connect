@@ -19,9 +19,9 @@ under the License.
 -->
 <rss version="0.91">
   <channel>
-    <title>openid-connect-core - Checkstyle report</title>
+    <title>OpenID Connect Core - Checkstyle report</title>
     <link>http://site.trajano.net/trajano/openid-connect/openid-connect-core/</link>
-    <description>openid-connect-core - Checkstyle report</description>
+    <description>OpenID Connect Core - Checkstyle report</description>
     <language>en-us</language>
     <copyright>&#169;2012 - 2015 Trajano</copyright>
     <item>
