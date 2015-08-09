@@ -7,6 +7,8 @@
         <version>1.0.2-SNAPSHOT</version>
     </parent>
     <artifactId>openid-connect-provider</artifactId>
+    <name>OpenID Connect Provider</name>
+    <description>This is a web fragment that provides the REST API used by OpenID Connect protocol.</description>
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>

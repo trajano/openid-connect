@@ -8,6 +8,7 @@
     </parent>
     <artifactId>openid-connect-provider-sample</artifactId>
     <packaging>war</packaging>
+    <name>OpenID Connect Provider Sample</name>
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
