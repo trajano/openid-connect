@@ -3,7 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>OpenID Connect &#x2013; Surefire Report</title>
+    <title>OpenID Connect &#x2013; OpenID Connect</title>
     <style type="text/css" media="all">
       @import url("./css/maven-base.css");
       @import url("./css/maven-theme.css");
@@ -64,43 +64,40 @@
 	  <div id="content" class="site-content" role="main">
 	    <article class="page type-page status-publish hentry">
 	      <div class="entry-content">
-                <script type="text/javascript">
-//<![CDATA[
-function toggleDisplay(elementId) {
- var elm = document.getElementById(elementId + 'error');
- if (elm && typeof elm.style != "undefined") {
- if (elm.style.display == "none") {
- elm.style.display = "";
- document.getElementById(elementId + 'off').style.display = "none";
- document.getElementById(elementId + 'on').style.display = "inline";
- } else if (elm.style.display == "") { elm.style.display = "none";
- document.getElementById(elementId + 'off').style.display = "inline";
- document.getElementById(elementId + 'on').style.display = "none";
- } 
- } 
- }
-//]]>
-</script>
+                <h1>OpenID Connect</h1>
+<p>This is an implementation of the OpenID Connect implementation using Java EE core technologies such as Servlets and JASPIC. This was extracted from the <a class="externalLink" href="http://site.trajano.net/server-auth-modules">server-auth-modules</a> project in order to streamline the code base for client and server side components.</p>
+<p>It has the following components:</p>
+
+<ul>
+  
+<li>
+<p>openid-connect-core : this contains all the common elements for both client  and server. The naming of <tt>core</tt> was intentional as this provides all the  OpenID Connect core terms, objects, messages as per the <a class="externalLink" href="http://openid.net/connect/">OpenID Connect specification</a>.</p></li>
+  
+<li>
+<p>openid-connect-jaspic-module : this is an implementation of an OpenID Connect  client as a JASPIC ServerAuthModule. This provides a standards based  authentication implementation which does not include any external dependencies.</p></li>
+  
+<li>
+<p>openid-connect-provider : this provides the REST API implementation and  Java interfaces that are necessary to set up an OpenID Provider. It is a  JAR file that is intended to be included in a WAR project that would be  responsible for exposing the API using the <tt>web.xml</tt> and <tt>Application</tt></p></li>
+  
+<li>
+<p>openid-connect-provider-sample: this is a sample OpenID Provider as a  WAR file used to perform testing.</p></li>
+</ul>
 <div class="section">
-<h2><a name="Surefire_Report"></a>Surefire Report</h2></div>
-<div class="section">
-<h2><a name="Summary"></a>Summary</h2><a name="Summary"></a><br />
-<table border="1" class="bodyTable">
-<tr class="a">
-<th>Tests</th>
-<th>Errors </th>
-<th>Failures</th>
-<th>Skipped</th>
-<th>Success Rate</th>
-<th>Time</th></tr>
-<tr class="b">
-<td>0</td>
-<td>0</td>
-<td>0</td>
-<td>0</td>
-<td>0%</td>
-<td>0</td></tr></table><br />
-<p>Note: failures are anticipated and checked for with assertions while errors are unanticipated.</p><br /></div>
+<h2><a name="Specifications_Implemented"></a>Specifications Implemented</h2>
+<p><a class="externalLink" href="https://openid.net/developers/specs/">OpenID Specifications</a> that have been implemented are:</p>
+
+<ul>
+  
+<li><a class="externalLink" href="http://openid.net/specs/openid-connect-core-1_0.html">OpenID Connect Core</a></li>
+  
+<li><a class="externalLink" href="http://openid.net/specs/openid-connect-discovery-1_0.html">OpenID Connect Discovery</a> only the <tt>.well-known/openid-configuration</tt></li>
+  
+<li><a class="externalLink" href="http://openid.net/specs/oauth-v2-multiple-response-types-1_0.html">OAuth 2.0 Multiple Response Type Encoding Practices</a></li>
+  
+<li><a class="externalLink" href="http://openid.net/specs/openid-connect-logout-1_0.html">OpenID Connect HTTP Based Logout</a></li>
+  
+<li><a class="externalLink" href="http://openid.net/specs/oauth-v2-form-post-response-mode-1_0.html">OAuth 2.0 Form Post Response Mode</a></li>
+</ul></div>
 	      </div>
 	    </article>
 	  </div>
@@ -122,8 +119,8 @@ function toggleDisplay(elementId) {
                  <h1 class="widget-title">Overview</h1>
                   <ul>
                       <li class="none">
-                          <a href="index.html" title="About">About</a>
-            </li>
+            <strong>About</strong>
+          </li>
                       <li class="none">
                           <a href="scope.html" title="Scope">Scope</a>
             </li>
@@ -138,32 +135,9 @@ function toggleDisplay(elementId) {
                                                                                                                                                                                                                                                                                                                   <li class="collapsed">
                           <a href="project-info.html" title="Project Information">Project Information</a>
                   </li>
-                                                                                                                                                                                              <li class="expanded">
+                                                                                                                                                                                    <li class="collapsed">
                           <a href="project-reports.html" title="Project Reports">Project Reports</a>
-                    <ul>
-                          <li class="none">
-                          <a href="linkcheck.html" title="Linkcheck">Linkcheck</a>
-            </li>
-                          <li class="none">
-                          <a href="dependency-updates-report.html" title="Dependency Updates Report">Dependency Updates Report</a>
-            </li>
-                          <li class="none">
-                          <a href="plugin-updates-report.html" title="Plugin Updates Report">Plugin Updates Report</a>
-            </li>
-                          <li class="none">
-                          <a href="checkstyle-aggregate.html" title="Checkstyle">Checkstyle</a>
-            </li>
-                          <li class="none">
-            <strong>Surefire Report</strong>
-          </li>
-                          <li class="none">
-                          <a href="xref/index.html" title="Source Xref">Source Xref</a>
-            </li>
-                          <li class="none">
-                          <a href="xref-test/index.html" title="Test Source Xref">Test Source Xref</a>
-            </li>
-              </ul>
-        </li>
+                  </li>
           </ul>
         </aside>
           </div>
