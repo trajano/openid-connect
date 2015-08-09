@@ -46,20 +46,6 @@ under the License.
           <tbody>
                           <tr>
                 <td>
-                  <a href="http://site.trajano.net/trajano/openid-connect/openid-connect-jaspic-sample//checkstyle.html#net.trajano.openidconnect.sample.package-info.java">net/trajano/openidconnect/sample/package-info.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
                   <a href="http://site.trajano.net/trajano/openid-connect/openid-connect-jaspic-sample//checkstyle.html#net.trajano.openidconnect.sample.ConfigProvider.java">net/trajano/openidconnect/sample/ConfigProvider.java</a>
                 </td>
                 <td>
@@ -67,6 +53,20 @@ under the License.
                 </td>
                 <td>
                   2
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://site.trajano.net/trajano/openid-connect/openid-connect-jaspic-sample//checkstyle.html#net.trajano.openidconnect.sample.package-info.java">net/trajano/openidconnect/sample/package-info.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
                 </td>
                 <td>
                   0
