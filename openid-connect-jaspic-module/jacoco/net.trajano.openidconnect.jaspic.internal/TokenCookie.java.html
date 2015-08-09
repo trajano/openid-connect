@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>TokenCookie.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">openid-connect-jaspic-module</a> &gt; <a href="index.source.html" class="el_package">net.trajano.openidconnect.jaspic.internal</a> &gt; <span class="el_source">TokenCookie.java</span></div><h1>TokenCookie.java</h1><pre class="source lang-java linenums">package net.trajano.openidconnect.jaspic.internal;
+<?xml version="1.0" encoding="utf-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>TokenCookie.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">OpenID Connect JASPIC Module</a> &gt; <a href="index.source.html" class="el_package">net.trajano.openidconnect.jaspic.internal</a> &gt; <span class="el_source">TokenCookie.java</span></div><h1>TokenCookie.java</h1><pre class="source lang-java linenums">package net.trajano.openidconnect.jaspic.internal;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -80,16 +80,16 @@ public class TokenCookie {
 
         try {
 <span class="fc" id="L82">            final JsonObject tokens = Json.createReader(CipherUtil.buildDecryptStream(new ByteArrayInputStream(Encoding.base64urlDecode(cookieValues[0])), secret))</span>
-<span class="fc" id="L83">                    .readObject();</span>
+                    .readObject();
 <span class="fc" id="L84">            accessToken = ((JsonString) tokens.get(ACCESS_TOKEN_KEY)).getString();</span>
 <span class="fc" id="L85">            refreshToken = ((JsonString) tokens.get(REFRESH_TOKEN_KEY)).getString();</span>
 <span class="fc" id="L86">            idTokenJwt = ((JsonString) tokens.get(&quot;id_token_hint&quot;)).getString();</span>
 <span class="fc" id="L87">            idToken = new JsonWebTokenProcessor(idTokenJwt).signatureCheck(false).getJsonPayload();</span>
-<span class="fc bfc" id="L88" title="All 2 branches covered.">            if (cookieValues.length == 1) {</span>
+<span class="pc bpc" id="L88" title="1 of 2 branches missed.">            if (cookieValues.length == 1) {</span>
 <span class="fc" id="L89">                userInfo = null;</span>
             } else {
-<span class="fc" id="L91">                userInfo = Json.createReader(CipherUtil.buildDecryptStream(new ByteArrayInputStream(Encoding.base64urlDecode(cookieValues[1])), secret))</span>
-<span class="fc" id="L92">                        .readObject();</span>
+<span class="nc" id="L91">                userInfo = Json.createReader(CipherUtil.buildDecryptStream(new ByteArrayInputStream(Encoding.base64urlDecode(cookieValues[1])), secret))</span>
+                        .readObject();
             }
 <span class="nc" id="L94">        } catch (final IOException e) {</span>
 <span class="nc" id="L95">            throw new GeneralSecurityException(e);</span>
@@ -107,7 +107,7 @@ public class TokenCookie {
 <span class="fc" id="L107">    public TokenCookie(final String accessToken, final String refreshToken, final JsonObject idToken, final String idTokenJwt, final JsonObject userInfo) {</span>
 
 <span class="fc" id="L109">        this.accessToken = accessToken;</span>
-<span class="fc bfc" id="L110" title="All 2 branches covered.">        this.refreshToken = refreshToken != null ? refreshToken : &quot;&quot;;</span>
+<span class="pc bpc" id="L110" title="1 of 2 branches missed.">        this.refreshToken = refreshToken != null ? refreshToken : &quot;&quot;;</span>
 <span class="fc" id="L111">        this.idToken = idToken;</span>
 <span class="fc" id="L112">        this.idTokenJwt = idTokenJwt;</span>
 <span class="fc" id="L113">        this.userInfo = userInfo;</span>
@@ -128,7 +128,7 @@ public class TokenCookie {
 
         try {
 <span class="fc" id="L130">            return Encoding.base64urlEncode(CipherUtil.encrypt(jsonObject.toString()</span>
-<span class="fc" id="L131">                    .getBytes(&quot;UTF-8&quot;), secret));</span>
+                    .getBytes(&quot;UTF-8&quot;), secret));
 <span class="nc" id="L132">        } catch (final IOException e) {</span>
 <span class="nc" id="L133">            throw new GeneralSecurityException(e);</span>
         }
@@ -161,7 +161,7 @@ public class TokenCookie {
 
     public JsonObject getUserInfo() {
 
-<span class="fc" id="L164">        return userInfo;</span>
+<span class="nc" id="L164">        return userInfo;</span>
     }
 
     public boolean isExpired() {
@@ -182,15 +182,15 @@ public class TokenCookie {
     public String toCookieValue(final SecretKey secret) throws GeneralSecurityException {
 
 <span class="fc" id="L184">        final JsonObject tokens = Json.createObjectBuilder()</span>
-<span class="fc" id="L185">                .add(ACCESS_TOKEN_KEY, accessToken)</span>
-<span class="fc" id="L186">                .add(REFRESH_TOKEN_KEY, refreshToken)</span>
-<span class="fc" id="L187">                .add(&quot;id_token_hint&quot;, idTokenJwt)</span>
-<span class="fc" id="L188">                .build();</span>
+                .add(ACCESS_TOKEN_KEY, accessToken)
+                .add(REFRESH_TOKEN_KEY, refreshToken)
+                .add(&quot;id_token_hint&quot;, idTokenJwt)
+                .build();
 
 <span class="fc" id="L190">        final StringBuilder b = new StringBuilder(encode(tokens, secret));</span>
-<span class="fc bfc" id="L191" title="All 2 branches covered.">        if (userInfo != null) {</span>
-<span class="fc" id="L192">            b.append('.');</span>
-<span class="fc" id="L193">            b.append(encode(userInfo, secret));</span>
+<span class="pc bpc" id="L191" title="1 of 2 branches missed.">        if (userInfo != null) {</span>
+<span class="nc" id="L192">            b.append('.');</span>
+<span class="nc" id="L193">            b.append(encode(userInfo, secret));</span>
         }
 <span class="fc" id="L195">        return b.toString();</span>
     }

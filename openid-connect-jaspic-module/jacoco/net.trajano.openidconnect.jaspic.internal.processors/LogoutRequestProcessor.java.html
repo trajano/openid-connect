@@ -1,10 +1,11 @@
-<?xml version="1.0" encoding="utf-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>LogoutRequestProcessor.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">openid-connect-jaspic-module</a> &gt; <a href="index.source.html" class="el_package">net.trajano.openidconnect.jaspic.internal.processors</a> &gt; <span class="el_source">LogoutRequestProcessor.java</span></div><h1>LogoutRequestProcessor.java</h1><pre class="source lang-java linenums">package net.trajano.openidconnect.jaspic.internal.processors;
+<?xml version="1.0" encoding="utf-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>LogoutRequestProcessor.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">OpenID Connect JASPIC Module</a> &gt; <a href="index.source.html" class="el_package">net.trajano.openidconnect.jaspic.internal.processors</a> &gt; <span class="el_source">LogoutRequestProcessor.java</span></div><h1>LogoutRequestProcessor.java</h1><pre class="source lang-java linenums">package net.trajano.openidconnect.jaspic.internal.processors;
 
 import java.io.IOException;
 import java.net.URI;
 import java.security.GeneralSecurityException;
 
 import javax.security.auth.message.AuthStatus;
+import javax.servlet.ServletException;
 import javax.ws.rs.core.UriBuilder;
 
 import net.trajano.openidconnect.core.OpenIdProviderConfiguration;
@@ -14,12 +15,13 @@ import net.trajano.openidconnect.jaspic.internal.Log;
 import net.trajano.openidconnect.jaspic.internal.ValidateContext;
 import net.trajano.openidconnect.jaspic.internal.ValidateRequestProcessor;
 
-<span class="fc" id="L17">public class LogoutRequestProcessor implements ValidateRequestProcessor {</span>
+<span class="fc" id="L18">public class LogoutRequestProcessor implements</span>
+    ValidateRequestProcessor {
 
     /**
      * Encoded value for the context root state.
      */
-<span class="fc" id="L22">    private static final String CONTEXT_ROOT_STATE = Encoding.base64urlEncode(&quot;/&quot;);</span>
+<span class="fc" id="L24">    private static final String CONTEXT_ROOT_STATE = Encoding.base64urlEncode(&quot;/&quot;);</span>
 
     /**
      * This only supports the scenario when logout goto uri is not available.
@@ -27,63 +29,71 @@ import net.trajano.openidconnect.jaspic.internal.ValidateRequestProcessor;
     @Override
     public boolean canValidateRequest(final ValidateContext context) {
 
-<span class="pc bpc" id="L30" title="1 of 2 branches missed.">        if (context.hasOption(OpenIdConnectAuthModule.LOGOUT_GOTO_URI_KEY)) {</span>
-<span class="nc" id="L31">            return false;</span>
+<span class="pc bpc" id="L32" title="1 of 2 branches missed.">        if (context.hasOption(OpenIdConnectAuthModule.LOGOUT_GOTO_URI_KEY)) {</span>
+<span class="nc" id="L33">            return false;</span>
         }
 
-<span class="pc bpc" id="L34" title="3 of 6 branches missed.">        return context.isSecure() &amp;&amp; context.isGetRequest() &amp;&amp; context.isRequestUri(OpenIdConnectAuthModule.LOGOUT_URI_KEY);</span>
+<span class="pc bpc" id="L36" title="3 of 6 branches missed.">        return context.isSecure() &amp;&amp; context.isGetRequest() &amp;&amp; context.isRequestUri(OpenIdConnectAuthModule.LOGOUT_URI_KEY);</span>
     }
 
     @Override
     public AuthStatus validateRequest(final ValidateContext context) throws IOException,
-            GeneralSecurityException {
+        GeneralSecurityException {
 
-<span class="nc" id="L41">        String idTokenHint = context.getTokenCookie()</span>
-<span class="nc" id="L42">                .getIdTokenJwt();</span>
-<span class="nc" id="L43">        context.deleteAuthCookies();</span>
-<span class="nc" id="L44">        final OpenIdProviderConfiguration oidProviderConfig = context.getOpenIDProviderConfig();</span>
+<span class="nc" id="L43">        final String idTokenHint = context.getTokenCookie()</span>
+<span class="nc" id="L44">            .getIdTokenJwt();</span>
+<span class="nc" id="L45">        context.deleteAuthCookies();</span>
+<span class="nc" id="L46">        final OpenIdProviderConfiguration oidProviderConfig = context.getOpenIDProviderConfig();</span>
 
-<span class="nc" id="L46">        String contextPath = UriBuilder.fromUri(context.getReq()</span>
-<span class="nc" id="L47">                .getRequestURL()</span>
-<span class="nc" id="L48">                .toString())</span>
-<span class="nc" id="L49">                .replacePath(context.getReq()</span>
-<span class="nc" id="L50">                        .getContextPath())</span>
-<span class="nc" id="L51">                .build()</span>
-<span class="nc" id="L52">                .toASCIIString();</span>
-<span class="nc" id="L53">        final String referrer = context.getReq()</span>
-<span class="nc" id="L54">                .getHeader(&quot;Referer&quot;);</span>
+<span class="nc" id="L48">        final String contextPath = UriBuilder.fromUri(context.getReq()</span>
+<span class="nc" id="L49">            .getRequestURL()</span>
+<span class="nc" id="L50">            .toString())</span>
+<span class="nc" id="L51">            .replacePath(context.getReq()</span>
+<span class="nc" id="L52">                .getContextPath())</span>
+<span class="nc" id="L53">            .build()</span>
+<span class="nc" id="L54">            .toASCIIString();</span>
+<span class="nc" id="L55">        final String referrer = context.getReq()</span>
+<span class="nc" id="L56">            .getHeader(&quot;Referer&quot;);</span>
         final String state;
-<span class="nc bnc" id="L56" title="All 2 branches missed.">        if (referrer.startsWith(contextPath)) {</span>
+<span class="nc bnc" id="L58" title="All 2 branches missed.">        if (referrer.startsWith(contextPath)) {</span>
 
-<span class="nc" id="L58">            final StringBuilder stateBuilder = new StringBuilder(referrer.substring(contextPath.length()));</span>
-<span class="nc" id="L59">            if (context.getReq()</span>
-<span class="nc bnc" id="L60" title="All 2 branches missed.">                    .getQueryString() != null) {</span>
-<span class="nc" id="L61">                stateBuilder.append('?');</span>
-<span class="nc" id="L62">                stateBuilder.append(context.getReq()</span>
-<span class="nc" id="L63">                        .getQueryString());</span>
+<span class="nc" id="L60">            final StringBuilder stateBuilder = new StringBuilder(referrer.substring(contextPath.length()));</span>
+<span class="nc bnc" id="L61" title="All 2 branches missed.">            if (context.getReq()</span>
+<span class="nc" id="L62">                .getQueryString() != null) {</span>
+<span class="nc" id="L63">                stateBuilder.append('?');</span>
+<span class="nc" id="L64">                stateBuilder.append(context.getReq()</span>
+<span class="nc" id="L65">                    .getQueryString());</span>
             }
-<span class="nc" id="L65">            state = Encoding.base64urlEncode(stateBuilder.toString());</span>
-<span class="nc" id="L66">        } else {</span>
-<span class="nc" id="L67">            Log.fine(&quot;Referrer &quot; + referrer + &quot;does not start with context path &quot; + contextPath + &quot; using root context&quot;);</span>
-<span class="nc" id="L68">            state = CONTEXT_ROOT_STATE;</span>
+<span class="nc" id="L67">            state = Encoding.base64urlEncode(stateBuilder.toString());</span>
+<span class="nc" id="L68">        } else {</span>
+<span class="nc" id="L69">            Log.fine(&quot;Referrer &quot; + referrer + &quot;does not start with context path &quot; + contextPath + &quot; using root context&quot;);</span>
+<span class="nc" id="L70">            state = CONTEXT_ROOT_STATE;</span>
         }
 
-<span class="nc" id="L71">        final URI redirectUri = context.getUri(&quot;logout_redirection_endpoint&quot;);</span>
+<span class="nc" id="L73">        final URI redirectUri = context.getUri(&quot;logout_redirection_endpoint&quot;);</span>
 
-<span class="nc bnc" id="L73" title="All 2 branches missed.">        if (oidProviderConfig.getEndSessionEndpoint() != null) {</span>
-<span class="nc" id="L74">            UriBuilder b = UriBuilder.fromUri(oidProviderConfig.getEndSessionEndpoint())</span>
-<span class="nc" id="L75">                    .queryParam(&quot;post_logout_redirect_uri&quot;, redirectUri)</span>
-<span class="nc" id="L76">                    .queryParam(&quot;id_token_hint&quot;, idTokenHint)</span>
-<span class="nc" id="L77">                    .queryParam(&quot;state&quot;, state);</span>
-<span class="nc" id="L78">            context.getResp()</span>
-<span class="nc" id="L79">                    .sendRedirect(b.build()</span>
-<span class="nc" id="L80">                            .toASCIIString());</span>
-<span class="nc" id="L81">        } else {</span>
-<span class="nc" id="L82">            context.getResp()</span>
-<span class="nc" id="L83">                    .sendRedirect(context.getReq()</span>
-<span class="nc" id="L84">                            .getServletContext() + &quot;/&quot;);</span>
+<span class="nc bnc" id="L75" title="All 2 branches missed.">        if (oidProviderConfig.getEndSessionEndpoint() != null) {</span>
+<span class="nc" id="L76">            final UriBuilder b = UriBuilder.fromUri(oidProviderConfig.getEndSessionEndpoint())</span>
+<span class="nc" id="L77">                .queryParam(&quot;post_logout_redirect_uri&quot;, redirectUri)</span>
+<span class="nc" id="L78">                .queryParam(&quot;id_token_hint&quot;, idTokenHint)</span>
+<span class="nc" id="L79">                .queryParam(&quot;state&quot;, state);</span>
+<span class="nc" id="L80">            context.getResp()</span>
+<span class="nc" id="L81">                .sendRedirect(b.build()</span>
+<span class="nc" id="L82">                    .toASCIIString());</span>
+<span class="nc" id="L83">        } else {</span>
+<span class="nc" id="L84">            context.getResp()</span>
+<span class="nc" id="L85">                .sendRedirect(context.getReq()</span>
+<span class="nc" id="L86">                    .getServletContext() + &quot;/&quot;);</span>
         }
-<span class="nc" id="L86">        return AuthStatus.SEND_SUCCESS;</span>
+<span class="nc bnc" id="L88" title="All 2 branches missed.">        if (context.getReq().getSession(false) != null) {</span>
+<span class="nc" id="L89">            context.getReq().getSession(false).invalidate();</span>
+        }
+        try {
+<span class="nc" id="L92">            context.getReq().logout();</span>
+<span class="nc" id="L93">        } catch (final ServletException e) {</span>
+<span class="nc" id="L94">            throw new GeneralSecurityException(e);</span>
+        }
+<span class="nc" id="L96">        return AuthStatus.SEND_CONTINUE;</span>
     }
 
 }

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>CallbackRequestProcessor.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">openid-connect-jaspic-module</a> &gt; <a href="index.source.html" class="el_package">net.trajano.openidconnect.jaspic.internal.processors</a> &gt; <span class="el_source">CallbackRequestProcessor.java</span></div><h1>CallbackRequestProcessor.java</h1><pre class="source lang-java linenums">package net.trajano.openidconnect.jaspic.internal.processors;
+<?xml version="1.0" encoding="utf-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>CallbackRequestProcessor.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">OpenID Connect JASPIC Module</a> &gt; <a href="index.source.html" class="el_package">net.trajano.openidconnect.jaspic.internal.processors</a> &gt; <span class="el_source">CallbackRequestProcessor.java</span></div><h1>CallbackRequestProcessor.java</h1><pre class="source lang-java linenums">package net.trajano.openidconnect.jaspic.internal.processors;
 
 import static net.trajano.openidconnect.core.OpenIdConnectKey.CLIENT_ID;
 import static net.trajano.openidconnect.core.OpenIdConnectKey.CLIENT_SECRET;
@@ -67,9 +67,9 @@ import net.trajano.openidconnect.token.IdTokenResponse;
     @Override
     public boolean canValidateRequest(final ValidateContext context) {
 
-<span class="pc bpc" id="L70" title="2 of 6 branches missed.">        return context.isSecure() &amp;&amp; context.isRequestUri(OpenIdConnectAuthModule.REDIRECTION_ENDPOINT_URI_KEY) &amp;&amp; !isNullOrEmpty(context.getReq()</span>
+<span class="pc bpc" id="L70" title="1 of 4 branches missed.">        return context.isSecure() &amp;&amp; context.isRequestUri(OpenIdConnectAuthModule.REDIRECTION_ENDPOINT_URI_KEY) &amp;&amp; !isNullOrEmpty(context.getReq()</span>
 <span class="pc bpc" id="L71" title="1 of 2 branches missed.">            .getParameter(CODE)) &amp;&amp; !isNullOrEmpty(context.getReq()</span>
-<span class="fc" id="L72">                .getParameter(STATE));</span>
+<span class="pc bpc" id="L72" title="1 of 2 branches missed.">                .getParameter(STATE));</span>
 
     }
 
@@ -85,38 +85,39 @@ import net.trajano.openidconnect.token.IdTokenResponse;
     private IdTokenResponse getToken(final String grantKey,
         final String grant,
         final GrantType grantType,
-        final ValidateContext context) throws IOException {
+        final ValidateContext context) throws IOException,
+            GeneralSecurityException {
 
-<span class="fc" id="L90">        final MultivaluedMap&lt;String, String&gt; requestData = new MultivaluedHashMap&lt;&gt;();</span>
-<span class="fc" id="L91">        requestData.putSingle(grantKey, grant);</span>
-<span class="fc" id="L92">        requestData.putSingle(GRANT_TYPE, grantType.name());</span>
-<span class="fc" id="L93">        requestData.putSingle(REDIRECT_URI, context.getUri(OpenIdConnectAuthModule.REDIRECTION_ENDPOINT_URI_KEY)</span>
-<span class="fc" id="L94">            .toASCIIString());</span>
+<span class="fc" id="L91">        final MultivaluedMap&lt;String, String&gt; requestData = new MultivaluedHashMap&lt;&gt;();</span>
+<span class="fc" id="L92">        requestData.putSingle(grantKey, grant);</span>
+<span class="fc" id="L93">        requestData.putSingle(GRANT_TYPE, grantType.name());</span>
+<span class="fc" id="L94">        requestData.putSingle(REDIRECT_URI, context.getUri(OpenIdConnectAuthModule.REDIRECTION_ENDPOINT_URI_KEY)</span>
+<span class="fc" id="L95">            .toASCIIString());</span>
 
         try {
-<span class="fc" id="L97">            final String authorization = &quot;Basic &quot; + Encoding.base64Encode(context.getOption(OpenIdConnectKey.CLIENT_ID) + &quot;:&quot; + context.getOption(OpenIdConnectKey.CLIENT_SECRET));</span>
-<span class="fc" id="L98">            final IdTokenResponse authorizationTokenResponse = context.target(context.getOpenIDProviderConfig()</span>
-<span class="fc" id="L99">                .getTokenEndpoint())</span>
-<span class="fc" id="L100">                .request(MediaType.APPLICATION_JSON_TYPE)</span>
-<span class="fc" id="L101">                .header(&quot;Authorization&quot;, authorization)</span>
-<span class="fc" id="L102">                .post(Entity.form(requestData), IdTokenResponse.class);</span>
-<span class="pc bpc" id="L103" title="1 of 2 branches missed.">            if (LOG.isLoggable(Level.FINEST)) {</span>
-<span class="nc" id="L104">                LOG.finest(&quot;authorization token response =  &quot; + authorizationTokenResponse);</span>
+<span class="fc" id="L98">            final String authorization = &quot;Basic &quot; + Encoding.base64Encode(context.getOption(OpenIdConnectKey.CLIENT_ID) + &quot;:&quot; + context.getOption(OpenIdConnectKey.CLIENT_SECRET));</span>
+<span class="fc" id="L99">            final JsonObject authorizationTokenResponse = context.target(context.getOpenIDProviderConfig()</span>
+<span class="fc" id="L100">                .getTokenEndpoint())</span>
+<span class="fc" id="L101">                .request(MediaType.APPLICATION_JSON_TYPE)</span>
+<span class="fc" id="L102">                .header(&quot;Authorization&quot;, authorization)</span>
+<span class="fc" id="L103">                .post(Entity.form(requestData), JsonObject.class);</span>
+<span class="pc bpc" id="L104" title="1 of 2 branches missed.">            if (LOG.isLoggable(Level.FINEST)) {</span>
+<span class="nc" id="L105">                LOG.finest(&quot;authorization token response =  &quot; + authorizationTokenResponse);</span>
             }
-<span class="fc" id="L106">            return authorizationTokenResponse;</span>
-<span class="nc" id="L107">        } catch (final BadRequestException e) {</span>
+<span class="nc" id="L107">            return new IdTokenResponse(authorizationTokenResponse);</span>
+<span class="nc" id="L108">        } catch (final BadRequestException e) {</span>
             // workaround for google that does not support BASIC authentication
             // on their endpoint.
-<span class="nc" id="L110">            requestData.putSingle(CLIENT_ID, context.getOption(OpenIdConnectKey.CLIENT_ID));</span>
-<span class="nc" id="L111">            requestData.putSingle(CLIENT_SECRET, context.getOption(OpenIdConnectKey.CLIENT_SECRET));</span>
-<span class="nc" id="L112">            final IdTokenResponse authorizationTokenResponse = context.target(context.getOpenIDProviderConfig()</span>
-<span class="nc" id="L113">                .getTokenEndpoint())</span>
-<span class="nc" id="L114">                .request(MediaType.APPLICATION_JSON_TYPE)</span>
-<span class="nc" id="L115">                .post(Entity.form(requestData), IdTokenResponse.class);</span>
-<span class="nc bnc" id="L116" title="All 2 branches missed.">            if (LOG.isLoggable(Level.FINEST)) {</span>
-<span class="nc" id="L117">                LOG.finest(&quot;authorization token response =  &quot; + authorizationTokenResponse);</span>
+<span class="nc" id="L111">            requestData.putSingle(CLIENT_ID, context.getOption(OpenIdConnectKey.CLIENT_ID));</span>
+<span class="nc" id="L112">            requestData.putSingle(CLIENT_SECRET, context.getOption(OpenIdConnectKey.CLIENT_SECRET));</span>
+<span class="nc" id="L113">            final JsonObject authorizationTokenResponse = context.target(context.getOpenIDProviderConfig()</span>
+<span class="nc" id="L114">                .getTokenEndpoint())</span>
+<span class="nc" id="L115">                .request(MediaType.APPLICATION_JSON_TYPE)</span>
+<span class="nc" id="L116">                .post(Entity.form(requestData), JsonObject.class);</span>
+<span class="nc bnc" id="L117" title="All 2 branches missed.">            if (LOG.isLoggable(Level.FINEST)) {</span>
+<span class="nc" id="L118">                LOG.finest(&quot;authorization token response =  &quot; + authorizationTokenResponse);</span>
             }
-<span class="nc" id="L119">            return authorizationTokenResponse;</span>
+<span class="nc" id="L120">            return new IdTokenResponse(authorizationTokenResponse);</span>
         }
     }
 
@@ -132,10 +133,10 @@ import net.trajano.openidconnect.token.IdTokenResponse;
      */
     private JsonWebKeySet getWebKeys(final ValidateContext context) throws GeneralSecurityException {
 
-<span class="fc" id="L135">        return context.target(context.getOpenIDProviderConfig()</span>
-<span class="fc" id="L136">            .getJwksUri())</span>
-<span class="fc" id="L137">            .request(MediaType.APPLICATION_JSON_TYPE)</span>
-<span class="fc" id="L138">            .get(JsonWebKeySet.class);</span>
+<span class="nc" id="L136">        return context.target(context.getOpenIDProviderConfig()</span>
+<span class="nc" id="L137">            .getJwksUri())</span>
+<span class="nc" id="L138">            .request(MediaType.APPLICATION_JSON_TYPE)</span>
+<span class="nc" id="L139">            .get(JsonWebKeySet.class);</span>
     }
 
     /**
@@ -149,10 +150,10 @@ import net.trajano.openidconnect.token.IdTokenResponse;
      */
     private String googleWorkaround(final String issuer) {
 
-<span class="pc bpc" id="L152" title="1 of 2 branches missed.">        if (issuer.startsWith(HTTPS_PREFIX)) {</span>
-<span class="fc" id="L153">            return issuer;</span>
+<span class="nc bnc" id="L153" title="All 2 branches missed.">        if (issuer.startsWith(HTTPS_PREFIX)) {</span>
+<span class="nc" id="L154">            return issuer;</span>
         }
-<span class="nc" id="L155">        return HTTPS_PREFIX + issuer;</span>
+<span class="nc" id="L156">        return HTTPS_PREFIX + issuer;</span>
     }
 
     /**
@@ -171,85 +172,85 @@ import net.trajano.openidconnect.token.IdTokenResponse;
         final ValidateContext context) throws GeneralSecurityException {
 
         try {
-<span class="fc" id="L174">            final String iss = googleWorkaround(jwtPayload.getString(&quot;iss&quot;));</span>
-<span class="fc" id="L175">            context.getHandler()</span>
-<span class="fc" id="L176">                .handle(new Callback[] {</span>
-<span class="fc" id="L177">                    new CallerPrincipalCallback(subject, UriBuilder.fromUri(iss)</span>
-<span class="fc" id="L178">                        .userInfo(jwtPayload.getString(&quot;sub&quot;))</span>
-<span class="fc" id="L179">                        .build()</span>
-<span class="fc" id="L180">                        .toASCIIString()),</span>
-                    new GroupPrincipalCallback(subject, new String[] {
-                        iss
+<span class="nc" id="L175">            final String iss = googleWorkaround(jwtPayload.getString(&quot;iss&quot;));</span>
+<span class="nc" id="L176">            context.getHandler()</span>
+<span class="nc" id="L177">                .handle(new Callback[] {</span>
+<span class="nc" id="L178">                    new CallerPrincipalCallback(subject, UriBuilder.fromUri(iss)</span>
+<span class="nc" id="L179">                        .userInfo(jwtPayload.getString(&quot;sub&quot;))</span>
+<span class="nc" id="L180">                        .build()</span>
+<span class="nc" id="L181">                        .toASCIIString()),</span>
+<span class="nc" id="L182">                    new GroupPrincipalCallback(subject, new String[] {</span>
+<span class="nc" id="L183">                        iss</span>
                             })
             });
-<span class="nc" id="L185">        } catch (final IOException</span>
-            | UnsupportedCallbackException e) {
+<span class="nc" id="L186">        } catch (final IOException</span>
+<span class="nc" id="L187">            | UnsupportedCallbackException e) {</span>
             // Should not happen
-<span class="nc" id="L188">            LOG.log(Level.SEVERE, &quot;updatePrincipalException&quot;, e.getMessage());</span>
-<span class="nc" id="L189">            LOG.throwing(this.getClass()</span>
-<span class="nc" id="L190">                .getName(), &quot;updateSubjectPrincipal&quot;, e);</span>
-<span class="nc" id="L191">            throw new AuthException(MessageFormat.format(Log.r(&quot;updatePrincipalException&quot;), e.getMessage()));</span>
-<span class="fc" id="L192">        }</span>
-<span class="fc" id="L193">    }</span>
+<span class="nc" id="L189">            LOG.log(Level.SEVERE, &quot;updatePrincipalException&quot;, e.getMessage());</span>
+<span class="nc" id="L190">            LOG.throwing(this.getClass()</span>
+<span class="nc" id="L191">                .getName(), &quot;updateSubjectPrincipal&quot;, e);</span>
+<span class="nc" id="L192">            throw new AuthException(MessageFormat.format(Log.r(&quot;updatePrincipalException&quot;), e.getMessage()));</span>
+        }
+<span class="nc" id="L194">    }</span>
 
     @Override
     public AuthStatus validateRequest(final ValidateContext context) throws IOException,
         GeneralSecurityException {
 
-<span class="fc" id="L199">        final OpenIdProviderConfiguration oidProviderConfig = context.getOpenIDProviderConfig();</span>
-<span class="fc" id="L200">        final IdTokenResponse token = getToken(OpenIdConnectKey.CODE, context.getReq()</span>
-<span class="fc" id="L201">            .getParameter(OpenIdConnectKey.CODE), GrantType.authorization_code, context);</span>
-<span class="fc" id="L202">        final net.trajano.openidconnect.crypto.JsonWebKeySet webKeys = getWebKeys(context);</span>
+<span class="nc" id="L200">        final OpenIdProviderConfiguration oidProviderConfig = context.getOpenIDProviderConfig();</span>
+<span class="nc" id="L201">        final IdTokenResponse token = getToken(OpenIdConnectKey.CODE, context.getReq()</span>
+<span class="nc" id="L202">            .getParameter(OpenIdConnectKey.CODE), GrantType.authorization_code, context);</span>
+<span class="nc" id="L203">        final net.trajano.openidconnect.crypto.JsonWebKeySet webKeys = getWebKeys(context);</span>
 
-<span class="fc" id="L204">        LOG.log(Level.FINEST, &quot;tokenValue&quot;, token);</span>
-<span class="fc" id="L205">        final JsonObject claimsSet = new JsonWebTokenProcessor(token.getEncodedIdToken()).jwks(webKeys)</span>
-<span class="fc" id="L206">            .getJsonPayload();</span>
+<span class="nc" id="L205">        LOG.log(Level.FINEST, &quot;tokenValue&quot;, token);</span>
+<span class="nc" id="L206">        final JsonObject claimsSet = new JsonWebTokenProcessor(token.getEncodedIdToken()).jwks(webKeys)</span>
+<span class="nc" id="L207">            .getJsonPayload();</span>
 
-<span class="fc" id="L208">        final String nonceCookie = context.getCookie(OpenIdConnectAuthModule.NET_TRAJANO_AUTH_NONCE);</span>
+<span class="nc" id="L209">        final String nonceCookie = context.getCookie(OpenIdConnectAuthModule.NET_TRAJANO_AUTH_NONCE);</span>
         final String nonce;
-<span class="pc bpc" id="L210" title="1 of 2 branches missed.">        if (nonceCookie != null) {</span>
-<span class="nc" id="L211">            nonce = new String(CipherUtil.decrypt(Encoding.base64urlDecode(nonceCookie), context.getSecret()), &quot;US-ASCII&quot;);</span>
-        } else {
-<span class="fc" id="L213">            nonce = null;</span>
+<span class="nc bnc" id="L211" title="All 2 branches missed.">        if (nonceCookie != null) {</span>
+<span class="nc" id="L212">            nonce = new String(CipherUtil.decrypt(Encoding.base64urlDecode(nonceCookie), context.getSecret()), &quot;US-ASCII&quot;);</span>
+<span class="nc" id="L213">        } else {</span>
+<span class="nc" id="L214">            nonce = null;</span>
         }
 
-<span class="fc" id="L216">        validateIdToken(context.getOption(CLIENT_ID), claimsSet, nonce, token.getAccessToken());</span>
+<span class="nc" id="L217">        validateIdToken(context.getOption(CLIENT_ID), claimsSet, nonce, token.getAccessToken());</span>
 
-<span class="fc" id="L218">        context.deleteCookie(OpenIdConnectAuthModule.NET_TRAJANO_AUTH_NONCE);</span>
+<span class="nc" id="L219">        context.deleteCookie(OpenIdConnectAuthModule.NET_TRAJANO_AUTH_NONCE);</span>
 
-<span class="fc" id="L220">        final String iss = googleWorkaround(claimsSet.getString(&quot;iss&quot;));</span>
-<span class="fc" id="L221">        final String issuer = googleWorkaround(oidProviderConfig.getIssuer());</span>
-<span class="pc bpc" id="L222" title="1 of 2 branches missed.">        if (!iss.equals(issuer)) {</span>
-<span class="nc" id="L223">            LOG.log(Level.SEVERE, &quot;issuerMismatch&quot;, new Object[] {</span>
-                iss,
-                issuer
+<span class="nc" id="L221">        final String iss = googleWorkaround(claimsSet.getString(&quot;iss&quot;));</span>
+<span class="nc" id="L222">        final String issuer = googleWorkaround(oidProviderConfig.getIssuer());</span>
+<span class="nc bnc" id="L223" title="All 2 branches missed.">        if (!iss.equals(issuer)) {</span>
+<span class="nc" id="L224">            LOG.log(Level.SEVERE, &quot;issuerMismatch&quot;, new Object[] {</span>
+<span class="nc" id="L225">                iss,</span>
+<span class="nc" id="L226">                issuer</span>
             });
-<span class="nc" id="L227">            throw new GeneralSecurityException(MessageFormat.format(Log.r(&quot;issuerMismatch&quot;), iss, issuer));</span>
+<span class="nc" id="L228">            throw new GeneralSecurityException(MessageFormat.format(Log.r(&quot;issuerMismatch&quot;), iss, issuer));</span>
         }
-<span class="fc" id="L229">        updateSubjectPrincipal(context.getClientSubject(), claimsSet, context);</span>
+<span class="nc" id="L230">        updateSubjectPrincipal(context.getClientSubject(), claimsSet, context);</span>
 
         final TokenCookie tokenCookie;
-<span class="pc bpc" id="L232" title="1 of 2 branches missed.">        if (oidProviderConfig.getUserinfoEndpoint() != null &amp;&amp; Pattern.compile(&quot;\\bprofile\\b&quot;)</span>
-<span class="fc" id="L233">            .matcher(context.getOption(OpenIdConnectKey.SCOPE))</span>
-<span class="fc bfc" id="L234" title="All 2 branches covered.">            .find()) {</span>
-<span class="fc" id="L235">            final Response userInfoResponse = context.target(oidProviderConfig.getUserinfoEndpoint())</span>
-<span class="fc" id="L236">                .request(MediaType.APPLICATION_JSON_TYPE)</span>
-<span class="fc" id="L237">                .header(&quot;Authorization&quot;, token.getTokenType() + &quot; &quot; + token.getAccessToken())</span>
-<span class="fc" id="L238">                .get();</span>
-<span class="pc bpc" id="L239" title="1 of 2 branches missed.">            if (userInfoResponse.getStatus() == 200) {</span>
-<span class="fc" id="L240">                tokenCookie = new TokenCookie(token.getAccessToken(), token.getRefreshToken(), claimsSet, token.getEncodedIdToken(), userInfoResponse.readEntity(JsonObject.class));</span>
-            } else {
-<span class="nc" id="L242">                LOG.log(Level.WARNING, &quot;unableToGetProfile&quot;);</span>
-<span class="nc" id="L243">                tokenCookie = new TokenCookie(claimsSet, token.getEncodedIdToken());</span>
+<span class="nc bnc" id="L233" title="All 2 branches missed.">        if (oidProviderConfig.getUserinfoEndpoint() != null &amp;&amp; Pattern.compile(&quot;\\bprofile\\b&quot;)</span>
+<span class="nc" id="L234">            .matcher(context.getOption(OpenIdConnectKey.SCOPE))</span>
+<span class="nc bnc" id="L235" title="All 2 branches missed.">            .find()) {</span>
+<span class="nc" id="L236">            final Response userInfoResponse = context.target(oidProviderConfig.getUserinfoEndpoint())</span>
+<span class="nc" id="L237">                .request(MediaType.APPLICATION_JSON_TYPE)</span>
+<span class="nc" id="L238">                .header(&quot;Authorization&quot;, token.getTokenType() + &quot; &quot; + token.getAccessToken())</span>
+<span class="nc" id="L239">                .get();</span>
+<span class="nc bnc" id="L240" title="All 2 branches missed.">            if (userInfoResponse.getStatus() == 200) {</span>
+<span class="nc" id="L241">                tokenCookie = new TokenCookie(token.getAccessToken(), token.getRefreshToken(), claimsSet, token.getEncodedIdToken(), userInfoResponse.readEntity(JsonObject.class));</span>
+<span class="nc" id="L242">            } else {</span>
+<span class="nc" id="L243">                LOG.log(Level.WARNING, &quot;unableToGetProfile&quot;);</span>
+<span class="nc" id="L244">                tokenCookie = new TokenCookie(claimsSet, token.getEncodedIdToken());</span>
             }
-<span class="fc" id="L245">        } else {</span>
-<span class="fc" id="L246">            tokenCookie = new TokenCookie(claimsSet, token.getEncodedIdToken());</span>
+<span class="nc" id="L246">        } else {</span>
+<span class="nc" id="L247">            tokenCookie = new TokenCookie(claimsSet, token.getEncodedIdToken());</span>
         }
 
-<span class="fc" id="L249">        context.saveIdTokenCookie(tokenCookie);</span>
-<span class="fc" id="L250">        context.saveAgeCookie();</span>
-<span class="fc" id="L251">        context.redirectToState();</span>
-<span class="fc" id="L252">        return AuthStatus.SEND_SUCCESS;</span>
+<span class="nc" id="L250">        context.saveIdTokenCookie(tokenCookie);</span>
+<span class="nc" id="L251">        context.saveAgeCookie();</span>
+<span class="nc" id="L252">        context.redirectToState();</span>
+<span class="nc" id="L253">        return AuthStatus.SEND_SUCCESS;</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span></div></body></html>
