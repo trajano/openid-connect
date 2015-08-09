@@ -55,8 +55,8 @@ public class AuthenticationResponseConverter {
     public URI toFragmentUri() {
 
 <span class="nc" id="L57">        return UriBuilder.fromUri(redirectUri)</span>
-<span class="nc" id="L58">                .fragment(toQueryUri().getQuery())</span>
-<span class="nc" id="L59">                .build();</span>
+                .fragment(toQueryUri().getQuery())
+                .build();
     }
 
     public URI toQueryUri() {

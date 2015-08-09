@@ -1,89 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<pmd version="5.2.3" timestamp="2015-08-08T14:18:20.971">
-<file name="/Users/trajano/Projects/openid-connect/openid-connect-provider/src/main/java/net/trajano/openidconnect/provider/ejb/DefaultAuthenticationResponseProvider.java">
-<violation beginline="54" endline="54" begincolumn="27" endcolumn="39" rule="UnusedPrivateField" ruleset="Unused Code" package="net.trajano.openidconnect.provider.ejb" class="DefaultAuthenticationResponseProvider" variable="clientManager" externalInfoUrl="http://pmd.sourceforge.net/pmd-5.2.3/pmd-java/rules/java/unusedcode.html#UnusedPrivateField" priority="3">
+<pmd version="5.2.3" timestamp="2015-08-09T14:59:39.894">
+<file name="C:\Program Files (x86)\Git\p\openid-connect\openid-connect-provider\src\main\java\net\trajano\openidconnect\provider\ejb\DefaultAuthenticationResponseProvider.java">
+<violation beginline="51" endline="51" begincolumn="27" endcolumn="39" rule="UnusedPrivateField" ruleset="Unused Code" package="net.trajano.openidconnect.provider.ejb" class="DefaultAuthenticationResponseProvider" variable="clientManager" externalInfoUrl="http://pmd.sourceforge.net/pmd-5.2.3/pmd-java/rules/java/unusedcode.html#UnusedPrivateField" priority="3">
 Avoid unused private fields such as 'clientManager'.
 </violation>
-<violation beginline="132" endline="132" begincolumn="9" endcolumn="23" rule="MethodArgumentCouldBeFinal" ruleset="Optimization" package="net.trajano.openidconnect.provider.ejb" class="DefaultAuthenticationResponseProvider" method="buildResponse" variable="consent" externalInfoUrl="http://pmd.sourceforge.net/pmd-5.2.3/pmd-java/rules/java/optimizations.html#MethodArgumentCouldBeFinal" priority="3">
-Parameter 'consent' is not assigned and could be declared final
-</violation>
-<violation beginline="201" endline="201" begincolumn="38" endcolumn="54" rule="MethodArgumentCouldBeFinal" ruleset="Optimization" package="net.trajano.openidconnect.provider.ejb" class="DefaultAuthenticationResponseProvider" method="getConsentRequestUri" variable="requestJwt" externalInfoUrl="http://pmd.sourceforge.net/pmd-5.2.3/pmd-java/rules/java/optimizations.html#MethodArgumentCouldBeFinal" priority="3">
-Parameter 'requestJwt' is not assigned and could be declared final
-</violation>
-<violation beginline="202" endline="202" begincolumn="9" endcolumn="37" rule="MethodArgumentCouldBeFinal" ruleset="Optimization" package="net.trajano.openidconnect.provider.ejb" class="DefaultAuthenticationResponseProvider" method="getConsentRequestUri" variable="authReq" externalInfoUrl="http://pmd.sourceforge.net/pmd-5.2.3/pmd-java/rules/java/optimizations.html#MethodArgumentCouldBeFinal" priority="3">
-Parameter 'authReq' is not assigned and could be declared final
-</violation>
-<violation beginline="203" endline="203" begincolumn="9" endcolumn="30" rule="MethodArgumentCouldBeFinal" ruleset="Optimization" package="net.trajano.openidconnect.provider.ejb" class="DefaultAuthenticationResponseProvider" method="getConsentRequestUri" variable="req" externalInfoUrl="http://pmd.sourceforge.net/pmd-5.2.3/pmd-java/rules/java/optimizations.html#MethodArgumentCouldBeFinal" priority="3">
-Parameter 'req' is not assigned and could be declared final
-</violation>
-<violation beginline="204" endline="204" begincolumn="16" endcolumn="22" rule="UnusedFormalParameter" ruleset="Unused Code" package="net.trajano.openidconnect.provider.ejb" class="DefaultAuthenticationResponseProvider" method="getConsentRequestUri" variable="subject" externalInfoUrl="http://pmd.sourceforge.net/pmd-5.2.3/pmd-java/rules/java/unusedcode.html#UnusedFormalParameter" priority="3">
-Avoid unused method parameters such as 'subject'.
-</violation>
-<violation beginline="204" endline="204" begincolumn="9" endcolumn="22" rule="MethodArgumentCouldBeFinal" ruleset="Optimization" package="net.trajano.openidconnect.provider.ejb" class="DefaultAuthenticationResponseProvider" method="getConsentRequestUri" variable="subject" externalInfoUrl="http://pmd.sourceforge.net/pmd-5.2.3/pmd-java/rules/java/optimizations.html#MethodArgumentCouldBeFinal" priority="3">
-Parameter 'subject' is not assigned and could be declared final
-</violation>
-<violation beginline="207" endline="207" begincolumn="9" endcolumn="121" rule="LocalVariableCouldBeFinal" ruleset="Optimization" package="net.trajano.openidconnect.provider.ejb" class="DefaultAuthenticationResponseProvider" method="getConsentRequestUri" variable="consentRequested" externalInfoUrl="http://pmd.sourceforge.net/pmd-5.2.3/pmd-java/rules/java/optimizations.html#LocalVariableCouldBeFinal" priority="3">
-Local variable 'consentRequested' could be declared final
-</violation>
-<violation beginline="231" endline="232" begincolumn="5" endcolumn="40" rule="DefaultPackage" ruleset="Controversial" package="net.trajano.openidconnect.provider.ejb" class="DefaultAuthenticationResponseProvider" externalInfoUrl="http://pmd.sourceforge.net/pmd-5.2.3/pmd-java/rules/java/controversial.html#DefaultPackage" priority="3">
+<violation beginline="55" endline="56" begincolumn="5" endcolumn="40" rule="DefaultPackage" ruleset="Controversial" package="net.trajano.openidconnect.provider.ejb" class="DefaultAuthenticationResponseProvider" externalInfoUrl="http://pmd.sourceforge.net/pmd-5.2.3/pmd-java/rules/java/controversial.html#DefaultPackage" priority="3">
 Use explicit scoping instead of the default package private level
 </violation>
-<violation beginline="235" endline="235" begincolumn="35" endcolumn="51" rule="MethodArgumentCouldBeFinal" ruleset="Optimization" package="net.trajano.openidconnect.provider.ejb" class="DefaultAuthenticationResponseProvider" method="buildResponse" variable="requestJwt" externalInfoUrl="http://pmd.sourceforge.net/pmd-5.2.3/pmd-java/rules/java/optimizations.html#MethodArgumentCouldBeFinal" priority="3">
-Parameter 'requestJwt' is not assigned and could be declared final
-</violation>
-<violation beginline="236" endline="236" begincolumn="9" endcolumn="34" rule="MethodArgumentCouldBeFinal" ruleset="Optimization" package="net.trajano.openidconnect.provider.ejb" class="DefaultAuthenticationResponseProvider" method="buildResponse" variable="request" externalInfoUrl="http://pmd.sourceforge.net/pmd-5.2.3/pmd-java/rules/java/optimizations.html#MethodArgumentCouldBeFinal" priority="3">
-Parameter 'request' is not assigned and could be declared final
-</violation>
-<violation beginline="237" endline="237" begincolumn="9" endcolumn="22" rule="MethodArgumentCouldBeFinal" ruleset="Optimization" package="net.trajano.openidconnect.provider.ejb" class="DefaultAuthenticationResponseProvider" method="buildResponse" variable="subject" externalInfoUrl="http://pmd.sourceforge.net/pmd-5.2.3/pmd-java/rules/java/optimizations.html#MethodArgumentCouldBeFinal" priority="3">
-Parameter 'subject' is not assigned and could be declared final
-</violation>
-<violation beginline="238" endline="238" begincolumn="9" endcolumn="23" rule="MethodArgumentCouldBeFinal" ruleset="Optimization" package="net.trajano.openidconnect.provider.ejb" class="DefaultAuthenticationResponseProvider" method="buildResponse" variable="consent" externalInfoUrl="http://pmd.sourceforge.net/pmd-5.2.3/pmd-java/rules/java/optimizations.html#MethodArgumentCouldBeFinal" priority="3">
-Parameter 'consent' is not assigned and could be declared final
-</violation>
-<violation beginline="245" endline="245" begincolumn="35" endcolumn="56" rule="MethodArgumentCouldBeFinal" ruleset="Optimization" package="net.trajano.openidconnect.provider.ejb" class="DefaultAuthenticationResponseProvider" method="doConsentCallback" variable="req" externalInfoUrl="http://pmd.sourceforge.net/pmd-5.2.3/pmd-java/rules/java/optimizations.html#MethodArgumentCouldBeFinal" priority="3">
-Parameter 'req' is not assigned and could be declared final
-</violation>
-<violation beginline="246" endline="246" begincolumn="9" endcolumn="36" rule="MethodArgumentCouldBeFinal" ruleset="Optimization" package="net.trajano.openidconnect.provider.ejb" class="DefaultAuthenticationResponseProvider" method="doConsentCallback" variable="response" externalInfoUrl="http://pmd.sourceforge.net/pmd-5.2.3/pmd-java/rules/java/optimizations.html#MethodArgumentCouldBeFinal" priority="3">
-Parameter 'response' is not assigned and could be declared final
-</violation>
-<violation beginline="247" endline="247" begincolumn="9" endcolumn="22" rule="MethodArgumentCouldBeFinal" ruleset="Optimization" package="net.trajano.openidconnect.provider.ejb" class="DefaultAuthenticationResponseProvider" method="doConsentCallback" variable="subject" externalInfoUrl="http://pmd.sourceforge.net/pmd-5.2.3/pmd-java/rules/java/optimizations.html#MethodArgumentCouldBeFinal" priority="3">
-Parameter 'subject' is not assigned and could be declared final
-</violation>
-<violation beginline="248" endline="248" begincolumn="9" endcolumn="23" rule="MethodArgumentCouldBeFinal" ruleset="Optimization" package="net.trajano.openidconnect.provider.ejb" class="DefaultAuthenticationResponseProvider" method="doConsentCallback" variable="consent" externalInfoUrl="http://pmd.sourceforge.net/pmd-5.2.3/pmd-java/rules/java/optimizations.html#MethodArgumentCouldBeFinal" priority="3">
-Parameter 'consent' is not assigned and could be declared final
-</violation>
-<violation beginline="251" endline="251" begincolumn="9" endcolumn="70" rule="LocalVariableCouldBeFinal" ruleset="Optimization" package="net.trajano.openidconnect.provider.ejb" class="DefaultAuthenticationResponseProvider" method="doConsentCallback" variable="requestJwt" externalInfoUrl="http://pmd.sourceforge.net/pmd-5.2.3/pmd-java/rules/java/optimizations.html#LocalVariableCouldBeFinal" priority="3">
-Local variable 'requestJwt' could be declared final
-</violation>
-<violation beginline="256" endline="256" begincolumn="17" endcolumn="95" rule="LocalVariableCouldBeFinal" ruleset="Optimization" package="net.trajano.openidconnect.provider.ejb" class="DefaultAuthenticationResponseProvider" method="doConsentCallback" variable="consentRequestURI" externalInfoUrl="http://pmd.sourceforge.net/pmd-5.2.3/pmd-java/rules/java/optimizations.html#LocalVariableCouldBeFinal" priority="3">
-Local variable 'consentRequestURI' could be declared final
+<violation beginline="257" endline="257" begincolumn="22" endcolumn="28" rule="UnusedFormalParameter" ruleset="Unused Code" package="net.trajano.openidconnect.provider.ejb" class="DefaultAuthenticationResponseProvider" method="getConsentRequestUri" variable="subject" externalInfoUrl="http://pmd.sourceforge.net/pmd-5.2.3/pmd-java/rules/java/unusedcode.html#UnusedFormalParameter" priority="3">
+Avoid unused method parameters such as 'subject'.
 </violation>
 </file>
-<file name="/Users/trajano/Projects/openid-connect/openid-connect-provider/src/main/java/net/trajano/openidconnect/provider/ejb/DefaultTokenProvider.java">
-<violation beginline="83" endline="83" begincolumn="13" endcolumn="69" rule="LocalVariableCouldBeFinal" ruleset="Optimization" package="net.trajano.openidconnect.provider.ejb" class="DefaultTokenProvider" method="createNewToken" variable="userinfo" externalInfoUrl="http://pmd.sourceforge.net/pmd-5.2.3/pmd-java/rules/java/optimizations.html#LocalVariableCouldBeFinal" priority="3">
-Local variable 'userinfo' could be declared final
-</violation>
-<violation beginline="84" endline="84" begincolumn="18" endcolumn="43" rule="LocalVariableCouldBeFinal" ruleset="Optimization" package="net.trajano.openidconnect.provider.ejb" class="DefaultTokenProvider" method="createNewToken" variable="e" externalInfoUrl="http://pmd.sourceforge.net/pmd-5.2.3/pmd-java/rules/java/optimizations.html#LocalVariableCouldBeFinal" priority="3">
-Local variable 'e' could be declared final
-</violation>
-<violation beginline="150" endline="150" begincolumn="9" endcolumn="97" rule="LocalVariableCouldBeFinal" ruleset="Optimization" package="net.trajano.openidconnect.provider.ejb" class="DefaultTokenProvider" method="refreshToken" variable="claims" externalInfoUrl="http://pmd.sourceforge.net/pmd-5.2.3/pmd-java/rules/java/optimizations.html#LocalVariableCouldBeFinal" priority="3">
-Local variable 'claims' could be declared final
-</violation>
-<violation beginline="226" endline="226" begincolumn="46" endcolumn="63" rule="MethodArgumentCouldBeFinal" ruleset="Optimization" package="net.trajano.openidconnect.provider.ejb" class="DefaultTokenProvider" method="getClaimsByAccessToken" variable="accessToken" externalInfoUrl="http://pmd.sourceforge.net/pmd-5.2.3/pmd-java/rules/java/optimizations.html#MethodArgumentCouldBeFinal" priority="3">
-Parameter 'accessToken' is not assigned and could be declared final
-</violation>
-</file>
-<file name="/Users/trajano/Projects/openid-connect/openid-connect-provider/src/main/java/net/trajano/openidconnect/provider/endpoints/EndSessionEndpoint.java">
-<violation beginline="63" endline="63" begincolumn="27" endcolumn="39" rule="UnusedPrivateField" ruleset="Unused Code" package="net.trajano.openidconnect.provider.endpoints" class="EndSessionEndpoint" variable="tokenProvider" externalInfoUrl="http://pmd.sourceforge.net/pmd-5.2.3/pmd-java/rules/java/unusedcode.html#UnusedPrivateField" priority="3">
+<file name="C:\Program Files (x86)\Git\p\openid-connect\openid-connect-provider\src\main\java\net\trajano\openidconnect\provider\endpoints\EndSessionEndpoint.java">
+<violation beginline="66" endline="66" begincolumn="27" endcolumn="39" rule="UnusedPrivateField" ruleset="Unused Code" package="net.trajano.openidconnect.provider.endpoints" class="EndSessionEndpoint" variable="tokenProvider" externalInfoUrl="http://pmd.sourceforge.net/pmd-5.2.3/pmd-java/rules/java/unusedcode.html#UnusedPrivateField" priority="3">
 Avoid unused private fields such as 'tokenProvider'.
 </violation>
 </file>
-<file name="/Users/trajano/Projects/openid-connect/openid-connect-provider/src/main/java/net/trajano/openidconnect/provider/endpoints/TokenEndpoint.java">
+<file name="C:\Program Files (x86)\Git\p\openid-connect\openid-connect-provider\src\main\java\net\trajano\openidconnect\provider\endpoints\TokenEndpoint.java">
 <violation beginline="42" endline="42" begincolumn="27" endcolumn="28" rule="UnusedPrivateField" ruleset="Unused Code" package="net.trajano.openidconnect.provider.endpoints" class="TokenEndpoint" variable="cm" externalInfoUrl="http://pmd.sourceforge.net/pmd-5.2.3/pmd-java/rules/java/unusedcode.html#UnusedPrivateField" priority="3">
 Avoid unused private fields such as 'cm'.
 </violation>
 </file>
-<file name="/Users/trajano/Projects/openid-connect/openid-connect-provider/src/main/java/net/trajano/openidconnect/provider/endpoints/UserinfoEndpoint.java">
+<file name="C:\Program Files (x86)\Git\p\openid-connect\openid-connect-provider\src\main\java\net\trajano\openidconnect\provider\endpoints\UserinfoEndpoint.java">
 <violation beginline="94" endline="94" begincolumn="9" endcolumn="83" rule="LocalVariableCouldBeFinal" ruleset="Optimization" package="net.trajano.openidconnect.provider.endpoints" class="UserinfoEndpoint" method="op" variable="byAccessToken" externalInfoUrl="http://pmd.sourceforge.net/pmd-5.2.3/pmd-java/rules/java/optimizations.html#LocalVariableCouldBeFinal" priority="3">
 Local variable 'byAccessToken' could be declared final
 </violation>
@@ -103,7 +41,7 @@ Parameter 'userinfo' is not assigned and could be declared final
 Parameter 'userinfoClaims' is not assigned and could be declared final
 </violation>
 </file>
-<file name="/Users/trajano/Projects/openid-connect/openid-connect-provider/src/main/java/net/trajano/openidconnect/provider/endpoints/WellKnownOpenIdConfiguration.java">
+<file name="C:\Program Files (x86)\Git\p\openid-connect\openid-connect-provider\src\main\java\net\trajano\openidconnect\provider\endpoints\WellKnownOpenIdConfiguration.java">
 <violation beginline="81" endline="81" begincolumn="14" endcolumn="44" rule="SimplifyStartsWith" ruleset="Optimization" package="net.trajano.openidconnect.provider.endpoints" class="WellKnownOpenIdConfiguration" method="init" externalInfoUrl="http://pmd.sourceforge.net/pmd-5.2.3/pmd-java/rules/java/optimizations.html#SimplifyStartsWith" priority="3">
 This call to String.startsWith can be rewritten using String.charAt(0)
 </violation>
@@ -111,7 +49,7 @@ This call to String.startsWith can be rewritten using String.charAt(0)
 Prefer StringBuffer over += for concatenating strings
 </violation>
 </file>
-<file name="/Users/trajano/Projects/openid-connect/openid-connect-provider/src/main/java/net/trajano/openidconnect/provider/internal/AuthenticationResponseConverter.java">
+<file name="C:\Program Files (x86)\Git\p\openid-connect\openid-connect-provider\src\main\java\net\trajano\openidconnect\provider\internal\AuthenticationResponseConverter.java">
 <violation beginline="26" endline="26" begincolumn="44" endcolumn="58" rule="MethodArgumentCouldBeFinal" ruleset="Optimization" package="net.trajano.openidconnect.provider.internal" class="AuthenticationResponseConverter" method="AuthenticationResponseConverter" variable="redirectUri" externalInfoUrl="http://pmd.sourceforge.net/pmd-5.2.3/pmd-java/rules/java/optimizations.html#MethodArgumentCouldBeFinal" priority="3">
 Parameter 'redirectUri' is not assigned and could be declared final
 </violation>
@@ -119,7 +57,7 @@ Parameter 'redirectUri' is not assigned and could be declared final
 Parameter 'response' is not assigned and could be declared final
 </violation>
 </file>
-<file name="/Users/trajano/Projects/openid-connect/openid-connect-provider/src/main/java/net/trajano/openidconnect/provider/internal/FormPostBuilder.java">
+<file name="C:\Program Files (x86)\Git\p\openid-connect\openid-connect-provider\src\main\java\net\trajano\openidconnect\provider\internal\FormPostBuilder.java">
 <violation beginline="17" endline="19" begincolumn="13" endcolumn="67" rule="LocalVariableCouldBeFinal" ruleset="Optimization" package="net.trajano.openidconnect.provider.internal" class="FormPostBuilder" variable="templateStream" externalInfoUrl="http://pmd.sourceforge.net/pmd-5.2.3/pmd-java/rules/java/optimizations.html#LocalVariableCouldBeFinal" priority="3">
 Local variable 'templateStream' could be declared final
 </violation>

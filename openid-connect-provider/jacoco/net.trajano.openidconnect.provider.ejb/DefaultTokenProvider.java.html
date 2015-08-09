@@ -33,7 +33,8 @@ import net.trajano.openidconnect.token.TokenResponse;
 import net.trajano.openidconnect.userinfo.Userinfo;
 
 @Stateless
-<span class="nc" id="L36">public class DefaultTokenProvider implements TokenProvider {</span>
+<span class="nc" id="L36">public class DefaultTokenProvider implements</span>
+    TokenProvider {
 
     @EJB
     private KeyProvider keyProvider;
@@ -54,10 +55,10 @@ import net.trajano.openidconnect.userinfo.Userinfo;
     private String computeHash(final String token) throws GeneralSecurityException {
 
         // TODO this should be based on something.
-<span class="nc" id="L57">        final MessageDigest digest = MessageDigest.getInstance(&quot;SHA-256&quot;);</span>
-<span class="nc" id="L58">        final byte[] digestedBytes = digest.digest(token.getBytes(CharSets.US_ASCII));</span>
+<span class="nc" id="L58">        final MessageDigest digest = MessageDigest.getInstance(&quot;SHA-256&quot;);</span>
+<span class="nc" id="L59">        final byte[] digestedBytes = digest.digest(token.getBytes(CharSets.US_ASCII));</span>
 
-<span class="nc" id="L60">        return Encoding.base64urlEncode(digestedBytes, 0, 128 / 8);</span>
+<span class="nc" id="L61">        return Encoding.base64urlEncode(digestedBytes, 0, 128 / 8);</span>
     }
 
     /**
@@ -65,117 +66,123 @@ import net.trajano.openidconnect.userinfo.Userinfo;
      */
     @Override
     public String createNewToken(final String subject,
-            final URI issuer,
-            final AuthenticationRequest req) throws IOException,
-                    GeneralSecurityException {
+        final URI issuer,
+        final AuthenticationRequest req) throws IOException,
+            GeneralSecurityException {
 
-<span class="nc" id="L72">        final IdToken idToken = new IdToken();</span>
-<span class="nc" id="L73">        idToken.setSub(subject);</span>
-<span class="nc" id="L74">        idToken.setNonce(req.getNonce());</span>
-<span class="nc" id="L75">        idToken.setAuthTime(System.currentTimeMillis() / 1000);</span>
-<span class="nc" id="L76">        idToken.setAud(req.getClientId());</span>
-<span class="nc" id="L77">        idToken.setAzp(req.getClientId());</span>
-<span class="nc" id="L78">        idToken.setIss(issuer.toASCIIString());</span>
-<span class="nc" id="L79">        idToken.setAcr(&quot;0&quot;);</span>
+<span class="nc" id="L73">        final IdToken idToken = new IdToken();</span>
+<span class="nc" id="L74">        idToken.setSub(subject);</span>
+<span class="nc" id="L75">        idToken.setNonce(req.getNonce());</span>
+<span class="nc" id="L76">        idToken.setAuthTime(System.currentTimeMillis() / 1000);</span>
+<span class="nc" id="L77">        idToken.setAud(req.getClientId());</span>
+<span class="nc" id="L78">        idToken.setAzp(req.getClientId());</span>
+<span class="nc" id="L79">        idToken.setIss(issuer.toASCIIString());</span>
+<span class="nc" id="L80">        idToken.setAcr(&quot;0&quot;);</span>
 
-<span class="nc" id="L81">        if (req.getClaims()</span>
-<span class="nc bnc" id="L82" title="All 2 branches missed.">                .containsKey(&quot;id_token&quot;)) {</span>
-<span class="nc" id="L83">            Userinfo userinfo = userinfoProvider.getUserinfo(idToken);</span>
-<span class="nc bnc" id="L84" title="All 2 branches missed.">            for (Entry&lt;String, JsonValue&gt; e : req.getClaims()</span>
-<span class="nc" id="L85">                    .getJsonObject(&quot;id_token&quot;)</span>
-<span class="nc" id="L86">                    .entrySet()) {</span>
-<span class="nc bnc" id="L87" title="All 2 branches missed.">                if (&quot;name&quot;.equals(e.getKey())) {</span>
-<span class="nc" id="L88">                    idToken.setName(userinfo.getName());</span>
+<span class="nc" id="L82">        if (req.getClaims()</span>
+<span class="nc bnc" id="L83" title="All 2 branches missed.">            .containsKey(&quot;id_token&quot;)) {</span>
+<span class="nc" id="L84">            final Userinfo userinfo = userinfoProvider.getUserinfo(idToken);</span>
+<span class="nc bnc" id="L85" title="All 2 branches missed.">            for (final Entry&lt;String, JsonValue&gt; e : req.getClaims()</span>
+<span class="nc" id="L86">                .getJsonObject(&quot;id_token&quot;)</span>
+<span class="nc" id="L87">                .entrySet()) {</span>
+<span class="nc bnc" id="L88" title="All 2 branches missed.">                if (&quot;name&quot;.equals(e.getKey())) {</span>
+<span class="nc" id="L89">                    idToken.setName(userinfo.getName());</span>
                 }
-<span class="nc" id="L90">            }</span>
+            }
         }
 
-<span class="nc" id="L93">        return store(idToken, req);</span>
+<span class="nc" id="L94">        return store(idToken, req);</span>
     }
 
     @Override
     public IdTokenResponse getByAccessToken(final String accessToken) {
 
-<span class="nc" id="L99">        return tokenStorage.getByAccessToken(accessToken);</span>
+<span class="nc" id="L100">        return tokenStorage.getByAccessToken(accessToken);</span>
     }
 
     @Override
     public IdTokenResponse getByCode(final String code,
-            final boolean deleteAfterRetrieval) {
+        final boolean deleteAfterRetrieval) {
 
-<span class="nc" id="L106">        final IdTokenResponse tokenResponse = tokenStorage.getByCode(code);</span>
+<span class="nc" id="L107">        final IdTokenResponse tokenResponse = tokenStorage.getByCode(code);</span>
 
-//        if (tokenStorage.isCodeUsed(code)) {
-//            // Revoke access tokens since code was used twice.
-//            tokenStorage.removeMappingForAccessToken(tokenResponse.getAccessToken());
-//            tokenStorage.removeMappingForRefreshToken(tokenResponse.getRefreshToken());
-//            tokenStorage.removeMappingForCode(code);
-//            return null;
-//        }
-<span class="nc bnc" id="L115" title="All 2 branches missed.">        if (deleteAfterRetrieval) {</span>
-<span class="nc" id="L116">          tokenStorage.removeMappingForCode(code);</span>
-<span class="nc" id="L117">            tokenStorage.markCodeAsUsed(code);</span>
+<span class="nc bnc" id="L109" title="All 2 branches missed.">        if (tokenStorage.isCodeUsed(code)) {</span>
+            // Revoke access tokens since code was used twice.
+<span class="nc" id="L111">            tokenStorage.removeMappingForAccessToken(tokenResponse.getAccessToken());</span>
+<span class="nc" id="L112">            tokenStorage.removeMappingForRefreshToken(tokenResponse.getRefreshToken());</span>
+<span class="nc" id="L113">            tokenStorage.removeMappingForCode(code);</span>
+<span class="nc" id="L114">            return null;</span>
         }
-<span class="nc" id="L119">        return tokenResponse;</span>
+<span class="nc bnc" id="L116" title="All 2 branches missed.">        if (deleteAfterRetrieval) {</span>
+<span class="nc" id="L117">            tokenStorage.removeMappingForCode(code);</span>
+<span class="nc" id="L118">            tokenStorage.markCodeAsUsed(code);</span>
+        }
+<span class="nc" id="L120">        return tokenResponse;</span>
     }
 
     @Override
     public IdTokenResponse getByConsent(final Consent consent) {
 
-<span class="nc" id="L125">        return tokenStorage.getByConsent(consent);</span>
+<span class="nc" id="L126">        return tokenStorage.getByConsent(consent);</span>
+    }
+
+    @Override
+    public JsonObject getClaimsByAccessToken(final String accessToken) {
+
+<span class="nc" id="L132">        return tokenStorage.getClaimsByAccessToken(accessToken);</span>
     }
 
     @Override
     public IdTokenResponse refreshToken(final String clientId,
-            final String refreshTokenIn,
-            final Set&lt;Scope&gt; scopes,
-            final Integer expiresIn) throws IOException,
-                    GeneralSecurityException {
+        final String refreshTokenIn,
+        final Set&lt;Scope&gt; scopes,
+        final Integer expiresIn) throws IOException,
+            GeneralSecurityException {
 
-<span class="nc" id="L135">        final IdTokenResponse idTokenResponse = tokenStorage.removeMappingForRefreshToken(refreshTokenIn);</span>
-<span class="nc bnc" id="L136" title="All 2 branches missed.">        if (idTokenResponse == null) {</span>
-<span class="nc" id="L137">            return null;</span>
+<span class="nc" id="L142">        final IdTokenResponse idTokenResponse = tokenStorage.removeMappingForRefreshToken(refreshTokenIn);</span>
+<span class="nc bnc" id="L143" title="All 2 branches missed.">        if (idTokenResponse == null) {</span>
+<span class="nc" id="L144">            return null;</span>
         }
-<span class="nc bnc" id="L139" title="All 2 branches missed.">        if (!clientId.equals(idTokenResponse.getIdToken(keyProvider.getPrivateJwks())</span>
-<span class="nc" id="L140">                .getAud())) {</span>
-<span class="nc" id="L141">            throw new WebApplicationException();</span>
+<span class="nc" id="L146">        if (!clientId.equals(idTokenResponse.getIdToken(keyProvider.getPrivateJwks())</span>
+<span class="nc bnc" id="L147" title="All 2 branches missed.">            .getAud())) {</span>
+<span class="nc" id="L148">            throw new WebApplicationException();</span>
         }
-<span class="nc bnc" id="L143" title="All 4 branches missed.">        if (scopes != null &amp;&amp; !scopes.containsAll(scopes)) {</span>
-<span class="nc" id="L144">            throw new WebApplicationException();</span>
+<span class="nc bnc" id="L150" title="All 4 branches missed.">        if (scopes != null &amp;&amp; !scopes.containsAll(scopes)) {</span>
+<span class="nc" id="L151">            throw new WebApplicationException();</span>
         }
-<span class="nc bnc" id="L146" title="All 4 branches missed.">        if (scopes != null &amp;&amp; scopes.containsAll(scopes)) {</span>
-<span class="nc" id="L147">            idTokenResponse.setScopes(scopes);</span>
+<span class="nc bnc" id="L153" title="All 4 branches missed.">        if (scopes != null &amp;&amp; scopes.containsAll(scopes)) {</span>
+<span class="nc" id="L154">            idTokenResponse.setScopes(scopes);</span>
         }
 
-<span class="nc" id="L150">        JsonObject claims = tokenStorage.getClaimsByAccessToken(idTokenResponse.getAccessToken());</span>
+<span class="nc" id="L157">        final JsonObject claims = tokenStorage.getClaimsByAccessToken(idTokenResponse.getAccessToken());</span>
         // remove from map we are getting a new one
-<span class="nc" id="L152">        tokenStorage.removeMappingForAccessToken(idTokenResponse.getAccessToken());</span>
-<span class="nc" id="L153">        final String newAccessToken = keyProvider.nextEncodedToken();</span>
-<span class="nc" id="L154">        final String newRefreshToken = keyProvider.nextEncodedToken();</span>
+<span class="nc" id="L159">        tokenStorage.removeMappingForAccessToken(idTokenResponse.getAccessToken());</span>
+<span class="nc" id="L160">        final String newAccessToken = keyProvider.nextEncodedToken();</span>
+<span class="nc" id="L161">        final String newRefreshToken = keyProvider.nextEncodedToken();</span>
 
-<span class="nc" id="L156">        idTokenResponse.setAccessToken(newAccessToken);</span>
-<span class="nc" id="L157">        idTokenResponse.setRefreshToken(newRefreshToken);</span>
-<span class="nc" id="L158">        final IdToken idToken = idTokenResponse.getIdToken(keyProvider.getJwks());</span>
+<span class="nc" id="L163">        idTokenResponse.setAccessToken(newAccessToken);</span>
+<span class="nc" id="L164">        idTokenResponse.setRefreshToken(newRefreshToken);</span>
+<span class="nc" id="L165">        final IdToken idToken = idTokenResponse.getIdToken(keyProvider.getJwks());</span>
 
-<span class="nc bnc" id="L160" title="All 2 branches missed.">        if (expiresIn != null) {</span>
-<span class="nc" id="L161">            idToken.resetIssueAndExpiration(tokenStorage.getExpiration(expiresIn));</span>
-        } else {
-<span class="nc" id="L163">            idToken.resetIssueAndExpiration(tokenStorage.getDefaultExpiration());</span>
+<span class="nc bnc" id="L167" title="All 2 branches missed.">        if (expiresIn != null) {</span>
+<span class="nc" id="L168">            idToken.resetIssueAndExpiration(tokenStorage.getExpiration(expiresIn));</span>
+<span class="nc" id="L169">        } else {</span>
+<span class="nc" id="L170">            idToken.resetIssueAndExpiration(tokenStorage.getDefaultExpiration());</span>
         }
 
-<span class="nc" id="L166">        idToken.setAtHash(computeHash(newAccessToken));</span>
+<span class="nc" id="L173">        idToken.setAtHash(computeHash(newAccessToken));</span>
 
-<span class="nc" id="L168">        final ByteArrayOutputStream baos = new ByteArrayOutputStream();</span>
-<span class="nc" id="L169">        new IdTokenProvider().writeTo(idToken, IdToken.class, IdToken.class, null, MediaType.APPLICATION_JSON_TYPE, null, baos);</span>
-<span class="nc" id="L170">        baos.close();</span>
+<span class="nc" id="L175">        final ByteArrayOutputStream baos = new ByteArrayOutputStream();</span>
+<span class="nc" id="L176">        new IdTokenProvider().writeTo(idToken, IdToken.class, IdToken.class, null, MediaType.APPLICATION_JSON_TYPE, null, baos);</span>
+<span class="nc" id="L177">        baos.close();</span>
 
-<span class="nc" id="L172">        final JsonWebTokenBuilder jwtBuilder = new JsonWebTokenBuilder().jwk(keyProvider.getPrivateJwks())</span>
-<span class="nc" id="L173">                .payload(baos.toByteArray());</span>
-<span class="nc" id="L174">        idTokenResponse.setEncodedIdToken(jwtBuilder.toString());</span>
+<span class="nc" id="L179">        final JsonWebTokenBuilder jwtBuilder = new JsonWebTokenBuilder().jwk(keyProvider.getPrivateJwks())</span>
+<span class="nc" id="L180">            .payload(baos.toByteArray());</span>
+<span class="nc" id="L181">        idTokenResponse.setEncodedIdToken(jwtBuilder.toString());</span>
 
-<span class="nc" id="L176">        tokenStorage.store(idToken, idTokenResponse, claims);</span>
+<span class="nc" id="L183">        tokenStorage.store(idToken, idTokenResponse, claims);</span>
 
-<span class="nc" id="L178">        return idTokenResponse;</span>
+<span class="nc" id="L185">        return idTokenResponse;</span>
     }
 
     /**
@@ -191,41 +198,35 @@ import net.trajano.openidconnect.userinfo.Userinfo;
      * @throws GeneralSecurityException
      */
     private String store(final IdToken idToken,
-            final AuthenticationRequest req) throws IOException,
-                    GeneralSecurityException {
+        final AuthenticationRequest req) throws IOException,
+            GeneralSecurityException {
 
-<span class="nc" id="L197">        final IdTokenResponse response = new IdTokenResponse();</span>
-<span class="nc" id="L198">        final String newAccessToken = keyProvider.nextEncodedToken();</span>
-<span class="nc" id="L199">        response.setAccessToken(newAccessToken);</span>
-<span class="nc" id="L200">        response.setRefreshToken(keyProvider.nextEncodedToken());</span>
-<span class="nc" id="L201">        response.setExpiresIn(tokenStorage.getDefaultExpiration());</span>
-<span class="nc" id="L202">        response.setScopes(req.getScopes());</span>
-<span class="nc" id="L203">        response.setTokenType(TokenResponse.BEARER);</span>
+<span class="nc" id="L204">        final IdTokenResponse response = new IdTokenResponse();</span>
+<span class="nc" id="L205">        final String newAccessToken = keyProvider.nextEncodedToken();</span>
+<span class="nc" id="L206">        response.setAccessToken(newAccessToken);</span>
+<span class="nc" id="L207">        response.setRefreshToken(keyProvider.nextEncodedToken());</span>
+<span class="nc" id="L208">        response.setExpiresIn(tokenStorage.getDefaultExpiration());</span>
+<span class="nc" id="L209">        response.setScopes(req.getScopes());</span>
+<span class="nc" id="L210">        response.setTokenType(TokenResponse.BEARER);</span>
 
-<span class="nc" id="L205">        idToken.setAtHash(computeHash(newAccessToken));</span>
+<span class="nc" id="L212">        idToken.setAtHash(computeHash(newAccessToken));</span>
 
-<span class="nc" id="L207">        final String code = keyProvider.nextEncodedToken();</span>
-<span class="nc" id="L208">        idToken.setCHash(computeHash(code));</span>
-        
-<span class="nc" id="L210">        idToken.resetIssueAndExpiration(tokenStorage.getDefaultExpiration());</span>
+<span class="nc" id="L214">        final String code = keyProvider.nextEncodedToken();</span>
+<span class="nc" id="L215">        idToken.setCHash(computeHash(code));</span>
 
-<span class="nc" id="L212">        final ByteArrayOutputStream baos = new ByteArrayOutputStream();</span>
-<span class="nc" id="L213">        new IdTokenProvider().writeTo(idToken, IdToken.class, IdToken.class, null, MediaType.APPLICATION_JSON_TYPE, null, baos);</span>
-<span class="nc" id="L214">        baos.close();</span>
-<span class="nc" id="L215">        final JsonWebTokenBuilder jwtBuilder = new JsonWebTokenBuilder().jwk(keyProvider.getPrivateJwks())</span>
-<span class="nc" id="L216">                .alg(JsonWebAlgorithm.RS256)</span>
-<span class="nc" id="L217">                .payload(baos.toByteArray());</span>
-<span class="nc" id="L218">        response.setEncodedIdToken(jwtBuilder.toString());</span>
+<span class="nc" id="L217">        idToken.resetIssueAndExpiration(tokenStorage.getDefaultExpiration());</span>
 
-<span class="nc" id="L220">        tokenStorage.store(idToken, response, code, req.getClaims());</span>
+<span class="nc" id="L219">        final ByteArrayOutputStream baos = new ByteArrayOutputStream();</span>
+<span class="nc" id="L220">        new IdTokenProvider().writeTo(idToken, IdToken.class, IdToken.class, null, MediaType.APPLICATION_JSON_TYPE, null, baos);</span>
+<span class="nc" id="L221">        baos.close();</span>
+<span class="nc" id="L222">        final JsonWebTokenBuilder jwtBuilder = new JsonWebTokenBuilder().jwk(keyProvider.getPrivateJwks())</span>
+<span class="nc" id="L223">            .alg(JsonWebAlgorithm.RS256)</span>
+<span class="nc" id="L224">            .payload(baos.toByteArray());</span>
+<span class="nc" id="L225">        response.setEncodedIdToken(jwtBuilder.toString());</span>
 
-<span class="nc" id="L222">        return code;</span>
-    }
+<span class="nc" id="L227">        tokenStorage.store(idToken, response, code, req.getClaims());</span>
 
-    @Override
-    public JsonObject getClaimsByAccessToken(String accessToken) {
-
-<span class="nc" id="L228">        return tokenStorage.getClaimsByAccessToken(accessToken);</span>
+<span class="nc" id="L229">        return code;</span>
     }
 
 }

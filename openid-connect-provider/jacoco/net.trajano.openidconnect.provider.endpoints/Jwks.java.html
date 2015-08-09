@@ -59,9 +59,9 @@ import net.trajano.openidconnect.provider.spi.KeyProvider;
 <span class="nc" id="L59">        cacheControl.setMaxAge(300);</span>
 
 <span class="nc" id="L61">        return Response.ok(keyProvider.getJwks())</span>
-<span class="nc" id="L62">                .cacheControl(cacheControl)</span>
-<span class="nc" id="L63">                .tag(keyProvider.getSecretKeyId())</span>
-<span class="nc" id="L64">                .build();</span>
+                .cacheControl(cacheControl)
+                .tag(keyProvider.getSecretKeyId())
+                .build();
     }
 
     @EJB

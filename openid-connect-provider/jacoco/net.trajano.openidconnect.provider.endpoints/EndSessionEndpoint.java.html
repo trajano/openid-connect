@@ -7,9 +7,11 @@ import java.net.URI;
 import java.security.GeneralSecurityException;
 
 import javax.ejb.EJB;
+import javax.ejb.Stateless;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.constraints.NotNull;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -44,8 +46,9 @@ import net.trajano.openidconnect.token.IdToken;
  * @author Archimedes
  */
 @Path(&quot;end&quot;)
+@Stateless
 @Produces(MediaType.APPLICATION_JSON)
-<span class="nc" id="L48">public class EndSessionEndpoint {</span>
+<span class="nc" id="L51">public class EndSessionEndpoint {</span>
 
     @EJB
     private Authenticator authenticator;
@@ -74,27 +77,28 @@ import net.trajano.openidconnect.token.IdToken;
      */
     @POST
     @Path(&quot;confirm&quot;)
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     public Response confirm(@NotNull @FormParam(&quot;nonce&quot;) final String nonce,
-            @NotNull @FormParam(&quot;logout&quot;) final boolean logout,
-            @Context final HttpServletRequest req) throws IOException,
-                    GeneralSecurityException {
+        @NotNull @FormParam(&quot;logout&quot;) final boolean logout,
+        @Context final HttpServletRequest req) throws IOException,
+            GeneralSecurityException {
 
-<span class="nc" id="L82">        final HttpSession session = req.getSession(false);</span>
-<span class="nc bnc" id="L83" title="All 2 branches missed.">        if (session == null || !session.getAttribute(&quot;nonce&quot;)</span>
-<span class="nc bnc" id="L84" title="All 2 branches missed.">                .equals(nonce)) {</span>
-<span class="nc" id="L85">            throw new OpenIdConnectException(ErrorCode.access_denied);</span>
+<span class="nc" id="L86">        final HttpSession session = req.getSession(false);</span>
+<span class="nc bnc" id="L87" title="All 2 branches missed.">        if (session == null || !session.getAttribute(&quot;nonce&quot;)</span>
+<span class="nc bnc" id="L88" title="All 2 branches missed.">            .equals(nonce)) {</span>
+<span class="nc" id="L89">            throw new OpenIdConnectException(ErrorCode.access_denied);</span>
         }
 
-<span class="nc" id="L88">        final URI postLogoutRedirectUri = (URI) session.getAttribute(&quot;post_logout_redirect_uri&quot;);</span>
-<span class="nc" id="L89">        final String state = (String) session.getAttribute(&quot;state&quot;);</span>
-<span class="nc bnc" id="L90" title="All 2 branches missed.">        if (logout) {</span>
-<span class="nc" id="L91">            authenticator.endSession(req);</span>
-<span class="nc" id="L92">            session.invalidate();</span>
+<span class="nc" id="L92">        final URI postLogoutRedirectUri = (URI) session.getAttribute(&quot;post_logout_redirect_uri&quot;);</span>
+<span class="nc" id="L93">        final String state = (String) session.getAttribute(&quot;state&quot;);</span>
+<span class="nc bnc" id="L94" title="All 2 branches missed.">        if (logout) {</span>
+<span class="nc" id="L95">            authenticator.endSession(req);</span>
+<span class="nc" id="L96">            session.invalidate();</span>
         }
-<span class="nc" id="L94">        return Response.temporaryRedirect(UriBuilder.fromUri(postLogoutRedirectUri)</span>
-<span class="nc" id="L95">                .queryParam(OpenIdConnectKey.STATE, state)</span>
-<span class="nc" id="L96">                .build())</span>
-<span class="nc" id="L97">                .build();</span>
+<span class="nc" id="L98">        return Response.temporaryRedirect(UriBuilder.fromUri(postLogoutRedirectUri)</span>
+<span class="nc" id="L99">            .queryParam(OpenIdConnectKey.STATE, state)</span>
+<span class="nc" id="L100">            .build())</span>
+<span class="nc" id="L101">            .build();</span>
 
     }
 
@@ -117,12 +121,12 @@ import net.trajano.openidconnect.token.IdToken;
      */
     @GET
     public Response getOp(@QueryParam(&quot;post_logout_redirect_uri&quot;) final URI postLogoutRedirectUri,
-            @QueryParam(OpenIdConnectKey.ID_TOKEN_HINT) final String idTokenHint,
-            @QueryParam(OpenIdConnectKey.STATE) final String state,
-            @Context final HttpServletRequest req) throws IOException,
-                    GeneralSecurityException {
+        @QueryParam(OpenIdConnectKey.ID_TOKEN_HINT) final String idTokenHint,
+        @QueryParam(OpenIdConnectKey.STATE) final String state,
+        @Context final HttpServletRequest req) throws IOException,
+            GeneralSecurityException {
 
-<span class="nc" id="L125">        return op(postLogoutRedirectUri, idTokenHint, state, req);</span>
+<span class="nc" id="L129">        return op(postLogoutRedirectUri, idTokenHint, state, req);</span>
     }
 
     /**
@@ -162,52 +166,52 @@ import net.trajano.openidconnect.token.IdToken;
      */
     @POST
     public Response op(@FormParam(&quot;post_logout_redirect_uri&quot;) final URI postLogoutRedirectUri,
-            @FormParam(OpenIdConnectKey.ID_TOKEN_HINT) final String idTokenHint,
-            @FormParam(OpenIdConnectKey.STATE) final String state,
-            @Context final HttpServletRequest req) throws IOException,
-                    GeneralSecurityException {
+        @FormParam(OpenIdConnectKey.ID_TOKEN_HINT) final String idTokenHint,
+        @FormParam(OpenIdConnectKey.STATE) final String state,
+        @Context final HttpServletRequest req) throws IOException,
+            GeneralSecurityException {
 
-<span class="nc" id="L170">        IdToken idToken = null;</span>
-<span class="nc bnc" id="L171" title="All 2 branches missed.">        if (idTokenHint != null) {</span>
-<span class="nc" id="L172">            final JsonWebTokenProcessor idTokenProcessor = new JsonWebTokenProcessor(idTokenHint).jwks(keyProvider.getPrivateJwks());</span>
-<span class="nc bnc" id="L173" title="All 2 branches missed.">            if (!idTokenProcessor.isJwkAvailable()) {</span>
-<span class="nc" id="L174">                throw new OpenIdConnectException(ErrorCode.invalid_request, &quot;no jwk available for kid&quot;);</span>
+<span class="nc" id="L174">        IdToken idToken = null;</span>
+<span class="nc bnc" id="L175" title="All 2 branches missed.">        if (idTokenHint != null) {</span>
+<span class="nc" id="L176">            final JsonWebTokenProcessor idTokenProcessor = new JsonWebTokenProcessor(idTokenHint).jwks(keyProvider.getPrivateJwks());</span>
+<span class="nc bnc" id="L177" title="All 2 branches missed.">            if (!idTokenProcessor.isJwkAvailable()) {</span>
+<span class="nc" id="L178">                throw new OpenIdConnectException(ErrorCode.invalid_request, &quot;no jwk available for kid&quot;);</span>
             }
-<span class="nc" id="L176">            final byte[] idTokenBytes = idTokenProcessor.getPayload();</span>
-<span class="nc" id="L177">            final MessageBodyReader&lt;IdToken&gt; idTokenReader = providers.getMessageBodyReader(IdToken.class, IdToken.class, new Annotation[0], MediaType.APPLICATION_JSON_TYPE);</span>
-<span class="nc" id="L178">            idToken = idTokenReader.readFrom(IdToken.class, IdToken.class, new Annotation[0], MediaType.APPLICATION_JSON_TYPE, null, new ByteArrayInputStream(idTokenBytes));</span>
+<span class="nc" id="L180">            final byte[] idTokenBytes = idTokenProcessor.getPayload();</span>
+<span class="nc" id="L181">            final MessageBodyReader&lt;IdToken&gt; idTokenReader = providers.getMessageBodyReader(IdToken.class, IdToken.class, new Annotation[0], MediaType.APPLICATION_JSON_TYPE);</span>
+<span class="nc" id="L182">            idToken = idTokenReader.readFrom(IdToken.class, IdToken.class, new Annotation[0], MediaType.APPLICATION_JSON_TYPE, null, new ByteArrayInputStream(idTokenBytes));</span>
         }
-<span class="nc bnc" id="L180" title="All 6 branches missed.">        if (postLogoutRedirectUri != null &amp;&amp; idToken != null &amp;&amp; !clientManager.isPostLogoutRedirectUriValidForClient(idToken.getAzp(), postLogoutRedirectUri)) {</span>
-<span class="nc" id="L181">            throw new OpenIdConnectException(ErrorCode.invalid_request);</span>
+<span class="nc bnc" id="L184" title="All 6 branches missed.">        if (postLogoutRedirectUri != null &amp;&amp; idToken != null &amp;&amp; !clientManager.isPostLogoutRedirectUriValidForClient(idToken.getAzp(), postLogoutRedirectUri)) {</span>
+<span class="nc" id="L185">            throw new OpenIdConnectException(ErrorCode.invalid_request);</span>
         }
 
-<span class="nc" id="L184">        final HttpSession session = req.getSession(false);</span>
-<span class="nc bnc" id="L185" title="All 4 branches missed.">        if (session != null &amp;&amp; authenticator.isAuthenticated(req)) {</span>
-<span class="nc" id="L186">            if (!authenticator.getSubject(req)</span>
-<span class="nc bnc" id="L187" title="All 2 branches missed.">                    .equals(idToken.getSub())) {</span>
-<span class="nc" id="L188">                throw new OpenIdConnectException(ErrorCode.access_denied);</span>
+<span class="nc" id="L188">        final HttpSession session = req.getSession(false);</span>
+<span class="nc bnc" id="L189" title="All 4 branches missed.">        if (session != null &amp;&amp; authenticator.isAuthenticated(req)) {</span>
+<span class="nc" id="L190">            if (!authenticator.getSubject(req)</span>
+<span class="nc bnc" id="L191" title="All 2 branches missed.">                .equals(idToken.getSub())) {</span>
+<span class="nc" id="L192">                throw new OpenIdConnectException(ErrorCode.access_denied);</span>
             }
-<span class="nc" id="L190">            final UriBuilder uriBuilder = UriBuilder.fromUri(req.getRequestURL()</span>
-<span class="nc" id="L191">                    .toString())</span>
-<span class="nc" id="L192">                    .replacePath(req.getContextPath());</span>
+<span class="nc" id="L194">            final UriBuilder uriBuilder = UriBuilder.fromUri(req.getRequestURL()</span>
+<span class="nc" id="L195">                .toString())</span>
+<span class="nc" id="L196">                .replacePath(req.getContextPath());</span>
 
-<span class="nc" id="L194">            session.setAttribute(&quot;post_logout_redirect_uri&quot;, postLogoutRedirectUri);</span>
-<span class="nc bnc" id="L195" title="All 2 branches missed.">            if (idToken != null) {</span>
-<span class="nc" id="L196">                session.setAttribute(&quot;id_token&quot;, idToken);</span>
+<span class="nc" id="L198">            session.setAttribute(&quot;post_logout_redirect_uri&quot;, postLogoutRedirectUri);</span>
+<span class="nc bnc" id="L199" title="All 2 branches missed.">            if (idToken != null) {</span>
+<span class="nc" id="L200">                session.setAttribute(&quot;id_token&quot;, idToken);</span>
             }
-<span class="nc" id="L198">            session.setAttribute(&quot;state&quot;, state);</span>
-<span class="nc" id="L199">            final String nonce = keyProvider.nextEncodedToken();</span>
-<span class="nc" id="L200">            session.setAttribute(&quot;nonce&quot;, nonce);</span>
+<span class="nc" id="L202">            session.setAttribute(&quot;state&quot;, state);</span>
+<span class="nc" id="L203">            final String nonce = keyProvider.nextEncodedToken();</span>
+<span class="nc" id="L204">            session.setAttribute(&quot;nonce&quot;, nonce);</span>
 
-<span class="nc" id="L202">            return Response.temporaryRedirect(authenticator.logout(nonce, idToken, state, postLogoutRedirectUri, req, uriBuilder))</span>
-<span class="nc" id="L203">                    .build();</span>
+<span class="nc" id="L206">            return Response.temporaryRedirect(authenticator.logout(nonce, idToken, state, postLogoutRedirectUri, req, uriBuilder))</span>
+<span class="nc" id="L207">                .build();</span>
         }
         // If the user is not authenticated, it just goes back to the post
         // redirect URI.
-<span class="nc" id="L207">        return Response.temporaryRedirect(UriBuilder.fromUri(postLogoutRedirectUri)</span>
-<span class="nc" id="L208">                .queryParam(OpenIdConnectKey.STATE, state)</span>
-<span class="nc" id="L209">                .build())</span>
-<span class="nc" id="L210">                .build();</span>
+<span class="nc" id="L211">        return Response.temporaryRedirect(UriBuilder.fromUri(postLogoutRedirectUri)</span>
+<span class="nc" id="L212">            .queryParam(OpenIdConnectKey.STATE, state)</span>
+<span class="nc" id="L213">            .build())</span>
+<span class="nc" id="L214">            .build();</span>
 
     }
 }
