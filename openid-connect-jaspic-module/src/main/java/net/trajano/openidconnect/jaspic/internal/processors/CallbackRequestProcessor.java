@@ -85,7 +85,8 @@ public class CallbackRequestProcessor implements
     private IdTokenResponse getToken(final String grantKey,
         final String grant,
         final GrantType grantType,
-        final ValidateContext context) throws IOException {
+        final ValidateContext context) throws IOException,
+            GeneralSecurityException {
 
         final MultivaluedMap<String, String> requestData = new MultivaluedHashMap<>();
         requestData.putSingle(grantKey, grant);
@@ -95,28 +96,28 @@ public class CallbackRequestProcessor implements
 
         try {
             final String authorization = "Basic " + Encoding.base64Encode(context.getOption(OpenIdConnectKey.CLIENT_ID) + ":" + context.getOption(OpenIdConnectKey.CLIENT_SECRET));
-            final IdTokenResponse authorizationTokenResponse = context.target(context.getOpenIDProviderConfig()
+            final JsonObject authorizationTokenResponse = context.target(context.getOpenIDProviderConfig()
                 .getTokenEndpoint())
                 .request(MediaType.APPLICATION_JSON_TYPE)
                 .header("Authorization", authorization)
-                .post(Entity.form(requestData), IdTokenResponse.class);
+                .post(Entity.form(requestData), JsonObject.class);
             if (LOG.isLoggable(Level.FINEST)) {
                 LOG.finest("authorization token response =  " + authorizationTokenResponse);
             }
-            return authorizationTokenResponse;
+            return new IdTokenResponse(authorizationTokenResponse);
         } catch (final BadRequestException e) {
             // workaround for google that does not support BASIC authentication
             // on their endpoint.
             requestData.putSingle(CLIENT_ID, context.getOption(OpenIdConnectKey.CLIENT_ID));
             requestData.putSingle(CLIENT_SECRET, context.getOption(OpenIdConnectKey.CLIENT_SECRET));
-            final IdTokenResponse authorizationTokenResponse = context.target(context.getOpenIDProviderConfig()
+            final JsonObject authorizationTokenResponse = context.target(context.getOpenIDProviderConfig()
                 .getTokenEndpoint())
                 .request(MediaType.APPLICATION_JSON_TYPE)
-                .post(Entity.form(requestData), IdTokenResponse.class);
+                .post(Entity.form(requestData), JsonObject.class);
             if (LOG.isLoggable(Level.FINEST)) {
                 LOG.finest("authorization token response =  " + authorizationTokenResponse);
             }
-            return authorizationTokenResponse;
+            return new IdTokenResponse(authorizationTokenResponse);
         }
     }
 

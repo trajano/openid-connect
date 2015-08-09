@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 
+import javax.json.JsonObject;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -59,29 +60,11 @@ import net.trajano.openidconnect.rs.IdTokenProvider;
  * @author Archimedes Trajano
  */
 @XmlRootElement
-@XmlAccessorType(XmlAccessType.FIELD)
+@XmlAccessorType(XmlAccessType.NONE)
 public class IdTokenResponse extends TokenResponse {
 
     /**
-     * Flag to indicate that the token was retrieved using a used up
-     * authentication code.
-     */
-
-    @XmlTransient
-    private boolean usedUpAuthenticationCode;
-
-    public boolean isUsedUpAuthenticationCode() {
-
-        return usedUpAuthenticationCode;
-    }
-
-    public void setUsedUpAuthenticationCode(boolean usedUpAuthenticationCode) {
-
-        this.usedUpAuthenticationCode = usedUpAuthenticationCode;
-    }
-
-    /**
-     * 
+     *
      */
     private static final long serialVersionUID = -6175007590579157079L;
 
@@ -91,6 +74,31 @@ public class IdTokenResponse extends TokenResponse {
     @XmlElement(name = "id_token",
         required = true)
     private String encodedIdToken;
+
+    /**
+     * Flag to indicate that the token was retrieved using a used up
+     * authentication code.
+     */
+
+    @XmlTransient
+    private boolean usedUpAuthenticationCode;
+
+    /**
+     * Constructs IdTokenResponse.
+     */
+    public IdTokenResponse() {
+    }
+
+    /**
+     * Constructs IdTokenResponse from a JSON Object.
+     *
+     * @param tokenResponse
+     *            token response JSON
+     */
+    public IdTokenResponse(final JsonObject tokenResponse) throws GeneralSecurityException {
+        super(tokenResponse);
+        setEncodedIdToken(tokenResponse.getString("id_token"));
+    }
 
     public String getEncodedIdToken() {
 
@@ -113,15 +121,25 @@ public class IdTokenResponse extends TokenResponse {
             }
             return new IdTokenProvider().readFrom(IdToken.class, null, null, MediaType.APPLICATION_JSON_TYPE, null, new ByteArrayInputStream(p.getPayload()));
         } catch (IOException
-                 | GeneralSecurityException e) {
+            | GeneralSecurityException e) {
             throw new WebApplicationException(e);
         }
 
     }
 
+    public boolean isUsedUpAuthenticationCode() {
+
+        return usedUpAuthenticationCode;
+    }
+
     public void setEncodedIdToken(final String encodedIdToken) throws GeneralSecurityException {
 
         this.encodedIdToken = encodedIdToken;
+    }
+
+    public void setUsedUpAuthenticationCode(final boolean usedUpAuthenticationCode) {
+
+        this.usedUpAuthenticationCode = usedUpAuthenticationCode;
     }
 
 }

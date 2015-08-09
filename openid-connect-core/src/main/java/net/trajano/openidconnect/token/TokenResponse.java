@@ -5,55 +5,30 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import javax.json.JsonObject;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
-
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import javax.xml.bind.annotation.XmlTransient;
 
 import net.trajano.openidconnect.core.Scope;
 
-@JsonIgnoreProperties(ignoreUnknown=true)
-public class TokenResponse implements Serializable{
-    /**
-     * 
-     */
-    private static final long serialVersionUID = 5216911835177655318L;
-
-    public String getAccessToken() {
-
-        return accessToken;
-    }
-
-    public void setAccessToken(String accessToken) {
-
-        this.accessToken = accessToken;
-    }
-
-    public int getExpiresIn() {
-
-        return expiresIn;
-    }
-
-    public void setExpiresIn(int expiresIn) {
-
-        this.expiresIn = expiresIn;
-    }
-
-    public String getRefreshToken() {
-
-        return refreshToken;
-    }
-
-    public void setRefreshToken(String refreshToken) {
-
-        this.refreshToken = refreshToken;
-    }
+@XmlAccessorType(XmlAccessType.NONE)
+public class TokenResponse implements
+    Serializable {
 
     public static final String BEARER = "Bearer";
 
     /**
+     *
+     */
+    private static final long serialVersionUID = 5216911835177655318L;
+
+    /**
      * REQUIRED. The access token issued by the authorization server.
      */
-    @XmlElement(name = "access_token", required = true)
+    @XmlElement(name = "access_token",
+        required = true)
     private String accessToken;
 
     /**
@@ -63,61 +38,19 @@ public class TokenResponse implements Serializable{
      * server SHOULD provide the expiration time via other means or document the
      * default value.
      */
-    @XmlElement(name = "expires_in", required = false)
+    @XmlElement(name = "expires_in",
+        required = false)
     private int expiresIn;
 
     @XmlElement(name = "refresh_token")
     private String refreshToken;
 
-    public void setScope(final String scope) {
-
-        this.scope = scope;
-    }
-
-
     /**
      * OPTIONAL, if identical to the scope requested by the client; otherwise,
      * REQUIRED. The scope of the access token as described by Section 3.3.
      */
+    @XmlElement(name = "scope")
     private String scope;
-
-    public String getScope() {
-
-        return scope;
-    }
-
-    public void setTokenType(final String tokenType) {
-
-        this.tokenType = tokenType;
-    }
-
-    public void setScopes(Set<Scope> scopes) {
-
-        StringBuilder b = new StringBuilder();
-        Iterator<Scope> i = scopes.iterator();
-        b.append(i.next());
-        while (i.hasNext()) {
-            b.append(' ');
-            b.append(i.next());
-        }
-        scope = b.toString();
-
-    }
-
-    public Set<Scope> getScopes() {
-
-        Set<Scope> scopes = new HashSet<>();
-        for (final String scopePart : scope.split("\\s")) {
-            scopes.add(Scope.valueOf(scopePart));
-        }
-        return scopes;
-
-    }
-
-    public String getTokenType() {
-
-        return tokenType;
-    }
 
     /**
      * <p>
@@ -132,6 +65,102 @@ public class TokenResponse implements Serializable{
      * specification.
      * </p>
      */
-    @XmlElement(name = "token_type", required = true)
+    @XmlElement(name = "token_type",
+        required = true)
     private String tokenType = BEARER;
+
+    /**
+     * Constructs TokenResponse.
+     *
+     * @param tokenResponse
+     */
+    public TokenResponse() {
+    }
+
+    /**
+     * Constructs TokenResponse.
+     *
+     * @param tokenResponse
+     */
+    public TokenResponse(final JsonObject tokenResponse) {
+        accessToken = tokenResponse.getString("access_token");
+        expiresIn = tokenResponse.getInt("expires_in");
+        refreshToken = tokenResponse.getString("refresh_token");
+        scope = tokenResponse.getString("scope");
+        tokenType = tokenResponse.getString("token_type", BEARER);
+    }
+
+    public String getAccessToken() {
+
+        return accessToken;
+    }
+
+    public int getExpiresIn() {
+
+        return expiresIn;
+    }
+
+    public String getRefreshToken() {
+
+        return refreshToken;
+    }
+
+    public String getScope() {
+
+        return scope;
+    }
+
+    @XmlTransient
+    public Set<Scope> getScopes() {
+
+        final Set<Scope> scopes = new HashSet<>();
+        for (final String scopePart : scope.split("\\s")) {
+            scopes.add(Scope.valueOf(scopePart));
+        }
+        return scopes;
+
+    }
+
+    public String getTokenType() {
+
+        return tokenType;
+    }
+
+    public void setAccessToken(final String accessToken) {
+
+        this.accessToken = accessToken;
+    }
+
+    public void setExpiresIn(final int expiresIn) {
+
+        this.expiresIn = expiresIn;
+    }
+
+    public void setRefreshToken(final String refreshToken) {
+
+        this.refreshToken = refreshToken;
+    }
+
+    public void setScope(final String scope) {
+
+        this.scope = scope;
+    }
+
+    public void setScopes(final Set<Scope> scopes) {
+
+        final StringBuilder b = new StringBuilder();
+        final Iterator<Scope> i = scopes.iterator();
+        b.append(i.next());
+        while (i.hasNext()) {
+            b.append(' ');
+            b.append(i.next());
+        }
+        scope = b.toString();
+
+    }
+
+    public void setTokenType(final String tokenType) {
+
+        this.tokenType = tokenType;
+    }
 }
