@@ -27,7 +27,7 @@ under the License.
     <item>
       <title>File: 5,
              Errors: 0,
-             Warnings: 76,
+             Warnings: 66,
              Infos: 0
       </title>
             <link>http://site.trajano.net/trajano/openid-connect/openid-connect-provider-sample//checkstyle.html</link>
@@ -46,13 +46,13 @@ under the License.
           <tbody>
                           <tr>
                 <td>
-                  <a href="http://site.trajano.net/trajano/openid-connect/openid-connect-provider-sample//checkstyle.html#net.trajano.openidconnect.provider.sample.AcceptAllClientManager.java">net/trajano/openidconnect/provider/sample/AcceptAllClientManager.java</a>
+                  <a href="http://site.trajano.net/trajano/openid-connect/openid-connect-provider-sample//checkstyle.html#net.trajano.openidconnect.provider.sample.LoginServlet.java">net/trajano/openidconnect/provider/sample/LoginServlet.java</a>
                 </td>
                 <td>
                   0
                 </td>
                 <td>
-                  32
+                  9
                 </td>
                 <td>
                   0
@@ -74,20 +74,6 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="http://site.trajano.net/trajano/openid-connect/openid-connect-provider-sample//checkstyle.html#net.trajano.openidconnect.provider.sample.MapTokenStorage.java">net/trajano/openidconnect/provider/sample/MapTokenStorage.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  17
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
                   <a href="http://site.trajano.net/trajano/openid-connect/openid-connect-provider-sample//checkstyle.html#net.trajano.openidconnect.provider.sample.ConsentServlet.java">net/trajano/openidconnect/provider/sample/ConsentServlet.java</a>
                 </td>
                 <td>
@@ -102,13 +88,27 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="http://site.trajano.net/trajano/openid-connect/openid-connect-provider-sample//checkstyle.html#net.trajano.openidconnect.provider.sample.LoginServlet.java">net/trajano/openidconnect/provider/sample/LoginServlet.java</a>
+                  <a href="http://site.trajano.net/trajano/openid-connect/openid-connect-provider-sample//checkstyle.html#net.trajano.openidconnect.provider.sample.MapTokenStorage.java">net/trajano/openidconnect/provider/sample/MapTokenStorage.java</a>
                 </td>
                 <td>
                   0
                 </td>
                 <td>
-                  9
+                  7
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://site.trajano.net/trajano/openid-connect/openid-connect-provider-sample//checkstyle.html#net.trajano.openidconnect.provider.sample.AcceptAllClientManager.java">net/trajano/openidconnect/provider/sample/AcceptAllClientManager.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  32
                 </td>
                 <td>
                   0
