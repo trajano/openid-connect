@@ -90,18 +90,19 @@ public class IdTokenResponse extends TokenResponse {
 <span class="nc" id="L90">    }</span>
 
     /**
-     * Constructs IdTokenResponse.
+     * Constructs IdTokenResponse from a JSON Object.
      *
-     * @param authorizationTokenResponse
+     * @param tokenResponse
+     *            token response JSON
      */
     public IdTokenResponse(final JsonObject tokenResponse) throws GeneralSecurityException {
-<span class="nc" id="L98">        super(tokenResponse);</span>
-<span class="nc" id="L99">        setEncodedIdToken(tokenResponse.getString(&quot;id_token&quot;));</span>
-<span class="nc" id="L100">    }</span>
+<span class="nc" id="L99">        super(tokenResponse);</span>
+<span class="nc" id="L100">        setEncodedIdToken(tokenResponse.getString(&quot;id_token&quot;));</span>
+<span class="nc" id="L101">    }</span>
 
     public String getEncodedIdToken() {
 
-<span class="nc" id="L104">        return encodedIdToken;</span>
+<span class="nc" id="L105">        return encodedIdToken;</span>
     }
 
     /**
@@ -114,32 +115,32 @@ public class IdTokenResponse extends TokenResponse {
     public IdToken getIdToken(final JsonWebKeySet jwks) {
 
         try {
-<span class="nc" id="L117">            final JsonWebTokenProcessor p = new JsonWebTokenProcessor(encodedIdToken).jwks(jwks);</span>
-<span class="nc bnc" id="L118" title="All 2 branches missed.">            if (!p.isJwkAvailable()) {</span>
-<span class="nc" id="L119">                throw new OpenIdConnectException(ErrorCode.invalid_request, &quot;no jwk available for kid&quot;);</span>
+<span class="nc" id="L118">            final JsonWebTokenProcessor p = new JsonWebTokenProcessor(encodedIdToken).jwks(jwks);</span>
+<span class="nc bnc" id="L119" title="All 2 branches missed.">            if (!p.isJwkAvailable()) {</span>
+<span class="nc" id="L120">                throw new OpenIdConnectException(ErrorCode.invalid_request, &quot;no jwk available for kid&quot;);</span>
             }
-<span class="nc" id="L121">            return new IdTokenProvider().readFrom(IdToken.class, null, null, MediaType.APPLICATION_JSON_TYPE, null, new ByteArrayInputStream(p.getPayload()));</span>
+<span class="nc" id="L122">            return new IdTokenProvider().readFrom(IdToken.class, null, null, MediaType.APPLICATION_JSON_TYPE, null, new ByteArrayInputStream(p.getPayload()));</span>
         } catch (IOException
-<span class="nc" id="L123">            | GeneralSecurityException e) {</span>
-<span class="nc" id="L124">            throw new WebApplicationException(e);</span>
+<span class="nc" id="L124">            | GeneralSecurityException e) {</span>
+<span class="nc" id="L125">            throw new WebApplicationException(e);</span>
         }
 
     }
 
     public boolean isUsedUpAuthenticationCode() {
 
-<span class="nc" id="L131">        return usedUpAuthenticationCode;</span>
+<span class="nc" id="L132">        return usedUpAuthenticationCode;</span>
     }
 
     public void setEncodedIdToken(final String encodedIdToken) throws GeneralSecurityException {
 
-<span class="nc" id="L136">        this.encodedIdToken = encodedIdToken;</span>
-<span class="nc" id="L137">    }</span>
+<span class="nc" id="L137">        this.encodedIdToken = encodedIdToken;</span>
+<span class="nc" id="L138">    }</span>
 
     public void setUsedUpAuthenticationCode(final boolean usedUpAuthenticationCode) {
 
-<span class="nc" id="L141">        this.usedUpAuthenticationCode = usedUpAuthenticationCode;</span>
-<span class="nc" id="L142">    }</span>
+<span class="nc" id="L142">        this.usedUpAuthenticationCode = usedUpAuthenticationCode;</span>
+<span class="nc" id="L143">    }</span>
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span></div></body></html>

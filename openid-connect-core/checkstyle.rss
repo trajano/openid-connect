@@ -27,7 +27,7 @@ under the License.
     <item>
       <title>File: 59,
              Errors: 1,
-             Warnings: 612,
+             Warnings: 611,
              Infos: 0
       </title>
             <link>http://site.trajano.net/trajano/openid-connect/openid-connect-core//checkstyle.html</link>
@@ -528,7 +528,7 @@ under the License.
                   0
                 </td>
                 <td>
-                  3
+                  2
                 </td>
                 <td>
                   0

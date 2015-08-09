@@ -1,6 +1,6 @@
 GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_COVERED,LINE_MISSED,LINE_COVERED,COMPLEXITY_MISSED,COMPLEXITY_COVERED,METHOD_MISSED,METHOD_COVERED
 OpenID Connect Core,net.trajano.openidconnect.rs,AuthenticationRequestUriProvider,32,0,8,0,6,0,10,0,6,0
-OpenID Connect Core,net.trajano.openidconnect.rs,JsonWebKeySetProvider,3,144,2,6,1,26,3,8,1,6
+OpenID Connect Core,net.trajano.openidconnect.rs,JsonWebKeySetProvider,2,145,1,7,1,26,2,9,1,6
 OpenID Connect Core,net.trajano.openidconnect.rs,JsonWebKeyProvider,70,151,18,20,22,33,11,14,1,5
 OpenID Connect Core,net.trajano.openidconnect.rs,IdTokenProvider,261,0,32,0,56,0,22,0,6,0
 OpenID Connect Core,net.trajano.openidconnect.rs,AuthenticationRequestJsonProvider,32,0,8,0,6,0,10,0,6,0

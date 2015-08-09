@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<pmd version="5.2.3" timestamp="2015-08-09T14:43:12.070">
+<pmd version="5.2.3" timestamp="2015-08-09T14:51:26.959">
 <file name="C:\Program Files (x86)\Git\p\openid-connect\openid-connect-core\src\main\java\net\trajano\openidconnect\auth\AuthenticationRequest.java">
 <violation beginline="54" endline="54" begincolumn="23" endcolumn="41" rule="UseConcurrentHashMap" ruleset="Controversial" package="net.trajano.openidconnect.auth" class="AuthenticationRequest$Builder" externalInfoUrl="http://pmd.sourceforge.net/pmd-5.2.3/pmd-java/rules/java/controversial.html#UseConcurrentHashMap" priority="3">
 If you run in Java5 or newer and have concurrent access, you should use the ConcurrentHashMap implementation
