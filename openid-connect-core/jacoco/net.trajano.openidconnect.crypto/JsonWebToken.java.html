@@ -194,7 +194,7 @@ public class JsonWebToken {
 <span class="fc" id="L194">        final StringBuilder b = new StringBuilder(joseHeaderEncoded);</span>
 <span class="fc bfc" id="L195" title="All 2 branches covered.">        for (final byte[] payload : payloads) {</span>
 <span class="fc" id="L196">            b.append('.')</span>
-<span class="fc" id="L197">                    .append(Encoding.base64urlEncode(payload));</span>
+                    .append(Encoding.base64urlEncode(payload));
         }
 <span class="fc" id="L199">        return b.toString();</span>
 

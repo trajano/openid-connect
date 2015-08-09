@@ -22,26 +22,26 @@ public class InvalidClientException extends NotAuthorizedException {
     public InvalidClientException(String type) {
 
 <span class="nc" id="L24">        super(Response.noContent()</span>
-<span class="nc" id="L25">                .header(WWW_AUTHENTICATE, buildWwwAuthenticateHeader(type, null, null))</span>
-<span class="nc" id="L26">                .status(Status.UNAUTHORIZED)</span>
-<span class="nc" id="L27">                .build());</span>
+                .header(WWW_AUTHENTICATE, buildWwwAuthenticateHeader(type, null, null))
+                .status(Status.UNAUTHORIZED)
+                .build());
 <span class="nc" id="L28">    }</span>
 
     public InvalidClientException(String type, String errorDescription) {
 
 <span class="nc" id="L32">        super(Response.noContent()</span>
-<span class="nc" id="L33">                .header(WWW_AUTHENTICATE, buildWwwAuthenticateHeader(type, errorDescription, null))</span>
-<span class="nc" id="L34">                .status(Status.UNAUTHORIZED)</span>
-<span class="nc" id="L35">                .build());</span>
+                .header(WWW_AUTHENTICATE, buildWwwAuthenticateHeader(type, errorDescription, null))
+                .status(Status.UNAUTHORIZED)
+                .build());
 
 <span class="nc" id="L37">    }</span>
 
     public InvalidClientException(String type, String errorDescription, URI errorUri) {
 
 <span class="nc" id="L41">        super(Response.noContent()</span>
-<span class="nc" id="L42">                .header(WWW_AUTHENTICATE, buildWwwAuthenticateHeader(type, errorDescription, errorUri))</span>
-<span class="nc" id="L43">                .status(Status.UNAUTHORIZED)</span>
-<span class="nc" id="L44">                .build());</span>
+                .header(WWW_AUTHENTICATE, buildWwwAuthenticateHeader(type, errorDescription, errorUri))
+                .status(Status.UNAUTHORIZED)
+                .build());
 
 <span class="nc" id="L46">    }</span>
 

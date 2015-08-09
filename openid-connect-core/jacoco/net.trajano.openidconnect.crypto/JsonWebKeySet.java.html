@@ -29,14 +29,14 @@ import javax.xml.bind.annotation.XmlRootElement;
     public JsonWebKey[] getKeys() {
 
 <span class="fc" id="L31">        return keys.values()</span>
-<span class="fc" id="L32">                .toArray(new JsonWebKey[0]);</span>
+                .toArray(new JsonWebKey[0]);
     }
     
 
     public JsonWebKey[] getSigningKeys() {
 
 <span class="nc" id="L38">        return signingKeys.values()</span>
-<span class="nc" id="L39">                .toArray(new JsonWebKey[0]);</span>
+                .toArray(new JsonWebKey[0]);
     }
 
 

@@ -9,6 +9,7 @@ import java.util.Locale;
 import java.util.Set;
 
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlEnumValue;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import net.trajano.openidconnect.auth.Display;
@@ -211,7 +212,7 @@ public class OpenIdProviderConfiguration {
      * parameter, with true indicating support. If omitted, the default value is
      * true.
      */
-<span class="nc" id="L214">    @XmlElement(name = &quot;request_uri_parameter_supported&quot;)</span>
+<span class="nc" id="L215">    @XmlElement(name = &quot;request_uri_parameter_supported&quot;)</span>
     private boolean requestUriParameterSupported = true;
 
     /**
@@ -269,9 +270,14 @@ public class OpenIdProviderConfiguration {
     @XmlElement(name = &quot;service_documentation&quot;)
     private URI serviceDocumentation;
 
+    /**
+     * Subject types supported uses a reserved keyword &lt;code&gt;public&lt;/code&gt; which
+     * causes issues with rendering on application servers that do not support
+     * JSON binding with JAXB annotations. So {@link String} is used.
+     */
     @XmlElement(name = &quot;subject_types_supported&quot;,
         required = true)
-    private Set&lt;SubjectIdentifierType&gt; subjectTypesSupported;
+    private Set&lt;String&gt; subjectTypesSupported;
 
     /**
      * URL of the OP's OAuth 2.0 Token Endpoint [OpenID.Core]. This is REQUIRED
@@ -315,386 +321,394 @@ public class OpenIdProviderConfiguration {
     @XmlElement(name = &quot;userinfo_signing_alg_values_supported&quot;)
     private Set&lt;String&gt; userinfoSigningAlgValuesSupported;
 
-<span class="nc" id="L318">    public OpenIdProviderConfiguration() {</span>
-<span class="nc" id="L319">    }</span>
+<span class="nc" id="L324">    public OpenIdProviderConfiguration() {</span>
+<span class="nc" id="L325">    }</span>
 
     public Set&lt;String&gt; getAcrValuesSupported() {
 
-<span class="nc" id="L323">        return acrValuesSupported;</span>
+<span class="nc" id="L329">        return acrValuesSupported;</span>
     }
 
     public URI getAuthorizationEndpoint() {
 
-<span class="nc" id="L328">        return authorizationEndpoint;</span>
+<span class="nc" id="L334">        return authorizationEndpoint;</span>
     }
 
     public URI getCheckSessionIframe() {
 
-<span class="nc" id="L333">        return checkSessionIframe;</span>
+<span class="nc" id="L339">        return checkSessionIframe;</span>
     }
 
     public Set&lt;String&gt; getClaimsSupported() {
 
-<span class="nc" id="L338">        return claimsSupported;</span>
+<span class="nc" id="L344">        return claimsSupported;</span>
     }
 
     public Set&lt;String&gt; getClaimTypesSupported() {
 
-<span class="nc" id="L343">        return claimTypesSupported;</span>
+<span class="nc" id="L349">        return claimTypesSupported;</span>
     }
 
     public List&lt;Display&gt; getDisplayValuesSupported() {
 
-<span class="nc" id="L348">        return displayValuesSupported;</span>
+<span class="nc" id="L354">        return displayValuesSupported;</span>
     }
 
     public URI getEndSessionEndpoint() {
 
-<span class="nc" id="L353">        return endSessionEndpoint;</span>
+<span class="nc" id="L359">        return endSessionEndpoint;</span>
     }
 
     public List&lt;GrantType&gt; getGrantTypesSupported() {
 
-<span class="nc" id="L358">        return grantTypesSupported;</span>
+<span class="nc" id="L364">        return grantTypesSupported;</span>
     }
 
     public List&lt;String&gt; getIdTokenEncryptionAlgValuesSupported() {
 
-<span class="nc" id="L363">        return idTokenEncryptionAlgValuesSupported;</span>
+<span class="nc" id="L369">        return idTokenEncryptionAlgValuesSupported;</span>
     }
 
     public List&lt;String&gt; getIdTokenEncryptionEncValuesSupported() {
 
-<span class="nc" id="L368">        return idTokenEncryptionEncValuesSupported;</span>
+<span class="nc" id="L374">        return idTokenEncryptionEncValuesSupported;</span>
     }
 
     public List&lt;String&gt; getIdTokenSigningAlgValuesSupported() {
 
-<span class="nc" id="L373">        return idTokenSigningAlgValuesSupported;</span>
+<span class="nc" id="L379">        return idTokenSigningAlgValuesSupported;</span>
     }
 
     public String getIssuer() {
 
-<span class="nc" id="L378">        return issuer;</span>
+<span class="nc" id="L384">        return issuer;</span>
     }
 
     public URI getJwksUri() {
 
-<span class="nc" id="L383">        return jwksUri;</span>
+<span class="nc" id="L389">        return jwksUri;</span>
     }
 
     public URI getRegistrationEndpoint() {
 
-<span class="nc" id="L388">        return registrationEndpoint;</span>
+<span class="nc" id="L394">        return registrationEndpoint;</span>
     }
 
     public List&lt;String&gt; getRequestObjectEncryptionAlgValuesSupported() {
 
-<span class="nc" id="L393">        return requestObjectEncryptionAlgValuesSupported;</span>
+<span class="nc" id="L399">        return requestObjectEncryptionAlgValuesSupported;</span>
     }
 
     public List&lt;String&gt; getRequestObjectEncryptionEncValuesSupported() {
 
-<span class="nc" id="L398">        return requestObjectEncryptionEncValuesSupported;</span>
+<span class="nc" id="L404">        return requestObjectEncryptionEncValuesSupported;</span>
     }
 
     public List&lt;String&gt; getRequestObjectSigningAlgValuesSupported() {
 
-<span class="nc" id="L403">        return requestObjectSigningAlgValuesSupported;</span>
+<span class="nc" id="L409">        return requestObjectSigningAlgValuesSupported;</span>
     }
 
     public List&lt;ResponseMode&gt; getResponseModesSupported() {
 
-<span class="nc" id="L408">        return responseModesSupported;</span>
+<span class="nc" id="L414">        return responseModesSupported;</span>
     }
 
     public List&lt;String&gt; getResponseTypesSupported() {
 
-<span class="nc" id="L413">        return responseTypesSupported;</span>
+<span class="nc" id="L419">        return responseTypesSupported;</span>
     }
 
     public URI getRevocationEndpoint() {
 
-<span class="nc" id="L418">        return revocationEndpoint;</span>
+<span class="nc" id="L424">        return revocationEndpoint;</span>
     }
 
     public Set&lt;Scope&gt; getScopesSupported() {
 
-<span class="nc" id="L423">        return scopesSupported;</span>
+<span class="nc" id="L429">        return scopesSupported;</span>
     }
 
     public URI getServiceDocumentation() {
 
-<span class="nc" id="L428">        return serviceDocumentation;</span>
+<span class="nc" id="L434">        return serviceDocumentation;</span>
     }
 
-    public Set&lt;SubjectIdentifierType&gt; getSubjectTypesSupported() {
+    public Set&lt;String&gt; getSubjectTypesSupported() {
 
-<span class="nc" id="L433">        return subjectTypesSupported;</span>
+<span class="nc" id="L439">        return subjectTypesSupported;</span>
     }
 
     public URI getTokenEndpoint() {
 
-<span class="nc" id="L438">        return tokenEndpoint;</span>
+<span class="nc" id="L444">        return tokenEndpoint;</span>
     }
 
     public List&lt;TokenEndPointAuthMethod&gt; getTokenEndpointAuthMethodsSupported() {
 
-<span class="nc" id="L443">        return tokenEndpointAuthMethodsSupported;</span>
+<span class="nc" id="L449">        return tokenEndpointAuthMethodsSupported;</span>
     }
 
     public Set&lt;String&gt; getTokenEndpointAuthSigningAlgValuesSupported() {
 
-<span class="nc" id="L448">        return tokenEndpointAuthSigningAlgValuesSupported;</span>
+<span class="nc" id="L454">        return tokenEndpointAuthSigningAlgValuesSupported;</span>
     }
 
     public Set&lt;Locale&gt; getUiLocalesSupported() {
 
-<span class="nc" id="L453">        return uiLocalesSupported;</span>
+<span class="nc" id="L459">        return uiLocalesSupported;</span>
     }
 
     public Set&lt;String&gt; getUserinfoEncryptionAlgValuesSupported() {
 
-<span class="nc" id="L458">        return userinfoEncryptionAlgValuesSupported;</span>
+<span class="nc" id="L464">        return userinfoEncryptionAlgValuesSupported;</span>
     }
 
     public Set&lt;String&gt; getUserinfoEncryptionEncValuesSupported() {
 
-<span class="nc" id="L463">        return userinfoEncryptionEncValuesSupported;</span>
+<span class="nc" id="L469">        return userinfoEncryptionEncValuesSupported;</span>
     }
 
     public URI getUserinfoEndpoint() {
 
-<span class="nc" id="L468">        return userinfoEndpoint;</span>
+<span class="nc" id="L474">        return userinfoEndpoint;</span>
     }
 
     public Set&lt;String&gt; getUserinfoSigningAlgValuesSupported() {
 
-<span class="nc" id="L473">        return userinfoSigningAlgValuesSupported;</span>
+<span class="nc" id="L479">        return userinfoSigningAlgValuesSupported;</span>
     }
 
     public boolean isClaimsParameterSupported() {
 
-<span class="nc" id="L478">        return claimsParameterSupported;</span>
+<span class="nc" id="L484">        return claimsParameterSupported;</span>
     }
 
     public boolean isRequestParameterSupported() {
 
-<span class="nc" id="L483">        return requestParameterSupported;</span>
+<span class="nc" id="L489">        return requestParameterSupported;</span>
     }
 
     public boolean isRequestUriParameterSupported() {
 
-<span class="nc" id="L488">        return requestUriParameterSupported;</span>
+<span class="nc" id="L494">        return requestUriParameterSupported;</span>
     }
 
     public boolean isRequireRequestUriRegistration() {
 
-<span class="nc" id="L493">        return requireRequestUriRegistration;</span>
+<span class="nc" id="L499">        return requireRequestUriRegistration;</span>
     }
 
     public void setAcrValuesSupported(final Set&lt;String&gt; acrValuesSupported) {
 
-<span class="nc" id="L498">        this.acrValuesSupported = acrValuesSupported;</span>
-<span class="nc" id="L499">    }</span>
+<span class="nc" id="L504">        this.acrValuesSupported = acrValuesSupported;</span>
+<span class="nc" id="L505">    }</span>
 
     public void setAuthorizationEndpoint(final URI authorizationEndpoint) {
 
-<span class="nc" id="L503">        this.authorizationEndpoint = authorizationEndpoint;</span>
-<span class="nc" id="L504">    }</span>
+<span class="nc" id="L509">        this.authorizationEndpoint = authorizationEndpoint;</span>
+<span class="nc" id="L510">    }</span>
 
     public void setCheckSessionIframe(final URI checkSessionIframe) {
 
-<span class="nc" id="L508">        this.checkSessionIframe = checkSessionIframe;</span>
-<span class="nc" id="L509">    }</span>
+<span class="nc" id="L514">        this.checkSessionIframe = checkSessionIframe;</span>
+<span class="nc" id="L515">    }</span>
 
     public void setClaimsParameterSupported(final boolean claimsParameterSupported) {
 
-<span class="nc" id="L513">        this.claimsParameterSupported = claimsParameterSupported;</span>
-<span class="nc" id="L514">    }</span>
+<span class="nc" id="L519">        this.claimsParameterSupported = claimsParameterSupported;</span>
+<span class="nc" id="L520">    }</span>
 
     public void setClaimsSupported(final String... claimsSupported) {
 
-<span class="nc" id="L518">        this.claimsSupported = new HashSet&lt;&gt;(Arrays.asList(claimsSupported));</span>
-<span class="nc" id="L519">    }</span>
+<span class="nc" id="L524">        this.claimsSupported = new HashSet&lt;&gt;(Arrays.asList(claimsSupported));</span>
+<span class="nc" id="L525">    }</span>
 
     public void setClaimTypesSupported(final Set&lt;String&gt; claimTypesSupported) {
 
-<span class="nc" id="L523">        this.claimTypesSupported = claimTypesSupported;</span>
-<span class="nc" id="L524">    }</span>
+<span class="nc" id="L529">        this.claimTypesSupported = claimTypesSupported;</span>
+<span class="nc" id="L530">    }</span>
 
     public void setDisplayValuesSupported(final Display... displayValuesSupported) {
 
-<span class="nc bnc" id="L528" title="All 2 branches missed.">        if (displayValuesSupported == null) {</span>
-<span class="nc" id="L529">            this.displayValuesSupported = Collections.emptyList();</span>
+<span class="nc bnc" id="L534" title="All 2 branches missed.">        if (displayValuesSupported == null) {</span>
+<span class="nc" id="L535">            this.displayValuesSupported = Collections.emptyList();</span>
         } else {
-<span class="nc" id="L531">            this.displayValuesSupported = Arrays.asList(displayValuesSupported);</span>
+<span class="nc" id="L537">            this.displayValuesSupported = Arrays.asList(displayValuesSupported);</span>
         }
-<span class="nc" id="L533">    }</span>
+<span class="nc" id="L539">    }</span>
 
     public void setEndSessionEndpoint(final URI endSessionEndpoint) {
 
-<span class="nc" id="L537">        this.endSessionEndpoint = endSessionEndpoint;</span>
-<span class="nc" id="L538">    }</span>
+<span class="nc" id="L543">        this.endSessionEndpoint = endSessionEndpoint;</span>
+<span class="nc" id="L544">    }</span>
 
     public void setGrantTypesSupported(final GrantType... grantTypesSupported) {
 
-<span class="nc bnc" id="L542" title="All 2 branches missed.">        if (grantTypesSupported == null) {</span>
-<span class="nc" id="L543">            this.grantTypesSupported = Collections.emptyList();</span>
+<span class="nc bnc" id="L548" title="All 2 branches missed.">        if (grantTypesSupported == null) {</span>
+<span class="nc" id="L549">            this.grantTypesSupported = Collections.emptyList();</span>
         } else {
-<span class="nc" id="L545">            this.grantTypesSupported = Arrays.asList(grantTypesSupported);</span>
+<span class="nc" id="L551">            this.grantTypesSupported = Arrays.asList(grantTypesSupported);</span>
         }
-<span class="nc" id="L547">    }</span>
+<span class="nc" id="L553">    }</span>
 
     public void setIdTokenEncryptionAlgValuesSupported(final String... alg) {
 
-<span class="nc bnc" id="L551" title="All 2 branches missed.">        if (alg == null) {</span>
-<span class="nc" id="L552">            idTokenEncryptionAlgValuesSupported = Collections.emptyList();</span>
+<span class="nc bnc" id="L557" title="All 2 branches missed.">        if (alg == null) {</span>
+<span class="nc" id="L558">            idTokenEncryptionAlgValuesSupported = Collections.emptyList();</span>
         } else {
-<span class="nc" id="L554">            idTokenEncryptionAlgValuesSupported = Arrays.asList(alg);</span>
+<span class="nc" id="L560">            idTokenEncryptionAlgValuesSupported = Arrays.asList(alg);</span>
         }
-<span class="nc" id="L556">    }</span>
+<span class="nc" id="L562">    }</span>
 
     public void setIdTokenEncryptionEncValuesSupported(final String... enc) {
 
-<span class="nc bnc" id="L560" title="All 2 branches missed.">        if (enc == null) {</span>
-<span class="nc" id="L561">            idTokenEncryptionEncValuesSupported = Collections.emptyList();</span>
+<span class="nc bnc" id="L566" title="All 2 branches missed.">        if (enc == null) {</span>
+<span class="nc" id="L567">            idTokenEncryptionEncValuesSupported = Collections.emptyList();</span>
         } else {
-<span class="nc" id="L563">            idTokenEncryptionEncValuesSupported = Arrays.asList(enc);</span>
+<span class="nc" id="L569">            idTokenEncryptionEncValuesSupported = Arrays.asList(enc);</span>
         }
-<span class="nc" id="L565">    }</span>
+<span class="nc" id="L571">    }</span>
 
     public void setIdTokenSigningAlgValuesSupported(final String... alg) {
 
-<span class="nc bnc" id="L569" title="All 2 branches missed.">        if (alg == null) {</span>
-<span class="nc" id="L570">            idTokenSigningAlgValuesSupported = Collections.emptyList();</span>
+<span class="nc bnc" id="L575" title="All 2 branches missed.">        if (alg == null) {</span>
+<span class="nc" id="L576">            idTokenSigningAlgValuesSupported = Collections.emptyList();</span>
         } else {
-<span class="nc" id="L572">            idTokenSigningAlgValuesSupported = Arrays.asList(alg);</span>
+<span class="nc" id="L578">            idTokenSigningAlgValuesSupported = Arrays.asList(alg);</span>
         }
-<span class="nc" id="L574">    }</span>
+<span class="nc" id="L580">    }</span>
 
     public void setIssuer(final URI issuer) {
 
-<span class="nc" id="L578">        this.issuer = issuer.toASCIIString();</span>
-<span class="nc" id="L579">    }</span>
+<span class="nc" id="L584">        this.issuer = issuer.toASCIIString();</span>
+<span class="nc" id="L585">    }</span>
 
     public void setJwksUri(final URI jwksUri) {
 
-<span class="nc" id="L583">        this.jwksUri = jwksUri;</span>
-<span class="nc" id="L584">    }</span>
+<span class="nc" id="L589">        this.jwksUri = jwksUri;</span>
+<span class="nc" id="L590">    }</span>
 
     public void setRegistrationEndpoint(final URI registrationEndpoint) {
 
-<span class="nc" id="L588">        this.registrationEndpoint = registrationEndpoint;</span>
-<span class="nc" id="L589">    }</span>
+<span class="nc" id="L594">        this.registrationEndpoint = registrationEndpoint;</span>
+<span class="nc" id="L595">    }</span>
 
     public void setRequestObjectEncryptionAlgValuesSupported(final String... alg) {
 
-<span class="nc" id="L593">        requestObjectEncryptionAlgValuesSupported = Arrays.asList(alg);</span>
-<span class="nc" id="L594">    }</span>
+<span class="nc" id="L599">        requestObjectEncryptionAlgValuesSupported = Arrays.asList(alg);</span>
+<span class="nc" id="L600">    }</span>
 
     public void setRequestObjectEncryptionEncValuesSupported(final String... enc) {
 
-<span class="nc bnc" id="L598" title="All 2 branches missed.">        if (enc == null) {</span>
-<span class="nc" id="L599">            requestObjectEncryptionEncValuesSupported = Collections.emptyList();</span>
+<span class="nc bnc" id="L604" title="All 2 branches missed.">        if (enc == null) {</span>
+<span class="nc" id="L605">            requestObjectEncryptionEncValuesSupported = Collections.emptyList();</span>
         } else {
-<span class="nc" id="L601">            requestObjectEncryptionEncValuesSupported = Arrays.asList(enc);</span>
+<span class="nc" id="L607">            requestObjectEncryptionEncValuesSupported = Arrays.asList(enc);</span>
         }
-<span class="nc" id="L603">    }</span>
+<span class="nc" id="L609">    }</span>
 
     public void setRequestObjectSigningAlgValuesSupported(final String... alg) {
 
-<span class="nc bnc" id="L607" title="All 2 branches missed.">        if (alg == null) {</span>
-<span class="nc" id="L608">            requestObjectSigningAlgValuesSupported = Collections.emptyList();</span>
+<span class="nc bnc" id="L613" title="All 2 branches missed.">        if (alg == null) {</span>
+<span class="nc" id="L614">            requestObjectSigningAlgValuesSupported = Collections.emptyList();</span>
         } else {
-<span class="nc" id="L610">            requestObjectSigningAlgValuesSupported = Arrays.asList(alg);</span>
+<span class="nc" id="L616">            requestObjectSigningAlgValuesSupported = Arrays.asList(alg);</span>
         }
-<span class="nc" id="L612">    }</span>
+<span class="nc" id="L618">    }</span>
 
     public void setRequestParameterSupported(final boolean requestParameterSupported) {
 
-<span class="nc" id="L616">        this.requestParameterSupported = requestParameterSupported;</span>
-<span class="nc" id="L617">    }</span>
+<span class="nc" id="L622">        this.requestParameterSupported = requestParameterSupported;</span>
+<span class="nc" id="L623">    }</span>
 
     public void setRequestUriParameterSupported(final boolean requestUriParameterSupported) {
 
-<span class="nc" id="L621">        this.requestUriParameterSupported = requestUriParameterSupported;</span>
-<span class="nc" id="L622">    }</span>
+<span class="nc" id="L627">        this.requestUriParameterSupported = requestUriParameterSupported;</span>
+<span class="nc" id="L628">    }</span>
 
     public void setRequireRequestUriRegistration(final boolean requireRequestUriRegistration) {
 
-<span class="nc" id="L626">        this.requireRequestUriRegistration = requireRequestUriRegistration;</span>
-<span class="nc" id="L627">    }</span>
+<span class="nc" id="L632">        this.requireRequestUriRegistration = requireRequestUriRegistration;</span>
+<span class="nc" id="L633">    }</span>
 
     public void setResponseModesSupported(final ResponseMode... responseModesSupported) {
 
-<span class="nc" id="L631">        this.responseModesSupported = Arrays.asList(responseModesSupported);</span>
-<span class="nc" id="L632">    }</span>
+<span class="nc" id="L637">        this.responseModesSupported = Arrays.asList(responseModesSupported);</span>
+<span class="nc" id="L638">    }</span>
 
     public void setResponseTypesSupported(final String... responseTypesSupported) {
 
-<span class="nc" id="L636">        this.responseTypesSupported = Arrays.asList(responseTypesSupported);</span>
-<span class="nc" id="L637">    }</span>
+<span class="nc" id="L642">        this.responseTypesSupported = Arrays.asList(responseTypesSupported);</span>
+<span class="nc" id="L643">    }</span>
 
     public void setRevocationEndpoint(final URI revocationEndpoint) {
 
-<span class="nc" id="L641">        this.revocationEndpoint = revocationEndpoint;</span>
-<span class="nc" id="L642">    }</span>
+<span class="nc" id="L647">        this.revocationEndpoint = revocationEndpoint;</span>
+<span class="nc" id="L648">    }</span>
 
     public void setScopesSupported(final Scope... scopesSupported) {
 
-<span class="nc" id="L646">        this.scopesSupported = new HashSet&lt;&gt;(Arrays.asList(scopesSupported));</span>
-<span class="nc" id="L647">    }</span>
+<span class="nc" id="L652">        this.scopesSupported = new HashSet&lt;&gt;(Arrays.asList(scopesSupported));</span>
+<span class="nc" id="L653">    }</span>
 
     public void setServiceDocumentation(final URI serviceDocumentation) {
 
-<span class="nc" id="L651">        this.serviceDocumentation = serviceDocumentation;</span>
-<span class="nc" id="L652">    }</span>
+<span class="nc" id="L657">        this.serviceDocumentation = serviceDocumentation;</span>
+<span class="nc" id="L658">    }</span>
 
     public void setSubjectTypesSupported(final SubjectIdentifierType... subjectTypesSupported) {
 
-<span class="nc" id="L656">        this.subjectTypesSupported = new HashSet&lt;&gt;(Arrays.asList(subjectTypesSupported));</span>
-<span class="nc" id="L657">    }</span>
+<span class="nc" id="L662">        this.subjectTypesSupported = new HashSet&lt;&gt;(subjectTypesSupported.length);</span>
+<span class="nc bnc" id="L663" title="All 2 branches missed.">        for (final SubjectIdentifierType subjectType : subjectTypesSupported) {</span>
+            try {
+<span class="nc" id="L665">                this.subjectTypesSupported.add(subjectType.getClass().getField(((Enum&lt;SubjectIdentifierType&gt;) subjectType).name()).getAnnotation(XmlEnumValue.class).value());</span>
+<span class="nc" id="L666">            } catch (NoSuchFieldException</span>
+                | SecurityException e) {
+<span class="nc" id="L668">                throw new IllegalArgumentException(e);</span>
+<span class="nc" id="L669">            }</span>
+        }
+<span class="nc" id="L671">    }</span>
 
     public void setTokenEndpoint(final URI tokenEndpoint) {
 
-<span class="nc" id="L661">        this.tokenEndpoint = tokenEndpoint;</span>
-<span class="nc" id="L662">    }</span>
+<span class="nc" id="L675">        this.tokenEndpoint = tokenEndpoint;</span>
+<span class="nc" id="L676">    }</span>
 
     public void setTokenEndpointAuthMethodsSupported(final TokenEndPointAuthMethod... tokenEndpointAuthMethodsSupported) {
 
-<span class="nc" id="L666">        this.tokenEndpointAuthMethodsSupported = Arrays.asList(tokenEndpointAuthMethodsSupported);</span>
-<span class="nc" id="L667">    }</span>
+<span class="nc" id="L680">        this.tokenEndpointAuthMethodsSupported = Arrays.asList(tokenEndpointAuthMethodsSupported);</span>
+<span class="nc" id="L681">    }</span>
 
     public void setTokenEndpointAuthSigningAlgValuesSupported(final Set&lt;String&gt; tokenEndpointAuthSigningAlgValuesSupported) {
 
-<span class="nc" id="L671">        this.tokenEndpointAuthSigningAlgValuesSupported = tokenEndpointAuthSigningAlgValuesSupported;</span>
-<span class="nc" id="L672">    }</span>
+<span class="nc" id="L685">        this.tokenEndpointAuthSigningAlgValuesSupported = tokenEndpointAuthSigningAlgValuesSupported;</span>
+<span class="nc" id="L686">    }</span>
 
     public void setUiLocalesSupported(final Set&lt;Locale&gt; uiLocalesSupported) {
 
-<span class="nc" id="L676">        this.uiLocalesSupported = uiLocalesSupported;</span>
-<span class="nc" id="L677">    }</span>
+<span class="nc" id="L690">        this.uiLocalesSupported = uiLocalesSupported;</span>
+<span class="nc" id="L691">    }</span>
 
     public void setUserinfoEncryptionAlgValuesSupported(final Set&lt;String&gt; userinfoEncryptionAlgValuesSupported) {
 
-<span class="nc" id="L681">        this.userinfoEncryptionAlgValuesSupported = userinfoEncryptionAlgValuesSupported;</span>
-<span class="nc" id="L682">    }</span>
+<span class="nc" id="L695">        this.userinfoEncryptionAlgValuesSupported = userinfoEncryptionAlgValuesSupported;</span>
+<span class="nc" id="L696">    }</span>
 
     public void setUserinfoEncryptionEncValuesSupported(final Set&lt;String&gt; userinfoEncryptionEncValuesSupported) {
 
-<span class="nc" id="L686">        this.userinfoEncryptionEncValuesSupported = userinfoEncryptionEncValuesSupported;</span>
-<span class="nc" id="L687">    }</span>
+<span class="nc" id="L700">        this.userinfoEncryptionEncValuesSupported = userinfoEncryptionEncValuesSupported;</span>
+<span class="nc" id="L701">    }</span>
 
     public void setUserinfoEndpoint(final URI userinfoEndpoint) {
 
-<span class="nc" id="L691">        this.userinfoEndpoint = userinfoEndpoint;</span>
-<span class="nc" id="L692">    }</span>
+<span class="nc" id="L705">        this.userinfoEndpoint = userinfoEndpoint;</span>
+<span class="nc" id="L706">    }</span>
 
     public void setUserinfoSigningAlgValuesSupported(final Set&lt;String&gt; userinfoSigningAlgValuesSupported) {
 
-<span class="nc" id="L696">        this.userinfoSigningAlgValuesSupported = userinfoSigningAlgValuesSupported;</span>
-<span class="nc" id="L697">    }</span>
+<span class="nc" id="L710">        this.userinfoSigningAlgValuesSupported = userinfoSigningAlgValuesSupported;</span>
+<span class="nc" id="L711">    }</span>
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span></div></body></html>

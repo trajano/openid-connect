@@ -34,7 +34,7 @@ public class RedirectedOpenIdProviderException extends WebApplicationException {
         final boolean useFragment) {
 
 <span class="nc" id="L36">        UriBuilder b = UriBuilder.fromUri(redirectUri)</span>
-<span class="nc" id="L37">            .queryParam(ERROR, errorResponse.getError());</span>
+            .queryParam(ERROR, errorResponse.getError());
 <span class="nc bnc" id="L38" title="All 2 branches missed.">        if (errorResponse.getErrorDescription() != null) {</span>
 <span class="nc" id="L39">            b.queryParam(ERROR_DESCRIPTION, errorResponse.getErrorDescription());</span>
         }
@@ -49,7 +49,7 @@ public class RedirectedOpenIdProviderException extends WebApplicationException {
 
         }
 <span class="nc" id="L51">        return Response.temporaryRedirect(b.build())</span>
-<span class="nc" id="L52">            .build();</span>
+            .build();
 
     }
 

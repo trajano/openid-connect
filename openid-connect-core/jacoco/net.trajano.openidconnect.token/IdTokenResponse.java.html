@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 
+import javax.json.JsonObject;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -59,29 +60,11 @@ import net.trajano.openidconnect.rs.IdTokenProvider;
  * @author Archimedes Trajano
  */
 @XmlRootElement
-@XmlAccessorType(XmlAccessType.FIELD)
-<span class="nc" id="L63">public class IdTokenResponse extends TokenResponse {</span>
+@XmlAccessorType(XmlAccessType.NONE)
+public class IdTokenResponse extends TokenResponse {
 
     /**
-     * Flag to indicate that the token was retrieved using a used up
-     * authentication code.
-     */
-
-    @XmlTransient
-    private boolean usedUpAuthenticationCode;
-
-    public boolean isUsedUpAuthenticationCode() {
-
-<span class="nc" id="L75">        return usedUpAuthenticationCode;</span>
-    }
-
-    public void setUsedUpAuthenticationCode(boolean usedUpAuthenticationCode) {
-
-<span class="nc" id="L80">        this.usedUpAuthenticationCode = usedUpAuthenticationCode;</span>
-<span class="nc" id="L81">    }</span>
-
-    /**
-     * 
+     *
      */
     private static final long serialVersionUID = -6175007590579157079L;
 
@@ -92,9 +75,33 @@ import net.trajano.openidconnect.rs.IdTokenProvider;
         required = true)
     private String encodedIdToken;
 
+    /**
+     * Flag to indicate that the token was retrieved using a used up
+     * authentication code.
+     */
+
+    @XmlTransient
+    private boolean usedUpAuthenticationCode;
+
+    /**
+     * Constructs IdTokenResponse.
+     */
+<span class="nc" id="L89">    public IdTokenResponse() {</span>
+<span class="nc" id="L90">    }</span>
+
+    /**
+     * Constructs IdTokenResponse.
+     *
+     * @param authorizationTokenResponse
+     */
+    public IdTokenResponse(final JsonObject tokenResponse) throws GeneralSecurityException {
+<span class="nc" id="L98">        super(tokenResponse);</span>
+<span class="nc" id="L99">        setEncodedIdToken(tokenResponse.getString(&quot;id_token&quot;));</span>
+<span class="nc" id="L100">    }</span>
+
     public String getEncodedIdToken() {
 
-<span class="nc" id="L97">        return encodedIdToken;</span>
+<span class="nc" id="L104">        return encodedIdToken;</span>
     }
 
     /**
@@ -107,22 +114,32 @@ import net.trajano.openidconnect.rs.IdTokenProvider;
     public IdToken getIdToken(final JsonWebKeySet jwks) {
 
         try {
-<span class="nc" id="L110">            final JsonWebTokenProcessor p = new JsonWebTokenProcessor(encodedIdToken).jwks(jwks);</span>
-<span class="nc bnc" id="L111" title="All 2 branches missed.">            if (!p.isJwkAvailable()) {</span>
-<span class="nc" id="L112">                throw new OpenIdConnectException(ErrorCode.invalid_request, &quot;no jwk available for kid&quot;);</span>
+<span class="nc" id="L117">            final JsonWebTokenProcessor p = new JsonWebTokenProcessor(encodedIdToken).jwks(jwks);</span>
+<span class="nc bnc" id="L118" title="All 2 branches missed.">            if (!p.isJwkAvailable()) {</span>
+<span class="nc" id="L119">                throw new OpenIdConnectException(ErrorCode.invalid_request, &quot;no jwk available for kid&quot;);</span>
             }
-<span class="nc" id="L114">            return new IdTokenProvider().readFrom(IdToken.class, null, null, MediaType.APPLICATION_JSON_TYPE, null, new ByteArrayInputStream(p.getPayload()));</span>
-<span class="nc" id="L115">        } catch (IOException</span>
-                 | GeneralSecurityException e) {
-<span class="nc" id="L117">            throw new WebApplicationException(e);</span>
+<span class="nc" id="L121">            return new IdTokenProvider().readFrom(IdToken.class, null, null, MediaType.APPLICATION_JSON_TYPE, null, new ByteArrayInputStream(p.getPayload()));</span>
+<span class="nc" id="L122">        } catch (IOException</span>
+            | GeneralSecurityException e) {
+<span class="nc" id="L124">            throw new WebApplicationException(e);</span>
         }
 
     }
 
+    public boolean isUsedUpAuthenticationCode() {
+
+<span class="nc" id="L131">        return usedUpAuthenticationCode;</span>
+    }
+
     public void setEncodedIdToken(final String encodedIdToken) throws GeneralSecurityException {
 
-<span class="nc" id="L124">        this.encodedIdToken = encodedIdToken;</span>
-<span class="nc" id="L125">    }</span>
+<span class="nc" id="L136">        this.encodedIdToken = encodedIdToken;</span>
+<span class="nc" id="L137">    }</span>
+
+    public void setUsedUpAuthenticationCode(final boolean usedUpAuthenticationCode) {
+
+<span class="nc" id="L141">        this.usedUpAuthenticationCode = usedUpAuthenticationCode;</span>
+<span class="nc" id="L142">    }</span>
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span></div></body></html>

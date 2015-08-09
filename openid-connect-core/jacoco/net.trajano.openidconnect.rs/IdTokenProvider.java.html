@@ -66,7 +66,7 @@ import net.trajano.openidconnect.token.IdToken;
             final InputStream is) throws IOException {
 
 <span class="nc" id="L68">        final JsonObject obj = Json.createReader(is)</span>
-<span class="nc" id="L69">                .readObject();</span>
+                .readObject();
 <span class="nc" id="L70">        final IdToken idToken = new IdToken();</span>
 <span class="nc bnc" id="L71" title="All 2 branches missed.">        if (obj.containsKey(&quot;acr&quot;)) {</span>
 <span class="nc" id="L72">            idToken.setAcr(obj.getString(&quot;acr&quot;));</span>

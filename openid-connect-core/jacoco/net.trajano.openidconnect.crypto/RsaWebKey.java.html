@@ -209,7 +209,7 @@ public class RsaWebKey extends JsonWebKey {
 <span class="fc" id="L209">        final BigInteger modulus = Encoding.base64urlDecodeUint(n);</span>
 <span class="fc" id="L210">        final BigInteger publicExponent = Encoding.base64urlDecodeUint(e);</span>
 <span class="fc" id="L211">        return KeyFactory.getInstance(&quot;RSA&quot;)</span>
-<span class="fc" id="L212">                .generatePublic(new RSAPublicKeySpec(modulus, publicExponent));</span>
+                .generatePublic(new RSAPublicKeySpec(modulus, publicExponent));
     }
 
     @Override
@@ -219,7 +219,7 @@ public class RsaWebKey extends JsonWebKey {
 <span class="fc" id="L219">        final BigInteger publicExponent = Encoding.base64urlDecodeUint(e);</span>
 <span class="fc bfc" id="L220" title="All 4 branches covered.">        if (getUse() == KeyUse.sig || d == null) {</span>
 <span class="fc" id="L221">            return KeyFactory.getInstance(&quot;RSA&quot;)</span>
-<span class="fc" id="L222">                    .generatePublic(new RSAPublicKeySpec(modulus, publicExponent));</span>
+                    .generatePublic(new RSAPublicKeySpec(modulus, publicExponent));
         } else {
 
 <span class="fc" id="L225">            final BigInteger privateExponent = Encoding.base64urlDecodeUint(d);</span>
@@ -229,7 +229,7 @@ public class RsaWebKey extends JsonWebKey {
 <span class="fc" id="L229">            final BigInteger primeExponentQ = Encoding.base64urlDecodeUint(dq);</span>
 <span class="fc" id="L230">            final BigInteger crtCoefficent = Encoding.base64urlDecodeUint(qi);</span>
 <span class="fc" id="L231">            return KeyFactory.getInstance(&quot;RSA&quot;)</span>
-<span class="fc" id="L232">                    .generatePrivate(new RSAPrivateCrtKeySpec(modulus, publicExponent, privateExponent, primeP, primeQ, primeExponentP, primeExponentQ, crtCoefficent));</span>
+                    .generatePrivate(new RSAPrivateCrtKeySpec(modulus, publicExponent, privateExponent, primeP, primeQ, primeExponentP, primeExponentQ, crtCoefficent));
         }
 
     }

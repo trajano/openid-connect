@@ -113,12 +113,12 @@ public class AuthenticationRequest {
 
 <span class="nc bnc" id="L114" title="All 2 branches missed.">            if (locales != null) {</span>
 <span class="nc" id="L115">                final StringBuilder b = new StringBuilder(locales.nextElement()</span>
-<span class="nc" id="L116">                    .toLanguageTag());</span>
+                    .toLanguageTag());
 
 <span class="nc bnc" id="L118" title="All 2 branches missed.">                while (locales.hasMoreElements()) {</span>
 <span class="nc" id="L119">                    b.append(' ');</span>
 <span class="nc" id="L120">                    b.append(locales.nextElement()</span>
-<span class="nc" id="L121">                        .toLanguageTag());</span>
+                        .toLanguageTag());
                 }
 <span class="nc" id="L123">                requestMap.put(OpenIdConnectKey.UI_LOCALES, b.toString());</span>
             }
@@ -218,18 +218,18 @@ public class AuthenticationRequest {
         final String requestObjectValue;
 <span class="pc bpc" id="L219" title="1 of 4 branches missed.">        if (requestObject == null || !requestObject.containsKey(key)) {</span>
 <span class="fc" id="L220">            requestObjectValue = null;</span>
-<span class="fc" id="L221">        } else if (requestObject.get(key)</span>
-<span class="fc bfc" id="L222" title="All 2 branches covered.">            .getValueType() == ValueType.STRING) {</span>
+<span class="fc bfc" id="L221" title="All 2 branches covered.">        } else if (requestObject.get(key)</span>
+            .getValueType() == ValueType.STRING) {
 <span class="fc" id="L223">            requestObjectValue = requestObject.getString(key);</span>
-<span class="fc" id="L224">        } else if (requestObject.get(key)</span>
-<span class="pc bpc" id="L225" title="1 of 2 branches missed.">            .getValueType() == ValueType.NUMBER) {</span>
+<span class="pc bpc" id="L224" title="1 of 2 branches missed.">        } else if (requestObject.get(key)</span>
+            .getValueType() == ValueType.NUMBER) {
 <span class="fc" id="L226">            requestObjectValue = requestObject.getJsonNumber(key)</span>
-<span class="fc" id="L227">                .bigIntegerValueExact()</span>
-<span class="fc" id="L228">                .toString();</span>
-<span class="nc" id="L229">        } else if (requestObject.get(key)</span>
-<span class="nc bnc" id="L230" title="All 2 branches missed.">            .getValueType() == ValueType.OBJECT) {</span>
+                .bigIntegerValueExact()
+                .toString();
+<span class="nc bnc" id="L229" title="All 2 branches missed.">        } else if (requestObject.get(key)</span>
+            .getValueType() == ValueType.OBJECT) {
 <span class="nc" id="L231">            requestObjectValue = requestObject.getJsonObject(key)</span>
-<span class="nc" id="L232">                .toString();</span>
+                .toString();
         } else {
 <span class="nc" id="L234">            requestObjectValue = null;</span>
         }
@@ -317,10 +317,10 @@ public class AuthenticationRequest {
         }
 <span class="pc bpc" id="L318" title="1 of 2 branches missed.">        if (requestMap.containsKey(OpenIdConnectKey.CLAIMS)) {</span>
 <span class="nc" id="L319">            claims = Json.createReader(new StringReader(requestMap.get(OpenIdConnectKey.CLAIMS)))</span>
-<span class="nc" id="L320">                .readObject();</span>
+                .readObject();
         } else {
 <span class="fc" id="L322">            claims = Json.createObjectBuilder()</span>
-<span class="fc" id="L323">                .build();</span>
+                .build();
         }
 <span class="pc bpc" id="L325" title="1 of 2 branches missed.">        if (requestMap.containsKey(OpenIdConnectKey.DISPLAY)) {</span>
 <span class="nc" id="L326">            display = Util.valueOf(Display.class, requestMap.get(OpenIdConnectKey.DISPLAY));</span>

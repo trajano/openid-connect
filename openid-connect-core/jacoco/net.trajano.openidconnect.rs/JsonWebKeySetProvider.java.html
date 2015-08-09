@@ -53,7 +53,7 @@ import net.trajano.openidconnect.internal.CharSets;
             final Annotation[] annotations,
             final MediaType mediaType) {
 
-<span class="pc bpc" id="L56" title="1 of 4 branches missed.">        return JsonWebKeySet.class.isAssignableFrom(type) &amp;&amp; MediaType.APPLICATION_JSON_TYPE.isCompatible(mediaType);</span>
+<span class="pc bpc" id="L56" title="2 of 4 branches missed.">        return JsonWebKeySet.class.isAssignableFrom(type) &amp;&amp; MediaType.APPLICATION_JSON_TYPE.isCompatible(mediaType);</span>
     }
 
     @Override
@@ -75,14 +75,14 @@ import net.trajano.openidconnect.internal.CharSets;
             WebApplicationException {
 
 <span class="fc" id="L77">        final JsonArray keysArray = Json.createReader(inputStream)</span>
-<span class="fc" id="L78">                .readObject()</span>
-<span class="fc" id="L79">                .getJsonArray(&quot;keys&quot;);</span>
+                .readObject()
+                .getJsonArray(&quot;keys&quot;);
 
 <span class="fc" id="L81">        final JsonWebKeySet keySet = new JsonWebKeySet();</span>
 <span class="fc" id="L82">        final MessageBodyReader&lt;JsonWebKey&gt; reader = providers.getMessageBodyReader(JsonWebKey.class, JsonWebKey.class, annotations, mediaType);</span>
 <span class="fc bfc" id="L83" title="All 2 branches covered.">        for (final JsonValue key : keysArray) {</span>
 <span class="fc" id="L84">            final InputStream keyStream = new ByteArrayInputStream(key.toString()</span>
-<span class="fc" id="L85">                    .getBytes(CharSets.UTF8));</span>
+                    .getBytes(CharSets.UTF8));
 <span class="fc" id="L86">            final JsonWebKey jsonWebKey = reader.readFrom(JsonWebKey.class, null, annotations, mediaType, null, keyStream);</span>
 <span class="fc" id="L87">            keySet.add(jsonWebKey);</span>
 <span class="fc" id="L88">        }</span>
@@ -113,11 +113,11 @@ import net.trajano.openidconnect.internal.CharSets;
 <span class="fc" id="L113">            writer.writeTo(key, JsonWebKey.class, null, annotations, mediaType, null, keyStream);</span>
 <span class="fc" id="L114">            keyStream.close();</span>
 <span class="fc" id="L115">            keysArray.add(Json.createReader(new ByteArrayInputStream(keyStream.toByteArray()))</span>
-<span class="fc" id="L116">                    .readObject());</span>
+                    .readObject());
         }
 <span class="fc" id="L118">        final JsonObject jwksObject = Json.createObjectBuilder()</span>
-<span class="fc" id="L119">                .add(&quot;keys&quot;, keysArray)</span>
-<span class="fc" id="L120">                .build();</span>
+                .add(&quot;keys&quot;, keysArray)
+                .build();
 <span class="fc" id="L121">        final JsonWriter w = Json.createWriter(os);</span>
 <span class="fc" id="L122">        w.write(jwksObject);</span>
 <span class="fc" id="L123">        w.close();</span>

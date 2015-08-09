@@ -5,55 +5,30 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import javax.json.JsonObject;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
-
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import javax.xml.bind.annotation.XmlTransient;
 
 import net.trajano.openidconnect.core.Scope;
 
-@JsonIgnoreProperties(ignoreUnknown=true)
-<span class="nc" id="L15">public class TokenResponse implements Serializable{</span>
-    /**
-     * 
-     */
-    private static final long serialVersionUID = 5216911835177655318L;
-
-    public String getAccessToken() {
-
-<span class="nc" id="L23">        return accessToken;</span>
-    }
-
-    public void setAccessToken(String accessToken) {
-
-<span class="nc" id="L28">        this.accessToken = accessToken;</span>
-<span class="nc" id="L29">    }</span>
-
-    public int getExpiresIn() {
-
-<span class="nc" id="L33">        return expiresIn;</span>
-    }
-
-    public void setExpiresIn(int expiresIn) {
-
-<span class="nc" id="L38">        this.expiresIn = expiresIn;</span>
-<span class="nc" id="L39">    }</span>
-
-    public String getRefreshToken() {
-
-<span class="nc" id="L43">        return refreshToken;</span>
-    }
-
-    public void setRefreshToken(String refreshToken) {
-
-<span class="nc" id="L48">        this.refreshToken = refreshToken;</span>
-<span class="nc" id="L49">    }</span>
+@XmlAccessorType(XmlAccessType.NONE)
+public class TokenResponse implements
+    Serializable {
 
     public static final String BEARER = &quot;Bearer&quot;;
 
     /**
+     *
+     */
+    private static final long serialVersionUID = 5216911835177655318L;
+
+    /**
      * REQUIRED. The access token issued by the authorization server.
      */
-    @XmlElement(name = &quot;access_token&quot;, required = true)
+    @XmlElement(name = &quot;access_token&quot;,
+        required = true)
     private String accessToken;
 
     /**
@@ -63,61 +38,19 @@ import net.trajano.openidconnect.core.Scope;
      * server SHOULD provide the expiration time via other means or document the
      * default value.
      */
-    @XmlElement(name = &quot;expires_in&quot;, required = false)
+    @XmlElement(name = &quot;expires_in&quot;,
+        required = false)
     private int expiresIn;
 
     @XmlElement(name = &quot;refresh_token&quot;)
     private String refreshToken;
 
-    public void setScope(final String scope) {
-
-<span class="nc" id="L74">        this.scope = scope;</span>
-<span class="nc" id="L75">    }</span>
-
-
     /**
      * OPTIONAL, if identical to the scope requested by the client; otherwise,
      * REQUIRED. The scope of the access token as described by Section 3.3.
      */
+    @XmlElement(name = &quot;scope&quot;)
     private String scope;
-
-    public String getScope() {
-
-<span class="nc" id="L86">        return scope;</span>
-    }
-
-    public void setTokenType(final String tokenType) {
-
-<span class="nc" id="L91">        this.tokenType = tokenType;</span>
-<span class="nc" id="L92">    }</span>
-
-    public void setScopes(Set&lt;Scope&gt; scopes) {
-
-<span class="nc" id="L96">        StringBuilder b = new StringBuilder();</span>
-<span class="nc" id="L97">        Iterator&lt;Scope&gt; i = scopes.iterator();</span>
-<span class="nc" id="L98">        b.append(i.next());</span>
-<span class="nc bnc" id="L99" title="All 2 branches missed.">        while (i.hasNext()) {</span>
-<span class="nc" id="L100">            b.append(' ');</span>
-<span class="nc" id="L101">            b.append(i.next());</span>
-        }
-<span class="nc" id="L103">        scope = b.toString();</span>
-
-<span class="nc" id="L105">    }</span>
-
-    public Set&lt;Scope&gt; getScopes() {
-
-<span class="nc" id="L109">        Set&lt;Scope&gt; scopes = new HashSet&lt;&gt;();</span>
-<span class="nc bnc" id="L110" title="All 2 branches missed.">        for (final String scopePart : scope.split(&quot;\\s&quot;)) {</span>
-<span class="nc" id="L111">            scopes.add(Scope.valueOf(scopePart));</span>
-        }
-<span class="nc" id="L113">        return scopes;</span>
-
-    }
-
-    public String getTokenType() {
-
-<span class="nc" id="L119">        return tokenType;</span>
-    }
 
     /**
      * &lt;p&gt;
@@ -132,7 +65,103 @@ import net.trajano.openidconnect.core.Scope;
      * specification.
      * &lt;/p&gt;
      */
-<span class="nc" id="L135">    @XmlElement(name = &quot;token_type&quot;, required = true)</span>
+<span class="nc" id="L68">    @XmlElement(name = &quot;token_type&quot;,</span>
+        required = true)
     private String tokenType = BEARER;
+
+    /**
+     * Constructs TokenResponse.
+     *
+     * @param tokenResponse
+     */
+<span class="nc" id="L77">    public TokenResponse() {</span>
+<span class="nc" id="L78">    }</span>
+
+    /**
+     * Constructs TokenResponse.
+     *
+     * @param tokenResponse
+     */
+<span class="nc" id="L85">    public TokenResponse(final JsonObject tokenResponse) {</span>
+<span class="nc" id="L86">        accessToken = tokenResponse.getString(&quot;access_token&quot;);</span>
+<span class="nc" id="L87">        expiresIn = tokenResponse.getInt(&quot;expires_in&quot;);</span>
+<span class="nc" id="L88">        refreshToken = tokenResponse.getString(&quot;refresh_token&quot;);</span>
+<span class="nc" id="L89">        scope = tokenResponse.getString(&quot;scope&quot;);</span>
+<span class="nc" id="L90">        tokenType = tokenResponse.getString(&quot;token_type&quot;, BEARER);</span>
+<span class="nc" id="L91">    }</span>
+
+    public String getAccessToken() {
+
+<span class="nc" id="L95">        return accessToken;</span>
+    }
+
+    public int getExpiresIn() {
+
+<span class="nc" id="L100">        return expiresIn;</span>
+    }
+
+    public String getRefreshToken() {
+
+<span class="nc" id="L105">        return refreshToken;</span>
+    }
+
+    public String getScope() {
+
+<span class="nc" id="L110">        return scope;</span>
+    }
+
+    @XmlTransient
+    public Set&lt;Scope&gt; getScopes() {
+
+<span class="nc" id="L116">        final Set&lt;Scope&gt; scopes = new HashSet&lt;&gt;();</span>
+<span class="nc bnc" id="L117" title="All 2 branches missed.">        for (final String scopePart : scope.split(&quot;\\s&quot;)) {</span>
+<span class="nc" id="L118">            scopes.add(Scope.valueOf(scopePart));</span>
+        }
+<span class="nc" id="L120">        return scopes;</span>
+
+    }
+
+    public String getTokenType() {
+
+<span class="nc" id="L126">        return tokenType;</span>
+    }
+
+    public void setAccessToken(final String accessToken) {
+
+<span class="nc" id="L131">        this.accessToken = accessToken;</span>
+<span class="nc" id="L132">    }</span>
+
+    public void setExpiresIn(final int expiresIn) {
+
+<span class="nc" id="L136">        this.expiresIn = expiresIn;</span>
+<span class="nc" id="L137">    }</span>
+
+    public void setRefreshToken(final String refreshToken) {
+
+<span class="nc" id="L141">        this.refreshToken = refreshToken;</span>
+<span class="nc" id="L142">    }</span>
+
+    public void setScope(final String scope) {
+
+<span class="nc" id="L146">        this.scope = scope;</span>
+<span class="nc" id="L147">    }</span>
+
+    public void setScopes(final Set&lt;Scope&gt; scopes) {
+
+<span class="nc" id="L151">        final StringBuilder b = new StringBuilder();</span>
+<span class="nc" id="L152">        final Iterator&lt;Scope&gt; i = scopes.iterator();</span>
+<span class="nc" id="L153">        b.append(i.next());</span>
+<span class="nc bnc" id="L154" title="All 2 branches missed.">        while (i.hasNext()) {</span>
+<span class="nc" id="L155">            b.append(' ');</span>
+<span class="nc" id="L156">            b.append(i.next());</span>
+        }
+<span class="nc" id="L158">        scope = b.toString();</span>
+
+<span class="nc" id="L160">    }</span>
+
+    public void setTokenType(final String tokenType) {
+
+<span class="nc" id="L164">        this.tokenType = tokenType;</span>
+<span class="nc" id="L165">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span></div></body></html>

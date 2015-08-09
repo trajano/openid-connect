@@ -12,21 +12,21 @@ import javax.xml.bind.annotation.XmlEnumValue;
  * types in the subject_types_supported element. If there is more than one type
  * listed in the array, the Client MAY elect to provide its preferred identifier
  * type using the subject_type parameter during Registration.
- * 
+ *
  * @author Archimedes
  */
 <span class="nc" id="L18">@XmlEnum</span>
 <span class="nc" id="L19">public enum SubjectIdentifierType {</span>
     /**
+     * This provides a different sub value to each Client, so as not to enable
+     * Clients to correlate the End-User's activities without permission.
+     */
+<span class="nc" id="L24">    @XmlEnumValue(&quot;pairwise&quot;) PAIRWISE,</span>
+    /**
      * This provides the same sub (subject) value to all Clients. It is the
      * default if the provider has no subject_types_supported element in its
      * discovery document.
      */
-<span class="nc" id="L25">    @XmlEnumValue(&quot;public&quot;) PUBLIC,</span>
-    /**
-     * This provides a different sub value to each Client, so as not to enable
-     * Clients to correlate the End-User's activities without permission.
-     */
-<span class="nc" id="L30">    @XmlEnumValue(&quot;pairwise&quot;) PAIRWISE</span>
+<span class="nc" id="L30">    @XmlEnumValue(&quot;public&quot;) PUBLIC;</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span></div></body></html>
