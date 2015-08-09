@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>SubjectIdentifierType.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">openid-connect-core</a> &gt; <a href="index.source.html" class="el_package">net.trajano.openidconnect.core</a> &gt; <span class="el_source">SubjectIdentifierType.java</span></div><h1>SubjectIdentifierType.java</h1><pre class="source lang-java linenums">package net.trajano.openidconnect.core;
+<?xml version="1.0" encoding="utf-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>SubjectIdentifierType.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">openid-connect-core</a> &gt; <a href="index.source.html" class="el_package">net.trajano.openidconnect.core</a> &gt; <span class="el_source">SubjectIdentifierType.java</span></div><h1>SubjectIdentifierType.java</h1><pre class="source lang-java linenums"><span class="nc" id="L1">package net.trajano.openidconnect.core;</span>
 
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlEnumValue;
@@ -15,14 +15,14 @@ import javax.xml.bind.annotation.XmlEnumValue;
  *
  * @author Archimedes
  */
-<span class="nc" id="L18">@XmlEnum</span>
+@XmlEnum
 <span class="nc" id="L19">public enum SubjectIdentifierType {</span>
-    /**
+<span class="nc" id="L20">    /**</span>
      * This provides a different sub value to each Client, so as not to enable
      * Clients to correlate the End-User's activities without permission.
      */
 <span class="nc" id="L24">    @XmlEnumValue(&quot;pairwise&quot;) PAIRWISE,</span>
-    /**
+<span class="nc" id="L25">    /**</span>
      * This provides the same sub (subject) value to all Clients. It is the
      * default if the provider has no subject_types_supported element in its
      * discovery document.

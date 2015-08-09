@@ -7,14 +7,14 @@ openid-connect-core,net.trajano.openidconnect.rs,AuthenticationRequestJsonProvid
 openid-connect-core,net.trajano.openidconnect.rs,OpenIdConnect,11,0,0,0,2,0,2,0,2,0
 openid-connect-core,net.trajano.openidconnect.rs,JsonWebTokenProvider,34,0,4,0,7,0,8,0,6,0
 openid-connect-core,net.trajano.openidconnect.rs,JwtMediaType,10,0,0,0,2,0,2,0,2,0
-openid-connect-core,net.trajano.openidconnect.core,SubjectIdentifierType,38,0,0,0,4,0,4,0,4,0
+openid-connect-core,net.trajano.openidconnect.core,SubjectIdentifierType,50,0,0,0,6,0,4,0,4,0
 openid-connect-core,net.trajano.openidconnect.core,Scope,5,73,0,0,0,7,1,3,1,3
 openid-connect-core,net.trajano.openidconnect.core,TokenEndPointAuthMethod,58,0,0,0,2,0,4,0,4,0
 openid-connect-core,net.trajano.openidconnect.core,ErrorResponse,45,0,0,0,20,0,10,0,10,0
 openid-connect-core,net.trajano.openidconnect.core,OpenIdConnectException,34,0,0,0,8,0,4,0,4,0
 openid-connect-core,net.trajano.openidconnect.core,ErrorCode,208,0,0,0,20,0,4,0,4,0
 openid-connect-core,net.trajano.openidconnect.core,RedirectedOpenIdProviderException,112,0,10,0,20,0,11,0,6,0
-openid-connect-core,net.trajano.openidconnect.core,OpenIdProviderConfiguration,353,0,16,0,127,0,79,0,71,0
+openid-connect-core,net.trajano.openidconnect.core,OpenIdProviderConfiguration,353,0,16,0,134,0,79,0,71,0
 openid-connect-core,net.trajano.openidconnect.core,OpenIdConnectKey,3,0,0,0,2,0,1,0,1,0
 openid-connect-core,net.trajano.openidconnect.auth,ResponseType,5,53,0,0,0,2,1,3,1,3
 openid-connect-core,net.trajano.openidconnect.auth,AuthenticationRequest.Builder,142,0,8,0,29,0,14,0,10,0
@@ -33,7 +33,7 @@ openid-connect-core,net.trajano.openidconnect.token,GrantType,48,0,0,0,2,0,4,0,4
 openid-connect-core,net.trajano.openidconnect.token,TokenResponse,133,0,4,0,37,0,16,0,14,0
 openid-connect-core,net.trajano.openidconnect.token,IdToken,105,22,2,0,37,6,26,4,25,4
 openid-connect-core,net.trajano.openidconnect.crypto,EcWebKey,128,0,4,0,30,0,14,0,12,0
-openid-connect-core,net.trajano.openidconnect.crypto,JsonWebAlgorithm,92,391,11,7,19,81,9,18,2,16
+openid-connect-core,net.trajano.openidconnect.crypto,JsonWebAlgorithm,91,390,11,7,14,81,9,18,2,16
 openid-connect-core,net.trajano.openidconnect.crypto,JsonWebTokenProcessor,68,166,17,19,14,39,14,13,1,8
 openid-connect-core,net.trajano.openidconnect.crypto,JsonWebToken,7,146,0,4,1,31,1,12,1,10
 openid-connect-core,net.trajano.openidconnect.crypto,JsonWebTokenBuilder,59,150,2,12,13,37,5,15,3,10

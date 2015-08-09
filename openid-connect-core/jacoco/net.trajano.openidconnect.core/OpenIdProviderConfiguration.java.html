@@ -212,8 +212,8 @@ public class OpenIdProviderConfiguration {
      * parameter, with true indicating support. If omitted, the default value is
      * true.
      */
-<span class="nc" id="L215">    @XmlElement(name = &quot;request_uri_parameter_supported&quot;)</span>
-    private boolean requestUriParameterSupported = true;
+    @XmlElement(name = &quot;request_uri_parameter_supported&quot;)
+<span class="nc" id="L216">    private boolean requestUriParameterSupported = true;</span>
 
     /**
      * Boolean value specifying whether the OP requires any request_uri values
@@ -533,7 +533,7 @@ public class OpenIdProviderConfiguration {
 
 <span class="nc bnc" id="L534" title="All 2 branches missed.">        if (displayValuesSupported == null) {</span>
 <span class="nc" id="L535">            this.displayValuesSupported = Collections.emptyList();</span>
-        } else {
+<span class="nc" id="L536">        } else {</span>
 <span class="nc" id="L537">            this.displayValuesSupported = Arrays.asList(displayValuesSupported);</span>
         }
 <span class="nc" id="L539">    }</span>
@@ -547,7 +547,7 @@ public class OpenIdProviderConfiguration {
 
 <span class="nc bnc" id="L548" title="All 2 branches missed.">        if (grantTypesSupported == null) {</span>
 <span class="nc" id="L549">            this.grantTypesSupported = Collections.emptyList();</span>
-        } else {
+<span class="nc" id="L550">        } else {</span>
 <span class="nc" id="L551">            this.grantTypesSupported = Arrays.asList(grantTypesSupported);</span>
         }
 <span class="nc" id="L553">    }</span>
@@ -556,7 +556,7 @@ public class OpenIdProviderConfiguration {
 
 <span class="nc bnc" id="L557" title="All 2 branches missed.">        if (alg == null) {</span>
 <span class="nc" id="L558">            idTokenEncryptionAlgValuesSupported = Collections.emptyList();</span>
-        } else {
+<span class="nc" id="L559">        } else {</span>
 <span class="nc" id="L560">            idTokenEncryptionAlgValuesSupported = Arrays.asList(alg);</span>
         }
 <span class="nc" id="L562">    }</span>
@@ -565,7 +565,7 @@ public class OpenIdProviderConfiguration {
 
 <span class="nc bnc" id="L566" title="All 2 branches missed.">        if (enc == null) {</span>
 <span class="nc" id="L567">            idTokenEncryptionEncValuesSupported = Collections.emptyList();</span>
-        } else {
+<span class="nc" id="L568">        } else {</span>
 <span class="nc" id="L569">            idTokenEncryptionEncValuesSupported = Arrays.asList(enc);</span>
         }
 <span class="nc" id="L571">    }</span>
@@ -574,7 +574,7 @@ public class OpenIdProviderConfiguration {
 
 <span class="nc bnc" id="L575" title="All 2 branches missed.">        if (alg == null) {</span>
 <span class="nc" id="L576">            idTokenSigningAlgValuesSupported = Collections.emptyList();</span>
-        } else {
+<span class="nc" id="L577">        } else {</span>
 <span class="nc" id="L578">            idTokenSigningAlgValuesSupported = Arrays.asList(alg);</span>
         }
 <span class="nc" id="L580">    }</span>
@@ -603,7 +603,7 @@ public class OpenIdProviderConfiguration {
 
 <span class="nc bnc" id="L604" title="All 2 branches missed.">        if (enc == null) {</span>
 <span class="nc" id="L605">            requestObjectEncryptionEncValuesSupported = Collections.emptyList();</span>
-        } else {
+<span class="nc" id="L606">        } else {</span>
 <span class="nc" id="L607">            requestObjectEncryptionEncValuesSupported = Arrays.asList(enc);</span>
         }
 <span class="nc" id="L609">    }</span>
@@ -612,7 +612,7 @@ public class OpenIdProviderConfiguration {
 
 <span class="nc bnc" id="L613" title="All 2 branches missed.">        if (alg == null) {</span>
 <span class="nc" id="L614">            requestObjectSigningAlgValuesSupported = Collections.emptyList();</span>
-        } else {
+<span class="nc" id="L615">        } else {</span>
 <span class="nc" id="L616">            requestObjectSigningAlgValuesSupported = Arrays.asList(alg);</span>
         }
 <span class="nc" id="L618">    }</span>
@@ -664,9 +664,9 @@ public class OpenIdProviderConfiguration {
             try {
 <span class="nc" id="L665">                this.subjectTypesSupported.add(subjectType.getClass().getField(((Enum&lt;SubjectIdentifierType&gt;) subjectType).name()).getAnnotation(XmlEnumValue.class).value());</span>
 <span class="nc" id="L666">            } catch (NoSuchFieldException</span>
-                | SecurityException e) {
+<span class="nc" id="L667">                | SecurityException e) {</span>
 <span class="nc" id="L668">                throw new IllegalArgumentException(e);</span>
-<span class="nc" id="L669">            }</span>
+            }
         }
 <span class="nc" id="L671">    }</span>
 

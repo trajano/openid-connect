@@ -58,7 +58,7 @@ public class JsonWebAlgorithm {
      */
     public static final String RSA_OAEP = &quot;RSA-OAEP&quot;;
 
-    public static final String RSA1_5 = &quot;RSA1_5&quot;;
+<span class="fc" id="L61">    public static final String RSA1_5 = &quot;RSA1_5&quot;;</span>
 
     public static String[] getEncAlgorithms() {
 
@@ -71,7 +71,7 @@ public class JsonWebAlgorithm {
 <span class="nc bnc" id="L71" title="All 2 branches missed.">            if (encryptionEncValuesSupported.contains(enc)) {</span>
 <span class="nc" id="L72">                return enc;</span>
             }
-<span class="nc" id="L74">        }</span>
+        }
 <span class="nc" id="L75">        return null;</span>
     }
 
@@ -81,7 +81,7 @@ public class JsonWebAlgorithm {
 <span class="nc bnc" id="L81" title="All 2 branches missed.">            if (encryptionAlgValuesSupported.contains(kex)) {</span>
 <span class="nc" id="L82">                return kex;</span>
             }
-<span class="nc" id="L84">        }</span>
+        }
 <span class="nc" id="L85">        return null;</span>
     }
 
@@ -101,7 +101,7 @@ public class JsonWebAlgorithm {
 <span class="fc" id="L101">            return INSTANCE.jwaKeySizeMap.get(enc);</span>
         } else {
 <span class="nc" id="L103">            throw new GeneralSecurityException(</span>
-                &quot;enc algorithm &quot; + enc + &quot; does not have a defined keysize or is not supported.&quot;);
+<span class="nc" id="L104">                &quot;enc algorithm &quot; + enc + &quot; does not have a defined keysize or is not supported.&quot;);</span>
         }
     }
 
@@ -315,9 +315,9 @@ public class JsonWebAlgorithm {
 <span class="fc" id="L315">            jwaJcaMap.put(jwa, jca);</span>
 <span class="fc" id="L316">            jwaEcMap.put(jwa, crv.toECParameterSpec());</span>
 <span class="fc" id="L317">            sigs.add(jwa);</span>
-<span class="nc" id="L318">        } catch (final GeneralSecurityException e) {</span>
+<span class="pc" id="L318">        } catch (final GeneralSecurityException e) {</span>
 <span class="nc" id="L319">            Log.fine(&quot;algNotSupportedForSig&quot;, jwa);</span>
-<span class="fc" id="L320">        }</span>
+        }
 <span class="fc" id="L321">    }</span>
 
     /**
@@ -349,7 +349,7 @@ public class JsonWebAlgorithm {
 <span class="fc" id="L349">            encs.add(jwa);</span>
 <span class="fc" id="L350">        } catch (final GeneralSecurityException e) {</span>
 <span class="fc" id="L351">            Log.fine(&quot;algNotSupportedForEnc&quot;, jwa);</span>
-<span class="fc" id="L352">        }</span>
+        }
 <span class="fc" id="L353">    }</span>
 
     /**
@@ -366,9 +366,9 @@ public class JsonWebAlgorithm {
 <span class="fc" id="L366">            Cipher.getInstance(jca);</span>
 <span class="fc" id="L367">            jwaJcaMap.put(jwa, jca);</span>
 <span class="fc" id="L368">            kexs.add(jwa);</span>
-<span class="nc" id="L369">        } catch (final GeneralSecurityException e) {</span>
+<span class="pc" id="L369">        } catch (final GeneralSecurityException e) {</span>
 <span class="nc" id="L370">            Log.fine(&quot;algNotSupportedForKex&quot;, jwa);</span>
-<span class="fc" id="L371">        }</span>
+        }
 <span class="fc" id="L372">    }</span>
 
     /**
@@ -386,9 +386,9 @@ public class JsonWebAlgorithm {
 <span class="fc" id="L386">            jwaJcaMap.put(jwa, jca);</span>
 <span class="fc" id="L387">            sigs.add(jwa);</span>
 <span class="fc" id="L388">            macs.add(jwa);</span>
-<span class="nc" id="L389">        } catch (final GeneralSecurityException e) {</span>
+<span class="pc" id="L389">        } catch (final GeneralSecurityException e) {</span>
 <span class="nc" id="L390">            Log.fine(&quot;algNotSupportedForSig&quot;, jwa);</span>
-<span class="fc" id="L391">        }</span>
+        }
 <span class="fc" id="L392">    }</span>
 
     /**
@@ -405,9 +405,9 @@ public class JsonWebAlgorithm {
 <span class="fc" id="L405">            Signature.getInstance(jca);</span>
 <span class="fc" id="L406">            jwaJcaMap.put(jwa, jca);</span>
 <span class="fc" id="L407">            sigs.add(jwa);</span>
-<span class="nc" id="L408">        } catch (final GeneralSecurityException e) {</span>
+<span class="pc" id="L408">        } catch (final GeneralSecurityException e) {</span>
 <span class="nc" id="L409">            Log.fine(&quot;algNotSupportedForSig&quot;, jwa);</span>
-<span class="fc" id="L410">        }</span>
+        }
 <span class="fc" id="L411">    }</span>
 
 }

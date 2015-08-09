@@ -119,8 +119,8 @@ public class IdTokenResponse extends TokenResponse {
 <span class="nc" id="L119">                throw new OpenIdConnectException(ErrorCode.invalid_request, &quot;no jwk available for kid&quot;);</span>
             }
 <span class="nc" id="L121">            return new IdTokenProvider().readFrom(IdToken.class, null, null, MediaType.APPLICATION_JSON_TYPE, null, new ByteArrayInputStream(p.getPayload()));</span>
-<span class="nc" id="L122">        } catch (IOException</span>
-            | GeneralSecurityException e) {
+        } catch (IOException
+<span class="nc" id="L123">            | GeneralSecurityException e) {</span>
 <span class="nc" id="L124">            throw new WebApplicationException(e);</span>
         }
 
