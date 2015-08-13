@@ -1,5 +1,6 @@
 package net.trajano.openidconnect.jaspic;
 
+import static java.lang.Boolean.FALSE;
 import static net.trajano.openidconnect.core.OpenIdConnectKey.CLIENT_ID;
 import static net.trajano.openidconnect.core.OpenIdConnectKey.CLIENT_SECRET;
 import static net.trajano.openidconnect.core.OpenIdConnectKey.GRANT_TYPE;
@@ -897,6 +898,8 @@ public class OpenIdConnectAuthModule implements
     public AuthStatus validateRequest(final MessageInfo messageInfo,
         final Subject clientSubject,
         final Subject serviceSubject) throws AuthException {
+
+        messageInfo.getMap().put("javax.servlet.http.registerSession", FALSE.toString());
 
         final HttpServletRequest req = (HttpServletRequest) messageInfo.getRequestMessage();
         final HttpServletResponse resp = (HttpServletResponse) messageInfo.getResponseMessage();
