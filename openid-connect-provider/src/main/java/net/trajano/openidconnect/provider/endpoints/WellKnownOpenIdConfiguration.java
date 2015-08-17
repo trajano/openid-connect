@@ -4,7 +4,7 @@ import static java.net.URI.create;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
-import javax.ejb.Stateless;
+import javax.enterprise.context.RequestScoped;
 import javax.servlet.ServletRegistration;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
@@ -27,7 +27,7 @@ import net.trajano.openidconnect.provider.spi.UserinfoProvider;
 import net.trajano.openidconnect.token.GrantType;
 
 @Path("openid-configuration")
-@Stateless
+@RequestScoped
 public class WellKnownOpenIdConfiguration {
 
     public static final String CODE = "code";
@@ -46,6 +46,8 @@ public class WellKnownOpenIdConfiguration {
      * Authorization endpoint mapping that is built during {@link #init()}
      */
     private String authorizationMapping;
+
+    private String endSessionMapping;
 
     /**
      * JWKS URI mapping that is built during {@link #init()}
@@ -69,6 +71,8 @@ public class WellKnownOpenIdConfiguration {
      */
     private String userinfoMapping;
 
+    private UserinfoProvider userinfoProvider;
+
     /**
      * Determines the endpoints for OAuth2 based on the mappings specified in
      * the {@link ServletRegistration}s.
@@ -90,10 +94,6 @@ public class WellKnownOpenIdConfiguration {
 
     }
 
-    private String endSessionMapping;
-
-    private UserinfoProvider userinfoProvider;
-
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response op(@Context final HttpServletRequest request) {
@@ -101,24 +101,24 @@ public class WellKnownOpenIdConfiguration {
         final OpenIdProviderConfiguration openIdConfiguration = new OpenIdProviderConfiguration();
 
         final UriBuilder baseUri = UriBuilder.fromUri(create(request.getRequestURL()
-                .toString()))
-                .scheme("https")
-                .replaceQuery(null)
-                .fragment(null);
+            .toString()))
+            .scheme("https")
+            .replaceQuery(null)
+            .fragment(null);
         openIdConfiguration.setIssuer(baseUri.replacePath(request.getContextPath())
-                .build());
+            .build());
         openIdConfiguration.setJwksUri(baseUri.replacePath(request.getContextPath() + jwksMapping)
-                .build());
+            .build());
         openIdConfiguration.setAuthorizationEndpoint(baseUri.replacePath(request.getContextPath() + authorizationMapping)
-                .build());
+            .build());
         openIdConfiguration.setRevocationEndpoint(baseUri.replacePath(request.getContextPath() + revocationMapping)
-                .build());
+            .build());
         openIdConfiguration.setTokenEndpoint(baseUri.replacePath(request.getContextPath() + tokenMapping)
-                .build());
+            .build());
         openIdConfiguration.setEndSessionEndpoint(baseUri.replacePath(request.getContextPath() + endSessionMapping)
-                .build());
+            .build());
         openIdConfiguration.setUserinfoEndpoint(baseUri.replacePath(request.getContextPath() + userinfoMapping)
-                .build());
+            .build());
 
         final Scope[] scopesSupported = userinfoProvider.scopesSupported();
         final Scope[] scopes = new Scope[scopesSupported.length + 1];
@@ -150,9 +150,9 @@ public class WellKnownOpenIdConfiguration {
         cacheControl.setMaxAge(86400);
 
         return Response.ok(openIdConfiguration)
-                .cacheControl(cacheControl)
-                .tag(keyProvider.getSecretKeyId())
-                .build();
+            .cacheControl(cacheControl)
+            .tag(keyProvider.getSecretKeyId())
+            .build();
 
     }
 

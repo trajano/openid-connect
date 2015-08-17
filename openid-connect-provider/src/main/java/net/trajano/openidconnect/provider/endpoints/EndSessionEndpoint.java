@@ -7,7 +7,7 @@ import java.net.URI;
 import java.security.GeneralSecurityException;
 
 import javax.ejb.EJB;
-import javax.ejb.Stateless;
+import javax.enterprise.context.RequestScoped;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.constraints.NotNull;
@@ -46,7 +46,7 @@ import net.trajano.openidconnect.token.IdToken;
  * @author Archimedes
  */
 @Path("end")
-@Stateless
+@RequestScoped
 @Produces(MediaType.APPLICATION_JSON)
 public class EndSessionEndpoint {
 

@@ -1,7 +1,7 @@
 package net.trajano.openidconnect.provider.endpoints;
 
 import javax.ejb.EJB;
-import javax.ejb.Stateless;
+import javax.enterprise.context.RequestScoped;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -27,7 +27,7 @@ import net.trajano.openidconnect.provider.spi.KeyProvider;
  * @author Archimedes Trajano
  */
 @Path("jwks")
-@Stateless
+@RequestScoped
 public class Jwks {
 
     private KeyProvider keyProvider;
@@ -59,9 +59,9 @@ public class Jwks {
         cacheControl.setMaxAge(300);
 
         return Response.ok(keyProvider.getJwks())
-                .cacheControl(cacheControl)
-                .tag(keyProvider.getSecretKeyId())
-                .build();
+            .cacheControl(cacheControl)
+            .tag(keyProvider.getSecretKeyId())
+            .build();
     }
 
     @EJB

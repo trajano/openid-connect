@@ -1,7 +1,7 @@
 package net.trajano.openidconnect.provider.endpoints;
 
 import javax.ejb.EJB;
-import javax.ejb.Stateless;
+import javax.enterprise.context.RequestScoped;
 import javax.json.JsonObject;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
@@ -49,69 +49,21 @@ import net.trajano.openidconnect.userinfo.Userinfo;
  * Clients to access the endpoint.
  * </p>
  */
-@Path("profile")@Stateless
+@Path("profile")
+@RequestScoped
 @Produces(MediaType.APPLICATION_JSON)
 public class UserinfoEndpoint {
 
     @EJB
-    private TokenProvider tokenProvider;
+    private KeyProvider keyProvider;
 
     @EJB
-    private KeyProvider keyProvider;
+    private TokenProvider tokenProvider;
 
     private UserinfoProvider userinfoProvider;
 
-    /**
-     * <p>
-     * The Client sends the UserInfo Request using either HTTP GET or HTTP POST.
-     * The Access Token obtained from an OpenID Connect Authentication Request
-     * MUST be sent as a Bearer Token, per Section 2 of OAuth 2.0 Bearer Token
-     * Usage [RFC6750].
-     * </p>
-     * <p>
-     * It is RECOMMENDED that the request use the HTTP GET method and the Access
-     * Token be sent using the Authorization header field.
-     * </p>
-     *
-     * @param req
-     * @return
-     */
-    @GET
-    public Response getOp(@Context final HttpServletRequest req) {
-
-        return op(req);
-    }
-
-    @POST
-    public Response op(@Context final HttpServletRequest req) {
-
-        final String accessToken = AuthorizationUtil.processBearer(req);
-        if (accessToken == null) {
-            return Response.status(400)
-                    .entity(new ErrorResponse(ErrorCode.access_denied, "unable to retrieve id token"))
-                    .build();
-        }
-        IdTokenResponse byAccessToken = tokenProvider.getByAccessToken(accessToken);
-        if (byAccessToken == null) {
-            return Response.status(400)
-                    .entity(new ErrorResponse(ErrorCode.access_denied, "unable to retrieve id token"))
-                    .build();
-        }
-        IdToken idToken = byAccessToken.getIdToken(keyProvider.getPrivateJwks());
-        JsonObject claims = tokenProvider.getClaimsByAccessToken(accessToken);
-
-        Userinfo userinfo = userinfoProvider.getUserinfo(idToken);
-
-        if (claims != null && claims.containsKey("userinfo")) {
-            filterUserInfo(userinfo, claims.getJsonObject("userinfo"));
-        }
-
-        return Response.ok(userinfo)
-                .build();
-    }
-
-    private void filterUserInfo(Userinfo userinfo,
-            JsonObject userinfoClaims) {
+    private void filterUserInfo(final Userinfo userinfo,
+        final JsonObject userinfoClaims) {
 
         if (!userinfoClaims.containsKey("updated_at")) {
             userinfo.setUpdatedAt(null);
@@ -170,6 +122,55 @@ public class UserinfoEndpoint {
         if (!userinfoClaims.containsKey("phone_number_verified")) {
             userinfo.setPhoneNumberVerified(null);
         }
+    }
+
+    /**
+     * <p>
+     * The Client sends the UserInfo Request using either HTTP GET or HTTP POST.
+     * The Access Token obtained from an OpenID Connect Authentication Request
+     * MUST be sent as a Bearer Token, per Section 2 of OAuth 2.0 Bearer Token
+     * Usage [RFC6750].
+     * </p>
+     * <p>
+     * It is RECOMMENDED that the request use the HTTP GET method and the Access
+     * Token be sent using the Authorization header field.
+     * </p>
+     *
+     * @param req
+     * @return
+     */
+    @GET
+    public Response getOp(@Context final HttpServletRequest req) {
+
+        return op(req);
+    }
+
+    @POST
+    public Response op(@Context final HttpServletRequest req) {
+
+        final String accessToken = AuthorizationUtil.processBearer(req);
+        if (accessToken == null) {
+            return Response.status(400)
+                .entity(new ErrorResponse(ErrorCode.access_denied, "unable to retrieve id token"))
+                .build();
+        }
+        final IdTokenResponse byAccessToken = tokenProvider.getByAccessToken(accessToken);
+        if (byAccessToken == null) {
+            return Response.status(400)
+                .entity(new ErrorResponse(ErrorCode.access_denied, "unable to retrieve id token"))
+                .build();
+        }
+        final IdToken idToken = byAccessToken.getIdToken(keyProvider.getPrivateJwks());
+        final JsonObject claims = tokenProvider.getClaimsByAccessToken(accessToken);
+
+        final Userinfo userinfo = userinfoProvider.getUserinfo(idToken);
+
+        if (claims != null && claims.containsKey("userinfo")) {
+            filterUserInfo(userinfo, claims.getJsonObject("userinfo"));
+        }
+
+        return Response.ok(userinfo)
+            .build();
     }
 
     @EJB
