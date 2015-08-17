@@ -85,8 +85,12 @@ public class TokenResponse implements
     public TokenResponse(final JsonObject tokenResponse) {
         accessToken = tokenResponse.getString("access_token");
         expiresIn = tokenResponse.getInt("expires_in");
-        refreshToken = tokenResponse.getString("refresh_token");
-        scope = tokenResponse.getString("scope");
+        if (tokenResponse.containsKey("refresh_token")) {
+            refreshToken = tokenResponse.getString("refresh_token");
+        }
+        if (tokenResponse.containsKey("scope")) {
+            scope = tokenResponse.getString("scope");
+        }
         tokenType = tokenResponse.getString("token_type", BEARER);
     }
 
